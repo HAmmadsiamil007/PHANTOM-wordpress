@@ -3953,6 +3953,9 @@
                 "ph_shadow_opacity": {
                     "label": "Shadow opacity"
                 },
+                "ph_shadow_color": {
+                    "label": "Shadow color"
+                },
                 "ph_border_radius_default": {
                     "label": "Default border radius"
                 },

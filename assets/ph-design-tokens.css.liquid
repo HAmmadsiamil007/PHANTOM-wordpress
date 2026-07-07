@@ -63,10 +63,16 @@
   --ph-border-width-thin: 1px;
   --ph-border-width-default: 2px;
   --ph-border-width-thick: 4px;
+  --ph-border-radius-default: 4px;
   --ph-border-radius-sm: 2px;
-  --ph-border-radius-md: 4px;
+  --ph-border-radius-md: var(--ph-border-radius-default, 4px);
   --ph-border-radius-lg: 8px;
   --ph-border-radius-full: 9999px;
+
+  --ph-border-color-rgb: 0, 0, 0;
+  --ph-border-color-light: rgba(var(--ph-border-color-rgb), 0.1);
+  --ph-border-color: rgba(var(--ph-border-color-rgb), 0.2);
+  --ph-border-color-strong: rgba(var(--ph-border-color-rgb), 0.4);
 
   /* ============================
      6. Opacity Scale (11 steps)
@@ -91,6 +97,10 @@
   :root {
     --ph-shadow-color-rgb: 255, 255, 255;
     --ph-shadow-opacity: 0.08;
+
+    --ph-border-color-light: rgba(255, 255, 255, 0.15);
+    --ph-border-color: rgba(255, 255, 255, 0.25);
+    --ph-border-color-strong: rgba(255, 255, 255, 0.5);
   }
 }
 

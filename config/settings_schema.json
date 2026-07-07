@@ -1170,6 +1170,12 @@
         "unit": "%"
       },
       {
+        "type": "color",
+        "id": "ph_shadow_color",
+        "label": "Shadow color",
+        "default": "#000000"
+      },
+      {
         "type": "range",
         "id": "ph_border_radius_default",
         "label": "Default border radius",
