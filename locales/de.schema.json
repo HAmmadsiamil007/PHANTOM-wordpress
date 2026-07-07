@@ -3722,11 +3722,20 @@
                                                                                                            "label":  "Skip cart and checkout links"
                                                                                                        },
                                                                "header_skeletons":  "Skeleton Loaders",
-                                                               "ph_motion_skeletons_enable":  {
-                                                                                                  "label":  "Enable skeleton loaders",
-                                                                                                  "info":  "Show placeholder shimmer while content loads. Only affects AJAX-dependent sections."
+                                                                "ph_motion_skeletons_enable":  {
+                                                                                                   "label":  "Enable skeleton loaders",
+                                                                                                   "info":  "Show placeholder shimmer while content loads. Only affects AJAX-dependent sections."
+                                                                                               },
+                                                                "header_stagger":  "Stagger Delays",
+                                                                "ph_motion_stagger_enable":  {
+                                                                                                   "label":  "Enable stagger delays",
+                                                                                                   "info":  "When enabled, grid items animate in sequence rather than all at once."
+                                                                                               },
+                                                                "ph_motion_stagger_amount":  {
+                                                                                                  "label":  "Stagger delay amount",
+                                                                                                  "info":  "Milliseconds between each item\u0027s animation start."
                                                                                               }
-                                                           }
+                                                            }
                                           },
                             "ph_presets":  {
                                                "name":  "PHANTOM Presets",
