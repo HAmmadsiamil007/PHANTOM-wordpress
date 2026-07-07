@@ -1075,7 +1075,7 @@
         "type": "checkbox",
         "id": "ph_motion_enable",
         "label": "t:settings_schema.ph_motion.settings.ph_motion_enable.label",
-        "default": false,
+        "default": true,
         "info": "t:settings_schema.ph_motion.settings.ph_motion_enable.info"
       },
       {

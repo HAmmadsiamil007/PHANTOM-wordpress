@@ -31,7 +31,15 @@
 
     <div class="page-width page-width--flush-small">
       <div class="grid-overflow-wrapper">
-        <div id="RecentlyViewed-{{ section.id }}" class="grid grid--uniform" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}overflow__animation{% endif %}"></div>
+        <div id="RecentlyViewed-{{ section.id }}" class="grid grid--uniform" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}overflow__animation{% endif %}">
+          {%- if settings.ph_motion_skeletons_enable -%}
+            {%- for i in (1..section.settings.recent_count) -%}
+              <div class="grid__item {{ gridView }}">
+                {%- render 'ph-skeleton-product' -%}
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
       </div>
     </div>
   </div>
@@ -45,7 +53,7 @@
         "type": "select",
         "id": "entrance_animation",
         "label": "t:sections.common.settings.entrance_animation.label",
-        "default": "existing",
+        "default": "ph-fade-up",
         "options": [
           {
             "value": "existing",
