@@ -327,7 +327,7 @@
         skeletonsEnabled: {{ settings.ph_motion_skeletons_enable | default: false }}
       };
     </script>
-      {{ 'ph-motion.js' | asset_url | script_tag }}
+    {{ 'ph-motion.js' | asset_url | script_tag }}
     {%- if settings.ph_motion_viewtransitions_enable -%}
       <script src="{{ 'ph-transitions.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
