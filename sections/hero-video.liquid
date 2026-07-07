@@ -50,7 +50,7 @@
   data-section-type="video-section"
   class="video-parent-section hero hero--{{ section.id }} hero--{{ section.settings.section_height }} hero--mobile--{{ section.settings.mobile_height }}"
   data-mobile-natural="false"
-  data-aos="hero__animation">
+  data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}hero__animation{% endif %}">
 
   <div class="hero__media hero__media--{{ section.id }}">
     <div class="hero__media-container">
@@ -159,7 +159,43 @@
   "name": "t:sections.hero-video.name",
   "class": "index-section--hero",
   "settings": [
-    {
+      {
+        "type": "select",
+        "id": "entrance_animation",
+        "label": "t:sections.common.settings.entrance_animation.label",
+        "default": "existing",
+        "options": [
+          {
+            "value": "existing",
+            "label": "t:sections.common.settings.entrance_animation.options.existing.label"
+          },
+          {
+            "value": "ph-fade-up",
+            "label": "ph-fade-up"
+          },
+          {
+            "value": "ph-scale-in",
+            "label": "ph-scale-in"
+          },
+          {
+            "value": "ph-blur-in",
+            "label": "ph-blur-in"
+          },
+          {
+            "value": "ph-slide-left",
+            "label": "ph-slide-left"
+          },
+          {
+            "value": "ph-slide-right",
+            "label": "ph-slide-right"
+          },
+          {
+            "value": "ph-rotate-in",
+            "label": "ph-rotate-in"
+          }
+        ]
+      },
+{
       "type": "textarea",
       "id": "title",
       "label": "t:sections.hero-video.settings.title.label",

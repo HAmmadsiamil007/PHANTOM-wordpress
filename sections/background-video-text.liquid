@@ -10,7 +10,7 @@
   data-section-id="{{ section.id }}"
   data-section-type="video-section"
   class="video-parent-section background-media-text background-media-text--{{ section.id }} background-media-text--{{ section.settings.height }}"
-  data-aos="background-media-text__animation">
+  data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}background-media-text__animation{% endif %}">
 
   <div class="background-media-text__video">
     {%- render 'video-div', section_id: section.id, url: section.settings.video_url -%}
@@ -62,7 +62,43 @@
   "name": "t:sections.background-video-text.name",
   "class": "index-section--flush",
   "settings": [
-    {
+      {
+        "type": "select",
+        "id": "entrance_animation",
+        "label": "t:sections.common.settings.entrance_animation.label",
+        "default": "existing",
+        "options": [
+          {
+            "value": "existing",
+            "label": "t:sections.common.settings.entrance_animation.options.existing.label"
+          },
+          {
+            "value": "ph-fade-up",
+            "label": "ph-fade-up"
+          },
+          {
+            "value": "ph-scale-in",
+            "label": "ph-scale-in"
+          },
+          {
+            "value": "ph-blur-in",
+            "label": "ph-blur-in"
+          },
+          {
+            "value": "ph-slide-left",
+            "label": "ph-slide-left"
+          },
+          {
+            "value": "ph-slide-right",
+            "label": "ph-slide-right"
+          },
+          {
+            "value": "ph-rotate-in",
+            "label": "ph-rotate-in"
+          }
+        ]
+      },
+{
       "type": "text",
       "id": "subtitle",
       "label": "t:sections.background-video-text.settings.subtitle.label",

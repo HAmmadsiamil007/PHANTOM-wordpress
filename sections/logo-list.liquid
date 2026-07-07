@@ -14,7 +14,7 @@
 
 {%- if section.settings.divider -%}<div class="section--divider">{%- endif -%}
 
-<div class="page-width" data-aos="logo__animation">
+<div class="page-width" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}logo__animation{% endif %}">
   {%- if section.settings.title != blank -%}
     <div class="section-header">
       <h2 class="section-header__title">{{ section.settings.title | escape }}</h2>
@@ -56,7 +56,43 @@
   "class": "index-section",
   "max_blocks": 10,
   "settings": [
-    {
+      {
+        "type": "select",
+        "id": "entrance_animation",
+        "label": "t:sections.common.settings.entrance_animation.label",
+        "default": "existing",
+        "options": [
+          {
+            "value": "existing",
+            "label": "t:sections.common.settings.entrance_animation.options.existing.label"
+          },
+          {
+            "value": "ph-fade-up",
+            "label": "ph-fade-up"
+          },
+          {
+            "value": "ph-scale-in",
+            "label": "ph-scale-in"
+          },
+          {
+            "value": "ph-blur-in",
+            "label": "ph-blur-in"
+          },
+          {
+            "value": "ph-slide-left",
+            "label": "ph-slide-left"
+          },
+          {
+            "value": "ph-slide-right",
+            "label": "ph-slide-right"
+          },
+          {
+            "value": "ph-rotate-in",
+            "label": "ph-rotate-in"
+          }
+        ]
+      },
+{
       "type": "text",
       "id": "title",
       "label": "t:sections.logo-list.settings.title.label",
@@ -84,7 +120,43 @@
       "type": "logo_image",
       "name": "t:sections.logo-list.blocks.logo.name",
       "settings": [
-        {
+      {
+        "type": "select",
+        "id": "entrance_animation",
+        "label": "t:sections.common.settings.entrance_animation.label",
+        "default": "existing",
+        "options": [
+          {
+            "value": "existing",
+            "label": "t:sections.common.settings.entrance_animation.options.existing.label"
+          },
+          {
+            "value": "ph-fade-up",
+            "label": "ph-fade-up"
+          },
+          {
+            "value": "ph-scale-in",
+            "label": "ph-scale-in"
+          },
+          {
+            "value": "ph-blur-in",
+            "label": "ph-blur-in"
+          },
+          {
+            "value": "ph-slide-left",
+            "label": "ph-slide-left"
+          },
+          {
+            "value": "ph-slide-right",
+            "label": "ph-slide-right"
+          },
+          {
+            "value": "ph-rotate-in",
+            "label": "ph-rotate-in"
+          }
+        ]
+      },
+{
           "type": "image_picker",
           "id": "image",
           "label": "t:sections.logo-list.blocks.logo.settings.image.label"

@@ -1,0 +1,98 @@
+/* ─── PHANTOM Motion System ───────────────────────────────────────────
+ * Layer 1: Scroll Animations (piggybacks on existing AOS engine)
+ * data-aos="ph-fade-up" | ph-scale-in | ph-blur-in | ph-slide-left |
+ *           ph-slide-right | ph-rotate-in
+ * Trigger: .aos-animate class (added by bundled AOS engine)
+ * Guards: prefers-reduced-motion | [data-disable-animations=true]
+ * ────────────────────────────────────────────────────────────────────── */
+
+/* ---- Reduced motion / disabled guard ---- */
+@media (prefers-reduced-motion: reduce) {
+  [data-aos^="ph-"] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+[data-disable-animations=true] [data-aos^="ph-"] {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+/* ---- Initial hidden state ---- */
+[data-aos^="ph-"] {
+  opacity: 0;
+  transition-property: opacity, transform, filter;
+  transition-duration: 0.7s;
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform, filter;
+  pointer-events: none;
+}
+[data-aos^="ph-"].aos-animate {
+  pointer-events: auto;
+}
+
+/* ---- ph-fade-up ---- */
+[data-aos="ph-fade-up"] {
+  transform: translateY(40px);
+}
+[data-aos="ph-fade-up"].aos-animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- ph-scale-in ---- */
+[data-aos="ph-scale-in"] {
+  transform: scale(0.92);
+}
+[data-aos="ph-scale-in"].aos-animate {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ---- ph-blur-in ---- */
+[data-aos="ph-blur-in"] {
+  filter: blur(6px);
+}
+[data-aos="ph-blur-in"].aos-animate {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* ---- ph-slide-left ---- */
+[data-aos="ph-slide-left"] {
+  transform: translateX(60px);
+}
+[data-aos="ph-slide-left"].aos-animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---- ph-slide-right ---- */
+[data-aos="ph-slide-right"] {
+  transform: translateX(-60px);
+}
+[data-aos="ph-slide-right"].aos-animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---- ph-rotate-in ---- */
+[data-aos="ph-rotate-in"] {
+  transform: perspective(800px) rotateY(12deg);
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+[data-aos="ph-rotate-in"].aos-animate {
+  opacity: 1;
+  transform: perspective(800px) rotateY(0deg);
+}
+
+/* ---- Stagger helpers ---- */
+[data-aos^="ph-"][data-aos-delay="100"] { transition-delay: 0.1s; }
+[data-aos^="ph-"][data-aos-delay="200"] { transition-delay: 0.2s; }
+[data-aos^="ph-"][data-aos-delay="300"] { transition-delay: 0.3s; }
+[data-aos^="ph-"][data-aos-delay="400"] { transition-delay: 0.4s; }
+[data-aos^="ph-"][data-aos-delay="500"] { transition-delay: 0.5s; }
+[data-aos^="ph-"][data-aos-delay="600"] { transition-delay: 0.6s; }

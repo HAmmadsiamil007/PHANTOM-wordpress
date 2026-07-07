@@ -10,7 +10,7 @@
   class="testimonials-section testimonials-{{ section.id }}{% if section.settings.ph_color_background == settings.ph_color_body_bg %} testimonials-section--with-divider{% endif %} text-{{ section.settings.align_text }}"
   data-section-id="{{ section.id }}"
   data-section-type="testimonials"
-  data-aos>
+  data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% endif %}">
   {%- if section.settings.title != blank -%}
     <div class="page-width">
       <div class="section-header">
@@ -30,7 +30,7 @@
           <div
             class="testimonials-slide testimonials-slide--{{ block.id }}"
             data-index="{{ forloop.index0 }}"
-            data-aos="row-of-{{ section.blocks.size }}"
+            data-aos="{% if block.settings.entrance_animation and block.settings.entrance_animation != 'existing' %}{{ block.settings.entrance_animation }}{% else %}row-of-{{ section.blocks.size }}{% endif %}"
             {{ block.shopify_attributes }}>
             <blockquote class="testimonials-slider__text">
               {%- if block.settings.icon == 'quote' -%}
@@ -141,6 +141,21 @@
       "id": "color_text",
       "label": "t:sections.testimonials.settings.ph_color_text.label",
       "default": "#1c1d1d"
+    },
+    {
+      "type": "select",
+      "id": "entrance_animation",
+      "label": "t:sections.common.settings.entrance_animation.label",
+      "default": "existing",
+      "options": [
+        { "value": "existing", "label": "t:sections.common.settings.entrance_animation.options.existing.label" },
+        { "value": "ph-fade-up", "label": "ph-fade-up" },
+        { "value": "ph-scale-in", "label": "ph-scale-in" },
+        { "value": "ph-blur-in", "label": "ph-blur-in" },
+        { "value": "ph-slide-left", "label": "ph-slide-left" },
+        { "value": "ph-slide-right", "label": "ph-slide-right" },
+        { "value": "ph-rotate-in", "label": "ph-rotate-in" }
+      ]
     }
   ],
   "blocks": [
@@ -206,6 +221,21 @@
           "id": "author_info",
           "label": "t:sections.testimonials.blocks.testimonial.settings.author_info.label",
           "default": "Los Angeles, CA"
+        },
+        {
+          "type": "select",
+          "id": "entrance_animation",
+          "label": "t:sections.common.settings.entrance_animation.label",
+          "default": "existing",
+          "options": [
+            { "value": "existing", "label": "t:sections.common.settings.entrance_animation.options.existing.label" },
+            { "value": "ph-fade-up", "label": "ph-fade-up" },
+            { "value": "ph-scale-in", "label": "ph-scale-in" },
+            { "value": "ph-blur-in", "label": "ph-blur-in" },
+            { "value": "ph-slide-left", "label": "ph-slide-left" },
+            { "value": "ph-slide-right", "label": "ph-slide-right" },
+            { "value": "ph-rotate-in", "label": "ph-rotate-in" }
+          ]
         }
       ]
     }

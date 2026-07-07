@@ -24,7 +24,7 @@
 
   <div class="page-width{% if section.settings.mobile_scrollable %} page-width--flush-small{% endif %}">
     <div{% if section.settings.mobile_scrollable %} class="grid-overflow-wrapper"{% endif %}>
-      <div class="grid grid--uniform"{% if section.settings.mobile_scrollable %} data-aos="overflow__animation"{% endif %}>
+      <div class="grid grid--uniform"{% if section.settings.mobile_scrollable %} data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}overflow__animation{% endif %}"{% endif %}>
         {%- liquid
           capture gridView
             render 'products_per_row', products_per_row: per_row, style: 'fractions'
@@ -46,7 +46,7 @@
           <div class="grid__item">
             <div class="grid grid--uniform">
               {%- for i in (1..product_limit) -%}
-                <div class="grid__item grid-product {{ gridView }}" data-aos="row-of-{{ per_row }}">
+                <div class="grid__item grid-product {{ gridView }}" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}row-of-{{ per_row }}{% endif %}">
                   <div class="grid-product__content">
                     <a href="{{ product.url | within: collection }}" class="grid-product__link">
                       <div class="grid-product__image-mask">
@@ -145,6 +145,21 @@
       "id": "divider",
       "label": "t:sections.featured-collection.settings.divider.label",
       "default": false
+    },
+    {
+      "type": "select",
+      "id": "entrance_animation",
+      "label": "t:sections.common.settings.entrance_animation.label",
+      "default": "existing",
+      "options": [
+        { "value": "existing", "label": "t:sections.common.settings.entrance_animation.options.existing.label" },
+        { "value": "ph-fade-up", "label": "ph-fade-up" },
+        { "value": "ph-scale-in", "label": "ph-scale-in" },
+        { "value": "ph-blur-in", "label": "ph-blur-in" },
+        { "value": "ph-slide-left", "label": "ph-slide-left" },
+        { "value": "ph-slide-right", "label": "ph-slide-right" },
+        { "value": "ph-rotate-in", "label": "ph-rotate-in" }
+      ]
     }
   ],
   "presets": [

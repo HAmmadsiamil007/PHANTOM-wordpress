@@ -48,7 +48,7 @@
         {%- endif -%}
         {%- if related_collection.products_count > 0 -%}
           <div class="product-recommendations page-width">
-            <div class="grid grid--uniform" data-aos="overflow__animation">
+            <div class="grid grid--uniform" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}overflow__animation{% endif %}">
               {%- for product in related_collection.products limit: number_of_products -%}
                 {% comment %} On smaller screen sizes, 39vw is used for grid items in the CSS {% endcomment %}
                 {%- render 'product-grid-item',
@@ -70,7 +70,43 @@
 {
   "name": "t:sections.product-recommendations.name",
   "settings": [
-    {
+      {
+        "type": "select",
+        "id": "entrance_animation",
+        "label": "t:sections.common.settings.entrance_animation.label",
+        "default": "existing",
+        "options": [
+          {
+            "value": "existing",
+            "label": "t:sections.common.settings.entrance_animation.options.existing.label"
+          },
+          {
+            "value": "ph-fade-up",
+            "label": "ph-fade-up"
+          },
+          {
+            "value": "ph-scale-in",
+            "label": "ph-scale-in"
+          },
+          {
+            "value": "ph-blur-in",
+            "label": "ph-blur-in"
+          },
+          {
+            "value": "ph-slide-left",
+            "label": "ph-slide-left"
+          },
+          {
+            "value": "ph-slide-right",
+            "label": "ph-slide-right"
+          },
+          {
+            "value": "ph-rotate-in",
+            "label": "ph-rotate-in"
+          }
+        ]
+      },
+{
       "type": "paragraph",
       "content": "t:sections.product-recommendations.settings.show_product_recommendations.info"
     },

@@ -29,6 +29,9 @@
 
   {%- render 'font-face' -%}
   {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
+  {{ 'ph-motion.css' | asset_url | stylesheet_tag }}
+  {{ 'ph-skeleton.css' | asset_url | stylesheet_tag }}
+  {{ 'ph-transitions.css' | asset_url | stylesheet_tag }}
   {%- render 'css-variables' -%}
 
   <script>
@@ -314,6 +317,19 @@
       }
     }
   {% endstyle %}
+
+  {%- if settings.ph_motion_enable -%}
+    <script>
+      window.phMotionSettings = {
+        entranceSpeed: {{ settings.ph_motion_entrance_speed | default: 0.7 }},
+        viewTransitionsEnabled: {{ settings.ph_motion_viewtransitions_enable | default: false }},
+        skeletonsEnabled: {{ settings.ph_motion_skeletons_enable | default: false }}
+      };
+    </script>
+    {%- if settings.ph_motion_viewtransitions_enable -%}
+      <script src="{{ 'ph-transitions.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+  {%- endif -%}
 
   <script src="{{ 'phantom-vendor.js' | asset_url | split: '?' | first }}" defer="defer"></script>
 

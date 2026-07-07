@@ -31,7 +31,7 @@
 
     <div class="page-width page-width--flush-small">
       <div class="grid-overflow-wrapper">
-        <div id="RecentlyViewed-{{ section.id }}" class="grid grid--uniform" data-aos="overflow__animation"></div>
+        <div id="RecentlyViewed-{{ section.id }}" class="grid grid--uniform" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}overflow__animation{% endif %}"></div>
       </div>
     </div>
   </div>
@@ -41,7 +41,43 @@
 {
   "name": "t:sections.recently-viewed.name",
   "settings": [
-    {
+      {
+        "type": "select",
+        "id": "entrance_animation",
+        "label": "t:sections.common.settings.entrance_animation.label",
+        "default": "existing",
+        "options": [
+          {
+            "value": "existing",
+            "label": "t:sections.common.settings.entrance_animation.options.existing.label"
+          },
+          {
+            "value": "ph-fade-up",
+            "label": "ph-fade-up"
+          },
+          {
+            "value": "ph-scale-in",
+            "label": "ph-scale-in"
+          },
+          {
+            "value": "ph-blur-in",
+            "label": "ph-blur-in"
+          },
+          {
+            "value": "ph-slide-left",
+            "label": "ph-slide-left"
+          },
+          {
+            "value": "ph-slide-right",
+            "label": "ph-slide-right"
+          },
+          {
+            "value": "ph-rotate-in",
+            "label": "ph-rotate-in"
+          }
+        ]
+      },
+{
       "type": "paragraph",
       "content": "t:sections.recently-viewed.settings.content"
     },

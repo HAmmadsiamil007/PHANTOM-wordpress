@@ -1,0 +1,29 @@
+/* ─── PHANTOM View Transitions ────────────────────────────────────────
+ * Layer 2: Page navigation cross-fade animation
+ * Trigger: document.startViewTransition()
+ * Guard:  prefers-reduced-motion | [data-disable-animations=true]
+ * ────────────────────────────────────────────────────────────────────── */
+
+::view-transition-old(root) {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+}
+
+::view-transition-new(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0s;
+  }
+}
+
+[data-disable-animations=true] ::view-transition-old(root),
+[data-disable-animations=true] ::view-transition-new(root) {
+  animation-duration: 0s;
+}

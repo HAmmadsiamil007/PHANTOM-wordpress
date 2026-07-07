@@ -1,4 +1,4 @@
-﻿{%- assign blog = blogs[section.settings.blog] -%}
+{%- assign blog = blogs[section.settings.blog] -%}
 
 {%- if section.settings.divider -%}<div class="section--divider">{%- endif -%}
 
@@ -33,7 +33,7 @@
 
     <div class="grid grid--uniform">
       {%- for i in (1..section.settings.post_limit) -%}
-        <div class="grid__item medium-up--one-third" data-aos="row-of-3">
+        <div class="grid__item medium-up--one-third" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}row-of-3{% endif %}">
           <div class="grid">
             <div class="grid__item small--one-third">
               <a href="#" class="article__grid-image">
@@ -76,7 +76,43 @@
   "name": "t:sections.blog-posts.name",
   "class": "index-section",
   "settings": [
-    {
+      {
+        "type": "select",
+        "id": "entrance_animation",
+        "label": "t:sections.common.settings.entrance_animation.label",
+        "default": "existing",
+        "options": [
+          {
+            "value": "existing",
+            "label": "t:sections.common.settings.entrance_animation.options.existing.label"
+          },
+          {
+            "value": "ph-fade-up",
+            "label": "ph-fade-up"
+          },
+          {
+            "value": "ph-scale-in",
+            "label": "ph-scale-in"
+          },
+          {
+            "value": "ph-blur-in",
+            "label": "ph-blur-in"
+          },
+          {
+            "value": "ph-slide-left",
+            "label": "ph-slide-left"
+          },
+          {
+            "value": "ph-slide-right",
+            "label": "ph-slide-right"
+          },
+          {
+            "value": "ph-rotate-in",
+            "label": "ph-rotate-in"
+          }
+        ]
+      },
+{
       "type": "text",
       "id": "title",
       "label": "t:sections.blog-posts.settings.title.label",

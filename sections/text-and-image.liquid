@@ -26,7 +26,7 @@
 
   <div class="page-width feature-row-wrapper feature-row--{{ image_width }}">
     {%- capture image_layout -%}
-      <div class="feature-row__item feature-row__images{% if overlap_images %} feature-row__item--overlap-images{% endif %} {% if placeholder_images %}feature-row__item--placeholder-images{% endif %}" data-aos>
+      <div class="feature-row__item feature-row__images{% if overlap_images %} feature-row__item--overlap-images{% endif %} {% if placeholder_images %}feature-row__item--placeholder-images{% endif %}" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% endif %}">
           {%- if section.settings.image != blank -%}
             <div class="feature-row__first-image">
               {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}<a href="{{ section.settings.button_link }}">{%- endif -%}
@@ -103,7 +103,7 @@
         {{ image_layout }}
       {%- endif -%}
 
-      <div class="feature-row__item feature-row__text feature-row__text--{{ section.settings.layout }} text-{{ section.settings.align_text }}" data-aos>
+      <div class="feature-row__item feature-row__text feature-row__text--{{ section.settings.layout }} text-{{ section.settings.align_text }}" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% endif %}">
         {%- if section.settings.subtitle != blank -%}
           <div class="subheading appear-delay{% cycle '','-1','-2','-3','-4' %}">{{ section.settings.subtitle }}</div>
         {%- endif -%}
@@ -393,6 +393,21 @@
       "label": "t:common.lazyload_images.label",
       "info": "t:common.lazyload_images.info",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "entrance_animation",
+      "label": "t:sections.common.settings.entrance_animation.label",
+      "default": "existing",
+      "options": [
+        { "value": "existing", "label": "t:sections.common.settings.entrance_animation.options.existing.label" },
+        { "value": "ph-fade-up", "label": "ph-fade-up" },
+        { "value": "ph-scale-in", "label": "ph-scale-in" },
+        { "value": "ph-blur-in", "label": "ph-blur-in" },
+        { "value": "ph-slide-left", "label": "ph-slide-left" },
+        { "value": "ph-slide-right", "label": "ph-slide-right" },
+        { "value": "ph-rotate-in", "label": "ph-rotate-in" }
+      ]
     }
   ],
   "presets": [

@@ -1,0 +1,76 @@
+/* ─── PHANTOM Skeleton Loaders ────────────────────────────────────────
+ * Layer 2: Loading state placeholders
+ * Guard:  prefers-reduced-motion | [data-disable-animations=true]
+ * ────────────────────────────────────────────────────────────────────── */
+
+.ph-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--ph-skeleton-bg, rgba(0,0,0,0.06));
+  border-radius: 4px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ph-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.4) 50%,
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: ph-shimmer 1.5s infinite;
+}
+
+@keyframes ph-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+.ph-skeleton--text {
+  height: 1em;
+  margin-bottom: 0.5em;
+  width: 100%;
+}
+
+.ph-skeleton--text-short {
+  width: 60%;
+}
+
+.ph-skeleton--heading {
+  height: 1.5em;
+  margin-bottom: 0.75em;
+  width: 70%;
+}
+
+.ph-skeleton--image {
+  width: 100%;
+  padding-bottom: 100%;
+  height: 0;
+}
+
+.ph-skeleton--product {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--ph-skeleton-card-bg, rgba(0,0,0,0.03));
+  border-radius: 8px;
+}
+
+.ph-skeleton--section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ph-skeleton::after { animation: none; display: none; }
+  .ph-skeleton { background: var(--ph-skeleton-bg, rgba(0,0,0,0.04)); }
+}
+
+[data-disable-animations=true] .ph-skeleton::after { animation: none; display: none; }

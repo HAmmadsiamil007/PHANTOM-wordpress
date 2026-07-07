@@ -1,7 +1,7 @@
 # PHANTOM Motion System — Design Doc
 
 > Designed: July 7, 2026
-> Status: Draft for review
+> Status: Draft for review (Updated after Round 1+2 review)
 
 ---
 
@@ -11,113 +11,151 @@ The PHANTOM Motion System is a 3-layer enhancement that transforms the theme fro
 
 ### Why This Matters
 
-1. **Differentiation:** Impulse (and all Archetype themes) have zero scroll-triggered animations, skeleton loading, or page transitions. Adding these makes PHANTOM feel like a completely different theme — visually and experientially.
+1. **Differentiation:** Adding modern animations, page transitions, and new style presets makes PHANTOM feel like a completely different theme — visually and experientially.
 
-2. **Anti-Detectability:** The animation JS, new CSS classes, new schema settings, and restructured rendering add thousands of lines of non-Impulse code. Theme detection tools look at code fingerprints — new code patterns break those fingerprints.
+2. **Anti-Detectability:** New animation CSS, new data attributes, new `data-aos` animation types, and new presets add thousands of lines of non-Impulse code. Theme detection tools look at code fingerprints — new code patterns break those fingerprints.
 
-3. **Business Value:** "Scroll-triggered animations" and "cinematic page transitions" are selling points that premium themes charge $350+ for. Skeleton loaders improve perceived performance (LCP, CLS metrics).
+3. **Business Value:** "Scroll-triggered animations" and "cinematic page transitions" are selling points that premium themes charge $350+ for.
 
-4. **Developer Experience:** The motion system can be used during theme development to preview loading states and section reveals.
+### Critical Finding — Existing AOS System
 
-### The Three Layers
+**The theme ALREADY has a scroll-triggered animation system (AOS):**
+- Bundled in `assets/phantom-vendor.js` (minified, cannot safely modify)
+- 55+ CSS rules in `assets/theme.css.liquid` using `.aos-animate[data-aos=...]`
+- Used across 17+ sections via `data-aos` attributes
+- Has a master disable toggle via `data-disable-animations` attribute
+- Has existing animation types: `row-of-3`, `row-of-4`, `hero__animation`, `overflow__animation`, `background-media-text__animation`, `logo__animation`, `map-section__animation`, `image-fade-in`
+
+**Our approach: ADDITIVE enhancement, not replacement.**
+- We keep AOS engine working (too deeply embedded to remove safely)
+- We add NEW animation types that our CSS handles
+- Both old and new animations coexist
+- Merchants choose per section via the `entrance_animation` setting
+
+---
+
+## The Three Layers
 
 ```
 PHANTOM Motion System
-├── Layer 1: Entrance Animation Engine       ← HIGHEST impact
-│   ├── Scroll-triggered fade/slide/scale animations on 15 key sections
-│   ├── IntersectionObserver-based, respects prefers-reduced-motion
-│   ├── Configurable per-section via theme editor
-│   └── 7 animation types: fade-up, fade-down, fade-left, fade-right, scale-in, zoom-in, none
+├── Layer 1: Enhanced Animation Engine    
+│   ├── New animation types via ph-motion.css.liquid
+│   ├── Works WITH existing AOS (not against)
+│   ├── Adds entrance_animation setting to 15 sections
+│   ├── 7 new animation types: fade-up, fade-down, fade-left, fade-right, scale-in, zoom-in, none
+│   └── Extension: not replacement
 │
-├── Layer 2: Skeleton Loading + Page Transitions  ← UX polish
-│   ├── Skeleton placeholders for 6 key section types
+├── Layer 2: Skeleton Loading + Page Transitions  
 │   ├── View Transitions API for SPA-like page navigation
-│   ├── Skeleton → content transition (fade overlap)
-│   └── Progressive enhancement — View Transitions fallback to normal load
+│   ├── Skeleton placeholders for AJAX-dependent sections only
+│   ├── Exclusion selectors prevent conflicts with existing JS
+│   ├── Progressive enhancement — falls back to normal load
+│   └── Independent of AOS — no conflict
 │
-└── Layer 3: Theme Presets                    ← Merchant value
-    ├── 4 complete style presets: Minimal, Editorial, Bold, Luxury
+└── Layer 3: Theme Presets                    
+    ├── 4 new style presets added to existing 3 (total: 7)
+    ├── Minimal, Editorial, Bold, Luxury
     ├── One-click switching via Theme Settings
-    ├── Each preset sets all colors, fonts, and layout options
     └── Pure JSON — no code changes, just settings_data.json entries
 ```
 
 ---
 
-## Layer 1: Entrance Animation Engine
+## Layer 1: Enhanced Animation Engine
 
 ### Architecture
 
-A single Web Component `<ph-motion>` that observes all `[data-ph-animate]` elements and adds a visible class when they enter the viewport.
-
 ```
-assets/ph-motion.js              → Web Component + IntersectionObserver
-assets/ph-motion.css.liquid      → @keyframes + CSS classes
+Existing:   [AOS engine in vendor.js] → observes [data-aos] → applies .aos-animate
+New:        [AOS engine in vendor.js] → observes [data-aos="ph-fade-up"] → applies .aos-animate
+            [ph-motion.css.liquid]    → styles .aos-animate[data-aos="ph-fade-up"] { ... }
 ```
 
-No modifications to theme.liquid — the section includes the JS/CSS assets when needed.
+We do NOT create a new IntersectionObserver. We use AOS's existing engine but with NEW animation types that our CSS handles with modern, smooth animations.
 
-### How Sections Opt In
-
-Each of the ~15 target sections gets:
-1. A new schema setting `entrance_animation` (select dropdown)
-2. The setting value rendered as `data-ph-animate="{{ section.settings.entrance_animation }}"`
-3. The section's wrapper element gets `class="ph-motion"` as a base class
-
-### Animation Types
+### New Animation Types
 
 | Value | CSS Transform | Opacity | Duration |
 |-------|--------------|---------|----------|
-| `fade-up` | translateY(30px) → translateY(0) | 0 → 1 | 0.6s |
-| `fade-down` | translateY(-30px) → translateY(0) | 0 → 1 | 0.6s |
-| `fade-left` | translateX(-30px) → translateX(0) | 0 → 1 | 0.6s |
-| `fade-right` | translateX(30px) → translateX(0) | 0 → 1 | 0.6s |
-| `scale-in` | scale(0.95) → scale(1) | 0 → 1 | 0.5s |
-| `zoom-in` | scale(0.8) → scale(1) | 0 → 1 | 0.7s |
+| `ph-fade-up` | translateY(30px) → translateY(0) | 0 → 1 | 0.6s |
+| `ph-fade-down` | translateY(-30px) → translateY(0) | 0 → 1 | 0.6s |
+| `ph-fade-left` | translateX(-30px) → translateX(0) | 0 → 1 | 0.6s |
+| `ph-fade-right` | translateX(30px) → translateX(0) | 0 → 1 | 0.6s |
+| `ph-scale-in` | scale(0.95) → scale(1) | 0 → 1 | 0.5s |
+| `ph-zoom-in` | scale(0.8) → scale(1) | 0 → 1 | 0.7s |
 
-### JavaScript Engine
+Note: Prefix `ph-` avoids collision with any existing AOS animation types.
 
-```javascript
-class PHMotion extends HTMLElement {
-  connectedCallback() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    this.observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('ph-motion--visible');
-            this.observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: '0px 0px -100px 0px', threshold: 0.1 }
-    );
-    this.querySelectorAll('[data-ph-animate]').forEach(el => {
-      if (el.dataset.phAnimate !== 'none') this.observer.observe(el);
-    });
-  }
-  disconnectedCallback() { this.observer?.disconnect(); }
-}
-customElements.define('ph-motion', PHMotion);
-```
-
-### CSS
+### CSS (in ph-motion.css.liquid)
 
 ```css
-[data-ph-animate] {
+[data-aos="ph-fade-up"] {
   opacity: 0;
+  transform: translateY(30px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
-[data-ph-animate].ph-motion--visible {
+[data-aos="ph-fade-up"].aos-animate {
   opacity: 1;
-  transform: translate(0, 0) scale(1);
+  transform: translateY(0);
 }
-[data-ph-animate="fade-up"]    { transform: translateY(30px); }
-[data-ph-animate="fade-down"]  { transform: translateY(-30px); }
-[data-ph-animate="fade-left"]  { transform: translateX(-30px); }
-[data-ph-animate="fade-right"] { transform: translateX(30px); }
-[data-ph-animate="scale-in"]   { transform: scale(0.95); }
-[data-ph-animate="zoom-in"]    { transform: scale(0.8); transition-duration: 0.7s; }
+
+[data-aos="ph-fade-down"] {
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+[data-aos="ph-fade-down"].aos-animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[data-aos="ph-fade-left"] {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+[data-aos="ph-fade-left"].aos-animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+[data-aos="ph-fade-right"] {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+[data-aos="ph-fade-right"].aos-animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+[data-aos="ph-scale-in"] {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+[data-aos="ph-scale-in"].aos-animate {
+  opacity: 1;
+  transform: scale(1);
+}
+
+[data-aos="ph-zoom-in"] {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+[data-aos="ph-zoom-in"].aos-animate {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aos^="ph-"] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
 ```
 
 ### Schema Setting (added to each target section)
@@ -131,141 +169,193 @@ customElements.define('ph-motion', PHMotion);
   "type": "select",
   "id": "entrance_animation",
   "label": "t:settings_schema.ph_motion.entrance_animation",
-  "default": "none",
+  "default": "existing",
   "options": [
-    { "value": "none", "label": "t:settings_schema.ph_motion.animation_options.none" },
-    { "value": "fade-up", "label": "t:settings_schema.ph_motion.animation_options.fade_up" },
-    { "value": "fade-down", "label": "t:settings_schema.ph_motion.animation_options.fade_down" },
-    { "value": "fade-left", "label": "t:settings_schema.ph_motion.animation_options.fade_left" },
-    { "value": "fade-right", "label": "t:settings_schema.ph_motion.animation_options.fade_right" },
-    { "value": "scale-in", "label": "t:settings_schema.ph_motion.animation_options.scale_in" },
-    { "value": "zoom-in", "label": "t:settings_schema.ph_motion.animation_options.zoom_in" }
+    { "value": "existing", "label": "t:settings_schema.ph_motion.animation_options.existing" },
+    { "value": "ph-fade-up", "label": "t:settings_schema.ph_motion.animation_options.ph_fade_up" },
+    { "value": "ph-fade-down", "label": "t:settings_schema.ph_motion.animation_options.ph_fade_down" },
+    { "value": "ph-fade-left", "label": "t:settings_schema.ph_motion.animation_options.ph_fade_left" },
+    { "value": "ph-fade-right", "label": "t:settings_schema.ph_motion.animation_options.ph_fade_right" },
+    { "value": "ph-scale-in", "label": "t:settings_schema.ph_motion.animation_options.ph_scale_in" },
+    { "value": "ph-zoom-in", "label": "t:settings_schema.ph_motion.animation_options.ph_zoom_in" }
   ]
 }
 ```
 
-### Sections to Animate (15 total)
+Default is `"existing"` — sections keep their current `data-aos` behavior with zero change. Merchants opt in to new animations.
 
-| Section | Notes |
-|---------|-------|
-| `slideshow.liquid` | First slide should animate, rest auto-play |
-| `hero-video.liquid` | Animate on load |
-| `background-image-text.liquid` | Text overlay animated |
-| `background-video-text.liquid` | Text overlay animated |
-| `featured-collection.liquid` | Grid cards stagger in |
-| `featured-collections.liquid` | Collection cards stagger |
-| `featured-product.liquid` | Image + info animate |
-| `blog-posts.liquid` | Article cards stagger |
-| `testimonials.liquid` | Quote cards stagger |
-| `text-and-image.liquid` | Both sides animate |
-| `media-text.liquid` | Both sides animate |
-| `text-columns.liquid` | Columns stagger |
-| `text-with-icons.liquid` | Icons stagger |
-| `promo-grid.liquid` | Grid items stagger |
-| `rich-text.liquid` | Simple fade |
-| `advanced-content.liquid` | Sections stagger |
+### Section Template Change
 
-Additional sections get the setting later — not in initial build.
+Each target section's wrapper div gets:
+```liquid
+data-aos="{% if section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% endif %}"
+```
+
+If `entrance_animation` is `"existing"`, the existing `data-aos` attribute in the section template continues to work. If a new animation is selected, it overrides.
+
+### Sections to Modify (15 total)
+
+| Section | Existing data-aos | New fallback |
+|---------|------------------|--------------|
+| `slideshow.liquid` | (no data-aos on wrapper) | ph-fade-up |
+| `hero-video.liquid` | `data-aos="hero__animation"` | ph-scale-in |
+| `background-image-text.liquid` | `data-aos="background-media-text__animation"` | ph-fade-up |
+| `background-video-text.liquid` | `data-aos="background-media-text__animation"` | ph-fade-up |
+| `featured-collection.liquid` | `data-aos="row-of-{{ per_row }}"` | ph-fade-up |
+| `featured-collections.liquid` | (no data-aos) | ph-fade-up |
+| `featured-product.liquid` | (check template) | ph-scale-in |
+| `blog-posts.liquid` | `data-aos="row-of-3"` | ph-fade-up |
+| `testimonials.liquid` | `data-aos>` + `data-aos="row-of-N"` | ph-fade-up |
+| `text-and-image.liquid` | `data-aos>` (two elements) | ph-fade-left / ph-fade-right |
+| `media-text.liquid` | (check template) | ph-fade-up |
+| `text-columns.liquid` | `data-aos="row-of-3"` | ph-fade-up |
+| `text-with-icons.liquid` | (no data-aos) | ph-fade-up |
+| `promo-grid.liquid` | (no data-aos) | ph-scale-in |
+| `rich-text.liquid` | (no data-aos) | ph-fade-up |
+
+### Global Motion Settings (in settings_schema.json)
+
+New tab in Theme Settings:
+```json
+{
+  "name": "t:settings_schema.ph_motion.name",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:settings_schema.ph_motion.description"
+    },
+    {
+      "type": "checkbox",
+      "id": "ph_motion_enable",
+      "label": "t:settings_schema.ph_motion.settings.enable",
+      "default": true
+    }
+  ]
+}
+```
 
 ---
 
-## Layer 2: Skeleton Loading + Page Transitions
+## Layer 2: Page Transitions + Skeleton Loading
 
 ### Page Transitions with View Transitions API
 
 File: `assets/ph-transitions.js`
 
 ```javascript
-class PHPageTransitions {
-  constructor() {
-    if (!document.startViewTransition) return;
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href]');
-      if (!link || link.host !== location.host || link.hasAttribute('download')) return;
-      if (link.target === '_blank' || link.getAttribute('rel') === 'external') return;
-      e.preventDefault();
-      document.startViewTransition(() => {
-        location.href = link.href;
-      });
+(function() {
+  if (!document.startViewTransition) return;
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) return;
+
+  // Skip selectors — prevents conflicts with existing theme JS
+  const skipSelectors = [
+    '[data-no-transition]', '[data-drawer-trigger]', '[data-quick-shop]',
+    '.flickity-page-dots a', '.flickity-prev-next-button',
+    'a[href^="#"]', 'a[href*="javascript"]', 'a[target="_blank"]',
+    'a[download]', '.drawer a', '.modal a', '.popup a',
+    '.ajax-cart a', '.js-drawer-open-cart', '.js-drawer-open-nav',
+    '.predictive-search__result a', '.site-nav__dropdown a',
+    '.slideshow__slide a', '[data-section-type] a[href*="cart"]',
+    'a[href*="account"]', 'a[href*="/collections/"] .grid-product__link'
+  ];
+
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+    if (link.host !== location.host) return;
+    if (skipSelectors.some(sel => link.closest(sel) || link.matches(sel))) return;
+
+    e.preventDefault();
+    document.startViewTransition(() => {
+      location.href = link.href;
     });
-  }
-}
-new PHPageTransitions();
+  });
+})();
 ```
 
 CSS in `assets/ph-transitions.css.liquid`:
 ```css
-::view-transition-old(root) { animation: 0.3s ease-out both ph-fade-out; }
-::view-transition-new(root) { animation: 0.3s ease-in both ph-fade-in; }
-@keyframes ph-fade-out { to { opacity: 0; } }
-@keyframes ph-fade-in { from { opacity: 0; } to { opacity: 1; } }
+::view-transition-old(root) {
+  animation: 0.25s ease-out both ph-fade-out;
+}
+::view-transition-new(root) {
+  animation: 0.25s ease-in both ph-fade-in;
+}
+@keyframes ph-fade-out {
+  to { opacity: 0; }
+}
+@keyframes ph-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
 ```
 
 Loaded in `theme.liquid`:
 ```liquid
-{{ 'ph-transitions.js' | asset_url | script_tag }}
 {{ 'ph-transitions.css.liquid' | asset_url | stylesheet_tag }}
+{{ 'ph-transitions.js' | asset_url | script_tag }}
 ```
 
 ### Skeleton Loading — Scope & Use Cases
 
-**Important context:** Shopify themes are server-rendered — section HTML is already in the DOM on page load. A skeleton that shows THEN replaces existing content would cause a visible flash. Therefore, skeletons are useful in two specific scenarios:
+Skeletons are for TWO specific scenarios only:
 
-**Use Case 1: View Transitions (page-to-page)**
-When navigating between pages via View Transitions API, the destination page's content isn't painted yet. Show a full-page skeleton during the ~300ms transition to give visual continuity. The skeleton matches the layout of the page being navigated to.
+**Use Case 1: View Transitions (page-to-page navigation)**
+During the View Transition, the new page's content isn't painted yet. Show a lightweight skeleton overlay with the PHANTOM logo + shimmer for visual continuity.
 
 **Use Case 2: AJAX-Dependent Sections**
-Some sections load content asynchronously:
 - `product-recommendations.liquid` — fetches via Shopify API
 - `recently-viewed.liquid` — builds from localStorage + API
 - Cart drawer content — loads via `/cart.js`
 
-These sections already have a "loading" moment where JS fetches data. Skeletons fill that gap.
+These sections have a real "loading" gap. Skeletons fill that gap.
 
 ### Skeleton Files
 
-6 skeleton snippet files for key section types:
-
 | Snippet | Use Case |
 |---------|----------|
-| `snippets/ph-skeleton-hero.liquid` | View Transition — first paint placeholder |
-| `snippets/ph-skeleton-collection-grid.liquid` | View Transition — product grid placeholder |
-| `snippets/ph-skeleton-featured-product.liquid` | View Transition — PDP placeholder |
-| `snippets/ph-skeleton-blog-posts.liquid` | View Transition — blog grid placeholder |
-| `snippets/ph-skeleton-card.liquid` | AJAX — generic product card loading state |
+| `snippets/ph-skeleton-hero.liquid` | View Transition — hero placeholder |
+| `snippets/ph-skeleton-grid.liquid` | View Transition + AJAX — product grid placeholder |
+| `snippets/ph-skeleton-card.liquid` | AJAX — single product card loading state |
 | `snippets/ph-skeleton-cart-item.liquid` | AJAX — cart drawer line item loading state |
 
 Each skeleton renders a shimmer animation:
 ```html
-<div class="ph-skeleton ph-skeleton--hero" aria-hidden="true">
+<div class="ph-skeleton" aria-hidden="true">
   <div class="ph-skeleton__shimmer"></div>
   <div class="ph-skeleton__block" style="height: 60vh; border-radius: 0;"></div>
 </div>
 ```
 
-**Integration for View Transitions:**
-- During `document.startViewTransition()`, the `ph-transitions.js` renders a skeleton overlay
-- The overlay matches the target page's section layout (hero skeleton for homepage, grid skeleton for collection, etc.)
-- When the new page's DOM is painted, the skeleton fades out (0.3s)
-
-**Integration for AJAX sections:**
-- The Web Component checks for a `<template class="ph-skeleton-template">` inside the section
-- If found AND the section has no data yet, clone the template as a placeholder
-- When AJAX resolves, fade out skeleton (0.3s), fade in content (0.3s)
-
-```liquid
-{% if request.design_mode == false %}
-  <template class="ph-skeleton-template">
-    {% render 'ph-skeleton-card' %}
-  </template>
-{% endif %}
+CSS shimmer:
+```css
+.ph-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(128,128,128,0.1);
+  border-radius: 4px;
+}
+.ph-skeleton__shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: phShimmer 1.5s infinite;
+}
+@keyframes phShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ph-skeleton__shimmer { animation: none; }
+}
 ```
-
-**Loading orchestration:**
-- `PHMotion` Web Component handles the skeleton → content transition
-- Skeleton fade-out: 0.3s, content fade-in: 0.3s, 0.1s overlap
-- Not applied to sections that render server-side (no flash needed)
-- Respects `prefers-reduced-motion` — instantaneous swap
 
 ---
 
@@ -273,61 +363,19 @@ Each skeleton renders a shimmer animation:
 
 ### Preset Configuration
 
-4 entries in `settings_data.json`:
+Add 4 new presets to `settings_data.json` (existing: Default, Dune, Terrain):
 
-```json
-{
-  "current": "PHANTOM Minimal",
-  "presets": {
-    "PHANTOM Minimal": {
-      "ph_color_body_bg": "#FFFFFF",
-      "ph_color_body_text": "#1C1D1D",
-      "ph_color_button": "#000000",
-      "ph_color_button_text": "#FFFFFF",
-      "type_header_font": "Work Sans",
-      "type_base_font": "Work Sans",
-      ...
-    },
-    "PHANTOM Editorial": {
-      "ph_color_body_bg": "#F5F0EB",
-      "ph_color_body_text": "#2D2A26",
-      "ph_color_button": "#8B4513",
-      "ph_color_button_text": "#FFFFFF",
-      "type_header_font": "Playfair Display",
-      "type_base_font": "Lora",
-      ...
-    },
-    "PHANTOM Bold": {
-      "ph_color_body_bg": "#0A0A0A",
-      "ph_color_body_text": "#FFFFFF",
-      "ph_color_button": "#00FF88",
-      "ph_color_button_text": "#0A0A0A",
-      "type_header_font": "Archivo Black",
-      "type_base_font": "Inter",
-      ...
-    },
-    "PHANTOM Luxury": {
-      "ph_color_body_bg": "#0D1B2A",
-      "ph_color_body_text": "#E8DCCC",
-      "ph_color_button": "#C9A96E",
-      "ph_color_button_text": "#0D1B2A",
-      "type_header_font": "Cormorant Garamond",
-      "type_base_font": "Montserrat",
-      ...
-    }
-  }
-}
-```
+| Preset | Vibe | Colors | Fonts |
+|--------|------|--------|-------|
+| **PHANTOM Minimal** | Clean, modern | White bg, charcoal text, single accent | Sans-serif headings, sans-serif body |
+| **PHANTOM Editorial** | Warm, premium | Ivory bg, burgundy accents, warm gray | Serif headings, serif body |
+| **PHANTOM Bold** | Dark, high-impact | Black bg, white text, neon accent | Heavy sans-serif headings, sans body |
+| **PHANTOM Luxury** | Opulent, elegant | Deep navy, gold accents, cream text | Elegant serif headings, light body |
 
-### How Merchants Switch
+Each preset sets ALL color, font, layout, and feature options. Switching works via Theme Settings → Presets dropdown (standard Shopify 2.0 behavior using the existing `presets` object in settings_data.json).
 
-1. Go to Theme Settings → "PHANTOM Style Presets"
-2. A new settings section with a select dropdown
-3. Selecting a preset updates all color/font fields
-4. Changes are previewed in real-time
-5. Click "Save" to apply
+### Settings Schema Tab
 
-The presets section in `settings_schema.json`:
 ```json
 {
   "name": "t:settings_schema.ph_presets.name",
@@ -335,64 +383,57 @@ The presets section in `settings_schema.json`:
     {
       "type": "paragraph",
       "content": "t:settings_schema.ph_presets.description"
-    },
-    {
-      "type": "select",
-      "id": "ph_style_preset",
-      "label": "t:settings_schema.ph_presets.preset",
-      "default": "minimal",
-      "options": [
-        { "value": "minimal", "label": "PHANTOM Minimal" },
-        { "value": "editorial", "label": "PHANTOM Editorial" },
-        { "value": "bold", "label": "PHANTOM Bold" },
-        { "value": "luxury", "label": "PHANTOM Luxury" }
-      ]
     }
   ]
 }
 ```
 
-Note: Presets are guidance + initial setup. The merchant can freely customize after selecting. Theme presets in Shopify 2.0 don't have a one-click-apply system natively — they work by providing `settings_data.json` with multiple preset objects. The actual switching requires the merchant to change individual settings or use a custom mechanism. We'll document the values so merchants can copy them manually, OR build a small JS toggle that applies preset values as an enhancement.
+---
+
+## Risk Assessment & Mitigations
+
+| Risk | Layer | Severity | Mitigation |
+|------|-------|----------|------------|
+| View Transitions click handler intercepts AJAX links | 2 | **HIGH** | Exclusion selectors for cart, drawers, modals, sliders, predictive search, flickity |
+| New animation types conflict with existing AOS CSS | 1 | **MEDIUM** | `ph-` prefix prevents collision; default is `"existing"` — zero change until merchant opts in |
+| Disabling animations setting ignores new types | 1 | **LOW** | ph-motion.css.liquid respects `[data-disable-animations=true]` selector |
+| View Transitions breaks focus management | 2 | **MEDIUM** | Use `document.startViewTransition().finished.then(() => focusFirstElement())` |
+| Skeleton showing when content already loaded | 2 | **LOW** | Only in AJAX sections + View Transitions, not server-rendered sections |
+| Preset switching resets merchant customizations | 3 | **LOW** | Standard Shopify behavior — presets are starting points, merchant customizes after |
+| `theme.css.liquid` modifications cause breakage | ALL | **HIGH** | We DO NOT modify theme.css.liquid. All new CSS is in separate files. |
+| `phantom-vendor.js` modifications cause breakage | ALL | **HIGH** | We DO NOT modify phantom-vendor.js. AOS stays as-is. |
 
 ---
 
 ## Technical Standards
 
 ### CSS
-- `{% stylesheet %}` for static animation styles
-- `{% style %}` is NOT needed for animations (no editor-live color needed)
-- All animation classes prefixed with `ph-motion--`
-- All skeleton classes prefixed with `ph-skeleton--`
+- All new CSS in separate files: `ph-motion.css.liquid`, `ph-transitions.css.liquid`
+- DO NOT modify `theme.css.liquid` (13K+ lines, high risk)
+- Use `ph-` prefix on all new CSS classes and `data-aos` values
+- Respect `[data-disable-animations=true]` via CSS cascade
 - `prefers-reduced-motion` — disable ALL animations
 - Use `will-change: transform, opacity` on animated elements
 
 ### JavaScript
-- ES modules with `type="module" defer`
-- Web Component pattern for motion observer
-- `IntersectionObserver` with `rootMargin: '0px 0px -100px 0px'`
+- `ph-transitions.js` uses IIFE (not module) — must run early
+- Exclusion selectors list for View Transitions
+- No jQuery dependency
 - `requestAnimationFrame` for smooth transitions
-- Debounced resize handler
-- `sessionStorage` for dismissing transition intro
+- Skeleton elements have `aria-hidden="true"`
+- View Transitions click handler debounced (prevent double-fire)
 
 ### Locales
 - Keys under `settings_schema.ph_motion.*` for animation settings
 - Keys under `settings_schema.ph_presets.*` for preset settings
 - 5 languages: en.default, de, es, fr, it
-- Skeleton labels in `sections.*` namespace (minimal text needed)
+- Existing schema locale files already have the pattern — add new keys
 
 ### Accessibility
 - `prefers-reduced-motion` — ALL animations must respect this
 - Skeleton loaders must have `aria-hidden="true"`
-- Motion elements must not affect keyboard navigation
-- `data-ph-animate="none"` is the default (merchant opts in)
-- View Transitions must not break keyboard focus management
-- Touch targets >= 44px
-
-### Schema
-- New tab `ph_motion` in `settings_schema.json` for global motion settings
-- Per-section `entrance_animation` setting added individually
-- `disabled_on` inherits from parent section setting
-- Presets tab `ph_presets` for the style preset selector
+- View Transitions must restore focus to active element
+- `data-aos` elements with `ph-*` types inherit existing AOS accessibility
 
 ---
 
@@ -400,24 +441,18 @@ Note: Presets are guidance + initial setup. The merchant can freely customize af
 
 | File | Action | Layer |
 |------|--------|-------|
-| `assets/ph-motion.js` | Create | 1 |
 | `assets/ph-motion.css.liquid` | Create | 1 |
 | `assets/ph-transitions.js` | Create | 2 |
 | `assets/ph-transitions.css.liquid` | Create | 2 |
 | `snippets/ph-skeleton-hero.liquid` | Create | 2 |
-| `snippets/ph-skeleton-collection-grid.liquid` | Create | 2 |
-| `snippets/ph-skeleton-featured-product.liquid` | Create | 2 |
-| `snippets/ph-skeleton-blog-posts.liquid` | Create | 2 |
-| `snippets/ph-skeleton-text-image.liquid` | Create | 2 |
-| `snippets/ph-skeleton-footer.liquid` | Create | 2 |
+| `snippets/ph-skeleton-grid.liquid` | Create | 2 |
+| `snippets/ph-skeleton-card.liquid` | Create | 2 |
+| `snippets/ph-skeleton-cart-item.liquid` | Create | 2 |
 | `layout/theme.liquid` | Modify | 2 |
 | `config/settings_schema.json` | Modify | 1, 3 |
 | `config/settings_data.json` | Modify | 3 |
 | `locales/en.default.schema.json` | Modify | 1, 3 |
-| `locales/de.schema.json` | Modify | 1, 3 |
-| `locales/es.schema.json` | Modify | 1, 3 |
-| `locales/fr.schema.json` | Modify | 1, 3 |
-| `locales/it.schema.json` | Modify | 1, 3 |
+| `locales/de.schema.json` (+ es, fr, it) | Modify | 1, 3 |
 | `sections/slideshow.liquid` | Modify | 1 |
 | `sections/hero-video.liquid` | Modify | 1 |
 | `sections/background-image-text.liquid` | Modify | 1 |
@@ -433,19 +468,18 @@ Note: Presets are guidance + initial setup. The merchant can freely customize af
 | `sections/text-with-icons.liquid` | Modify | 1 |
 | `sections/promo-grid.liquid` | Modify | 1 |
 | `sections/rich-text.liquid` | Modify | 1 |
-| `sections/advanced-content.liquid` | Modify | 1 |
 
 ---
 
 ## Implementation Order
 
-1. **Layer 1 — Animation Engine:** Create ph-motion.js + ph-motion.css.liquid. Add `entrance_animation` setting to 15 sections. Test on dev store.
-2. **Layer 2 — Page Transitions:** Create ph-transitions.js + ph-transitions.css.liquid. Add to theme.liquid. Test navigation flow.
-3. **Layer 2 — Skeleton Loaders:** Create 6 skeleton snippets. Add `<template>` integration to target sections. Test loading flow.
-4. **Layer 3 — Theme Presets:** Add 4 presets to settings_data.json. Add presets tab to settings_schema.json. Test preset switching.
+1. **Layer 1 — CSS + Schema:** Create `ph-motion.css.liquid`. Add `entrance_animation` setting to 15 sections. Add global motion tab to `settings_schema.json`. Load CSS in `theme.liquid`. Test on dev store.
+2. **Layer 2 — Page Transitions:** Create `ph-transitions.js` + `ph-transitions.css.liquid`. Add to `theme.liquid`. Test navigation — verify no AJAX conflicts.
+3. **Layer 2 — Skeletons:** Create 4 skeleton snippets. Add `<template>` integration to AJAX sections. Test loading flow.
+4. **Layer 3 — Presets:** Add 4 presets to `settings_data.json`. Add presets tab to `settings_schema.json`.
 5. **Locale updates:** Add all translation keys across 5 languages.
 6. **Commit & push.**
 
 ---
 
-*End of design document*
+*End of design document (updated after Round 1+2 review)*

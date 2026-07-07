@@ -19,7 +19,7 @@
         <div class="page-width footer-promotions">
           <div class="grid grid--flush-bottom">
             {%- for block in section.blocks -%}
-              <div class="grid__item {{ grid_item_width }}" {{ block.shopify_attributes }} data-aos="row-of-3">
+              <div class="grid__item {{ grid_item_width }}" {{ block.shopify_attributes }} data-aos="{% if block.settings.entrance_animation and block.settings.entrance_animation != 'existing' %}{{ block.settings.entrance_animation }}{% else %}row-of-3{% endif %}">
                 {%- if block.settings.enable_image -%}
                   <a href="{{ block.settings.button_link }}" class="article__grid-image" aria-label="{{ block.settings.title }}">
                     {%- if block.settings.image != blank -%}
@@ -163,6 +163,21 @@
           "type": "url",
           "id": "button_link",
           "label": "t:sections.footer-promotions.blocks.column.settings.button_link.label"
+        },
+        {
+          "type": "select",
+          "id": "entrance_animation",
+          "label": "t:sections.common.settings.entrance_animation.label",
+          "default": "existing",
+          "options": [
+            { "value": "existing", "label": "t:sections.common.settings.entrance_animation.options.existing.label" },
+            { "value": "ph-fade-up", "label": "ph-fade-up" },
+            { "value": "ph-scale-in", "label": "ph-scale-in" },
+            { "value": "ph-blur-in", "label": "ph-blur-in" },
+            { "value": "ph-slide-left", "label": "ph-slide-left" },
+            { "value": "ph-slide-right", "label": "ph-slide-right" },
+            { "value": "ph-rotate-in", "label": "ph-rotate-in" }
+          ]
         }
       ]
     }

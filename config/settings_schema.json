@@ -1063,5 +1063,100 @@
         "label": "t:settings_schema.extras.settings.disable_animations.label"
       }
     ]
+  },
+  {
+    "name": "t:settings_schema.ph_motion.name",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.ph_motion.settings.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "ph_motion_enable",
+        "label": "t:settings_schema.ph_motion.settings.ph_motion_enable.label",
+        "default": false,
+        "info": "t:settings_schema.ph_motion.settings.ph_motion_enable.info"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.ph_motion.settings.header_scroll"
+      },
+      {
+        "type": "select",
+        "id": "ph_motion_entrance_default",
+        "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_default.label",
+        "default": "existing",
+        "options": [
+          { "value": "existing", "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_default.options.existing.label" },
+          { "value": "ph-fade-up", "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_default.options.ph-fade-up.label" },
+          { "value": "ph-scale-in", "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_default.options.ph-scale-in.label" },
+          { "value": "ph-blur-in", "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_default.options.ph-blur-in.label" },
+          { "value": "ph-slide-left", "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_default.options.ph-slide-left.label" },
+          { "value": "ph-slide-right", "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_default.options.ph-slide-right.label" },
+          { "value": "ph-rotate-in", "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_default.options.ph-rotate-in.label" }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "ph_motion_entrance_speed",
+        "label": "t:settings_schema.ph_motion.settings.ph_motion_entrance_speed.label",
+        "default": 0.7,
+        "min": 0.3,
+        "max": 2.0,
+        "step": 0.1,
+        "unit": "s"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.ph_motion.settings.header_page_transitions"
+      },
+      {
+        "type": "checkbox",
+        "id": "ph_motion_viewtransitions_enable",
+        "label": "t:settings_schema.ph_motion.settings.ph_motion_viewtransitions_enable.label",
+        "default": false,
+        "info": "t:settings_schema.ph_motion.settings.ph_motion_viewtransitions_enable.info"
+      },
+      {
+        "type": "checkbox",
+        "id": "ph_motion_viewtransitions_skip_cart",
+        "label": "t:settings_schema.ph_motion.settings.ph_motion_viewtransitions_skip_cart.label",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.ph_motion.settings.header_skeletons"
+      },
+      {
+        "type": "checkbox",
+        "id": "ph_motion_skeletons_enable",
+        "label": "t:settings_schema.ph_motion.settings.ph_motion_skeletons_enable.label",
+        "default": false,
+        "info": "t:settings_schema.ph_motion.settings.ph_motion_skeletons_enable.info"
+      }
+    ]
+  },
+  {
+    "name": "t:settings_schema.ph_presets.name",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "t:settings_schema.ph_presets.settings.info"
+      },
+      {
+        "type": "select",
+        "id": "ph_style_preset",
+        "label": "t:settings_schema.ph_presets.settings.ph_style_preset.label",
+        "default": "default",
+        "options": [
+          { "value": "default", "label": "t:settings_schema.ph_presets.settings.ph_style_preset.options.default.label" },
+          { "value": "minimal", "label": "t:settings_schema.ph_presets.settings.ph_style_preset.options.minimal.label" },
+          { "value": "editorial", "label": "t:settings_schema.ph_presets.settings.ph_style_preset.options.editorial.label" },
+          { "value": "bold", "label": "t:settings_schema.ph_presets.settings.ph_style_preset.options.bold.label" },
+          { "value": "luxury", "label": "t:settings_schema.ph_presets.settings.ph_style_preset.options.luxury.label" }
+        ]
+      }
+    ]
   }
 ]

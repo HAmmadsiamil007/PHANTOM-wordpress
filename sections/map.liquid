@@ -21,7 +21,7 @@
 <div class="map-section display-map--{{ display_map }} {% if bg_image != blank %}bg-image--true{% endif %}"
   data-section-id="{{ section.id }}"
   data-section-type="map"
-  data-aos="map-section__animation"
+  data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% else %}map-section__animation{% endif %}"
 >
   {%- if section.settings.title != blank or section.settings.address != blank -%}
     <div class="map-section__overlay-wrapper">
@@ -72,7 +72,43 @@
   "name": "t:sections.map.name",
   "class": "index-section--flush",
   "settings": [
-    {
+      {
+        "type": "select",
+        "id": "entrance_animation",
+        "label": "t:sections.common.settings.entrance_animation.label",
+        "default": "existing",
+        "options": [
+          {
+            "value": "existing",
+            "label": "t:sections.common.settings.entrance_animation.options.existing.label"
+          },
+          {
+            "value": "ph-fade-up",
+            "label": "ph-fade-up"
+          },
+          {
+            "value": "ph-scale-in",
+            "label": "ph-scale-in"
+          },
+          {
+            "value": "ph-blur-in",
+            "label": "ph-blur-in"
+          },
+          {
+            "value": "ph-slide-left",
+            "label": "ph-slide-left"
+          },
+          {
+            "value": "ph-slide-right",
+            "label": "ph-slide-right"
+          },
+          {
+            "value": "ph-rotate-in",
+            "label": "ph-rotate-in"
+          }
+        ]
+      },
+{
       "id": "map_title",
       "type": "text",
       "label": "t:sections.map.settings.map_title.label",
