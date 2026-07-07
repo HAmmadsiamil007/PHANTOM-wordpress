@@ -1,5 +1,5 @@
 {%- if section.blocks.size > 0 -%}
-  <div class="page-width{% if section.settings.max_width %} page-width--narrow{% endif %}">
+  <div class="page-width{% if section.settings.max_width %} page-width--narrow{% endif %}" data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% endif %}">
     {%- for block in section.blocks -%}
       {%- case block.type -%}
         {%- when '@app' -%}
@@ -57,6 +57,21 @@
       "label": "t:sections.product-full-width.settings.max_width.label",
       "info": "t:sections.product-full-width.settings.max_width.info",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "entrance_animation",
+      "label": "t:sections.common.settings.entrance_animation.label",
+      "default": "existing",
+      "options": [
+        { "value": "existing", "label": "t:sections.common.settings.entrance_animation.options.existing.label" },
+        { "value": "ph-fade-up", "label": "t:sections.common.settings.entrance_animation.options.ph-fade-up.label" },
+        { "value": "ph-scale-in", "label": "t:sections.common.settings.entrance_animation.options.ph-scale-in.label" },
+        { "value": "ph-blur-in", "label": "t:sections.common.settings.entrance_animation.options.ph-blur-in.label" },
+        { "value": "ph-slide-left", "label": "t:sections.common.settings.entrance_animation.options.ph-slide-left.label" },
+        { "value": "ph-slide-right", "label": "t:sections.common.settings.entrance_animation.options.ph-slide-right.label" },
+        { "value": "ph-rotate-in", "label": "t:sections.common.settings.entrance_animation.options.ph-rotate-in.label" }
+      ]
     }
   ],
   "blocks": [

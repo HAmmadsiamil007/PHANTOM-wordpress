@@ -5,23 +5,25 @@
   endif
 -%}
 
-{%- render 'product-template',
-  product: product,
-  section_id: section.id,
-  blocks: section.blocks,
-  image_position: section.settings.image_position,
-  image_container_width: section.settings.image_size,
-  product_zoom_enable: section.settings.product_zoom_enable,
-  sku_enable: section.settings.sku_enable,
-  isModal: isModal,
-  thumbnail_position: section.settings.thumbnail_position,
-  thumbnail_height: section.settings.thumbnail_height,
-  thumbnail_arrows: section.settings.thumbnail_arrows,
-  mobile_layout: section.settings.mobile_layout,
-  video_looping: section.settings.enable_video_looping,
-  video_style: section.settings.product_video_style,
-  context: 'main-product',
--%}
+<div data-aos="{% if section.settings.entrance_animation and section.settings.entrance_animation != 'existing' %}{{ section.settings.entrance_animation }}{% endif %}">
+  {%- render 'product-template',
+    product: product,
+    section_id: section.id,
+    blocks: section.blocks,
+    image_position: section.settings.image_position,
+    image_container_width: section.settings.image_size,
+    product_zoom_enable: section.settings.product_zoom_enable,
+    sku_enable: section.settings.sku_enable,
+    isModal: isModal,
+    thumbnail_position: section.settings.thumbnail_position,
+    thumbnail_height: section.settings.thumbnail_height,
+    thumbnail_arrows: section.settings.thumbnail_arrows,
+    mobile_layout: section.settings.mobile_layout,
+    video_looping: section.settings.enable_video_looping,
+    video_style: section.settings.product_video_style,
+    context: 'main-product',
+  -%}
+</div>
 
 {% schema %}
 {
@@ -158,6 +160,21 @@
         }
       ],
       "info": "t:sections.main-product.settings.product_video_style.info"
+    },
+    {
+      "type": "select",
+      "id": "entrance_animation",
+      "label": "t:sections.common.settings.entrance_animation.label",
+      "default": "existing",
+      "options": [
+        { "value": "existing", "label": "t:sections.common.settings.entrance_animation.options.existing.label" },
+        { "value": "ph-fade-up", "label": "t:sections.common.settings.entrance_animation.options.ph-fade-up.label" },
+        { "value": "ph-scale-in", "label": "t:sections.common.settings.entrance_animation.options.ph-scale-in.label" },
+        { "value": "ph-blur-in", "label": "t:sections.common.settings.entrance_animation.options.ph-blur-in.label" },
+        { "value": "ph-slide-left", "label": "t:sections.common.settings.entrance_animation.options.ph-slide-left.label" },
+        { "value": "ph-slide-right", "label": "t:sections.common.settings.entrance_animation.options.ph-slide-right.label" },
+        { "value": "ph-rotate-in", "label": "t:sections.common.settings.entrance_animation.options.ph-rotate-in.label" }
+      ]
     }
   ],
   "blocks": [{
