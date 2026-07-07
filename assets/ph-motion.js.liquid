@@ -1,0 +1,39 @@
+(function() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (document.documentElement.dataset.disableAnimations === 'true') return;
+
+  var defaultAnim = (window.phMotionSettings || {}).entranceDefault || 'ph-fade-up';
+  if (!defaultAnim) return;
+
+  var oldClasses = [
+    'overflow__animation',
+    'hero__animation',
+    'logo__animation',
+    'background-media-text__animation',
+    'map-section__animation'
+  ];
+
+  var replaceFade = function() {
+    for (var i = 0; i < oldClasses.length; i++) {
+      var selector = '[data-aos="' + oldClasses[i] + '"]';
+      var els = document.querySelectorAll(selector);
+      for (var j = 0; j < els.length; j++) {
+        els[j].setAttribute('data-aos', defaultAnim);
+        if (typeof AOS !== 'undefined' && AOS) {
+          AOS.refreshHard();
+        }
+      }
+    }
+  };
+
+  replaceFade();
+
+  var timeout;
+  var debouncedReplace = function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(replaceFade, 100);
+  };
+
+  var observer = new MutationObserver(debouncedReplace);
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
