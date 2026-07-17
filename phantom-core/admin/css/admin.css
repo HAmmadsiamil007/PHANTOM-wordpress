@@ -1,0 +1,131 @@
+.phantom-core-wrap .phantom-core-form {
+	max-width: 900px;
+}
+
+.phantom-core-wrap .nav-tab-wrapper {
+	margin-bottom: 1em;
+}
+
+.phantom-core-field-row.phantom-core-dependent {
+	display: none;
+}
+
+.phantom-core-field-row .wp-picker-container {
+	vertical-align: middle;
+}
+
+.phantom-core-image-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.phantom-core-image-preview {
+	max-width: 200px;
+	max-height: 150px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	overflow: hidden;
+	background: #f0f0f1;
+}
+
+.phantom-core-image-preview img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.phantom-core-image-actions {
+	display: flex;
+	gap: 6px;
+}
+
+.phantom-core-repeater {
+	margin: 4px 0;
+}
+
+.phantom-core-repeater-rows {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.phantom-core-repeater-row {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+	padding: 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: #fafafa;
+	cursor: move;
+}
+
+.phantom-core-repeater-fields {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.phantom-core-repeater-field {
+	flex: 1;
+	min-width: 150px;
+}
+
+.phantom-core-repeater-field-label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 2px;
+	font-size: 11px;
+	text-transform: uppercase;
+	color: #555;
+}
+
+.phantom-core-repeater-field input[type="text"],
+.phantom-core-repeater-field input[type="number"],
+.phantom-core-repeater-field textarea {
+	width: 100%;
+}
+
+.phantom-core-repeater-remove {
+	white-space: nowrap;
+}
+
+.phantom-core-repeater-row.ui-sortable-helper {
+	box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.phantom-core-multiselect {
+	min-width: 200px;
+}
+
+.CodeMirror {
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.phantom-core-repeater-image {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.phantom-core-repeater-image input {
+	flex: 1;
+}
+
+@media (max-width: 782px) {
+	.phantom-core-repeater-row {
+		flex-direction: column;
+	}
+
+	.phantom-core-repeater-fields {
+		flex-direction: column;
+	}
+
+	.phantom-core-repeater-field {
+		min-width: 100%;
+	}
+}

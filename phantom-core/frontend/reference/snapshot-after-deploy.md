@@ -1,0 +1,231 @@
+- generic [active]:
+  - generic:
+    - generic [ref=f32e5]:
+      - generic [ref=f32e8]:
+        - paragraph [ref=f32e10]: "#ffffff"
+        - generic [ref=f32e13]:
+          - generic [ref=f32e15] [cursor=pointer]:
+            - img "EN" [ref=f32e16]
+            - text: EN
+            - img "dropdown" [ref=f32e17]
+          - generic [ref=f32e19] [cursor=pointer]:
+            - text: USD
+            - img "dropdown" [ref=f32e20]
+      - banner [ref=f32e21]:
+        - navigation "Primary" [ref=f32e23]:
+          - link [ref=f32e24] [cursor=pointer]:
+            - /url: index.html
+            - figure [ref=f32e25]:
+              - img "Claudia Kids Collection" [ref=f32e26]
+          - generic:
+            - list
+          - generic [ref=f32e27]:
+            - link "Search" [ref=f32e28] [cursor=pointer]:
+              - /url: "#search"
+              - img "Search" [ref=f32e29]
+            - link "Cart" [ref=f32e30] [cursor=pointer]:
+              - /url: cart.html
+              - img "Cart" [ref=f32e31]
+              - generic [ref=f32e32]: "0"
+            - link "My account" [ref=f32e33] [cursor=pointer]:
+              - /url: account.html
+              - img "My account" [ref=f32e34]
+      - main:
+        - generic [ref=f32e35]:
+          - figure:
+            - img "image" [ref=f32e36]
+          - figure:
+            - img "image" [ref=f32e37]
+          - generic [ref=f32e39]:
+            - generic [ref=f32e40]:
+              - figure [ref=f32e41]:
+                - img "vector" [ref=f32e42]
+              - generic [ref=f32e43]: Claudia Kids Collection
+              - heading "Little Treasures, Big Smiles!" [level=1] [ref=f32e44]:
+                - text: Little Treasures,
+                - text: Big Smiles!
+              - paragraph [ref=f32e45]: Discover a world of fun and joy with our toys, clothes, and essentials that bring smiles.
+              - link "Shop Now " [ref=f32e46] [cursor=pointer]:
+                - /url: shop.html
+                - text: Shop Now
+                - generic [ref=f32e47]: 
+            - link [ref=f32e49] [cursor=pointer]:
+              - /url: "#promotion"
+              - figure [ref=f32e50]:
+                - img "buttondown" [ref=f32e51]
+              - figure [ref=f32e52]:
+                - img "buttondown" [ref=f32e53]
+        - generic [ref=f32e56]:
+          - generic [ref=f32e59]:
+            - generic [ref=f32e60]:
+              - generic [ref=f32e61]: Trending
+              - heading "Kids Collection" [level=4] [ref=f32e62]
+              - generic [ref=f32e63]:
+                - text: Upto
+                - generic [ref=f32e64]: 50%
+                - text: "Off"
+              - link "Shop Now " [ref=f32e65] [cursor=pointer]:
+                - /url: shop.html
+                - text: Shop Now
+                - generic [ref=f32e66]: 
+            - figure [ref=f32e67]:
+              - img "promo" [ref=f32e68]
+          - generic [ref=f32e71]:
+            - generic [ref=f32e72]:
+              - generic [ref=f32e73]: Trending
+              - heading "Winter Sale" [level=4] [ref=f32e74]
+              - generic [ref=f32e75]:
+                - text: Upto
+                - generic [ref=f32e76]: 40%
+                - text: "Off"
+              - link "Shop Now " [ref=f32e77] [cursor=pointer]:
+                - /url: shop.html
+                - text: Shop Now
+                - generic [ref=f32e78]: 
+            - figure [ref=f32e79]:
+              - img "promo" [ref=f32e80]
+          - generic [ref=f32e83]:
+            - generic [ref=f32e84]:
+              - generic [ref=f32e85]: Trending
+              - heading "Accessories" [level=4] [ref=f32e86]
+              - generic [ref=f32e87]:
+                - text: Upto
+                - generic [ref=f32e88]: 30%
+                - text: "Off"
+              - link "Shop Now " [ref=f32e89] [cursor=pointer]:
+                - /url: shop.html
+                - text: Shop Now
+                - generic [ref=f32e90]: 
+            - figure [ref=f32e91]:
+              - img "promo" [ref=f32e92]
+          - generic [ref=f32e95]:
+            - generic [ref=f32e96]:
+              - generic [ref=f32e97]: New
+              - heading "Baby Essentials" [level=4] [ref=f32e98]
+              - generic [ref=f32e99]:
+                - text: Upto
+                - generic [ref=f32e100]: 25%
+                - text: "Off"
+              - link "Shop Now " [ref=f32e101] [cursor=pointer]:
+                - /url: shop.html
+                - text: Shop Now
+                - generic [ref=f32e102]: 
+            - figure [ref=f32e103]:
+              - img "promo" [ref=f32e104]
+        - generic [ref=f32e106]:
+          - generic [ref=f32e107]:
+            - generic [ref=f32e108]: Our Collection
+            - heading "Featured Products" [level=2] [ref=f32e109]
+            - figure [ref=f32e110]:
+              - img "vector" [ref=f32e111]
+          - generic [ref=f32e194]:
+            - generic [ref=f32e197]:
+              - heading [level=3]
+              - generic [ref=f32e200]: $27.99
+              - link "Add to Cart" [ref=f32e201] [cursor=pointer]:
+                - /url: http://localhost:8080/product/kids-guitar-toy/
+            - generic [ref=f32e204]:
+              - heading [level=3]
+              - generic [ref=f32e207]: $44.99
+              - link "Add to Cart" [ref=f32e208] [cursor=pointer]:
+                - /url: http://localhost:8080/product/building-construction-kit/
+            - generic [ref=f32e211]:
+              - heading [level=3]
+              - generic [ref=f32e214]: $39.99
+              - link "Add to Cart" [ref=f32e215] [cursor=pointer]:
+                - /url: http://localhost:8080/product/educational-tablet/
+            - generic [ref=f32e218]:
+              - heading [level=3]
+              - generic [ref=f32e221]: $22.99
+              - link "Add to Cart" [ref=f32e222] [cursor=pointer]:
+                - /url: http://localhost:8080/product/plush-animal-set/
+        - generic [ref=f32e114]:
+          - figure [ref=f32e115]:
+            - img "bg" [ref=f32e116]
+          - generic [ref=f32e117]:
+            - generic [ref=f32e119]:
+              - generic [ref=f32e120]: Limited Time Offer
+              - heading "Get 30% Off on Your First Order!" [level=2] [ref=f32e121]
+              - paragraph [ref=f32e122]: Join our family today and enjoy exclusive discounts on premium kids clothing, toys, and essentials.
+              - link "Shop Now " [ref=f32e123] [cursor=pointer]:
+                - /url: shop.html
+                - text: Shop Now
+                - generic [ref=f32e124]: 
+            - figure [ref=f32e126]:
+              - img "cta" [ref=f32e223]
+        - generic [ref=f32e129]:
+          - heading "Subscribe to Our Newsletter" [level=2] [ref=f32e130]
+          - paragraph [ref=f32e131]: Stay updated with our latest collections, exclusive offers, and parenting tips.
+          - generic [ref=f32e133]:
+            - textbox "Email" [ref=f32e134]:
+              - /placeholder: Enter your email address
+              - text: "Enter Your Email Address:"
+            - button "Subscribe" [ref=f32e135] [cursor=pointer]
+    - contentinfo [ref=f32e136]:
+      - generic [ref=f32e138]:
+        - generic [ref=f32e140]:
+          - figure [ref=f32e141]:
+            - img "Claudia Kids Collection" [ref=f32e142]
+          - paragraph [ref=f32e143]: At Claudia Kids Collection, we bring joy to little ones with carefully curated toys, clothing, and essentials. Every product is chosen with love and care.
+          - generic [ref=f32e144]:
+            - link "Facebook" [ref=f32e145] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=f32e146]: 
+            - link "Instagram" [ref=f32e147] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=f32e148]: 
+            - link "Twitter" [ref=f32e149] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=f32e150]: 
+            - link "Pinterest" [ref=f32e151] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=f32e152]: 
+        - generic [ref=f32e154]:
+          - heading "Quick Links" [level=5] [ref=f32e155]
+          - list [ref=f32e156]:
+            - listitem [ref=f32e157]:
+              - link "Home" [ref=f32e158] [cursor=pointer]:
+                - /url: index.html
+            - listitem [ref=f32e159]:
+              - link "About Us" [ref=f32e160] [cursor=pointer]:
+                - /url: about.html
+            - listitem [ref=f32e161]:
+              - link "Shop" [ref=f32e162] [cursor=pointer]:
+                - /url: shop.html
+            - listitem [ref=f32e163]:
+              - link "Blog" [ref=f32e164] [cursor=pointer]:
+                - /url: blog.html
+            - listitem [ref=f32e165]:
+              - link "Contact" [ref=f32e166] [cursor=pointer]:
+                - /url: contact.html
+        - generic [ref=f32e168]:
+          - heading "Customer Service" [level=5] [ref=f32e169]
+          - list [ref=f32e170]:
+            - listitem [ref=f32e171]:
+              - link "Shipping & Returns" [ref=f32e172] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=f32e173]:
+              - link "FAQ" [ref=f32e174] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=f32e175]:
+              - link "Size Guide" [ref=f32e176] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=f32e177]:
+              - link "Privacy Policy" [ref=f32e178] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=f32e179]:
+              - link "Terms of Service" [ref=f32e180] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=f32e182]:
+          - heading "Contact Info" [level=5] [ref=f32e183]
+          - list [ref=f32e184]:
+            - listitem [ref=f32e185]:
+              - generic [ref=f32e186]: 
+              - text: 121 King Street Melbourne, <br>3000, Australia
+            - listitem [ref=f32e187]:
+              - generic [ref=f32e188]: 
+              - text: +1235 211 5236
+            - listitem [ref=f32e189]:
+              - generic [ref=f32e190]: 
+              - text: hello@claudia.com
+      - paragraph [ref=f32e193]: Copyright (c) %d claudia.com All rights reserved.
