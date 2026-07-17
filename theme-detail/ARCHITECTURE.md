@@ -15,9 +15,9 @@ Phantom Core is a **decoupled WordPress framework** that replaces WordPress's tr
 │                                                                │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
 │  │Settings      │  │Customizer    │  │REST API              │  │
-│  │Registry      │◄─┤15 panels     │  │phantom/v1            │  │
-│  │555 settings  │  │39 sections   │  │20+ endpoints         │  │
-│  │43 sections   │  │live preview  │  │CRUD + public         │  │
+│  │Registry      │◄─┤14 panels     │  │phantom/v1            │  │
+│  │555 settings  │  │49 sections   │  │20+ endpoints         │  │
+│  │44 sections   │  │live preview  │  │CRUD + public         │  │
 │  └──────┬───────┘  └──────────────┘  └──────────┬───────────┘  │
 │         │                                        │              │
 │  ┌──────▼────────────────────────────────────────▼───────────┐  │
@@ -29,8 +29,9 @@ Phantom Core is a **decoupled WordPress framework** that replaces WordPress's tr
 ┌──────────────────────────▼──────────────────────────────────────┐
 │                    Frontend (Static HTML + JS)                   │
 │                                                                │
-│  frontend/*.html  ←  phantom-data.js  ←  REST API             │
+│  frontend/*.html (27 files) ← phantom-data.js (1040 lines)     │
 │  [data-phantom] attributes bind settings to DOM                │
+│  63 CSS variables injected inline                              │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -40,9 +41,9 @@ Phantom Core is a **decoupled WordPress framework** that replaces WordPress's tr
 
 ### 1. Settings Registry (`Settings_Registry`)
 
-**File:** `includes/class-settings-registry.php`
+**File:** `includes/class-settings-registry.php` — 4,928 lines
 
-The master settings repository. Defines **555 settings** across **43 sections**. Every setting has:
+The master settings repository. Defines **555 settings** across **44 sections**. Every setting has:
 
 - `key` — Unique identifier (e.g., `general_site_logo`)
 - `type` — `string|bool|int|float|color|select|image|text|code|repeater|array|number|multiselect`
@@ -55,17 +56,21 @@ The master settings repository. Defines **555 settings** across **43 sections**.
 - `css_selector` — CSS selector (default `:root`)
 - `dependencies` — Conditional visibility rules
 
+**Type breakdown:** string ~160, bool ~140, int ~95, color ~42, select ~25, text ~18, repeater 14, image 6, code 6, float 3, array 4, number 3, multiselect 1
+
 **Storage:** Each setting stored as `wp_option` with key `phantom_{key}`.
 
 **Singleton.** Accessed by every other component.
+
+**Key finding:** Only 1 setting uses `dependencies` (hero_overlay_color depends on hero_overlay_enable). The dependency system is implemented but barely utilized.
 
 ---
 
 ### 2. Customizer (`Customizer`)
 
-**File:** `includes/class-customizer.php`
+**File:** `includes/class-customizer.php` — 423 lines
 
-Bridges Settings Registry → WordPress Customizer. Defines **15 panels**, **~39 sections**.
+Bridges Settings Registry → WordPress Customizer. Defines **14 panels**, **49 sections**.
 
 **Panels:**
 1. `phantom_branding` — Logo, favicon, site identity
@@ -82,20 +87,28 @@ Bridges Settings Registry → WordPress Customizer. Defines **15 panels**, **~39
 12. `phantom_performance` — Performance & SEO
 13. `phantom_accessibility` — Accessibility features
 14. `phantom_advanced` — Integrations, custom code, import/export
-15. `phantom_pages` — Static page content (about, contact, FAQ, team, etc.)
 
 **Transport logic:**
 - `color` type → `postMessage` (instant preview, no refresh)
 - All others → `refresh` (unless explicitly set to `postMessage`)
-- 39 CSS var settings use `postMessage` for live preview
+- 42 CSS var settings use `postMessage` for live preview (via color type fallback)
+- Only 7 non-color settings use `postMessage` (all hero settings)
 
-**CSS Var Map:** 39 settings map directly to CSS custom properties. Both PHP (Shell) and JS (customizer-preview.js) manage these.
+**CSS Var Map:** 63 total CSS vars (not 39). 22 px keys (not 19).
+
+**⚠️ Critical Issue:** CSS var mapping is duplicated in 3 places:
+1. `class-customizer.php::get_css_var_map()` (line ~260)
+2. `class-customizer.php::get_px_keys()` (line ~410 — inline, not a method)
+3. `Shell.php::inject_css_variables()` (line ~330 — inline)
+4. `Shell.php` also inlines the px key list
+
+Changes must be made in 2 files / 4 locations. No shared source of truth.
 
 ---
 
 ### 3. REST API (`Rest_Controller`)
 
-**File:** `includes/class-rest-controller.php`
+**File:** `includes/class-rest-controller.php` — 1,247 lines
 
 Namespace `phantom/v1`. **20+ endpoints**:
 
@@ -121,34 +134,44 @@ Namespace `phantom/v1`. **20+ endpoints**:
 
 **WooCommerce:** All product/cart endpoints guarded by `class_exists('WooCommerce')`.
 
+**Missing WooCommerce endpoints:** product attributes, product variations, product reviews.
+
 ---
 
 ### 4. Shell (SPA Router)
 
-**File:** `templates/shell.php`
+**File:** `templates/shell.php` — 400 lines
 
 The frontend rendering engine. Hooks `template_redirect` at priority 0 to intercept **all** frontend requests.
 
 **Flow:**
 1. Parse URL → slug (e.g., `/shop` → `shop`)
 2. Bypass for: `wp-json`, `wp-admin`, `wp-login`, static files (CSS/JS/images)
-3. Map slug → HTML template from route table
+3. Map slug → HTML template from route table (30+ routes)
 4. Inject SEO meta (title, description, OG, Twitter, JSON-LD, base tag, WC nonce)
-5. Inject Customizer CSS (`:root { --primary--color: #... }`)
+5. Inject Customizer CSS (`:root { --primary--color: #... }` — 63 vars)
 6. Set security headers (CSP, X-Frame-Options, etc.)
-7. Output HTML and `exit`
+7. Inject `phantomData` JS config object
+8. Inject `phantom-data.js` and vendor scripts
+9. Output HTML and `exit`
 
-**Route table:** 40+ routes mapping slugs to `frontend/*.html` files.
+**Route table:** 30+ routes mapping slugs to `frontend/*.html` files.
 
 **Dynamic routes:**
 - `/product/{slug}` → `product-detail.html`
 - `/blog/{slug}` → `single-blog.html`
 
+**Bypass logic:**
+- `wp-json` → let WP handle (REST API)
+- `wp-admin`, `wp-login` → let WP handle (admin)
+- `.css`, `.js`, `.png`, `.jpg`, `.svg`, `.woff2`, etc. → let WP handle (static files)
+- Customizer preview → bypass shell entirely
+
 ---
 
 ### 5. Admin Settings Page (`Settings_Page`)
 
-**File:** `admin/class-settings-page.php`
+**File:** `admin/class-settings-page.php` — 820+ lines
 
 Full CRUD UI under **Appearance > Phantom Core**. 15 tabs with all field types:
 
@@ -162,27 +185,27 @@ Full CRUD UI under **Appearance > Phantom Core**. 15 tabs with all field types:
 
 ### 6. Frontend JavaScript (`phantom-data.js`)
 
-**File:** `frontend/assets/js/phantom-data.js`
+**File:** `frontend/assets/js/phantom-data.js` — 1,040 lines, 28 functions
 
-The core frontend data bridge. **1040 lines**. Runs on every page.
+The core frontend data bridge. Runs on every page.
 
 **Init sequence:**
-1. Fetch cart count
+1. Fetch cart count → `.cart-count`
 2. Fetch `/page-data` (mega-endpoint)
-3. Inject settings into `[data-phantom]` elements
-4. Inject banner (hero section)
-5. Inject footer (logo, about, copyright, contacts, social)
-6. Inject SEO meta tags
-7. Inject menus into `[data-phantom-menu]` elements
-8. Inject products into `[data-phantom-products]`
-9. Inject posts into `[data-phantom-posts]`
-10. Inject categories into `#category1`
-11. Inject single post (via `?post_id` or `[data-phantom-post]`)
-12. Inject single product (via `?product_id` or `[data-phantom-product]`)
-13. Inject cart into `.shopping-cart-info`
-14. Initialize WooCommerce (add-to-cart, quantity, remove)
-15. Initialize checkout form
-16. Hide preloader
+3. `injectSettings()` → `[data-phantom]` elements
+4. `injectBanner()` → hero section with heading/title/desc/btn/images
+5. `injectFooter()` → logo, about, copyright, contacts, social
+6. `injectMetaTags()` → SEO meta from settings
+7. `injectMenus()` → `[data-phantom-menu]` elements
+8. `injectProducts()` → `[data-phantom-products]`
+9. `injectPosts()` → `[data-phantom-posts]`
+10. `injectCategories()` → `#category1`
+11. `injectSinglePost()` → `[data-phantom-post]` or `?post_id`
+12. `injectSingleProduct()` → `[data-phantom-product]` or `?product_id`
+13. `injectCart()` → `.shopping-cart-info`
+14. `initWooCommerce()` → add-to-cart, quantity, remove event delegation
+15. `initCheckout()` → checkout form
+16. `hidePreloader()` → `#preloader` display none
 
 **WooCommerce integration:**
 - Add to cart: `wc-ajax=add_to_cart`
@@ -190,11 +213,17 @@ The core frontend data bridge. **1040 lines**. Runs on every page.
 - Quantity update: Store API `POST /wc/store/v1/cart/update-item`
 - Checkout: `wc-ajax=checkout`
 
+**JS quality note:**
+- Uses `var` instead of `let/const`
+- Uses function expressions instead of arrow functions
+- `innerHTML` used for trusted REST API data (with `escapeHtml()` available but unused)
+- jQuery dependency required for Bootstrap initialization and some DOM operations
+
 ---
 
 ### 7. Customizer Live Preview JS
 
-**File:** `admin/js/customizer-preview.js`
+**File:** `admin/js/customizer-preview.js` — 133 lines
 
 Runs in the Customizer iframe. Auto-binds CSS vars + handles DOM-specific changes:
 
@@ -208,7 +237,7 @@ Runs in the Customizer iframe. Auto-binds CSS vars + handles DOM-specific change
 
 ### 8. Cache Engine
 
-**File:** `includes/Engine/Cache.php`
+**File:** `includes/Engine/Cache.php` — 67 lines
 
 Transient-based caching with `phantom_cache_` prefix:
 
@@ -256,10 +285,11 @@ Shell::handle_request()
   ├── Parse URL → slug = "shop"
   ├── Not wp-json/wp-admin/static → proceed
   ├── Map slug → "shop.html"
-  ├── Read frontend/shop.html
-  ├── Inject SEO: title, meta, OG, JSON-LD, base tag, WC nonce
-  ├── Inject Customizer CSS: <style id="phantom-customizer-css">:root{...}</style>
-  ├── Set security headers (CSP, XFO, etc.)
+  ├── Read frontend/shop.html (27 possible files)
+  ├── Inject SEO: title, meta, OG, Twitter, JSON-LD, base tag, WC nonce
+  ├── Inject phantomData JS config: rest_url, settings, page data
+  ├── Inject CSS vars: <style id="phantom-customizer-css">:root{...63 vars...}</style>
+  ├── Set security headers (CSP, XFO, referrer-policy)
   └── Output HTML + exit
         │
         ▼
@@ -267,7 +297,7 @@ Browser renders shop.html
         │
         ▼
 phantom-data.js: DOMContentLoaded
-  ├── GET /page-data (REST API)
+  ├── Fetch /page-data (REST API — 1hr cached)
   ├── injectSettings() → [data-phantom] elements
   ├── injectMenus() → [data-phantom-menu]
   ├── injectProducts() → [data-phantom-products]
@@ -275,6 +305,12 @@ phantom-data.js: DOMContentLoaded
   ├── injectCart() → .shopping-cart-info
   ├── initWooCommerce() → event delegation
   └── hidePreloader()
+
+Swup handles subsequent navigation:
+  ├── Intercepts link clicks
+  ├── Fetches new page via AJAX
+  ├── Replaces #swup content
+  └── phantom-data.js runs again for new content
 ```
 
 ---
@@ -299,9 +335,11 @@ Earlier (file_exists checks in phantom-core.php):
 
 1. **Singleton pattern** — All major classes use `get_instance()` with private static `$instance`
 2. **PSR-4 Autoloading** — `PhantomCore\` namespace → `includes/`
-3. **Static HTML SPA** — Frontend is entirely static HTML. No PHP templates. Data injected client-side via REST API
+3. **Static HTML SPA** — 27 static HTML files. No PHP templates. Data injected client-side via REST API
 4. **Three-way settings management** — Customizer (visual) + Admin (form) + REST API (programmatic)
-5. **CSS Variable architecture** — Design tokens as CSS custom properties on `:root`. Managed by both PHP and JS
+5. **CSS Variable architecture** — 63 design tokens as CSS custom properties on `:root`. Managed by both PHP and JS
 6. **WooCommerce Store API** — Quantity updates use Store API; add/remove use legacy `wc-ajax`
 7. **Attribute-based data binding** — `[data-phantom]` attributes on HTML elements drive JS injection
 8. **Security-first** — CSP headers, XSS sanitization, URL validation, capability checks, nonce verification
+9. **Decoupled frontend** — 100% replaceable without touching PHP backend
+10. **CSS var duplication** — ⚠️ Same mapping logic exists in 2 files (customizer.php + Shell.php), must be kept in sync manually
