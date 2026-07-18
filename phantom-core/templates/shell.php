@@ -141,8 +141,13 @@ class Shell {
         // Server-side SEO injection
         $html = $this->inject_seo( $html, $slug, $template );
 
-        // Inject Customizer CSS variables for initial page render
-        $html = $this->inject_customizer_css( $html );
+		// Inject Google Fonts link tag (skipped in Customizer preview where wp_head() handles it)
+		if ( ! $is_customizer_preview ) {
+			$html = $this->inject_google_fonts( $html );
+		}
+
+		// Inject Customizer CSS variables for initial page render
+		$html = $this->inject_customizer_css( $html );
 
         // In Customizer preview, inject WordPress scripts into Phantom Core HTML
         if ( $is_customizer_preview ) {
@@ -338,7 +343,34 @@ class Shell {
         return str_replace( '</head>', '<style id="phantom-customizer-css">:root{' . $css . '}</style></head>', $html );
     }
 
-    private function get_css_var_map(): array {
+	private function inject_google_fonts( string $html ): string {
+		$options     = get_option( 'phantom_options', array() );
+		$body_font   = $options['typography_body_font'] ?? 'Archivo';
+		$heading_font = $options['typography_heading_font'] ?? 'Playfair Display';
+
+		$fonts = array();
+		if ( 'Archivo' !== $body_font ) {
+			$fonts[] = rawurlencode( $body_font ) . ':wght@100;200;300;400;500;600;700;800;900';
+		}
+		if ( 'Playfair Display' !== $heading_font ) {
+			$fonts[] = rawurlencode( $heading_font ) . ':wght@100;200;300;400;500;600;700;800;900';
+		}
+
+		if ( empty( $fonts ) ) {
+			return $html;
+		}
+
+		$family = implode( '&family=', $fonts );
+		$url    = 'https://fonts.googleapis.com/css2?family=' . $family . '&display=swap';
+		$link   = sprintf(
+			'<link rel="stylesheet" id="phantom-google-fonts-css" href="%s" media="all" />',
+			esc_url( $url )
+		);
+
+		return str_replace( '</head>', $link . '</head>', $html );
+	}
+
+	private function get_css_var_map(): array {
         return Settings_Registry::get_css_var_map();
     }
 

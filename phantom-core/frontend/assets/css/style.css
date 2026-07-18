@@ -63,7 +63,11 @@ Heading: "Playfair Display", sans-serif;
 
 
 body {
-    font-family: "Archivo", sans-serif;
+    font-family: var(--font-body, "Archivo", sans-serif);
+    font-weight: var(--font-body-weight, 400);
+    font-size: var(--font-base-size, 18px);
+    line-height: var(--font-line-height, 1.6);
+    letter-spacing: var(--font-body-spacing, 0px);
 }
 
 h1,
@@ -72,7 +76,10 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Playfair Display", serif;
+    font-family: var(--font-heading, "Playfair Display", serif);
+    font-weight: var(--font-heading-weight, 500);
+    text-transform: var(--font-heading-case, none);
+    letter-spacing: var(--font-heading-spacing, 0px);
 }
 
 :root {
@@ -124,8 +131,8 @@ figure {
 
 
 h1 {
-    font-size: 86px;
-    line-height: 86px;
+    font-size: var(--h1-size, 86px);
+    line-height: var(--h1-height, 86px);
     font-weight: 500;
     color: var(--secondary--color);
 }
@@ -138,22 +145,22 @@ h1.font-size92 {
 }
 
 h2 {
-    font-size: 62px;
-    line-height: 68px;
+    font-size: var(--h2-size, 62px);
+    line-height: var(--h2-height, 68px);
     font-weight: 500;
     color: var(--black--color);
 }
 
 h3 {
-    font-size: 46px;
-    line-height: 58px;
+    font-size: var(--h3-size, 46px);
+    line-height: var(--h3-height, 58px);
     font-weight: 500;
     color: var(--black--color);
 }
 
 h4 {
-    font-size: 24px;
-    line-height: 30px;
+    font-size: var(--h4-size, 24px);
+    line-height: var(--h4-height, 30px);
     font-weight: 600;
     color: var(--black--color);
 }
@@ -167,15 +174,15 @@ h4.font-size30 {
 }
 
 h5 {
-    font-size: 22px;
-    line-height: 30px;
+    font-size: var(--h5-size, 22px);
+    line-height: var(--h5-height, 30px);
     font-weight: 500;
     color: var(--black--color);
 }
 
 h6 {
-    font-size: 20px;
-    line-height: 24px;
+    font-size: var(--h6-size, 20px);
+    line-height: var(--h6-height, 24px);
     font-weight: 500;
     color: var(--black--color);
 }

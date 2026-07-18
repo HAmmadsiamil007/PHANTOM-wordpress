@@ -109,3 +109,37 @@ register_deactivation_hook(
 		flush_rewrite_rules();
 	}
 );
+
+/**
+ * Enqueue Google Fonts based on selected typography settings.
+ */
+function phantom_enqueue_google_fonts(): void {
+	$options     = get_option( 'phantom_options', array() );
+	$body_font   = $options['typography_body_font'] ?? 'Archivo';
+	$heading_font = $options['typography_heading_font'] ?? 'Playfair Display';
+
+	$fonts = array();
+	if ( $body_font && 'Archivo' !== $body_font ) {
+		$fonts[] = rawurlencode( $body_font ) . ':wght@100;200;300;400;500;600;700;800;900';
+	}
+	if ( $heading_font && 'Playfair Display' !== $heading_font ) {
+		$fonts[] = rawurlencode( $heading_font ) . ':wght@100;200;300;400;500;600;700;800;900';
+	}
+
+	if ( empty( $fonts ) ) {
+		$fonts[] = 'Archivo:wght@100;200;300;400;500;600;700;800;900';
+		$fonts[] = 'Playfair+Display:wght@100;200;300;400;500;600;700;800;900';
+	}
+
+	$family = implode( '&family=', $fonts );
+	$url    = 'https://fonts.googleapis.com/css2?family=' . $family . '&display=swap';
+
+	wp_enqueue_style(
+		'phantom-google-fonts',
+		$url,
+		array(),
+		PHANTOM_CORE_VERSION
+	);
+}
+
+add_action( 'wp_enqueue_scripts', 'PhantomCore\\phantom_enqueue_google_fonts', 9 );
