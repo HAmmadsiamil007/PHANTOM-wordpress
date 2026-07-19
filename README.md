@@ -6,7 +6,7 @@ A **decoupled WordPress framework** that replaces traditional PHP template hiera
 
 | Metric | Value |
 |--------|-------|
-| Version | 1.0.2 |
+| Version | 1.5.0 |
 | Settings | 555 across 43 sections |
 | Customizer Panels | 15 |
 | REST API Endpoints | 20+ |
@@ -71,10 +71,10 @@ Customizer  Admin Page   REST API
 # - REST API: /wp-json/phantom/v1
 
 # To push local changes to Docker:
-docker cp phantom-core optix_wordpress:/var/www/html/wp-content/plugins/phantom-core
+docker cp phantom-core phantom_wordpress:/var/www/html/wp-content/plugins/phantom-core
 
 # To pull from Docker:
-docker cp optix_wordpress:/var/www/html/wp-content/plugins/phantom-core ./phantom-core
+docker cp phantom_wordpress:/var/www/html/wp-content/plugins/phantom-core ./phantom-core
 ```
 
 ## Requirements

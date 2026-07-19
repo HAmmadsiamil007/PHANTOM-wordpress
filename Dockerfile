@@ -18,10 +18,8 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/wp-cli/main/phar/wp-cli.pha
     chmod +x wp-cli.phar; \
     mv wp-cli.phar /usr/local/bin/wp
 
-COPY optix-core /var/www/html/wp-content/plugins/optix-core
-COPY optix-main/optix-main /var/www/html/wp-content/themes/optix-main
+COPY phantom-core /var/www/html/wp-content/plugins/phantom-core
 
-RUN chown -R www-data:www-data /var/www/html/wp-content/plugins/optix-core; \
-    chown -R www-data:www-data /var/www/html/wp-content/themes/optix-main
+RUN chown -R www-data:www-data /var/www/html/wp-content/plugins/phantom-core
 
 RUN cp /usr/local/bin/wp /var/www/html/wp-cli.phar
