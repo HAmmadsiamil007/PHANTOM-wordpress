@@ -29,12 +29,15 @@ add_filter(
 				continue;
 			}
 			$val = get_option( 'phantom_' . $k, '' );
+			if ( is_array( $val ) ) {
+				$val = $val['desktop'] ?? '';
+			}
 			if ( '' !== $val ) {
 				$val_display = $val;
 				if ( in_array( $k, $px_keys, true ) && is_numeric( $val ) ) {
 					$val_display .= 'px';
 				}
-				$output .= "\t" . $map[ $k ] . ': ' . esc_attr( $val_display ) . ';' . "\n";
+				$output .= "\t" . $map[ $k ] . ': ' . esc_attr( (string) $val_display ) . ';' . "\n";
 			}
 		}
 

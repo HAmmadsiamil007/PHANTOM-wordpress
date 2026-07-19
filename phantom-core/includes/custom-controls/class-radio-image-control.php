@@ -17,7 +17,7 @@ class Radio_Image_Control extends Control_Base {
 
     public function enqueue(): void {
         $js_url = plugins_url( 'admin/js/custom-controls/ast-radio-image.js', PHANTOM_CORE_FILE );
-        wp_enqueue_script( 'phantom-ast-radio-image', $js_url, array( 'customize-controls' ), '1.0.0', true );
+        wp_enqueue_script( 'phantom-ast-radio-image', $js_url, array( 'customize-controls' ), PHANTOM_CORE_VERSION, true );
     }
 
     public function render_content(): void {

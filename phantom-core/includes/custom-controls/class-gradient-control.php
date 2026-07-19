@@ -32,7 +32,7 @@ class Gradient_Control extends Control_Base {
 
     public function enqueue(): void {
         $js_url = plugins_url( 'admin/js/custom-controls/ast-gradient.js', PHANTOM_CORE_FILE );
-        wp_enqueue_script( 'phantom-ast-gradient', $js_url, array( 'customize-controls', 'wp-color-picker' ), '1.0.0', true );
+        wp_enqueue_script( 'phantom-ast-gradient', $js_url, array( 'customize-controls', 'wp-color-picker' ), PHANTOM_CORE_VERSION, true );
         wp_enqueue_style( 'wp-color-picker' );
     }
 

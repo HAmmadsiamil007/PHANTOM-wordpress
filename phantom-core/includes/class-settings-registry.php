@@ -244,6 +244,8 @@ class Settings_Registry {
 			'header_bg'                    => '--header--bg',
 			'header_text_color'            => '--header--text',
 			'header_padding'               => '--header--padding',
+			'header_padding_x'             => '--header--padding--x',
+			'header_padding_y'             => '--header--padding--y',
 			'footer_bg'                    => '--footer--bg',
 			'footer_text_color'            => '--footer--text',
 			'footer_padding'               => '--footer--padding',

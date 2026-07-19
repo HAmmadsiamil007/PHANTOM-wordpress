@@ -36,7 +36,7 @@ class Toggle_Control extends Control_Base {
                 <label class="ast-toggle-label" for="ast-toggle-<?php echo esc_attr( $this->id ); ?>">
                     <span class="ast-toggle-switch"></span>
                 </label>
-                <span class="ast-toggle-status"><?php echo $this->value() ? 'ON' : 'OFF'; ?></span>
+                <span class="ast-toggle-status"><?php echo esc_html( $this->value() ? 'ON' : 'OFF' ); ?></span>
             </div>
         </label>
         <style>

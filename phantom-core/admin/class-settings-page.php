@@ -99,7 +99,7 @@ class Settings_Page {
 
 		$this->handle_submission();
 
-		$active_tab = sanitize_key( $_GET['tab'] ?? 'branding' );
+		$active_tab = sanitize_key( wp_unslash( $_GET['tab'] ?? 'branding' ) );
 		if ( ! isset( $this->tabs[ $active_tab ] ) ) {
 			$active_tab = array_key_first( $this->tabs );
 		}
@@ -550,7 +550,7 @@ class Settings_Page {
 			return;
 		}
 
-		if ( ! isset( $_POST['phantom_core_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['phantom_core_nonce'] ), 'phantom_core_save' ) ) {
+		if ( ! isset( $_POST['phantom_core_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['phantom_core_nonce'] ), 'phantom_core_save' ) ) {
 			wp_die( esc_html__( 'Security check failed.', 'phantom-core' ) );
 		}
 

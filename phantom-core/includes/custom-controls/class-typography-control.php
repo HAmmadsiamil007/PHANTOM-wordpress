@@ -44,7 +44,7 @@ class Typography_Control extends Control_Base {
 
     public function enqueue(): void {
         $js_url = plugins_url( 'admin/js/custom-controls/ast-typography.js', PHANTOM_CORE_FILE );
-        wp_enqueue_script( 'phantom-ast-typography', $js_url, array( 'customize-controls' ), '1.0.0', true );
+        wp_enqueue_script( 'phantom-ast-typography', $js_url, array( 'customize-controls' ), PHANTOM_CORE_VERSION, true );
         wp_localize_script( 'phantom-ast-typography', 'PhantomFonts', Font_Families::get_all() );
     }
 
