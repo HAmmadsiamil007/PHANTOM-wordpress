@@ -819,7 +819,8 @@
     }
 
     button:focus {
-        outline: none;
+        outline: 2px solid #7635d5;
+        outline-offset: 1px;
     }
 
     /* Policy Pages */
@@ -1054,7 +1055,8 @@
     }
 
     button:focus {
-        outline: none;
+        outline: 2px solid #7635d5;
+        outline-offset: 1px;
     }
 
     .navbar-collapse {

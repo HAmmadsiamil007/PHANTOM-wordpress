@@ -1158,7 +1158,8 @@
 
 .shop-con .price-field input[type=range]:active,
 .shop-con .price-field input[type=range]:focus {
-    outline: 0;
+    outline: 2px solid #7635d5;
+    outline-offset: 1px;
 }
 
 .shop-con .price-field input[type=range]::-ms-track {

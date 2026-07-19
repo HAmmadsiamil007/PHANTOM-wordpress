@@ -1273,7 +1273,8 @@ a.item-link {
 }
 
 .singleblog-section .box4 .tag .button:focus {
-	outline: none;
+	outline: 2px solid #7635d5;
+	outline-offset: 1px;
 }
 
 .singleblog-section .box4 .tag .button:hover {

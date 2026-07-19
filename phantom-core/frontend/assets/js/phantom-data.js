@@ -131,6 +131,7 @@
         a.setAttribute('aria-haspopup', 'true');
         a.setAttribute('aria-expanded', 'false');
         a.textContent = item.title;
+        a.setAttribute('aria-label', 'Navigate to ' + item.title);
         li.appendChild(a);
         const div = document.createElement('div');
         div.className = 'dropdown-menu drop-down-content';
@@ -154,6 +155,7 @@
         a.className = 'nav-link';
         a.href = sanitizeUrl(item.url);
         a.textContent = item.title;
+        a.setAttribute('aria-label', 'Navigate to ' + item.title);
         li.appendChild(a);
       }
       frag.appendChild(li);
@@ -246,9 +248,10 @@
       cartLink.setAttribute('data-product_sku', p.sku || '');
       const cartImg = document.createElement('img');
       cartImg.src = resolveUrl('assets/images/feature-cart.png');
-      cartImg.alt = 'cart';
+      cartImg.alt = '';
       cartImg.className = 'img-fluid';
       cartLink.appendChild(cartImg);
+      cartLink.setAttribute('aria-label', 'Add to cart');
       cartLi.appendChild(cartLink);
       ul.appendChild(cartLi);
     }
@@ -266,6 +269,7 @@
       heartImg.alt = 'wishlist';
       heartImg.className = 'img-fluid';
       heartLink.appendChild(heartImg);
+      heartLink.setAttribute('aria-label', p.is_in_wishlist ? 'Remove from wishlist' : 'Add to wishlist');
       heartLi.appendChild(heartLink);
       ul.appendChild(heartLi);
     }
@@ -282,6 +286,7 @@
       eyeImg.alt = 'quickview';
       eyeImg.className = 'img-fluid';
       eyeLink.appendChild(eyeImg);
+      eyeLink.setAttribute('aria-label', 'Quick view');
       eyeLi.appendChild(eyeLink);
       ul.appendChild(eyeLi);
     }
@@ -310,6 +315,7 @@
     const nameLink = document.createElement('a');
     nameLink.href = detailUrl;
     nameLink.textContent = p.name || '';
+    nameLink.setAttribute('aria-label', p.name || 'View product');
     h6.appendChild(nameLink);
     textWrapper.appendChild(h6);
     const priceDiv = document.createElement('div');
@@ -362,12 +368,119 @@
     });
   }
 
+  // ─── REVIEWS ─────────────────────────────────────────────
+
+  function injectProductReviews() {
+    var productEl = document.querySelector('[data-phantom-product]');
+    if (!productEl) return;
+    var productId = productEl.getAttribute('data-product-id');
+    if (!productId) return;
+
+    var reviewsContainer = document.querySelector('#reviews .reviews_content_box');
+    if (!reviewsContainer) return;
+
+    fetchJSON('/woo/reviews?product_id=' + encodeURIComponent(productId) + '&per_page=5').then(function(reviews) {
+      if (!reviews || !reviews.length) return;
+
+      var staticReview = reviewsContainer.querySelector('.text_wrapper');
+      if (staticReview) staticReview.style.display = 'none';
+
+      reviews.forEach(function(review) {
+        var reviewEl = document.createElement('div');
+        reviewEl.className = 'reviews_content_box';
+        reviewEl.setAttribute('role', 'article');
+
+        var figure = document.createElement('figure');
+        figure.className = 'mb-0 float-left';
+        var img = document.createElement('img');
+        img.className = 'img-fluid hover-effect';
+        img.src = 'assets/images/testimonials_image1.jpg';
+        img.alt = review.author || 'Reviewer';
+        figure.appendChild(img);
+        reviewEl.appendChild(figure);
+
+        var textWrapper = document.createElement('div');
+        textWrapper.className = 'text_wrapper';
+
+        var h5 = document.createElement('h5');
+        h5.textContent = review.author || 'Anonymous';
+        textWrapper.appendChild(h5);
+
+        var dateP = document.createElement('p');
+        dateP.className = 'text-size-16';
+        dateP.textContent = review.date ? new Date(review.date).toLocaleDateString() : '';
+        textWrapper.appendChild(dateP);
+
+        var ul = document.createElement('ul');
+        ul.className = 'list-unstyled mb-0';
+        var ratingCount = parseInt(review.rating) || 0;
+        for (var s = 0; s < 5; s++) {
+          var li = document.createElement('li');
+          li.style.display = 'inline-block';
+          var star = document.createElement('i');
+          star.className = s < ratingCount ? 'fa-solid fa-star' : 'fa-regular fa-star';
+          star.style.color = s < ratingCount ? '#fcd668' : '#ccc';
+          li.appendChild(star);
+          ul.appendChild(li);
+        }
+        textWrapper.appendChild(ul);
+
+        var contentP = document.createElement('p');
+        contentP.className = 'text-size-16 mt-2';
+        contentP.textContent = review.content || '';
+        textWrapper.appendChild(contentP);
+
+        reviewEl.appendChild(textWrapper);
+        reviewsContainer.parentNode.insertBefore(reviewEl, reviewsContainer);
+      });
+    }).catch(function(err) {
+      console.error('[PhantomCore] Review fetch error:', err);
+    });
+
+    var reviewForm = document.querySelector('#reviews form');
+    if (reviewForm) {
+      reviewForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var nameInput = reviewForm.querySelector('input[name="name"]');
+        var emailInput = reviewForm.querySelector('input[type="email"]');
+        var commentInput = reviewForm.querySelector('textarea');
+        if (!nameInput || !commentInput) return;
+
+        fetchJSON('/woo/reviews', {
+          method: 'POST',
+          body: {
+            product_id: parseInt(productId, 10),
+            reviewer: nameInput.value,
+            reviewer_email: emailInput ? emailInput.value : '',
+            review: commentInput.value,
+            rating: 5
+          }
+        }).then(function(data) {
+          if (data && data.success) {
+            showToast('Review submitted!', 'success');
+            commentInput.value = '';
+            injectProductReviews();
+          } else {
+            showToast('Failed to submit review', 'error');
+          }
+        }).catch(function(err) {
+          console.error('[PhantomCore] Review submit error:', err);
+          showToast('Failed to submit review', 'error');
+        });
+      });
+    }
+  }
+
   // ─── SINGLE PRODUCT ──────────────────────────────────────
 
   function renderProduct(p) {
     if (!p || p.code) return;
     const el = document.querySelector('[data-phantom-product]');
     if (!el) el = document.body;
+    if (el !== document.body) {
+      el.setAttribute('role', 'region');
+      el.setAttribute('aria-label', 'Product details');
+    }
 
     document.title = (p.name || 'Product') + ' | Claudia';
 
@@ -680,6 +793,7 @@
       fetchJSON('/products/' + id).then(function (resp) {
         const p = resp && resp.product ? resp.product : (Array.isArray(resp) ? resp[0] : resp);
         renderProduct(p);
+        injectProductReviews();
       }).catch(function (err) {
         console.error('[PhantomCore] Product detail error:', err);
       });
@@ -760,11 +874,13 @@
     for (var pi = 1; pi <= totalPages; pi++) {
       var pageLi = document.createElement('li');
       pageLi.className = 'page-item' + (pi === currentPage ? ' active' : '') + ' phantom-page-num';
+      if (pi === currentPage) pageLi.setAttribute('aria-current', 'page');
       var pageA = document.createElement('a');
       pageA.className = 'page-link';
       pageA.href = '#';
       pageA.setAttribute('data-page', pi);
       pageA.textContent = pi;
+      pageA.setAttribute('aria-label', 'Go to page ' + pi);
       pageLi.appendChild(pageA);
       if (prevLink && prevLink.nextSibling) {
         pagination.insertBefore(pageLi, prevLink.nextSibling);
@@ -805,7 +921,7 @@
         fig.className = 'mb-0';
         const img = document.createElement('img');
         img.src = item.image || '';
-        img.alt = item.name || '';
+        img.alt = item.name || 'Product image';
         img.className = 'img-fluid';
         fig.appendChild(img);
         imgBox.appendChild(fig);
@@ -838,6 +954,7 @@
         decBtn.className = 'value-button decrease-button';
         decBtn.setAttribute('data-cart-key', item.key || '');
         decBtn.textContent = '-';
+        decBtn.setAttribute('aria-label', 'Decrease quantity');
         qtyDetails.appendChild(decBtn);
         const numDiv = document.createElement('div');
         numDiv.className = 'number';
@@ -848,6 +965,7 @@
         incBtn.className = 'value-button increase-button';
         incBtn.setAttribute('data-cart-key', item.key || '');
         incBtn.textContent = '+';
+        incBtn.setAttribute('aria-label', 'Increase quantity');
         qtyDetails.appendChild(incBtn);
         qtyDiv.appendChild(qtyDetails);
         div.appendChild(qtyDiv);
@@ -864,6 +982,7 @@
         const rmBtn = document.createElement('button');
         rmBtn.className = 'remove-product';
         rmBtn.setAttribute('data-cart-key', item.key || '');
+        rmBtn.setAttribute('aria-label', 'Remove item from cart');
         const rmIcon = document.createElement('i');
         rmIcon.className = 'fas fa-times';
         rmBtn.appendChild(rmIcon);
@@ -1591,6 +1710,7 @@
       container = document.createElement('div');
       container.className = 'phantom-toast-container';
       container.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;';
+      container.setAttribute('aria-live', 'polite');
       document.body.appendChild(container);
     }
     var toast = document.createElement('div');
@@ -1862,6 +1982,12 @@
       initMyAccount();
       hidePreloader();
       if (data.settings && +data.settings.shop_product_image_zoom) initImageZoom();
+      document.querySelectorAll('.footer-con').forEach(function(el) {
+        el.setAttribute('role', 'contentinfo');
+      });
+      document.querySelectorAll('header.header-con').forEach(function(el) {
+        el.setAttribute('role', 'banner');
+      });
     }).catch(function (err) {
       console.error('[PhantomCore] Init error:', err);
       hidePreloader();

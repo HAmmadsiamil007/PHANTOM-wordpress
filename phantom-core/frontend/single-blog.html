@@ -54,18 +54,18 @@
                     <div class="top-bar-social">
                         <div class="other_list d-flex align-items-center position-relative">
                             <div class="country-selector lang-dropdown">
-                                <div class="caption"><img src="./assets/images/header-flag1.png" alt="image">EN <img
-                                        src="assets/images/header-dropdown.png" alt="image">
+                                <div class="caption"><img src="./assets/images/header-flag1.png" alt="">EN <img
+                                        src="assets/images/header-dropdown.png" alt="">
                                     <!-- captain -->
                                 </div>
                                 <div class="list" id="lang-dropdown">
                                     <div class="item">
-                                        <img src="./assets/images/header-flag1.png" alt="image">
+                                        <img src="./assets/images/header-flag1.png" alt="">
                                         <a class="text-decoration-none" href="/" data-country="UK">EN</a>
                                         <!-- item -->
                                     </div>
                                     <div class="item">
-                                        <img src="./assets/images/header-flag2.png" alt="image">
+                                        <img src="./assets/images/header-flag2.png" alt="">
                                         <a class="text-decoration-none" href="/" data-country="SE">USA</a>
                                         <!-- item -->
                                     </div>
@@ -75,7 +75,7 @@
                             </div>
                             <!-- Currency Selector -->
                             <div class="currency-selector curr-dropdown">
-                                <div class="caption">USD <img src="assets/images/header-dropdown.png" alt="dropdown">
+                                <div class="caption">USD <img src="assets/images/header-dropdown.png" alt="">
                                 </div>
                                 <div class="list" id="curr-dropdown">
                                     <div class="item"><a class="text-decoration-none" href="/"
@@ -107,7 +107,7 @@
             <div class="main-container">
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
                     <a class="navbar-brand" href="/">
-                        <figure class="logo mb-0"><img src="assets/images/logo.png" alt="image" class="img-fluid">
+                        <figure class="logo mb-0"><img src="assets/images/logo.png" alt="Site logo" class="img-fluid">
                         </figure>
                     </a>
                     <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
@@ -122,10 +122,9 @@
                         <!-- collapse -->
                     </div>
                     <div class="last_list">
-                        <a class="search" href="#search"><img src="assets/images/header-search.png" alt="image"></a>
-                        <a class="cart" href="/cart/"><img src="assets/images/header-cart.png"
-                                alt="image"><span>0</span></a>
-                        <a class="admin" href="/my-account/"><img src="assets/images/header-admin.png" alt="image"></a>
+                        <a class="search" href="#search" aria-label="Search"><img src="assets/images/header-search.png" alt=""></a>
+                        <a class="cart" href="/cart/" aria-label="Shopping Cart"><img src="assets/images/header-cart.png" alt=""><span>0</span></a>
+                        <a class="admin" href="/my-account/" aria-label="My Account"><img src="assets/images/header-admin.png" alt=""></a>
                         <!-- last_list -->
                     </div>
                     <!-- navbar -->
@@ -137,8 +136,8 @@
         <!-- Search Form -->
         <div id="search" class="">
             <span class="close">X</span>
-            <form role="search" id="searchform" method="get">
-                <input value="" name="q" type="search" placeholder="Type to Search">
+            <form role="search" id="searchform" method="get" aria-label="Search site">
+                <input value="" name="q" type="search" placeholder="Type to Search" aria-label="Search">
             </form>
         </div>
         <!-- SUB BANNER SECTION -->
@@ -172,7 +171,7 @@
                     data-wow-delay="0.3s" data-phantom-post>
                     <div class="main-box">
                         <figure class="image1 mb-3">
-                            <img src="./assets/images/singleblog-image1.jpg" alt="image" class="img-fluid"
+                            <img src="./assets/images/singleblog-image1.jpg" alt="Blog post image" class="img-fluid"
                                 loading="lazy">
                         </figure>
                         <div class="content1">
@@ -195,7 +194,7 @@
                         </div>
                         <div class="content2">
                             <figure class="singleblog-quoteimage">
-                                <img src="assets/images/singleblog-quoteimage.png" alt="image" class="img-fluid"
+                                <img src="assets/images/singleblog-quoteimage.png" alt="" class="img-fluid"
                                     loading="lazy">
                             </figure>
                             <p class="mb-0 text-white text-size-18">“Duis aute irure dolor in reprehenderit in voluptate
@@ -210,7 +209,7 @@
                         </p>
                         <div class="content3">
                             <figure class="image1 mb-3">
-                                <img src="assets/images/singleblog-image2.jpg" alt="image" class="img-fluid"
+                                <img src="assets/images/singleblog-image2.jpg" alt="Blog post image" class="img-fluid"
                                     loading="lazy">
                             </figure>
                             <p class="text text-size-16">Excepteur sint occaecat cupidatat non proident, sunt in culpa
@@ -331,7 +330,7 @@
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                                         <div class="form-group mb-0">
-                                            <input type="text" class="form_style" placeholder="Your name" name="name">
+                                            <input type="text" class="form_style" placeholder="Your name" name="name" aria-label="Your name">
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-6 col-12">
@@ -345,7 +344,7 @@
                                     <div class="col-12">
                                         <div class="form-group mb-0">
                                             <input type="text" class="form_style text-mb" placeholder="Your topic"
-                                                name="topic">
+                                                name="topic" aria-label="Your topic">
                                         </div>
                                     </div>
                                 </div>
@@ -360,13 +359,13 @@
                     data-wow-delay="0.4s">
                     <div class="box1">
                         <h5>Search News</h5>
-                        <form method="POST">
+                        <form method="POST" role="search">
                             <div class="form-row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <input type="text" name="search" id="searchblog" class="form-control upper_layer"
-                                        placeholder="Search Here...">
+                                        placeholder="Search Here..." aria-label="Search">
                                     <div class="input-group-append form-button">
-                                        <button class="btn search" name="btnsearch" id="searchbtn"><i
+                                        <button class="btn search" name="btnsearch" id="searchbtn" aria-label="Search"><i
                                                 class="fa-solid fa-magnifying-glass"></i></button>
                                     </div>
                                 </div>
@@ -416,7 +415,7 @@
                         <h5>Feeds</h5>
                         <div class="feed">
                             <figure class="feed-image mb-0">
-                                <img src="./assets/images/singleblog-feed1.jpg" alt="image" class="img-fluid"
+                                <img src="./assets/images/singleblog-feed1.jpg" alt="" class="img-fluid"
                                     loading="lazy">
                             </figure>
                             <a href="/six-colum-full-wide/" class="mb-0">Why You Need Virtual Assistant for Your
@@ -424,7 +423,7 @@
                         </div>
                         <div class="feed">
                             <figure class="feed-image mb-0">
-                                <img src="./assets/images/singleblog-feed2.jpg" alt="image" class="img-fluid"
+                                <img src="./assets/images/singleblog-feed2.jpg" alt="" class="img-fluid"
                                     loading="lazy">
                             </figure>
                             <a href="/six-colum-full-wide/" class="mb-0">Why You Need Virtual Assistant for Your
@@ -432,7 +431,7 @@
                         </div>
                         <div class="feed">
                             <figure class="feed-image mb-0">
-                                <img src="./assets/images/singleblog-feed3.jpg" alt="image" class="img-fluid"
+                                <img src="./assets/images/singleblog-feed3.jpg" alt="" class="img-fluid"
                                     loading="lazy">
                             </figure>
                             <a href="/six-colum-full-wide/" class="mb-0">Why You Need Virtual Assistant for Your
@@ -440,7 +439,7 @@
                         </div>
                         <div class="feed feed4">
                             <figure class="feed-image mb-0">
-                                <img src="./assets/images/singleblog-feed4.jpg" alt="image" class="img-fluid"
+                                <img src="./assets/images/singleblog-feed4.jpg" alt="" class="img-fluid"
                                     loading="lazy">
                             </figure>
                             <a href="/six-colum-full-wide/" class="mb-0">Why You Need Virtual Assistant for Your
@@ -461,7 +460,7 @@
                 </div>
                 <form action="javascript:;" class="wow fadeInRight" data-wow-duration="2s" data-wow-delay="0.05s">
                     <div class="form-group position-relative mb-0 align-items-center d-flex">
-                        <input type="text" class="form_style" placeholder="Enter Your Email Address:" name="email">
+                        <input type="text" class="form_style" placeholder="Enter Your Email Address:" name="email" aria-label="Email address for newsletter">
                         <button>Submit <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 </form>
@@ -479,7 +478,7 @@
                         <div class="logo-content">
                             <a href="/">
                                 <figure class="footer-logo">
-                                    <img src="assets/images/footer-logo.png" alt="image">
+                                    <img src="assets/images/footer-logo.png" alt="Site logo">
                                 </figure>
                             </a>
                             <p class="text-size-14 text">Duis aute irure dolor in reprehenderit in voluptate velit
@@ -554,7 +553,7 @@
             <div class="container">
                 <div class="content">
                     <p class="mb-0">Copyright © 2025 claudia.com All rights reserved.</p>
-                    <img src="./assets/images/payment-cards.png" alt="image" class="img-fluid">
+                    <img src="./assets/images/payment-cards.png" alt="Accepted payment cards" class="img-fluid">
                 </div>
             </div>
         </div>

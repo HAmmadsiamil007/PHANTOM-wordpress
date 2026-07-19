@@ -1140,8 +1140,8 @@ div.country-selector>div.list>div.item {
 }
 
 .login-form .login-card .input-field:focus {
-    outline: none;
-    box-shadow: none;
+    outline: 2px solid #7635d5;
+    outline-offset: 1px;
     border: 1px solid var(--secondary--color);
 }
 
@@ -1234,8 +1234,8 @@ div.country-selector>div.list>div.item {
 }
 
 .sign-up-form .login-card .select-option:focus {
-    outline: none;
-    box-shadow: none;
+    outline: 2px solid #7635d5;
+    outline-offset: 1px;
 }
 
 /* THANKYOU PAGE */
@@ -1600,8 +1600,8 @@ div.country-selector>div.list>div.item {
 .product-con .owl-dots button:focus,
 .product-con .owl-dots button:focus-visible {
     border: none;
-    outline: none;
-    box-shadow: none;
+    outline: 2px solid #7635d5;
+    outline-offset: 1px;
 }
 
 .product-con .owl-theme .owl-dots .owl-dot.active span {
@@ -2100,8 +2100,8 @@ div.country-selector>div.list>div.item {
 .contact-form-con form ul li input:focus-visible,
 .contact-form-con form ul li textarea:focus-visible {
     border: none;
-    outline: none;
-
+    outline: 2px solid #7635d5;
+    outline-offset: 1px;
 }
 
 .contact-form-con form ul li input:focus,
@@ -2228,8 +2228,8 @@ button.primary_btn:hover {
 }
 
 .faq-con .accordion-card a.btn.btn-link:focus {
-    outline: none;
-    box-shadow: none;
+    outline: 2px solid #7635d5;
+    outline-offset: 1px;
 }
 
 .faq-con .accordian-inner .accordion-card i {

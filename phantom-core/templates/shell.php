@@ -209,6 +209,10 @@ class Shell {
             $html = preg_replace( '/<body(\s[^>]*)?>/', '<body$1 data-phantom-dark-mode="true">', $html, 1 );
         }
 
+        // Inject skip-to-content link for keyboard/assistive technology users
+        $skip_link = '<a class="skip-link screen-reader-text" href="#phantom-main-content">Skip to main content</a>';
+        $html = preg_replace( '/<body(\s[^>]*)?>/', '<body$1>' . "\n" . $skip_link, $html, 1 );
+
         // Inject loading state for SPA transitions
         $loading_html = '<div id="phantom-loading" role="status" aria-hidden="true" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-color,#fff);z-index:9999;align-items:center;justify-content:center;transition:opacity .3s"><div style="width:40px;height:40px;border:3px solid var(--border-color,#e5e7eb);border-top-color:var(--accent-color,#6366f1);border-radius:50%;animation:phantom-spin .8s linear infinite"></div></div>';
         $html = preg_replace( '/<body[^>]*>/', '$0' . "\n" . $loading_html, $html, 1 );
@@ -224,6 +228,18 @@ class Shell {
 
 		// Inject custom images (logo, hero banner, favicon)
 		$html = $this->inject_images( $html );
+
+		// Inject inline accessibility styles
+		$a11y_css_inline = '<style id="phantom-a11y-css">'
+			. '.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:100000}'
+			. '.skip-link:focus{position:fixed;left:16px;top:16px;width:auto;height:auto;padding:12px 24px;background:#7635d5;color:#fff;font-size:16px;text-decoration:none;border-radius:4px;box-shadow:0 0 0 4px rgba(118,53,213,0.3);z-index:100000;outline:2px solid #fff;outline-offset:2px}'
+			. ':focus-visible{outline:2px solid #7635d5;outline-offset:2px}'
+			. '</style>';
+		$html = str_replace( '</head>', $a11y_css_inline . '</head>', $html );
+
+		// Inject a11y.css link tag
+		$a11y_css_url = PHANTOM_CORE_URL . 'frontend/assets/css/a11y.css?v=' . PHANTOM_CORE_VERSION;
+		$html = str_replace( '</head>', '<link rel="stylesheet" id="phantom-a11y-css" href="' . esc_url( $a11y_css_url ) . '" media="all" />' . "\n" . '</head>', $html );
 
 		// Inject Customizer CSS variables for initial page render
 		$html = $this->inject_customizer_css( $html );
@@ -684,7 +700,7 @@ class Shell {
 
 		$bridge_url = PHANTOM_CORE_URL . 'frontend/assets/js/phantom-bridge.js?v=' . PHANTOM_CORE_VERSION;
 		$bridge_script = '<script id="phantom-bridge-data" type="application/json">' . $json . '</script>';
-		$bridge_script .= "\n" . '<script src="' . esc_url( $bridge_url ) . '" id="phantom-bridge-js" onload="(function(){var d;try{d=JSON.parse(document.getElementById(\'phantom-bridge-data\').textContent)}catch(e){};PhantomBridge.init({data:d||{}})})()"></script>';
+		$bridge_script .= "\n" . '<script defer src="' . esc_url( $bridge_url ) . '" id="phantom-bridge-js" onload="(function(){var d;try{d=JSON.parse(document.getElementById(\'phantom-bridge-data\').textContent)}catch(e){};PhantomBridge.init({data:d||{}})})()"></script>';
 
 		$html = str_replace( '</body>', $bridge_script . '</body>', $html );
 		return $html;
