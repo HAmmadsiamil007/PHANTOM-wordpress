@@ -2,10 +2,7 @@
 <phpunit bootstrap="bootstrap.php">
     <testsuites>
         <testsuite name="phantom-core">
-            <file>settings-registry-test.php</file>
-            <file>settings-crud-test.php</file>
-            <file>font-families-test.php</file>
-            <file>global-palette-test.php</file>
+            <directory suffix="_Test.php">.</directory>
         </testsuite>
     </testsuites>
 </phpunit>

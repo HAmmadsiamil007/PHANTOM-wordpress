@@ -90,6 +90,7 @@ class Settings_Registry {
 			$this->section_product_cards(),
 			$this->section_shop_page(),
 			$this->section_product_page(),
+			$this->section_woocommerce(),
 			$this->section_blog(),
 			$this->section_footer(),
 			$this->section_typography(),

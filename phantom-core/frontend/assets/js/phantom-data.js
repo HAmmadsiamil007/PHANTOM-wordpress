@@ -379,9 +379,9 @@
     const priceEl = el.querySelector('.types_content .price');
     if (priceEl) {
       if (p.on_sale) {
-        priceEl.textContent = '$' + (p.sale_price || p.price) + ' $' + (p.regular_price || p.price);
+        priceEl.innerHTML = '<ins>$' + (p.sale_price || p.price) + '</ins> <del>$' + (p.regular_price || p.price) + '</del>';
       } else {
-      priceEl.textContent = stripHtml(p.price_html) || '$' + (p.price || 0);
+      priceEl.innerHTML = p.price_html || '$' + (p.price || 0);
       }
     }
 
@@ -1038,14 +1038,17 @@
         var numEl = document.querySelector('.number[data-cart-key="' + key + '"]');
         if (numEl && parseInt(numEl.textContent) > 1) {
           setButtonLoading(btn, true);
-          var newQty = parseInt(numEl.textContent) - 1;
+          var prevQty = parseInt(numEl.textContent);
+          var newQty = prevQty - 1;
           numEl.textContent = newQty;
           fetchJSON('/cart/update', { method: 'POST', body: { key: key, quantity: newQty } }).then(function (data) {
             setButtonLoading(btn, false);
             showToast('Cart updated', 'success');
             renderCartUI(data);
           }).catch(function (err) {
+            numEl.textContent = prevQty;
             setButtonLoading(btn, false);
+            showToast('Failed to update quantity', 'error');
             console.error('[PhantomCore] Cart decrease error:', err);
           });
         }
@@ -1060,14 +1063,17 @@
         var numEl2 = document.querySelector('.number[data-cart-key="' + key + '"]');
         if (numEl2) {
           setButtonLoading(btn, true);
-          var newQty2 = parseInt(numEl2.textContent) + 1;
+          var prevQty2 = parseInt(numEl2.textContent);
+          var newQty2 = prevQty2 + 1;
           numEl2.textContent = newQty2;
           fetchJSON('/cart/update', { method: 'POST', body: { key: key, quantity: newQty2 } }).then(function (data) {
             setButtonLoading(btn, false);
             showToast('Cart updated', 'success');
             renderCartUI(data);
           }).catch(function (err) {
+            numEl2.textContent = prevQty2;
             setButtonLoading(btn, false);
+            showToast('Failed to update quantity', 'error');
             console.error('[PhantomCore] Cart increase error:', err);
           });
         }
@@ -1349,8 +1355,11 @@
 
     // Copyright
     const copyrightEl = document.querySelector('.copyright .content p');
-    if (copyrightEl && settings.footer_copyright) {
-      copyrightEl.textContent = settings.footer_copyright.replace('%d', new Date().getFullYear());
+    if (copyrightEl) {
+      if (settings.footer_copyright) {
+        copyrightEl.textContent = settings.footer_copyright.replace('%d', new Date().getFullYear());
+      }
+      copyrightEl.textContent = copyrightEl.textContent.replace(/2025/g, new Date().getFullYear().toString());
     }
 
     // Payment cards
@@ -1695,6 +1704,12 @@
       }
     }
 
+    // Handle reset URL clicks — use dynamic URL
+    var resetLink = document.querySelector('[data-phantom-reset-url]');
+    if (resetLink) {
+      resetLink.href = (window.phantomData && window.phantomData.rest_url) ? window.phantomData.rest_url.replace(/\/wp-json\/?$/, '') + '/password-reset/' : '/password-reset/';
+    }
+
     if (path === '/password-reset') {
       var resetForm = document.querySelector('form[action*="/password-reset/"]');
       if (resetForm && !resetForm._phantomBound) {
@@ -1776,7 +1791,43 @@
 
   // ─── INIT ────────────────────────────────────────────────
 
+  function initBlogPagination() {
+    document.addEventListener('click', function (e) {
+      var pageLink = e.target.closest('.phantom-blog-pagination a[data-page]');
+      if (!pageLink) return;
+      e.preventDefault();
+      var container = document.querySelector('[data-phantom-posts]');
+      if (!container) return;
+      var page = pageLink.getAttribute('data-page');
+      if (page === 'prev') {
+        var active = document.querySelector('.phantom-blog-pagination .page-item.active');
+        page = active ? parseInt(active.querySelector('a').getAttribute('data-page'), 10) - 1 : 1;
+        if (page < 1) return;
+      } else if (page === 'next') {
+        var activePage = document.querySelector('.phantom-blog-pagination .page-item.active');
+        page = activePage ? parseInt(activePage.querySelector('a').getAttribute('data-page'), 10) + 1 : 1;
+      } else {
+        page = parseInt(page, 10);
+      }
+      fetchJSON('/posts?per_page=6&page=' + page).then(function (data) {
+        if (!data || !data.posts) return;
+        container.innerHTML = '';
+        data.posts.forEach(function (p) {
+          var div = document.createElement('div');
+          div.className = 'col-lg-4 col-md-6';
+          div.innerHTML = '<div class="blog-single position-relative"><div class="blog-img position-relative"><figure class="mb-0"><a href="/blog/' + encodeURIComponent(p.slug) + '"><img src="' + (p.featured_image || resolveUrl('assets/images/blog-single.png')) + '" alt="' + escapeHtml(p.title) + '" class="img-fluid"></a></figure></div><div class="blog-content"><ul class="list-unstyled d-flex blog_meta"><li>' + escapeHtml(p.date) + '</li></ul><h4><a href="/blog/' + encodeURIComponent(p.slug) + '">' + escapeHtml(p.title) + '</a></h4><p>' + escapeHtml(p.excerpt) + '</p><div class="generic-btn2"><a href="/blog/' + encodeURIComponent(p.slug) + '">Read More</a></div></div></div>';
+          container.appendChild(div);
+        });
+      }).catch(function (err) {
+        console.error('[PhantomCore] Blog pagination error:', err);
+      });
+    });
+  }
+
   function init() {
+    if (document._phantomInited) return;
+    document._phantomInited = true;
+
     fetchJSON('/cart').then(function (data) {
       if (data.totalItems !== undefined) updateCartCount(data.totalItems);
     }).catch(function (err) {
@@ -1805,6 +1856,7 @@
       initCheckout();
       initShipping();
       initShopControls();
+      initBlogPagination();
       initAuthForms();
       initLogout();
       initMyAccount();

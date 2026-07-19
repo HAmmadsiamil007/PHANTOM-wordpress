@@ -24,8 +24,9 @@ $(function () {
 		});
 		submitSignupFormNow = function (e) {
 			var t = e.serialize();
+			var apiUrl = (window.phantomData && window.phantomData.rest_url) ? window.phantomData.rest_url.replace(/\/+$/, '') : '/wp-json';
 			$.ajax({
-				url: '/index.php?rest_route=/phantom/v1/contact',
+				url: apiUrl + '/phantom/v1/contact',
 				type: "POST",
 				data: t,
 				dataType: "json",

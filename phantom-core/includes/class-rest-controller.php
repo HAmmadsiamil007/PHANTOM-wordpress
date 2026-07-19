@@ -820,6 +820,23 @@ class Rest_Controller extends \WP_REST_Controller {
 	 * Return a WP_Error for REST callbacks. WordPress REST infrastructure
 	 * converts WP_Error to a proper JSON error response automatically.
 	 */
+	private function check_rate_limit( string $action, int $max_attempts = 5, int $window = 60 ): ?\WP_Error {
+		$ip      = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+		$key     = 'phantom_rate_' . $action . '_' . md5( $ip );
+		$attempts = (int) get_transient( $key );
+
+		if ( $attempts >= $max_attempts ) {
+			return new \WP_Error(
+				'rate_limit_exceeded',
+				__( 'Too many attempts. Please try again later.', 'phantom-core' ),
+				array( 'status' => 429 )
+			);
+		}
+
+		set_transient( $key, $attempts + 1, $window );
+		return null;
+	}
+
 	public function wp_error( string $code, string $message, int $status = 400 ): \WP_Error {
 		return new \WP_Error( $code, $message, array( 'status' => $status ) );
 	}
@@ -1183,7 +1200,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		$featured    = rest_sanitize_boolean( $request->get_param( 'featured' ) ?? false );
 		$tag         = sanitize_text_field( $request->get_param( 'tag' ) ?? '' );
 
-		$valid_orderby = array( 'date', 'id', 'title', 'name', 'price', 'popularity', 'rating', 'rand' );
+		$valid_orderby = array( 'date', 'id', 'title', 'name', 'price', 'popularity', 'rating', 'rand', 'menu_order' );
 		if ( ! in_array( $orderby, $valid_orderby, true ) ) {
 			$orderby = 'date';
 		}
@@ -1649,6 +1666,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		try {
 			$cached = get_transient( 'phantom_page_data' );
 			if ( false !== $cached ) {
+				$cached['cart'] = $this->get_cart_data();
 				return new \WP_REST_Response( $cached, 200 );
 			}
 
@@ -1744,9 +1762,9 @@ class Rest_Controller extends \WP_REST_Controller {
 			}
 		}
 
+		$cache_data = $data;
+		set_transient( 'phantom_page_data', $cache_data, HOUR_IN_SECONDS );
 		$data['cart'] = $this->get_cart_data();
-
-		set_transient( 'phantom_page_data', $data, HOUR_IN_SECONDS );
 
 		return new \WP_REST_Response( $data, 200 );
 		} catch ( \Throwable $e ) {
@@ -2654,6 +2672,11 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function auth_login( \WP_REST_Request $request ): \WP_REST_Response {
+		$rate_error = $this->check_rate_limit( 'login' );
+		if ( $rate_error ) {
+			return $this->wp_error( 'rate_limit_exceeded', __( 'Too many login attempts. Please try again later.', 'phantom-core' ), 429 );
+		}
+
 		$email    = sanitize_email( $request->get_param( 'email' ) );
 		$password = $request->get_param( 'password' );
 
@@ -2682,6 +2705,11 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function auth_register( \WP_REST_Request $request ): \WP_REST_Response {
+		$rate_error = $this->check_rate_limit( 'register' );
+		if ( $rate_error ) {
+			return $this->wp_error( 'rate_limit_exceeded', __( 'Too many registration attempts. Please try again later.', 'phantom-core' ), 429 );
+		}
+
 		$name     = sanitize_text_field( $request->get_param( 'name' ) );
 		$email    = sanitize_email( $request->get_param( 'email' ) );
 		$password = $request->get_param( 'password' );
@@ -2731,6 +2759,11 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function auth_password_reset( \WP_REST_Request $request ): \WP_REST_Response {
+		$rate_error = $this->check_rate_limit( 'password_reset' );
+		if ( $rate_error ) {
+			return $this->wp_error( 'rate_limit_exceeded', __( 'Too many reset attempts. Please try again later.', 'phantom-core' ), 429 );
+		}
+
 		$email = sanitize_email( $request->get_param( 'email' ) );
 
 		if ( empty( $email ) || ! is_email( $email ) ) {
