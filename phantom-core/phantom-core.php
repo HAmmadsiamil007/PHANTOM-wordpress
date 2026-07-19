@@ -68,10 +68,8 @@ require_once PHANTOM_CORE_PATH . 'includes/custom-css/header.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/footer.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/layout.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/buttons.php';
-require_once PHANTOM_CORE_PATH . 'includes/custom-css/blog.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/product.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/responsive.php';
-require_once PHANTOM_CORE_PATH . 'includes/custom-css/responsive-helper.php';
 require_once PHANTOM_CORE_PATH . 'admin/class-settings-page.php';
 
 $rest_path = PHANTOM_CORE_PATH . 'includes/class-rest-controller.php';

@@ -14,7 +14,7 @@ const ADMIN_JS_DIR = path.join(__dirname, 'admin', 'js');
 const files = [
   path.join(JS_DIR, 'phantom-data.js'),
   path.join(JS_DIR, 'phantom-bridge.js'),
-  path.join(JS_DIR, 'phantom-editor.js'),
+
   path.join(JS_DIR, 'contact-form.js'),
 ];
 
