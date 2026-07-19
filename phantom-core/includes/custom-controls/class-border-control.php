@@ -22,13 +22,19 @@ class Border_Control extends Control_Base {
 	public static function get_sanitize_callback(): callable {
 		return function ( $value ) {
 			if ( is_array( $value ) ) {
+				$radius = $value['radius'] ?? 0;
+				if ( is_string( $radius ) && '' !== $radius ) {
+					$radius = preg_match( '/^-?\d+(?:\.\d+)?(?:px|%|em|rem)?$/', $radius ) ? $radius : '0';
+				} else {
+					$radius = absint( $radius );
+				}
 				$parsed = array(
 					'top'    => absint( $value['top'] ?? 0 ),
 					'right'  => absint( $value['right'] ?? 0 ),
 					'bottom' => absint( $value['bottom'] ?? 0 ),
 					'left'   => absint( $value['left'] ?? 0 ),
 					'color'  => sanitize_text_field( $value['color'] ?? '' ),
-					'radius' => absint( $value['radius'] ?? 0 ),
+					'radius' => $radius,
 					'linked' => ! empty( $value['linked'] ),
 				);
 				return $parsed;

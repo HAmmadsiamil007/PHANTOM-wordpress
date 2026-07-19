@@ -24,7 +24,8 @@ class Color_Group_Control extends Control_Base {
 			if ( is_array( $value ) ) {
 				$sanitized = array();
 				foreach ( $value as $k => $v ) {
-					$sanitized[ sanitize_key( $k ) ] = preg_match( '/^(#[a-fA-F0-9]{3,6}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))?$/', (string) $v ) ? $v : '';
+					$color = is_array( $v ) ? '' : (string) $v;
+					$sanitized[ sanitize_key( $k ) ] = preg_match( '/^(#[a-fA-F0-9]{3,6}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))?$/', $color ) ? $color : '';
 				}
 				return $sanitized;
 			}

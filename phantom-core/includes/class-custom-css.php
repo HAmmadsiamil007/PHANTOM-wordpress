@@ -26,9 +26,11 @@ class Phantom_Custom_CSS {
 	}
 
 	public function get_css(): string {
-		$cached = get_transient( self::CACHE_KEY );
-		if ( false !== $cached ) {
-			return $cached;
+		if ( ! is_customize_preview() ) {
+			$cached = get_transient( self::CACHE_KEY );
+			if ( false !== $cached ) {
+				return $cached;
+			}
 		}
 
 		$use_file_cache = (bool) get_option( 'phantom_cache_generated_css', false );
@@ -72,7 +74,7 @@ class Phantom_Custom_CSS {
 		if ( empty( $css ) ) {
 			return '';
 		}
-		return '<style id="phantom-inline-css">' . "\n" . $css . "\n" . '</style>';
+		return '<style id="phantom-inline-css">' . "\n" . wp_strip_all_tags( $css ) . "\n" . '</style>';
 	}
 
 	public static function get_breakpoints(): array {

@@ -15,6 +15,8 @@
 
     if (localStorage.getItem(storageKey) === '1') {
         setDarkMode(true);
+    } else if (localStorage.getItem(storageKey) === null && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setDarkMode(true);
     }
 
     if (toggle) {

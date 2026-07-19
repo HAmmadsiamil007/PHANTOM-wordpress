@@ -28,7 +28,8 @@
     if (val.tablet) rules += '@media (max-width: ' + breakpoints.tablet + 'px) { :root { ' + cssVar + ': ' + addPx(val.tablet) + '; } }';
     if (val.mobile) rules += '@media (max-width: ' + breakpoints.mobile + 'px) { :root { ' + cssVar + ': ' + addPx(val.mobile) + '; } }';
 
-    var regex = new RegExp('\\/\\* ' + settingKey + ' \\*\\/[\\s\\S]*?\\/\\* \\/' + settingKey + ' \\*\\/', 'g');
+    var escapedKey = settingKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var regex = new RegExp('\\/\\* ' + escapedKey + ' \\*\\/[\\s\\S]*?\\/\\* \\/' + escapedKey + ' \\*\\/', 'g');
     var existing = sheet.textContent || '';
     if (regex.test(existing)) {
       existing = existing.replace(regex, '/* ' + settingKey + ' */' + rules + '/* /' + settingKey + ' */');
@@ -39,11 +40,11 @@
   }
 
   // Auto-bind CSS variables from PHP mapping
-  if (typeof PhantomCustomizer !== 'undefined' && PhantomCustomizer.cssVarMap) {
+  if (typeof PhantomCustomizer !== 'undefined' && PhantomCustomizer.cssVarMap && Array.isArray(PhantomCustomizer.cssVarKeys)) {
     PhantomCustomizer.cssVarKeys.forEach(function (settingKey) {
       var settingId = 'phantom_' + settingKey;
       var cssVar = PhantomCustomizer.cssVarMap[settingKey];
-      var needsPx = PhantomCustomizer.cssVarPxKeys.indexOf(settingKey) !== -1;
+      var needsPx = Array.isArray(PhantomCustomizer.cssVarPxKeys) && PhantomCustomizer.cssVarPxKeys.indexOf(settingKey) !== -1;
       var isResponsive = PhantomCustomizer.responsiveKeys && PhantomCustomizer.responsiveKeys.indexOf(settingKey) !== -1;
       wp.customize(settingId, function (value) {
         value.bind(function (newval) {
@@ -87,7 +88,10 @@
   wp.customize('phantom_home_banner_title', function (value) {
     value.bind(function (newval) {
       var el = document.querySelector('.banner-con h1');
-      if (el) el.innerHTML = newval.replace(/\n/g, '<br>');
+      if (el) {
+        el.innerHTML = '';
+        el.appendChild(document.createTextNode(newval));
+      }
     });
   });
 
@@ -95,7 +99,10 @@
   wp.customize('phantom_home_banner_description', function (value) {
     value.bind(function (newval) {
       var el = document.querySelector('.banner-con .center-context p');
-      if (el) el.innerHTML = newval.replace(/\n/g, '<br>');
+      if (el) {
+        el.innerHTML = '';
+        el.appendChild(document.createTextNode(newval));
+      }
     });
   });
 

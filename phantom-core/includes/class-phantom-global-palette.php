@@ -111,8 +111,9 @@ class Phantom_Global_Palette {
 		$colors = $this->get_current_palette();
 		$css    = '';
 		$i      = 0;
+		$sfx    = $suffix ? sanitize_key( $suffix ) : '';
 		foreach ( $colors as $label => $hex ) {
-			$css .= "\t--phantom-color-{$i}{$suffix}: {$hex};\n";
+			$css .= "\t--phantom-color-{$i}{$sfx}: {$hex};\n";
 			$i++;
 		}
 		return $css;

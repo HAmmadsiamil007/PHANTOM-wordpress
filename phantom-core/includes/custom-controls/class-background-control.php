@@ -22,14 +22,22 @@ class Background_Control extends Control_Base {
 	public static function get_sanitize_callback(): callable {
 		return function ( $value ) {
 			if ( is_array( $value ) ) {
+				$color = $value['color'] ?? '';
+				if ( '' !== $color && ! preg_match( '/^(#[a-fA-F0-9]{3,6}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))?$/', $color ) ) {
+					$color = '';
+				}
+				$overlay = $value['overlay_color'] ?? '';
+				if ( '' !== $overlay && ! preg_match( '/^(#[a-fA-F0-9]{3,6}|rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*(?:,\s*(?:0|1|0?\.\d+)\s*)?\))?$/', $overlay ) ) {
+					$overlay = '';
+				}
 				$parsed = array(
-					'color'           => sanitize_text_field( $value['color'] ?? '' ),
+					'color'           => $color,
 					'image'           => esc_url_raw( $value['image'] ?? '' ),
 					'position'        => sanitize_text_field( $value['position'] ?? 'center center' ),
 					'repeat'          => sanitize_text_field( $value['repeat'] ?? 'no-repeat' ),
 					'size'            => sanitize_text_field( $value['size'] ?? 'cover' ),
 					'attachment'      => sanitize_text_field( $value['attachment'] ?? 'scroll' ),
-					'overlay_color'   => sanitize_text_field( $value['overlay_color'] ?? '' ),
+					'overlay_color'   => $overlay,
 					'overlay_opacity' => floatval( $value['overlay_opacity'] ?? 0.5 ),
 				);
 				return $parsed;

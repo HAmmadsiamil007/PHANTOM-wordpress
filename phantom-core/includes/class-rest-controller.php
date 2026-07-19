@@ -505,6 +505,7 @@ class Rest_Controller extends \WP_REST_Controller {
 
 		\PhantomCore\Customizer::get_instance()->sync_options();
 		delete_transient( 'phantom_page_data' );
+		\Phantom_Custom_CSS::flush_cache();
 
 		return new \WP_REST_Response( $this->format_entry( $key, $entry, true ), 200 );
 	}
@@ -657,6 +658,8 @@ class Rest_Controller extends \WP_REST_Controller {
 		}
 
 		$registry->flush_cache();
+		delete_transient( 'phantom_page_data' );
+		\Phantom_Custom_CSS::flush_cache();
 
 		return new \WP_REST_Response(
 			array(
@@ -669,6 +672,8 @@ class Rest_Controller extends \WP_REST_Controller {
 
 	public function flush_cache(): \WP_REST_Response {
 		Settings_Registry::get_instance()->flush_cache();
+		delete_transient( 'phantom_page_data' );
+		\Phantom_Custom_CSS::flush_cache();
 		return new \WP_REST_Response(
 			array(
 				'success' => true,
@@ -1096,7 +1101,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		if ( $sku ) {
 			$product->set_sku( $sku );
 		}
-		if ( null !== $stock_qty ) {
+		if ( null !== $stock_qty && in_array( $type, array( 'simple', 'external' ), true ) ) {
 			$product->set_manage_stock( true );
 			$product->set_stock_quantity( $stock_qty );
 		}
@@ -2213,7 +2218,7 @@ class Rest_Controller extends \WP_REST_Controller {
 
 		$comment_query = new \WP_Comment_Query(
 			array(
-				'post_type' => 'product',
+				'type'      => 'review',
 				'status'    => 'approve',
 				'post_id'   => $product_id,
 				'number'    => $per_page,

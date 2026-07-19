@@ -137,7 +137,14 @@ class Shell {
         if ( preg_match( '/^product\/(.+)$/', $slug, $matches ) ) {
             $template = 'product-detail.html';
             $product_slug = sanitize_title( $matches[1] );
-            $product_data = get_page_by_path( $product_slug, OBJECT, 'product' );
+            $product_query = new \WP_Query( array(
+                'name'             => $product_slug,
+                'post_type'        => 'product',
+                'posts_per_page'   => 1,
+                'post_status'      => 'publish',
+                'suppress_filters' => true,
+            ) );
+            $product_data = $product_query->have_posts() ? $product_query->posts[0] : null;
             if ( ! $product_data && function_exists( 'wc_get_product_id_by_slug' ) ) {
                 $product_id_by_slug = wc_get_product_id_by_slug( $product_slug );
                 if ( $product_id_by_slug ) {
@@ -152,7 +159,14 @@ class Shell {
         elseif ( preg_match( '/^blog\/(.+)$/', $slug, $matches ) ) {
             $template = 'single-blog.html';
             $post_slug = sanitize_title( $matches[1] );
-            $post = get_page_by_path( $post_slug, OBJECT, 'post' );
+            $post_query = new \WP_Query( array(
+                'name'             => $post_slug,
+                'post_type'        => 'post',
+                'posts_per_page'   => 1,
+                'post_status'      => 'publish',
+                'suppress_filters' => true,
+            ) );
+            $post = $post_query->have_posts() ? $post_query->posts[0] : null;
             if ( $post ) {
                 $_GET['post_id'] = $post->ID;
             }
@@ -545,7 +559,7 @@ class Shell {
 		}
 		$css = $this->minify_css( $css );
 		$extra_css = \Phantom_Custom_CSS::instance()->render_style();
-		return str_replace( '</head>', '<style id="phantom-customizer-css">:root{' . $css . '}</style><!-- [DEPRECATED] Legacy CSS var names -- use --color-* equivalents -->' . $extra_css . '</head>', $html );
+		return str_replace( '</head>', '<style id="phantom-customizer-css">:root{' . $css . '}</style>' . $extra_css . '</head>', $html );
     }
 
 	private function inject_images( string $html ): string {
@@ -742,7 +756,10 @@ class Shell {
 		delete_transient( 'phantom_page_data' );
 		$cache_dir = WP_CONTENT_DIR . '/cache/phantom/';
 		if ( is_dir( $cache_dir ) ) {
-			array_map( 'unlink', glob( $cache_dir . '*.css' ) );
+			$files = glob( $cache_dir . '*.css' );
+			if ( is_array( $files ) ) {
+				array_map( 'unlink', $files );
+			}
 		}
 	}
 }

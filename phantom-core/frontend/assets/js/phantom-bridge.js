@@ -16,6 +16,12 @@
     _listeners: {},
     _styleEl: null,
     _initialized: false,
+    _baseUrl: (function() {
+      var d = root.PhantomData && root.PhantomData.rest_url ? root.PhantomData.rest_url.replace(/\/+$/, '') : null;
+      if (d) return d;
+      var w = root.wpApiSettings && root.wpApiSettings.root ? root.wpApiSettings.root.replace(/\/+$/, '') : null;
+      return w ? w + '/phantom/v1' : '/index.php?rest_route=/phantom/v1';
+    })(),
 
     init: function (opts) {
       opts = opts || {};
@@ -66,16 +72,18 @@
 
       var self = this;
       var nonce = (window.PhantomData && window.PhantomData.nonce) || (document.querySelector('meta[name="wp-rest-nonce"]') || {}).content || '';
-      return fetch('/index.php?rest_route=/phantom/v1/settings/' + encodeURIComponent(key), {
+      var self2 = this;
+      return fetch(this._baseUrl + '/settings/' + encodeURIComponent(key), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': nonce },
         body: JSON.stringify({ value: value }),
         credentials: 'same-origin'
       }).then(function (r) {
         if (r.status === 401) {
-          return fetch('/index.php?rest_route=/phantom/v1/settings/' + encodeURIComponent(key), {
+          var freshNonce = (document.querySelector('meta[name="wp-rest-nonce"]') || {}).content || '';
+          return fetch(self2._baseUrl + '/settings/' + encodeURIComponent(key), {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': nonce },
+            headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': freshNonce },
             body: JSON.stringify({ value: value }),
             credentials: 'same-origin'
           });
@@ -127,7 +135,7 @@
     },
 
     openEditor: function (key) {
-      var customizerUrl = '/wp-admin/customize.php?autofocus[control]=phantom_' + encodeURIComponent(key);
+      var customizerUrl = (root.wpAdminUrl || '/wp-admin/') + 'customize.php?autofocus[control]=phantom_' + encodeURIComponent(key);
       window.open(customizerUrl, '_blank');
     },
 
@@ -139,7 +147,7 @@
         self._data[key] = changes[key];
       }
       var nonce = (window.PhantomData && window.PhantomData.nonce) || (document.querySelector('meta[name="wp-rest-nonce"]') || {}).content || '';
-      return fetch('/index.php?rest_route=/phantom/v1/settings', {
+      return fetch(this._baseUrl + '/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': nonce },
         body: JSON.stringify({ settings: changes }),
@@ -171,7 +179,7 @@
     },
 
     _saveSetting: function (key, value) {
-      var url = '/index.php?rest_route=/phantom/v1/settings/' + encodeURIComponent(key);
+      var url = this._baseUrl + '/settings/' + encodeURIComponent(key);
       var nonce = this._getNonce();
       var headers = { 'Content-Type': 'application/json' };
       if (nonce) headers['X-WP-Nonce'] = nonce;

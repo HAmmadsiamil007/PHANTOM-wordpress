@@ -18,6 +18,10 @@
       var operator = dep.operator || '===';
       if (!depKey) continue;
       var current = getter(depKey);
+      if (depVal === null || dep.value === undefined) {
+        if (!current) return false;
+        continue;
+      }
       if (!evalCondition(current, operator, depVal)) return false;
     }
     return true;

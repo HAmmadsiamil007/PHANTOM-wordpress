@@ -6,12 +6,13 @@
 (function () {
   'use strict';
 
-  const apiBase = '/index.php?rest_route=/phantom/v1';
+  const apiBase = window.phantomData && window.phantomData.rest_url ? window.phantomData.rest_url.replace(/\/+$/, '') : (window.wpApiSettings && window.wpApiSettings.root ? window.wpApiSettings.root.replace(/\/+$/, '') + '/phantom/v1' : '/index.php?rest_route=/phantom/v1');
   const cache = {};
+  const cacheTTL = 120000;
   var _settings = {};
 
   function fetchJSON(path, timeout) {
-    if (cache[path]) return Promise.resolve(cache[path]);
+    if (cache[path] && (Date.now() - cache[path].ts < cacheTTL)) return Promise.resolve(cache[path].data);
     timeout = timeout || 10000;
     const controller = new AbortController();
     const timer = setTimeout(function () { controller.abort(); }, timeout);
@@ -27,7 +28,7 @@
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     }).then(function (data) {
-      cache[path] = data;
+      cache[path] = { data: data, ts: Date.now() };
       return data;
     }).catch(function (err) {
       clearTimeout(timer);
@@ -61,11 +62,17 @@
     // data-phantom-bg="key" — sets background-image
     document.querySelectorAll('[data-phantom-bg]').forEach(function (el) {
       const key = el.getAttribute('data-phantom-bg');
-      if (settings[key]) el.style.backgroundImage = 'url(' + settings[key] + ')';
+      if (settings[key]) el.style.backgroundImage = 'url("' + settings[key].replace(/"/g, '%22') + '")';
     });
   }
 
   // ─── MENUS ───────────────────────────────────────────────
+
+  function stripHtml(str) {
+    var d = document.createElement('div');
+    d.innerHTML = str;
+    return d.textContent || d.innerText || '';
+  }
 
   function escapeHtml(str) {
     const d = document.createElement('div');
@@ -292,7 +299,7 @@
       delSpan.appendChild(del);
       priceDiv.appendChild(delSpan);
     } else {
-      priceDiv.innerHTML = priceHtml;
+      priceDiv.textContent = stripHtml(priceHtml);
     }
     textWrapper.appendChild(priceDiv);
     content.appendChild(textWrapper);
@@ -342,9 +349,9 @@
     const priceEl = el.querySelector('.types_content .price');
     if (priceEl) {
       if (p.on_sale) {
-        priceEl.innerHTML = '$' + (p.sale_price || p.price) + ' <span class="d-inline-block strike">$' + (p.regular_price || p.price) + '</span>';
+        priceEl.textContent = '$' + (p.sale_price || p.price) + ' $' + (p.regular_price || p.price);
       } else {
-        priceEl.innerHTML = p.price_html || '$' + (p.price || '0');
+        priceEl.textContent = stripHtml(p.price_html) || '$' + (p.price || '0');
       }
     }
 
@@ -522,7 +529,7 @@
         const vim = url.match(/(\d+)/);
         if (vim) html = '<iframe width="100%" height="450" src="https://player.vimeo.com/video/' + vim[1] + '" frameborder="0" allowfullscreen></iframe>';
       } else {
-        html = '<video width="100%" height="450" controls><source src="' + url + '" type="video/mp4"></video>';
+        html = '<video width="100%" height="450" controls><source src="' + url.replace(/"/g, '&quot;') + '" type="video/mp4"></video>';
       }
       vidContainer.innerHTML = html;
     }
@@ -805,10 +812,12 @@
         var variationId = btn.getAttribute('data-variation-id');
         if (variationId) {
           fd.append('variation_id', variationId);
-          for (var attr in btn.dataset) {
-            if (attr.indexOf('attribute') === 0) {
-              var attrName = attr.replace('attribute', '');
-              fd.append('variation[' + attrName + ']', btn.dataset[attr]);
+          var attrs = btn.attributes;
+          for (var a = 0; a < attrs.length; a++) {
+            var attrName = attrs[a].name;
+            if (attrName.indexOf('data-attribute-') === 0) {
+              var cleanName = attrName.replace('data-attribute-', '');
+              fd.append('variation[' + cleanName + ']', attrs[a].value);
             }
           }
         }
@@ -1038,7 +1047,7 @@
       // Content
       const contentEl = el.querySelector('.content1 p.text-size-16, .text-size-16, .news-detail-content p');
       if (contentEl && p.content) {
-        contentEl.innerHTML = p.content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+        contentEl.textContent = stripHtml(p.content);
       }
 
       // Featured image

@@ -35,19 +35,21 @@ final class Cache {
 
 	public function flush(): void {
 		global $wpdb;
-		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name LIKE %s",
-				$wpdb->esc_like( '_transient_' ) . '%',
-				$wpdb->esc_like( '_transient_' . $this->prefix ) . '%'
-			)
-		);
-		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name LIKE %s",
-				$wpdb->esc_like( '_transient_timeout_' ) . '%',
-				$wpdb->esc_like( '_transient_timeout_' . $this->prefix ) . '%'
-			)
-		);
+		$prefix = $wpdb->esc_like( '_transient_' ) . '%';
+		$timeout_prefix = $wpdb->esc_like( '_transient_timeout_' ) . '%';
+		$like = $wpdb->esc_like( '_transient_' . $this->prefix ) . '%';
+
+		$wpdb->query( 'START TRANSACTION' );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name LIKE %s", $prefix, $like ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name LIKE %s", $timeout_prefix, $wpdb->esc_like( '_transient_timeout_' . $this->prefix ) . '%' ) );
+		if ( is_multisite() ) {
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s AND meta_key LIKE %s", $prefix, $like ) );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s AND meta_key LIKE %s", $timeout_prefix, $wpdb->esc_like( '_site_transient_timeout_' . $this->prefix ) . '%' ) );
+		}
+		$wpdb->query( 'COMMIT' );
+
+		wp_cache_flush_group( 'transient' );
+
+		do_action( 'phantom_cache_flushed' );
 	}
 }
