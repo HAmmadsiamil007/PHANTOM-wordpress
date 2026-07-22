@@ -212,6 +212,7 @@ class Settings_Registry {
 			'sidebar_width'                => '--sidebar-width',
 			'typography_body_font'         => '--font-body',
 			'typography_body_weight'       => '--font-body-weight',
+			'typography_body_style'        => '--font-body-style',
 			'typography_base_size'         => '--font-base-size',
 			'typography_line_height'       => '--font-line-height',
 			'typography_body_spacing'      => '--font-body-spacing',
@@ -221,16 +222,46 @@ class Settings_Registry {
 			'typography_heading_spacing'   => '--font-heading-spacing',
 			'typography_h1_size'           => '--h1-size',
 			'typography_h1_height'         => '--h1-height',
+			'typography_h1_font'           => '--h1-font',
+			'typography_h1_weight'         => '--h1-weight',
+			'typography_h1_style'          => '--h1-style',
+			'typography_h1_spacing'        => '--h1-spacing',
+			'typography_h1_case'           => '--h1-case',
 			'typography_h2_size'           => '--h2-size',
 			'typography_h2_height'         => '--h2-height',
+			'typography_h2_font'           => '--h2-font',
+			'typography_h2_weight'         => '--h2-weight',
+			'typography_h2_style'          => '--h2-style',
+			'typography_h2_spacing'        => '--h2-spacing',
+			'typography_h2_case'           => '--h2-case',
 			'typography_h3_size'           => '--h3-size',
 			'typography_h3_height'         => '--h3-height',
+			'typography_h3_font'           => '--h3-font',
+			'typography_h3_weight'         => '--h3-weight',
+			'typography_h3_style'          => '--h3-style',
+			'typography_h3_spacing'        => '--h3-spacing',
+			'typography_h3_case'           => '--h3-case',
 			'typography_h4_size'           => '--h4-size',
 			'typography_h4_height'         => '--h4-height',
+			'typography_h4_font'           => '--h4-font',
+			'typography_h4_weight'         => '--h4-weight',
+			'typography_h4_style'          => '--h4-style',
+			'typography_h4_spacing'        => '--h4-spacing',
+			'typography_h4_case'           => '--h4-case',
 			'typography_h5_size'           => '--h5-size',
 			'typography_h5_height'         => '--h5-height',
+			'typography_h5_font'           => '--h5-font',
+			'typography_h5_weight'         => '--h5-weight',
+			'typography_h5_style'          => '--h5-style',
+			'typography_h5_spacing'        => '--h5-spacing',
+			'typography_h5_case'           => '--h5-case',
 			'typography_h6_size'           => '--h6-size',
 			'typography_h6_height'         => '--h6-height',
+			'typography_h6_font'           => '--h6-font',
+			'typography_h6_weight'         => '--h6-weight',
+			'typography_h6_style'          => '--h6-style',
+			'typography_h6_spacing'        => '--h6-spacing',
+			'typography_h6_case'           => '--h6-case',
 			'color_primary'                => '--primary--color',
 			'color_secondary'              => '--secondary--color',
 			'color_accent'                 => '--accent--color',
@@ -319,10 +350,13 @@ class Settings_Registry {
 			'widget_spacing', 'container_gutter', 'content_gap',
 			'element_margin_bottom', 'home_section_spacing',
 			'typography_base_size', 'typography_body_spacing', 'typography_heading_spacing',
-			'typography_h1_size', 'typography_h1_height', 'typography_h2_size',
-			'typography_h2_height', 'typography_h3_size', 'typography_h3_height',
-			'typography_h4_size', 'typography_h4_height', 'typography_h5_size',
-			'typography_h5_height', 'typography_h6_size', 'typography_h6_height',
+			'typography_h1_size', 'typography_h1_height',
+			'typography_h1_spacing', 'typography_h2_spacing', 'typography_h3_spacing',
+			'typography_h4_spacing', 'typography_h5_spacing', 'typography_h6_spacing',
+			'typography_h2_size', 'typography_h2_height', 'typography_h3_size',
+			'typography_h3_height', 'typography_h4_size', 'typography_h4_height',
+			'typography_h5_size', 'typography_h5_height', 'typography_h6_size',
+			'typography_h6_height',
 			'form_input_height', 'layout_columns',
 			'nav_menu_height', 'nav_submenu_width',
 		);
@@ -3061,29 +3095,10 @@ class Settings_Registry {
 	}
 
 	private function section_typography(): array {
-		$google_fonts = array(
-			'Archivo'            => 'Archivo',
-			'Playfair Display'   => 'Playfair Display',
-			'Inter'              => 'Inter',
-			'Roboto'             => 'Roboto',
-			'Open Sans'          => 'Open Sans',
-			'Lato'               => 'Lato',
-			'Nunito Sans'        => 'Nunito Sans',
-			'Poppins'            => 'Poppins',
-			'DM Sans'            => 'DM Sans',
-			'Figtree'            => 'Figtree',
-			'Work Sans'          => 'Work Sans',
-			'Plus Jakarta Sans'  => 'Plus Jakarta Sans',
-			'Merriweather'       => 'Merriweather',
-			'Lora'               => 'Lora',
-			'DM Serif Display'   => 'DM Serif Display',
-			'Cormorant Garamond' => 'Cormorant Garamond',
-			'Fraunces'           => 'Fraunces',
-			'PT Serif'           => 'PT Serif',
-			'Teko'               => 'Teko',
-			'Jost'               => 'Jost',
-		);
+		$font_families = \PhantomCore\Fonts::instance()->get_all_fonts();
+		$inherit_fonts = array( '' => '— Inherit —' ) + $font_families;
 		$weights = array(
+			''   => '— Inherit —',
 			'100' => '100 Thin',
 			'200' => '200 Extra Light',
 			'300' => '300 Light',
@@ -3100,12 +3115,25 @@ class Settings_Registry {
 			'capitalize' => 'Capitalize',
 			'lowercase'  => 'Lowercase',
 		);
-		return array(
+		$styles = array(
+			'normal' => 'Normal',
+			'italic' => 'Italic',
+		);
+		$headings = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+		$heading_labels = array(
+			'h1' => 'H1',
+			'h2' => 'H2',
+			'h3' => 'H3',
+			'h4' => 'H4',
+			'h5' => 'H5',
+			'h6' => 'H6',
+		);
+		$settings = array(
 			'typography_body_font'       => array(
 				'section' => 'typography',
 				'type'    => 'select',
 				'default' => 'Archivo',
-				'choices' => $google_fonts,
+				'choices' => $font_families,
 				'sanitize' => 'sanitize_text_field',
 				'label'   => __( 'Body Font Family', 'phantom-core' ),
 			),
@@ -3147,29 +3175,22 @@ class Settings_Registry {
 				'sanitize' => 'floatval',
 				'label'   => __( 'Body Letter Spacing (px)', 'phantom-core' ),
 			),
+			'typography_body_style'      => array(
+				'section' => 'typography',
+				'type'    => 'select',
+				'default' => 'normal',
+				'choices' => $styles,
+				'sanitize' => 'sanitize_text_field',
+				'label'   => __( 'Body Font Style', 'phantom-core' ),
+				'divider' => 'ast-top-divider',
+			),
 			'typography_heading_font'    => array(
 				'section' => 'typography',
 				'type'    => 'select',
 				'default' => 'Playfair Display',
-				'choices' => $google_fonts,
+				'choices' => $font_families,
 				'sanitize' => 'sanitize_text_field',
 				'label'   => __( 'Heading Font Family', 'phantom-core' ),
-			),
-			'font_subset'                => array(
-				'section'    => 'typography',
-				'type'       => 'multi_select',
-				'default'    => array( 'latin' ),
-				'choices'    => array(
-					'latin'        => 'Latin',
-					'latin-ext'    => 'Latin Extended',
-					'cyrillic'     => 'Cyrillic',
-					'cyrillic-ext' => 'Cyrillic Extended',
-					'greek'        => 'Greek',
-					'greek-ext'    => 'Greek Extended',
-					'vietnamese'   => 'Vietnamese',
-				),
-				'sanitize' => 'phantom_sanitize_subsets',
-				'label'    => __( 'Font Subsets', 'phantom-core' ),
 			),
 			'typography_heading_weight'  => array(
 				'section' => 'typography',
@@ -3197,128 +3218,118 @@ class Settings_Registry {
 				'sanitize' => 'floatval',
 				'label'   => __( 'Heading Letter Spacing (px)', 'phantom-core' ),
 			),
-			'typography_h1_size'         => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 86,
-				'min'     => 20,
-				'max'     => 200,
-				'sanitize' => 'absint',
-				'label'   => __( 'H1 Font Size (px)', 'phantom-core' ),
-				'responsive' => true,
-			),
-			'typography_h1_height'       => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 86,
-				'min'     => 20,
-				'max'     => 220,
-				'sanitize' => 'absint',
-				'label'   => __( 'H1 Line Height (px)', 'phantom-core' ),
-			),
-			'typography_h2_size'         => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 62,
-				'min'     => 16,
-				'max'     => 160,
-				'sanitize' => 'absint',
-				'label'   => __( 'H2 Font Size (px)', 'phantom-core' ),
-				'responsive' => true,
-			),
-			'typography_h2_height'       => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 68,
-				'min'     => 16,
-				'max'     => 180,
-				'sanitize' => 'absint',
-				'label'   => __( 'H2 Line Height (px)', 'phantom-core' ),
-			),
-			'typography_h3_size'         => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 46,
-				'min'     => 14,
-				'max'     => 120,
-				'sanitize' => 'absint',
-				'label'   => __( 'H3 Font Size (px)', 'phantom-core' ),
-				'responsive' => true,
-			),
-			'typography_h3_height'       => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 58,
-				'min'     => 14,
-				'max'     => 140,
-				'sanitize' => 'absint',
-				'label'   => __( 'H3 Line Height (px)', 'phantom-core' ),
-			),
-			'typography_h4_size'         => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 24,
-				'min'     => 12,
-				'max'     => 100,
-				'sanitize' => 'absint',
-				'label'   => __( 'H4 Font Size (px)', 'phantom-core' ),
-				'responsive' => true,
-			),
-			'typography_h4_height'       => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 30,
-				'min'     => 12,
-				'max'     => 120,
-				'sanitize' => 'absint',
-				'label'   => __( 'H4 Line Height (px)', 'phantom-core' ),
-			),
-			'typography_h5_size'         => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 22,
-				'min'     => 10,
-				'max'     => 80,
-				'sanitize' => 'absint',
-				'label'   => __( 'H5 Font Size (px)', 'phantom-core' ),
-				'responsive' => true,
-			),
-			'typography_h5_height'       => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 30,
-				'min'     => 10,
-				'max'     => 100,
-				'sanitize' => 'absint',
-				'label'   => __( 'H5 Line Height (px)', 'phantom-core' ),
-			),
-			'typography_h6_size'         => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 20,
-				'min'     => 10,
-				'max'     => 60,
-				'sanitize' => 'absint',
-				'label'   => __( 'H6 Font Size (px)', 'phantom-core' ),
-				'responsive' => true,
-			),
-			'typography_h6_height'       => array(
-				'section' => 'typography',
-				'type'    => 'int',
-				'default' => 24,
-				'min'     => 10,
-				'max'     => 80,
-				'sanitize' => 'absint',
-				'label'   => __( 'H6 Line Height (px)', 'phantom-core' ),
-			),
-			'typography_headings'        => array(
-				'section'  => 'typography',
-				'type'     => 'json',
-				'default'  => array(),
-				'sanitize' => 'phantom_sanitize_headings_json',
-				'label'    => __( 'Heading Typography (Composite)', 'phantom-core' ),
-			),
 		);
+		foreach ( $headings as $h ) {
+			$label = $heading_labels[ $h ];
+			$settings[ 'typography_' . $h . '_size' ] = array(
+				'section' => 'typography',
+				'type'    => 'int',
+				'default' => self::get_heading_default( $h, 'size' ),
+				'min'     => self::get_heading_min( $h ),
+				'max'     => self::get_heading_max( $h ),
+				'sanitize' => 'absint',
+				'label'   => __( $label . ' Font Size (px)', 'phantom-core' ),
+				'responsive' => true,
+				'divider' => 'ast-top-divider',
+			);
+			$settings[ 'typography_' . $h . '_height' ] = array(
+				'section' => 'typography',
+				'type'    => 'int',
+				'default' => self::get_heading_default( $h, 'height' ),
+				'min'     => self::get_heading_min( $h ),
+				'max'     => self::get_heading_max( $h ),
+				'sanitize' => 'absint',
+				'label'   => __( $label . ' Line Height (px)', 'phantom-core' ),
+			);
+			$settings[ 'typography_' . $h . '_font' ] = array(
+				'section' => 'typography',
+				'type'    => 'select',
+				'default' => '',
+				'choices' => $inherit_fonts,
+				'sanitize' => 'sanitize_text_field',
+				'label'   => __( $label . ' Font Family', 'phantom-core' ),
+			);
+			$settings[ 'typography_' . $h . '_weight' ] = array(
+				'section' => 'typography',
+				'type'    => 'select',
+				'default' => '',
+				'choices' => $weights,
+				'sanitize' => 'sanitize_text_field',
+				'label'   => __( $label . ' Font Weight', 'phantom-core' ),
+			);
+			$settings[ 'typography_' . $h . '_style' ] = array(
+				'section' => 'typography',
+				'type'    => 'select',
+				'default' => 'normal',
+				'choices' => $styles,
+				'sanitize' => 'sanitize_text_field',
+				'label'   => __( $label . ' Font Style', 'phantom-core' ),
+			);
+			$settings[ 'typography_' . $h . '_spacing' ] = array(
+				'section' => 'typography',
+				'type'    => 'float',
+				'default' => 0,
+				'min'     => -5,
+				'max'     => 20,
+				'step'    => 0.5,
+				'sanitize' => 'floatval',
+				'label'   => __( $label . ' Letter Spacing (px)', 'phantom-core' ),
+			);
+			$settings[ 'typography_' . $h . '_case' ] = array(
+				'section' => 'typography',
+				'type'    => 'select',
+				'default' => 'none',
+				'choices' => $cases,
+				'sanitize' => 'sanitize_text_field',
+				'label'   => __( $label . ' Text Case', 'phantom-core' ),
+			);
+		}
+		$settings['font_subset'] = array(
+			'section'    => 'typography',
+			'type'       => 'multi_select',
+			'default'    => array( 'latin' ),
+			'choices'    => array(
+				'latin'        => 'Latin',
+				'latin-ext'    => 'Latin Extended',
+				'cyrillic'     => 'Cyrillic',
+				'cyrillic-ext' => 'Cyrillic Extended',
+				'greek'        => 'Greek',
+				'greek-ext'    => 'Greek Extended',
+				'vietnamese'   => 'Vietnamese',
+			),
+			'sanitize' => 'phantom_sanitize_subsets',
+			'label'    => __( 'Font Subsets', 'phantom-core' ),
+			'divider'  => 'ast-top-divider',
+		);
+		return $settings;
+	}
+
+	private static function get_heading_default( string $tag, string $prop ): int {
+		$defaults = array(
+			'h1' => array( 'size' => 86, 'height' => 86 ),
+			'h2' => array( 'size' => 62, 'height' => 68 ),
+			'h3' => array( 'size' => 46, 'height' => 58 ),
+			'h4' => array( 'size' => 24, 'height' => 30 ),
+			'h5' => array( 'size' => 22, 'height' => 30 ),
+			'h6' => array( 'size' => 20, 'height' => 24 ),
+		);
+		return $defaults[ $tag ][ $prop ] ?? 24;
+	}
+
+	private static function get_heading_min( string $tag ): int {
+		$mins = array(
+			'h1' => 20, 'h2' => 16, 'h3' => 14,
+			'h4' => 12, 'h5' => 10, 'h6' => 10,
+		);
+		return $mins[ $tag ] ?? 10;
+	}
+
+	private static function get_heading_max( string $tag ): int {
+		$maxes = array(
+			'h1' => 220, 'h2' => 180, 'h3' => 140,
+			'h4' => 120, 'h5' => 100, 'h6' => 80,
+		);
+		return $maxes[ $tag ] ?? 80;
 	}
 
 	private function section_colors(): array {
