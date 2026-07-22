@@ -69,7 +69,7 @@ class Customizer {
 				'priority' => 70,
 			),
 			'phantom_typography'    => array(
-				'title'    => __( 'Typography', 'phantom-core' ),
+				'title'    => __( 'Typography & Fonts', 'phantom-core' ),
 				'sections' => array( 'typography' ),
 				'priority' => 80,
 			),
