@@ -21,7 +21,7 @@ namespace PhantomCore;
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PHANTOM_CORE_VERSION', '1.5.1' );
+define( 'PHANTOM_CORE_VERSION', '1.5.2' );
 define( 'PHANTOM_CORE_FILE', __FILE__ );
 define( 'PHANTOM_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PHANTOM_CORE_URL', plugin_dir_url( __FILE__ ) );

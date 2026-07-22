@@ -1661,6 +1661,11 @@ div.country-selector>div.list>div.item {
     margin-bottom: 9px;
 }
 
+.seller-box .heading6 a {
+    color: inherit;
+    text-decoration: none;
+}
+
 .objct-price {
     font-weight: 700;
     color: var(--primary--color);
@@ -2583,7 +2588,7 @@ button.primary_btn:hover {
 }
 
 .our-collection-con .seller-box {
-    background-color: var(--secondary--color);
+    background-color: #ffffff;
 }
 
 .our-collection-con .col-xl-4.col-lg-6.col-md-6 {

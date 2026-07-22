@@ -13,7 +13,9 @@ jQuery(function ($) {
 });
 
 // wow js
-new WOW().init();
+jQuery(function ($) {
+    new WOW().init();
+});
 
 // comingsoon page countdown
 (function () {
