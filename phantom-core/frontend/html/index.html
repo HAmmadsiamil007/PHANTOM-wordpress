@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHER — Step Into The Void</title>
+    <meta name="description" content="AETHER Void Runner — Engineered for the void. Premium athletic footwear with carbon fiber technology.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon/apple-icon-180x180.png">
+    <meta name="msapplication-TileColor" content="#09090B">
+    <meta name="theme-color" content="#09090B">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AETHER">
+    <meta property="og:url" content="https://aethershoes.com">
+    <link rel="canonical" href="https://aethershoes.com">
+    <meta property="og:image" content="https://aethershoes.com/assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg">
+    <meta property="og:title" content="AETHER — Step Into The Void">
+    <meta property="og:description" content="AETHER Void Runner — Engineered for the void. Premium athletic footwear with carbon fiber technology.">
+    <meta name="twitter:title" content="AETHER — Step Into The Void">
+    <meta name="twitter:description" content="AETHER Void Runner — Engineered for the void. Premium athletic footwear with carbon fiber technology.">
+    <meta name="twitter:image" content="https://aethershoes.com/assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@aethershoes">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "AETHER",
+        "url": "https://aethershoes.com",
+        "logo": "https://aethershoes.com/assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg",
+        "sameAs": [
+            "https://instagram.com/aethershoes",
+            "https://twitter.com/aethershoes",
+            "https://tiktok.com/@aethershoes",
+            "https://youtube.com/@aethershoes"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+1-555-123-4567",
+            "contactType": "customer service",
+            "email": "support@aethershoes.com"
+        }
+    }
+    </script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Swiper 11 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/motion.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/a11y.css"">
+</head>
+<body class="home-page">
+
+<!-- Preloader -->
+<div id="preloader" aria-hidden="true">
+    <div class="preloader-inner">
+        <div class="preloader-logo">AETHER</div>
+        <div class="preloader-bar">
+            <div class="preloader-progress"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Global Cinematic Fog -->
+<div id="fog-system">
+    <div id="foglayer_01" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+    </div>
+    <div id="foglayer_02" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+    </div>
+    <div id="foglayer_03" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+    </div>
+</div>
+
+<a class="skip-to-content visually-hidden" href="#main">Skip to main content</a>
+<div class="page-content">
+
+
+<!-- Mobile Header (=768px) -->
+<div class="mobile-header" id="mobileHeader">
+    <button class="mobile-hamburger" id="mobileHamburger" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="mobile-announcement" id="mobileAnnouncement">
+        <span class="mobile-announcement-text active">FREE SHIPPING ON ORDERS OVER $200</span>
+        <span class="mobile-announcement-text">FREE SHIPPING ON ALL ORDERS</span>
+    </div>
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="index.html" class="mobile-menu-logo">AETHER</a>
+            <div class="mobile-menu-spacer"></div>
+        </div>
+        <div class="mobile-menu-body">
+            <div class="mobile-search">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search products...">
+            </div>
+            <nav class="mobile-nav">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="shop.html" class="mobile-nav-link">Shop</a>
+                <a href="shop.html" class="mobile-nav-link">Collections</a>
+                <a href="shop.html" class="mobile-nav-link">New Arrivals</a>
+                <a href="shop.html" class="mobile-nav-link">Best Sellers</a>
+            </nav>
+            <div class="mobile-divider"></div>
+            <nav class="mobile-nav">
+                <a href="login.html" class="mobile-nav-link">Account</a>
+                <a href="shop.html" class="mobile-nav-link">Wishlist</a>
+                <a href="cart.html" class="mobile-nav-link">Cart</a>
+            </nav>
+            <div class="mobile-divider"></div>
+            <nav class="mobile-nav">
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="about.html" class="mobile-nav-link">About</a>
+            </nav>
+            <div class="mobile-divider"></div>
+            <div class="mobile-meta">
+                <span>Language</span>
+                <span>Currency</span>
+            </div>
+            <a href="shop.html" class="mobile-cta">Shop Now</a>
+            <div class="mobile-socials">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         1. ANNOUNCEMENT BAR
+         ═══════════════════════════════════════════════════════ -->
+    <div class="announcement-bar" id="announcementBar">
+        <div class="announcement-content">
+            <span><i class="fas fa-truck"></i> Free Shipping On Orders Over $200</span>
+            <span class="separator">|</span>
+            <span><i class="fas fa-bolt"></i> New Collection Dropping Soon</span>
+            <span class="separator">|</span>
+            <span><i class="fas fa-undo"></i> 30-Day Free Returns</span>
+        </div>
+    </div>
+    
+    <!-- ═══════════════════════════════════════════════════════
+         2. HEADER
+         ═══════════════════════════════════════════════════════ -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="index.html" class="brand-logo">AETHER</a>
+            
+            <nav class="main-nav" id="mainNav" data-phantom-menu="primary">
+                <div class="nav-mobile-logo">
+                    <a href="index.html" class="brand-logo">AETHER</a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link active">Home</a></li>
+                    <li class="nav-dropdown">
+                        <a href="shop.html" class="nav-link nav-dropdown-toggle">Collection <i class="fas fa-chevron-down"></i></a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="shop.html" class="nav-dropdown-link">Men</a></li>
+                            <li><a href="shop.html" class="nav-dropdown-link">Women</a></li>
+                            <li><a href="shop.html" class="nav-dropdown-link">Kid</a></li>
+                            <li><a href="shop.html" class="nav-dropdown-link">New Arrivals</a></li>
+                            <li><a href="shop.html" class="nav-dropdown-link">Bestsellers</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="blog.html" class="nav-link">Blog</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="nav-mobile-icons">
+                    <a href="shop.html" class="header-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+                    <a href="wishlist.html" class="header-icon" aria-label="Wishlist"><i class="fas fa-heart"></i></a>
+                    <a href="cart.html" class="header-icon" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
+                <a href="login.html" class="header-icon" aria-label="Account"><i class="fas fa-user"></i></a>
+                </div>
+            </nav>
+            
+            <div class="header-actions">
+                <a href="shop.html" class="header-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+                <a href="wishlist.html" class="header-icon" aria-label="Wishlist"><i class="fas fa-heart"></i></a>
+                <a href="cart.html" class="header-icon" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
+                <a href="login.html" class="header-icon" aria-label="Account"><i class="fas fa-user"></i></a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+<div id="main" tabindex="-1" class="visually-hidden-focusable" style="position:absolute;top:0"></div>
+    <main id="swup">
+
+    <!-- ═══════════════════════════════════════════════════════
+         3. HERO SLIDER
+         ═══════════════════════════════════════════════════════ -->
+    <section class="hero-slider" id="heroSlider" data-phantom-bg="hero" data-mouse-parallax data-parallax-section>
+                <div class="hero-fog" aria-hidden="true">
+                    <div id="hl_01" class="hf-fog">
+                        <div class="hf-img"></div>
+                        <div class="hf-img"></div>
+                    </div>
+                    <div id="hl_02" class="hf-fog">
+                        <div class="hf-img"></div>
+                        <div class="hf-img"></div>
+                    </div>
+                    <div id="hl_03" class="hf-fog">
+                        <div class="hf-img"></div>
+                        <div class="hf-img"></div>
+                    </div>
+                </div>
+        <div class="swiper hero-swiper">
+            <div class="swiper-wrapper">
+                <!-- Slide 1 — Flagship -->
+                <div class="swiper-slide hero-slide">
+                    <div class="hero-slide-bg">
+                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-alt="hero_slide_1" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
+                        <div class="hero-slide-overlay"></div>
+                    </div>
+                    <div class="container hero-slide-content">
+                        <div class="hero-slide-text">
+                            <h1 class="hero-headline" data-swiper-parallax="-200" data-phantom="hero_headline" data-mouse-depth="0.02">AETHER<br><span class="hero-headline-accent">Void Runner</span></h1>
+                            <p class="hero-subline" data-swiper-parallax="-300" data-phantom="hero_subline">Born from the silence between stars. Carbon-fiber exoskeleton meets adaptive cushioning that learns your stride. The benchmark has been reset.</p>
+                            <div class="hero-cta-group" data-swiper-parallax="-400" data-mouse-depth="0.03">
+                                <a href="shop.html" class="btn btn-primary btn-lg" data-magnetic="0.12">Shop Now — $449</a>
+                                <a href="about.html" class="btn btn-outline btn-lg" data-magnetic="0.12">Explore Tech</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="swiper-slide hero-slide">
+                    <div class="hero-slide-bg">
+                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-alt="hero_slide_2" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
+                        <div class="hero-slide-overlay"></div>
+                    </div>
+                    <div class="container hero-slide-content">
+                        <div class="hero-slide-text">
+                            <h1 class="hero-headline" data-swiper-parallax="-200" data-phantom="hero_headline" data-mouse-depth="0.02">Cloud<br><span class="hero-headline-accent">Stride</span></h1>
+                            <p class="hero-subline" data-swiper-parallax="-300" data-phantom="hero_subline">Float above the pavement. Zero-gravity foam compounds deliver infinite energy return with every step. Running has never felt this light.</p>
+                            <div class="hero-cta-group" data-swiper-parallax="-400" data-mouse-depth="0.03">
+                                <a href="shop.html" class="btn btn-primary btn-lg" data-magnetic="0.12">Shop Collection</a>
+                                <a href="about.html" class="btn btn-outline btn-lg" data-magnetic="0.12">Our Story</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="swiper-slide hero-slide">
+                    <div class="hero-slide-bg">
+                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-alt="hero_slide_3" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
+                        <div class="hero-slide-overlay"></div>
+                    </div>
+                    <div class="container hero-slide-content">
+                        <div class="hero-slide-text">
+                            <h1 class="hero-headline" data-swiper-parallax="-200" data-phantom="hero_headline" data-mouse-depth="0.02">Midnight<br><span class="hero-headline-accent">Edition</span></h1>
+                            <p class="hero-subline" data-swiper-parallax="-300" data-phantom="hero_subline">Darkness refined. A stealth-black silhouette with phosphorescent accents that ignite after sunset. Only 2,500 pairs exist. Once they are gone, the night reclaims them.</p>
+                            <div class="hero-cta-group" data-swiper-parallax="-400" data-mouse-depth="0.03">
+                                <a href="shop.html" class="btn btn-primary btn-lg" data-magnetic="0.12">Get Yours</a>
+                                <a href="about.html" class="btn btn-outline btn-lg" data-magnetic="0.12">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Navigation -->
+            <div class="hero-slider-nav">
+                <button class="hero-nav-btn hero-nav-prev" data-magnetic="0.12" aria-label="Previous slide"><i class="fas fa-arrow-left"></i></button>
+                <div class="hero-slide-counter"><span class="hero-current-slide">01</span> / <span class="hero-total-slides">03</span></div>
+                <button class="hero-nav-btn hero-nav-next" data-magnetic="0.12" aria-label="Next slide"><i class="fas fa-arrow-right"></i></button>
+            </div>
+            <!-- Progress -->
+            <div class="hero-slider-progress"></div>
+        </div>
+        <!-- Fire Sparks Canvas -->
+
+        <!-- Hero Particles -->
+        <div id="hero-particles" class="hero-particles"></div>
+        
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <p>Scroll to explore</p>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         4. CATEGORY SELECTOR
+         ═══════════════════════════════════════════════════════ -->
+    <section class="categories" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label" data-phantom="section_label" data-motion-text="words">Shop by Category</span>
+                <h2 class="section-title" data-phantom="section_title" data-motion-text="words">Find Your Fit</h2>
+            </div>
+            
+            <div class="category-grid" data-reveal-group>
+                <a href="shop.html" class="category-card category-card--large" data-tilt data-reveal-item>
+                    <div class="category-card-bg">
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Men's Collection" data-phantom-alt="category_men">
+                        <div class="category-card-overlay"></div>
+                    </div>
+                    <div class="category-card-content">
+                        <span class="category-count" data-phantom="category_count">24 Products</span>
+                        <h3 class="category-name">Men</h3>
+                        <span class="category-cta">Shop Men <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                
+                <a href="shop.html" class="category-card" data-tilt data-reveal-item>
+                    <div class="category-card-bg">
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Women's Collection" data-phantom-alt="category_women">
+                        <div class="category-card-overlay"></div>
+                    </div>
+                    <div class="category-card-content">
+                        <span class="category-count" data-phantom="category_count">18 Products</span>
+                        <h3 class="category-name">Women</h3>
+                        <span class="category-cta">Shop Women <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                
+                <a href="shop.html" class="category-card category-card--accent" data-tilt data-reveal-item>
+                    <div class="category-card-bg">
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Toys Collection" data-phantom-alt="category_toys">
+                        <div class="category-card-overlay"></div>
+                    </div>
+                    <div class="category-card-content">
+                        <span class="category-count" data-phantom="category_count">12 Products</span>
+                        <h3 class="category-name">Toys</h3>
+                        <span class="category-cta">Shop Toys <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                
+                <a href="shop.html" class="category-card" data-tilt data-reveal-item>
+                    <div class="category-card-bg">
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="New Arrivals" data-phantom-alt="category_new">
+                        <div class="category-card-overlay"></div>
+                    </div>
+                    <div class="category-card-content">
+                        <span class="category-count" data-phantom="category_count">Just Dropped</span>
+                        <h3 class="category-name">New Arrivals</h3>
+                        <span class="category-cta">Shop Now <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         5. BESTSELLERS
+         ═══════════════════════════════════════════════════════ -->
+    <section class="bestsellers" id="bestsellers">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label" data-phantom="section_label" data-motion-text="words">Bestsellers</span>
+                <h2 class="section-title" data-phantom="section_title" data-motion-text="words">Most Loved</h2>
+                <p class="section-subtitle" data-phantom="section_subtitle" data-motion-text="lines">The shoes everyone's talking about. Tried, tested, and obsessed over.</p>
+            </div>
+            
+            <div class="products-grid" data-phantom-products="featured" data-reveal-group>
+                <!-- Product 1 -->
+                <div class="product-card" data-tilt data-reveal-item>
+                    <div class="product-image" data-image-zoom>
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-alt="product_1">
+                        <span class="product-badge">Bestseller</span>
+                        <div class="product-actions">
+                            <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
+                            <button class="product-action-btn" aria-label="Quick view"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>(128)</span>
+                        </div>
+                        <h3 class="product-name">AETHER Void Runner</h3>
+                        <p class="product-tagline">Carbon fiber · 40mm cushion</p>
+                        <div class="product-price-row">
+                            <span class="product-price">$449</span>
+                            <a href="product-detail.html" class="btn btn-sm btn-primary" data-magnetic="0.12">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card" data-tilt data-reveal-item>
+                    <div class="product-image" data-image-zoom>
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-alt="product_2">
+                        <span class="product-badge badge-new">New</span>
+                        <div class="product-actions">
+                            <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
+                            <button class="product-action-btn" aria-label="Quick view"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>(86)</span>
+                        </div>
+                        <h3 class="product-name">AETHER Cloud Stride</h3>
+                        <p class="product-tagline">Ultra-light · Zero gravity</p>
+                        <div class="product-price-row">
+                            <span class="product-price">$99</span>
+                            <a href="product-detail.html" class="btn btn-sm btn-primary" data-magnetic="0.12">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card" data-tilt data-reveal-item>
+                    <div class="product-image" data-image-zoom>
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-alt="product_3">
+                        <span class="product-badge badge-limited">Limited</span>
+                        <div class="product-actions">
+                            <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
+                            <button class="product-action-btn" aria-label="Quick view"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>(64)</span>
+                        </div>
+                        <h3 class="product-name">AETHER Midnight</h3>
+                        <p class="product-tagline">Stealth black · Reflective</p>
+                        <div class="product-price-row">
+                            <span class="product-price">$479</span>
+                            <a href="product-detail.html" class="btn btn-sm btn-primary" data-magnetic="0.12">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card" data-tilt data-reveal-item>
+                    <div class="product-image" data-image-zoom>
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Aero Sprint" data-phantom-alt="product_4">
+                        <div class="product-actions">
+                            <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
+                            <button class="product-action-btn" aria-label="Quick view"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>(42)</span>
+                        </div>
+                        <h3 class="product-name">AETHER Aero Sprint</h3>
+                        <p class="product-tagline">Race-ready · Featherweight</p>
+                        <div class="product-price-row">
+                            <span class="product-price">$69</span>
+                            <a href="product-detail.html" class="btn btn-sm btn-primary" data-magnetic="0.12">Add to Cart</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-cta">
+                <a href="shop.html" class="btn btn-outline btn-lg" data-magnetic="0.12">View All Products <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         6. REVIEWS
+         ═══════════════════════════════════════════════════════ -->
+    <section class="reviews" id="reviews">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label" data-phantom="section_label" data-motion-text="words">Reviews</span>
+                <h2 class="section-title" data-phantom="section_title" data-motion-text="words">What Athletes Say</h2>
+                <div class="reviews-summary">
+                    <div class="reviews-score">
+                        <span class="score-number" data-phantom="reviews_score">4.9</span>
+                        <div class="score-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="score-count">Based on 312 reviews</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="swiper reviews-swiper">
+                <div class="swiper-wrapper">
+                    <!-- Review 1 -->
+                    <div class="swiper-slide">
+                        <div class="review-card" data-tilt>
+                            <div class="review-header">
+                                <div class="review-avatar">MC</div>
+                                <div class="review-meta">
+                                    <strong class="review-author">Marcus Chen</strong>
+                                    <span class="review-role">Professional Runner</span>
+                                </div>
+                                <div class="review-verified"><i class="fas fa-check-circle"></i> Verified</div>
+                            </div>
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h4 class="review-title">Game changer for marathon training</h4>
+                            <p class="review-text">"The carbon fiber plate gives insane energy return. I shaved 3 minutes off my half marathon time within the first month. The void cushioning makes it feel like you're running on clouds."</p>
+                            <span class="review-date">2 weeks ago</span>
+                        </div>
+                    </div>
+                    <!-- Review 2 -->
+                    <div class="swiper-slide">
+                        <div class="review-card" data-tilt>
+                            <div class="review-header">
+                                <div class="review-avatar">SK</div>
+                                <div class="review-meta">
+                                    <strong class="review-author">Sarah Kim</strong>
+                                    <span class="review-role">Sneaker Collector</span>
+                                </div>
+                                <div class="review-verified"><i class="fas fa-check-circle"></i> Verified</div>
+                            </div>
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h4 class="review-title">Premium feel from box to street</h4>
+                            <p class="review-text">"The design is unlike anything I've seen. The unboxing experience alone is worth it. These are艺术品 — functional art. Get compliments every time I wear them."</p>
+                            <span class="review-date">1 month ago</span>
+                        </div>
+                    </div>
+                    <!-- Review 3 -->
+                    <div class="swiper-slide">
+                        <div class="review-card" data-tilt>
+                            <div class="review-header">
+                                <div class="review-avatar">JW</div>
+                                <div class="review-meta">
+                                    <strong class="review-author">James Wright</strong>
+                                    <span class="review-role">Marathon Coach</span>
+                                </div>
+                                <div class="review-verified"><i class="fas fa-check-circle"></i> Verified</div>
+                            </div>
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h4 class="review-title">My athletes love these</h4>
+                            <p class="review-text">"I've put all my competitive runners in AETHER. The performance difference is measurable. Lightweight, responsive, and the adaptive fit system means zero hot spots during long runs."</p>
+                            <span class="review-date">3 weeks ago</span>
+                        </div>
+                    </div>
+                    <!-- Review 4 -->
+                    <div class="swiper-slide">
+                        <div class="review-card" data-tilt>
+                            <div class="review-header">
+                                <div class="review-avatar">AL</div>
+                                <div class="review-meta">
+                                    <strong class="review-author">Aisha Lawson</strong>
+                                    <span class="review-role">Fitness Enthusiast</span>
+                                </div>
+                                <div class="review-verified"><i class="fas fa-check-circle"></i> Verified</div>
+                            </div>
+                            <div class="review-stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <h4 class="review-title">Best running shoe I've owned</h4>
+                            <p class="review-text">"From daily jogs to race day — these handle everything. The breathability is incredible and they still look brand new after 200+ miles. Worth every penny."</p>
+                            <span class="review-date">5 days ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="reviews-pagination"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         7. FAQ
+         ═══════════════════════════════════════════════════════ -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label" data-phantom="section_label" data-motion-text="words">FAQ</span>
+                <h2 class="section-title" data-phantom="section_title" data-motion-text="words">Got Questions?</h2>
+                <p class="section-subtitle" data-phantom="section_subtitle" data-motion-text="lines">Everything you need to know about AETHER.</p>
+            </div>
+            
+            <div class="faq-grid">
+                <div class="faq-column">
+                    <div class="faq-item active">
+                        <button class="faq-question">
+                            <span>What makes AETHER different?</span>
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>AETHER combines carbon fiber plate technology with our proprietary Void Air cushioning system. Every shoe is engineered with aerospace-grade materials, delivering 40% more energy return than traditional running shoes while weighing only 280g.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>What is the return policy?</span>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>We offer a 30-day no-questions-asked return policy. If you're not satisfied with your AETHER shoes, return them in original condition for a full refund. We also cover return shipping on all orders.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>How do I find my size?</span>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Each product page includes our interactive size guide. We recommend measuring your foot length and comparing it to our chart. Our adaptive lacing system accommodates a range of fits within each size.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-column">
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>How long does shipping take?</span>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Standard shipping is free on orders over $200 and takes 3-5 business days. Express shipping (1-2 days) is available for 5. International shipping is available to 40+ countries with delivery in 5-10 business days.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Are AETHER shoes sustainable?</span>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Sustainability is core to AETHER. Our upper mesh uses 75% recycled materials, our packaging is 100% recyclable, and we offset 100% of carbon emissions from shipping. We're working toward a fully circular product by 2027.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Do you offer warranty?</span>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Every AETHER shoe comes with a 2-year performance warranty. If the cushioning, sole, or upper fails under normal use within 24 months, we'll replace them free of charge. No questions asked.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-cta">
+                <p>Still have questions?</p>
+                <a href="contact.html" class="btn btn-outline" data-magnetic="0.12">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NEWSLETTER
+         ═══════════════════════════════════════════════════════ -->
+
+    <section class="newsletter-section" id="newsletter">
+        <div class="newsletter-glow" aria-hidden="true"></div>
+        <div class="container">
+            <div class="newsletter-inner">
+                <span class="section-label" data-phantom="section_label" data-motion-text="words">Stay Connected</span>
+                <h2 class="newsletter-title" data-phantom="section_title" data-motion-text="words">JOIN THE VOID</h2>
+                <p class="newsletter-text" data-phantom="section_subtitle">Subscribe for exclusive drops, early access, and AETHER news.</p>
+                <form class="newsletter-form" id="newsletterForm">
+                    <div class="newsletter-input-wrap">
+                        <input type="email" placeholder="Enter your email" required class="newsletter-input" id="newsletterEmail" aria-label="Email address">
+                        <button type="submit" class="newsletter-btn">
+                            <span class="newsletter-btn-text">Subscribe</span>
+                            <i class="fas fa-arrow-right newsletter-btn-icon"></i>
+                        </button>
+                    </div>
+                    <p class="newsletter-note"><i class="fas fa-lock"></i> No spam. Unsubscribe anytime.</p>
+                </form>
+                <div class="newsletter-success" id="newsletterSuccess">
+                    <i class="fas fa-check-circle"></i>
+                    <p>Welcome to the void. Check your inbox.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         8. FOOTER
+         ═══════════════════════════════════════════════════════ -->
+    </main>
+    <footer class="footer" id="footer" role="contentinfo" aria-label="Site footer" data-phantom-menu="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">AETHER</a>
+                    <p class="footer-tagline">Step Into The Void</p>
+                    <div class="footer-social" aria-label="Social media links">
+                        <a href="https://instagram.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://twitter.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="https://tiktok.com/@aethershoes" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://youtube.com/@aethershoes" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-heading">Shop</h4>
+                    <ul>
+                        <li><a href="shop.html">Men</a></li>
+                        <li><a href="shop.html">Women</a></li>
+                        <li><a href="shop.html">Kids</a></li>
+                        <li><a href="shop.html">New Arrivals</a></li>
+                        <li><a href="shop.html">Bestsellers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-heading">Support</h4>
+                    <ul>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="faq.html#shipping">Shipping Info</a></li>
+                        <li><a href="faq.html#returns">Returns & Exchanges</a></li>
+                        <li><a href="product-detail.html#size-guide">Size Guide</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="about.html#careers">Careers</a></li>
+                        <li><a href="about.html#press">Press</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-newsletter">
+                    <h4 class="footer-heading">Stay in the Loop</h4>
+                    <p>Get exclusive drops, early access, and AETHER news.</p>
+                    <form class="footer-newsletter-form" aria-label="Newsletter subscription" id="footerNewsletterForm">
+                        <input type="email" placeholder="Your email" required aria-label="Email address">
+                        <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <span>&copy; 2026 AETHER. All Rights Reserved.</span>
+                    <a href="privacy-policy.html">Privacy</a>
+                    <a href="term-of-use.html">Terms</a>
+                    <a href="cookie-policy.html">Cookies</a>
+                </div>
+                <div class="footer-payments">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                    <i class="fab fa-apple-pay"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+</div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Swiper 11 -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- GSAP 3.12.5 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+    <!-- Custom JS -->
+    
+    <script src="assets/js/lenis-scroll.js"></script>
+    <script src="assets/js/animations.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/phantom-data.js"></script>
+    <script src="assets/js/phantom-bridge.js"></script>
+</body>
+</html>

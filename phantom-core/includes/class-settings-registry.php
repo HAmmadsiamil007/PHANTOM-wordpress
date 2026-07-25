@@ -1033,7 +1033,7 @@ class Settings_Registry {
 			'home_banner_heading'     => array(
 				'section'   => 'hero',
 				'type'      => 'text',
-				'default'   => 'Claudia Kids Collection',
+				'default'   => 'AETHER Collection',
 				'sanitize'  => 'sanitize_textarea_field',
 				'label'     => __( 'Hero Heading', 'phantom-core' ),
 				'transport' => 'postMessage',
@@ -1144,39 +1144,27 @@ class Settings_Registry {
 				'type'     => 'repeater',
 				'default'  => array(
 					array(
-						'title'    => 'Kids Toys',
+						'title'    => 'Men',
 						'image'    => '/pc-img1.png',
 						'bg_class' => 'bg-light1',
 						'url'      => '/shop/',
 					),
 					array(
-						'title'    => 'Clothes',
+						'title'    => 'Women',
 						'image'    => '/pc-img2.png',
 						'bg_class' => 'bg-light2',
 						'url'      => '/shop/',
 					),
 					array(
-						'title'    => 'Girls',
+						'title'    => 'Toys',
 						'image'    => '/pc-img3.png',
 						'bg_class' => 'bg-light3',
 						'url'      => '/shop/',
 					),
 					array(
-						'title'    => 'Accessories',
+						'title'    => 'New Arrivals',
 						'image'    => '/pc-img4.png',
 						'bg_class' => 'bg-light4',
-						'url'      => '/shop/',
-					),
-					array(
-						'title'    => 'New Born',
-						'image'    => '/pc-img5.png',
-						'bg_class' => 'bg-light5',
-						'url'      => '/shop/',
-					),
-					array(
-						'title'    => 'Boys',
-						'image'    => '/pc-img6.png',
-						'bg_class' => 'bg-light6',
 						'url'      => '/shop/',
 					),
 				),
@@ -1432,7 +1420,7 @@ class Settings_Registry {
 			'home_instagram_heading'         => array(
 				'section'  => 'home_sections',
 				'type'     => 'text',
-				'default'  => '@claudia instagram',
+				'default'  => '@aethershoes',
 				'sanitize' => 'sanitize_textarea_field',
 				'label'    => __( 'Instagram Heading', 'phantom-core' ),
 			),
@@ -2847,7 +2835,7 @@ class Settings_Registry {
 			'footer_copyright'            => array(
 				'section'  => 'footer',
 				'type'     => 'text',
-				'default'  => 'Copyright (c) %d claudia.com All rights reserved.',
+				'default'  => 'Copyright (c) %d aethershoes.com All rights reserved.',
 				'sanitize' => 'sanitize_textarea_field',
 				'label'    => __( 'Copyright Text', 'phantom-core' ),
 			),
@@ -2868,7 +2856,7 @@ class Settings_Registry {
 			'footer_email'                => array(
 				'section'  => 'footer',
 				'type'     => 'string',
-				'default'  => 'hello@claudia.com',
+				'default'  => 'hello@aethershoes.com',
 				'sanitize' => 'sanitize_email',
 				'label'    => __( 'Email', 'phantom-core' ),
 			),
@@ -4708,7 +4696,7 @@ class Settings_Registry {
 			'about_about_text_1'      => array(
 				'section'  => 'about_page',
 				'type'     => 'text',
-				'default'  => 'At Claudia Kids, we believe every child\'s world is full of wonder and imagination.',
+				'default'  => 'At AETHER, we believe every child\'s world is full of wonder and imagination.',
 				'sanitize' => 'sanitize_textarea_field',
 				'label'    => __( 'About Text 1', 'phantom-core' ),
 			),
@@ -4922,7 +4910,7 @@ class Settings_Registry {
 			'contact_email_addresses' => array(
 				'section'  => 'contact_page',
 				'type'     => 'array',
-				'default'  => array( 'info@claudia.com', 'claudia@gmail.com' ),
+				'default'  => array( 'info@aethershoes.com', 'support@aethershoes.com' ),
 				'sanitize' => function ( $v ) {
 					return $v; },
 				'label'    => __( 'Email Addresses', 'phantom-core' ),
