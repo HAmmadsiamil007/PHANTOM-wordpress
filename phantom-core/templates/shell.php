@@ -10,14 +10,6 @@ declare(strict_types=1);
 
 namespace PhantomCore;
 
-use PhantomCore\Adapters\Product_Adapter;
-use PhantomCore\Adapters\Category_Adapter;
-use PhantomCore\Adapters\Menu_Adapter;
-use PhantomCore\Adapters\Hero_Adapter;
-use PhantomCore\Renderer\Product_Card;
-use PhantomCore\Renderer\Category_Card;
-use PhantomCore\Renderer\Navigation;
-use PhantomCore\Renderer\Hero;
 use PhantomCore\Engine\Render_Engine;
 
 defined('ABSPATH') || exit;
