@@ -42,6 +42,10 @@ class Settings_Registry {
 			return null;
 		}
 		$entry = $this->entries[ $key ];
+		$bulk  = get_option( 'phantom_options', array() );
+		if ( array_key_exists( $key, $bulk ) ) {
+			return $bulk[ $key ];
+		}
 		$value = get_option( 'phantom_' . $key, '__not_set__' );
 		if ( '__not_set__' === $value ) {
 			return $entry['default'] ?? null;
@@ -49,12 +53,12 @@ class Settings_Registry {
 		return $value;
 	}
 
-	public function set( string $key, $value ): void {
+	public function set( string $key, $value ): bool {
 		if ( ! $this->registered ) {
 			$this->register();
 		}
 		if ( ! isset( $this->entries[ $key ] ) ) {
-			return;
+			return false;
 		}
 		$entry   = $this->entries[ $key ];
 		$sanitize = $entry['sanitize'] ?? null;
@@ -63,7 +67,7 @@ class Settings_Registry {
 		} elseif ( is_callable( $sanitize ) ) {
 			$value = $sanitize( $value );
 		}
-		update_option( 'phantom_' . $key, $value, false );
+		return update_option( 'phantom_' . $key, $value, false );
 	}
 
 	public function get_schema( string $key ): ?array {
@@ -79,52 +83,73 @@ class Settings_Registry {
 
 
 	protected function define_entries(): array {
-		return array_merge(
-			$this->section_branding(),
-			$this->section_header(),
-			$this->section_topbar(),
-			$this->section_navigation(),
-			$this->section_hero(),
-			$this->section_collections(),
-			$this->section_home_sections(),
-			$this->section_product_cards(),
-			$this->section_shop_page(),
-			$this->section_product_page(),
-			$this->section_woocommerce(),
-			$this->section_blog(),
-			$this->section_footer(),
-			$this->section_typography(),
-			$this->section_colors(),
-			$this->section_buttons(),
-			$this->section_forms(),
-			$this->section_spacing(),
-			$this->section_layout(),
-			$this->section_responsive(),
-			$this->section_animations(),
-			$this->section_effects_3d(),
-			$this->section_search(),
-			$this->section_performance(),
-			$this->section_seo(),
-			$this->section_accessibility(),
-			$this->section_integrations(),
-			$this->section_custom_code(),
-			$this->section_import_export(),
-			$this->section_about_page(),
-			$this->section_contact_page(),
-			$this->section_faq_page(),
-			$this->section_coming_soon(),
-			$this->section_error_404(),
-			$this->section_login_page(),
-			$this->section_register_page(),
-			$this->section_portfolio(),
-			$this->section_thank_you(),
-			$this->section_load_more(),
-			$this->section_privacy(),
-			$this->section_terms(),
-			$this->section_team(),
-			$this->section_testimonials(),
-			$this->section_announcement_bar()
+		$sections = array(
+			'branding'           => $this->section_branding(),
+			'header'             => $this->section_header(),
+			'topbar'             => $this->section_topbar(),
+			'navigation'         => $this->section_navigation(),
+			'hero'               => $this->section_hero(),
+			'collections'        => $this->section_collections(),
+			'home_sections'      => $this->section_home_sections(),
+			'product_cards'      => $this->section_product_cards(),
+			'shop_page'          => $this->section_shop_page(),
+			'product_page'       => $this->section_product_page(),
+			'woocommerce'        => $this->section_woocommerce(),
+			'blog'               => $this->section_blog(),
+			'footer'             => $this->section_footer(),
+			'typography'         => $this->section_typography(),
+			'colors'             => $this->section_colors(),
+			'buttons'            => $this->section_buttons(),
+			'forms'              => $this->section_forms(),
+			'spacing'            => $this->section_spacing(),
+			'layout'             => $this->section_layout(),
+			'responsive'         => $this->section_responsive(),
+			'animations'         => $this->section_animations(),
+			'effects_3d'         => $this->section_effects_3d(),
+			'search'             => $this->section_search(),
+			'performance'        => $this->section_performance(),
+			'seo'                => $this->section_seo(),
+			'accessibility'      => $this->section_accessibility(),
+			'integrations'       => $this->section_integrations(),
+			'custom_code'        => $this->section_custom_code(),
+			'import_export'      => $this->section_import_export(),
+			'about_page'         => $this->section_about_page(),
+			'contact_page'       => $this->section_contact_page(),
+			'faq_page'           => $this->section_faq_page(),
+			'coming_soon'        => $this->section_coming_soon(),
+			'error_404'          => $this->section_error_404(),
+			'login_page'         => $this->section_login_page(),
+			'register_page'      => $this->section_register_page(),
+			'portfolio'          => $this->section_portfolio(),
+			'thank_you'          => $this->section_thank_you(),
+			'load_more'          => $this->section_load_more(),
+			'privacy'            => $this->section_privacy(),
+			'terms'              => $this->section_terms(),
+			'team'               => $this->section_team(),
+			'testimonials'       => $this->section_testimonials(),
+			'announcement_bar'   => $this->section_announcement_bar(),
 		);
+		$keys_seen = array();
+		$merged    = array();
+		foreach ( $sections as $name => $section_entries ) {
+			foreach ( $section_entries as $key => $entry ) {
+				if ( isset( $keys_seen[ $key ] ) ) {
+					_doing_it_wrong(
+						__METHOD__,
+						sprintf(
+							'Duplicate setting key "%1$s" in section "%2$s" (first defined in "%3$s"). Later entry overrides earlier one.',
+							esc_html( $key ),
+							esc_html( $name ),
+							esc_html( $keys_seen[ $key ] )
+						),
+						'1.0.0'
+					);
+				}
+				$keys_seen[ $key ] = $name;
+				$merged[ $key ]    = $entry;
+			}
+		}
+		return $merged;
 	}
 
 	public function get_string( string $key, string $default = '' ): string {
@@ -327,7 +352,22 @@ class Settings_Registry {
 			'color_gradient_start'        => '--gradient-start--color',
 			'color_gradient_end'          => '--gradient-end--color',
 			'color_featured_badge'        => '--featured-badge--color',
+		'hero_fit'                     => '--hero-object-fit',
+		'hero_position'                => '--hero-object-position',
+		'hero_overlay_opacity'         => '--hero-overlay-opacity',
+		'hero_tablet_breakpoint'       => '--hero-tablet-bp',
+		'hero_mobile_breakpoint'       => '--hero-mobile-bp',
 		'button_font_size'             => '--button-font-size',
+			'color_card_bg'                => '--product-card-bg',
+			'color_card_text'              => '--product-card-text',
+			'color_card_border'            => '--product-card-border',
+			'color_button_bg'              => '--product-button-bg',
+			'color_button_text'            => '--product-button-text',
+			'color_button_hover_bg'        => '--product-button-hover-bg',
+			'color_badge_sale_bg'          => '--product-badge-sale-bg',
+			'color_badge_sale_text'        => '--product-badge-sale-text',
+			'color_badge_new_bg'           => '--product-badge-new-bg',
+			'color_badge_new_text'         => '--product-badge-new-text',
 		);
 	}
 
@@ -502,7 +542,7 @@ class Settings_Registry {
 					array( 'key' => 'display_header', 'value' => true ),
 				),
 				'partial'      => array(
-					'selector'        => 'header.site-header',
+					'selector'        => 'header.header',
 					'render_callback' => 'phantom_render_header_partial',
 				),
 			),
@@ -829,7 +869,7 @@ class Settings_Registry {
 				'sanitize' => 'sanitize_text_field',
 				'label'    => __( 'Menu Location', 'phantom-core' ),
 				'partial'  => array(
-					'selector'        => 'nav.site-navigation, .main-navigation',
+					'selector'        => 'nav.main-nav',
 					'render_callback' => 'phantom_render_nav_partial',
 				),
 			),
@@ -1086,12 +1126,115 @@ class Settings_Registry {
 				'label'     => __( 'Hero Image 2', 'phantom-core' ),
 				'transport' => 'postMessage',
 			),
-			'hero_banner_image'   => array(
+		'hero_banner_image'   => array(
+			'section'  => 'hero',
+			'type'     => 'image',
+			'default'  => '',
+			'sanitize' => 'esc_url_raw',
+			'label'    => __( 'Hero Banner Image', 'phantom-core' ),
+			'partial'  => array(
+				'selector'        => '[data-hero-area]',
+				'render_callback' => 'phantom_render_hero_media_partial',
+			),
+		),
+		'hero_image_tablet'    => array(
+			'section'  => 'hero',
+			'type'     => 'image',
+			'default'  => '',
+			'sanitize' => 'esc_url_raw',
+			'label'    => __( 'Tablet Hero Image', 'phantom-core' ),
+			'partial'  => array(
+				'selector'        => '[data-hero-area]',
+				'render_callback' => 'phantom_render_hero_media_partial',
+			),
+		),
+		'hero_image_mobile'    => array(
+			'section'  => 'hero',
+			'type'     => 'image',
+			'default'  => '',
+			'sanitize' => 'esc_url_raw',
+			'label'    => __( 'Mobile Hero Image', 'phantom-core' ),
+			'partial'  => array(
+				'selector'        => '[data-hero-area]',
+				'render_callback' => 'phantom_render_hero_media_partial',
+			),
+		),
+			'hero_enable_responsive'   => array(
 				'section'  => 'hero',
-				'type'     => 'image',
-				'default'  => '',
-				'sanitize' => 'esc_url_raw',
-				'label'    => __( 'Hero Banner Image', 'phantom-core' ),
+				'type'     => 'ast-toggle',
+				'default'  => 1,
+				'sanitize' => 'absint',
+				'label'    => __( 'Enable Responsive Images', 'phantom-core' ),
+			),
+			'hero_tablet_breakpoint'   => array(
+				'section'  => 'hero',
+				'type'     => 'number',
+				'default'  => 1024,
+				'sanitize' => 'absint',
+				'label'    => __( 'Tablet Breakpoint (px)', 'phantom-core' ),
+				'min'      => 544,
+				'max'      => 1920,
+				'step'     => 1,
+			),
+			'hero_mobile_breakpoint'   => array(
+				'section'  => 'hero',
+				'type'     => 'number',
+				'default'  => 768,
+				'sanitize' => 'absint',
+				'label'    => __( 'Mobile Breakpoint (px)', 'phantom-core' ),
+				'min'      => 320,
+				'max'      => 1024,
+				'step'     => 1,
+			),
+			'hero_loading'            => array(
+				'section'  => 'hero',
+				'type'     => 'ast-select',
+				'default'  => 'auto',
+				'options'  => array(
+					'auto'  => 'Auto',
+					'eager' => 'Eager',
+					'lazy'  => 'Lazy',
+				),
+				'sanitize' => 'sanitize_text_field',
+				'label'    => __( 'Image Loading', 'phantom-core' ),
+			),
+			'hero_fit'                => array(
+				'section'  => 'hero',
+				'type'     => 'ast-select',
+				'default'  => 'cover',
+				'options'  => array(
+					'cover'      => 'Cover',
+					'contain'    => 'Contain',
+					'fill'       => 'Fill',
+					'scale-down' => 'Scale Down',
+				),
+				'sanitize' => 'sanitize_text_field',
+				'label'    => __( 'Hero Fit', 'phantom-core' ),
+			),
+			'hero_position'           => array(
+				'section'  => 'hero',
+				'type'     => 'ast-select',
+				'default'  => 'center',
+				'options'  => array(
+					'center'      => 'Center',
+					'top'         => 'Top',
+					'bottom'      => 'Bottom',
+					'left'        => 'Left',
+					'right'       => 'Right',
+					'custom'      => 'Custom',
+				),
+				'sanitize' => 'sanitize_text_field',
+				'label'    => __( 'Hero Position', 'phantom-core' ),
+			),
+			'hero_overlay_opacity'    => array(
+				'section'  => 'hero',
+				'type'     => 'number',
+				'default'  => 50,
+				'sanitize' => 'absint',
+				'label'    => __( 'Overlay Opacity (%)', 'phantom-core' ),
+				'min'      => 0,
+				'max'      => 100,
+				'step'     => 5,
 			),
 			'hero_overlay_enable'     => array(
 				'section'  => 'hero',
@@ -1156,13 +1299,13 @@ class Settings_Registry {
 						'url'      => '/shop/',
 					),
 					array(
-						'title'    => 'Toys',
+						'title'    => 'New Arrivals',
 						'image'    => '/pc-img3.png',
 						'bg_class' => 'bg-light3',
 						'url'      => '/shop/',
 					),
 					array(
-						'title'    => 'New Arrivals',
+						'title'    => 'Toys',
 						'image'    => '/pc-img4.png',
 						'bg_class' => 'bg-light4',
 						'url'      => '/shop/',
@@ -1739,7 +1882,7 @@ class Settings_Registry {
 			'shop_enable'            => array(
 				'section'  => 'shop_page',
 				'type'     => 'ast-toggle',
-				'default'  => true,
+				'default'  => 1,
 				'sanitize' => 'absint',
 				'label'    => __( 'Enable Shop', 'phantom-core' ),
 			),
@@ -1828,7 +1971,7 @@ class Settings_Registry {
 				'sanitize' => 'sanitize_text_field',
 				'label'    => __( 'Product Grid Layout', 'phantom-core' ),
 				'partial'  => array(
-					'selector'        => '.products-container',
+					'selector'        => 'div.shop-grid',
 					'render_callback' => 'phantom_render_search_partial',
 				),
 			),
@@ -2468,8 +2611,8 @@ class Settings_Registry {
 				'sanitize'     => 'sanitize_text_field',
 				'label'        => __( 'Blog Layout', 'phantom-core' ),
 				'partial'      => array(
-					'selector' => '.blog-container',
-					'render_callback' => 'phantom_render_blog_partial',
+'selector' => 'div.blog-grid',
+		'render_callback' => 'phantom_render_blog_partial',
 				),
 			),
 			'blog_show_sidebar'                     => array(
@@ -2821,7 +2964,7 @@ class Settings_Registry {
 			'footer_logo'                 => array(
 				'section'  => 'footer',
 				'type'     => 'string',
-				'default'  => '/wp-content/plugins/phantom-core/frontend/assets/images/footer-logo.png',
+				'default'  => PHANTOM_CORE_URL . 'frontend/assets/images/footer-logo.png',
 				'sanitize' => 'esc_url_raw',
 				'label'    => __( 'Footer Logo', 'phantom-core' ),
 			),
@@ -2842,7 +2985,7 @@ class Settings_Registry {
 			'footer_payment_cards'        => array(
 				'section'  => 'footer',
 				'type'     => 'string',
-				'default'  => '/wp-content/plugins/phantom-core/frontend/assets/images/payment-cards.png',
+				'default'  => PHANTOM_CORE_URL . 'frontend/assets/images/payment-cards.png',
 				'sanitize' => 'esc_url_raw',
 				'label'    => __( 'Payment Cards Image', 'phantom-core' ),
 			),
@@ -3075,8 +3218,8 @@ class Settings_Registry {
 					array( 'key' => 'display_footer', 'value' => true ),
 				),
 				'partial'      => array(
-					'selector' => '.footer-content',
-					'render_callback' => 'phantom_render_footer_partial',
+'selector'        => 'footer.footer',
+		'render_callback' => 'phantom_render_footer_partial',
 				),
 			),
 		);
@@ -4182,7 +4325,8 @@ class Settings_Registry {
 			'enable_search'       => array(
 				'label'    => __( 'Enable Search', 'phantom-core' ),
 				'type'     => 'bool',
-				'default'  => true,
+				'default'  => 1,
+				'sanitize' => 'absint',
 				'section'  => 'search',
 				'priority' => 1,
 			),
@@ -4218,6 +4362,7 @@ class Settings_Registry {
 				'section'  => 'search',
 				'type'     => 'multiselect',
 				'default'  => array( 'post', 'product' ),
+				'sanitize' => 'sanitize_textarea_field',
 				'label'    => __( 'Search Post Types', 'phantom-core' ),
 			),
 			'search_per_page'       => array(
@@ -4245,7 +4390,7 @@ class Settings_Registry {
 				'sanitize' => 'sanitize_text_field',
 				'label'    => __( 'Results Layout', 'phantom-core' ),
 				'partial'  => array(
-					'selector'        => '.search-results-container',
+					'selector'        => 'div.shop-grid',
 					'render_callback' => 'phantom_render_search_partial',
 				),
 			),
@@ -4356,7 +4501,8 @@ class Settings_Registry {
 			'cache_generated_css'            => array(
 				'label'       => __( 'Cache CSS to Files', 'phantom-core' ),
 				'type'        => 'bool',
-				'default'     => false,
+				'default'     => 0,
+				'sanitize'    => 'absint',
 				'section'     => 'performance',
 				'priority'    => 100,
 			),
@@ -5007,7 +5153,7 @@ class Settings_Registry {
 			'coming_soon_logo'        => array(
 				'section'  => 'coming_soon',
 				'type'     => 'string',
-				'default'  => '/wp-content/plugins/phantom-core/frontend/assets/images/large-logo.png',
+				'default'  => PHANTOM_CORE_URL . 'frontend/assets/images/large-logo.png',
 				'sanitize' => 'esc_url_raw',
 				'label'    => __( 'Logo', 'phantom-core' ),
 			),

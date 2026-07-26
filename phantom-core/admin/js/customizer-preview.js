@@ -46,8 +46,9 @@
       var cssVar = PhantomCustomizer.cssVarMap[settingKey];
       var needsPx = Array.isArray(PhantomCustomizer.cssVarPxKeys) && PhantomCustomizer.cssVarPxKeys.indexOf(settingKey) !== -1;
       var isResponsive = PhantomCustomizer.responsiveKeys && PhantomCustomizer.responsiveKeys.indexOf(settingKey) !== -1;
-      wp.customize(settingId, function (value) {
-        value.bind(function (newval) {
+      var setting = wp.customize(settingId);
+      if (setting) {
+        setting.bind(function (newval) {
           if (isResponsive) {
             updateResponsiveCss(settingKey, cssVar, newval);
             return;
@@ -55,31 +56,23 @@
           if (needsPx && /^\d+(\.\d+)?$/.test(newval)) newval += 'px';
           document.documentElement.style.setProperty(cssVar, newval);
         });
-      });
+      }
     });
   }
-
-  // Header sticky — class toggle
-  wp.customize('phantom_header_sticky', function (value) {
-    value.bind(function (newval) {
-      var h = document.querySelector('header');
-      if (h) h.classList.toggle('sticky-header', !!newval);
-    });
-  });
 
   // Site title
   wp.customize('blogname', function (value) {
     value.bind(function (newval) {
-      document.querySelectorAll('.site-title, [data-phantom="site_name"]').forEach(function (el) {
+      document.querySelectorAll('.brand-logo, [data-phantom="site_name"]').forEach(function (el) {
         el.textContent = newval;
       });
     });
   });
 
-  // Hero Banner - Heading
+  // Hero Banner - Heading (accent text inside h1)
   wp.customize('phantom_home_banner_heading', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.banner-span');
+      var el = document.querySelector('.hero-headline .hero-headline-accent');
       if (el) el.textContent = newval;
     });
   });
@@ -87,14 +80,16 @@
   // Hero Banner - Title (h1)
   wp.customize('phantom_home_banner_title', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.banner-con h1');
+      var el = document.querySelector('h1.hero-headline');
       if (el) {
+        var accent = el.querySelector('.hero-headline-accent');
         el.textContent = '';
         var lines = (newval || '').split('\n');
         for (var i = 0; i < lines.length; i++) {
           if (i > 0) el.appendChild(document.createElement('br'));
           el.appendChild(document.createTextNode(lines[i]));
         }
+        if (accent) el.appendChild(accent);
       }
     });
   });
@@ -102,7 +97,7 @@
   // Hero Banner - Description
   wp.customize('phantom_home_banner_description', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.banner-con .center-context p');
+      var el = document.querySelector('p.hero-subline');
       if (el) {
         el.textContent = '';
         var lines = (newval || '').split('\n');
@@ -114,10 +109,10 @@
     });
   });
 
-  // Hero Banner - Button Text
+  // Hero Banner - Button Text (primary CTA)
   wp.customize('phantom_home_banner_btn_text', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.banner-con .secondary_btn');
+      var el = document.querySelector('.hero-cta-group .btn-primary');
       if (el) {
         var icon = el.querySelector('i');
         el.textContent = '';
@@ -130,7 +125,7 @@
   // Hero Banner - Button URL
   wp.customize('phantom_home_banner_btn_url', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.banner-con .secondary_btn');
+      var el = document.querySelector('.hero-cta-group .btn-primary');
       if (el) el.href = newval;
     });
   });
@@ -138,7 +133,7 @@
   // Hero Banner - Image 1
   wp.customize('phantom_home_banner_img1', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.banner-img1');
+      var el = document.querySelector('.swiper-slide.hero-slide:first-child .hero-slide-bg img');
       if (el) el.src = newval;
     });
   });
@@ -146,7 +141,7 @@
   // Hero Banner - Image 2
   wp.customize('phantom_home_banner_img2', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.banner-img2');
+      var el = document.querySelector('.swiper-slide.hero-slide:last-child .hero-slide-bg img');
       if (el) el.src = newval;
     });
   });
@@ -154,22 +149,38 @@
   // Logos
   wp.customize('phantom_general_site_logo', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.navbar-brand img.logo, .header-logo img, img[data-phantom="site_logo"], figure.logo img');
-      if (el) el.src = newval;
+      var el = document.querySelector('.brand-logo img, img[data-phantom="site_logo"]');
+      if (el) {
+        el.src = newval;
+      } else {
+        var brand = document.querySelector('.brand-logo');
+        if (brand && brand.tagName === 'A' && !brand.querySelector('img')) {
+          brand.style.backgroundImage = 'url(' + newval + ')';
+          brand.style.backgroundSize = 'contain';
+          brand.style.backgroundRepeat = 'no-repeat';
+          brand.style.backgroundPosition = 'center';
+          brand.textContent = '';
+          brand.style.display = 'inline-block';
+        }
+      }
     });
   });
   wp.customize('phantom_footer_logo', function (value) {
     value.bind(function (newval) {
       var el = document.querySelector('.footer-logo img');
-      if (el) el.src = newval;
-    });
-  });
-
-  // Hero Banner Image
-  wp.customize('phantom_hero_banner_image', function (value) {
-    value.bind(function (newval) {
-      var el = document.querySelector('.banner-img1');
-      if (el) el.src = newval;
+      if (el) {
+        el.src = newval;
+      } else {
+        var brand = document.querySelector('a.footer-logo');
+        if (brand && !brand.querySelector('img')) {
+          brand.style.backgroundImage = 'url(' + newval + ')';
+          brand.style.backgroundSize = 'contain';
+          brand.style.backgroundRepeat = 'no-repeat';
+          brand.style.backgroundPosition = 'center';
+          brand.textContent = '';
+          brand.style.display = 'inline-block';
+        }
+      }
     });
   });
 
@@ -184,7 +195,7 @@
   // Footer - About Text
   wp.customize('phantom_footer_about_text', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.logo-content .text.text-size-14');
+      var el = document.querySelector('p.footer-tagline');
       if (el) {
         el.textContent = '';
         var lines = (newval || '').split('\n');
@@ -199,7 +210,7 @@
   // Footer - Address
   wp.customize('phantom_footer_address', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.icon ul.list-unstyled a.address, .icon ul.list-unstyled li:last-child a');
+      var el = document.querySelector('.footer-newsletter p, [data-phantom="footer_address"]');
       if (el) {
         el.textContent = '';
         var lines = (newval || '').split('\n');
@@ -214,7 +225,7 @@
   // Footer - Copyright
   wp.customize('phantom_footer_copyright', function (value) {
     value.bind(function (newval) {
-      var el = document.querySelector('.copyright .content p');
+      var el = document.querySelector('.footer-legal span:first-child');
       if (el) {
         el.textContent = '';
         var text = (newval || '').replace('%d', new Date().getFullYear());
@@ -224,6 +235,79 @@
           el.appendChild(document.createTextNode(lines[i]));
         }
       }
+    });
+  });
+
+  // ─── HERO RESPONSIVE MEDIA ───────────────────────────────
+
+  // Desktop Hero Image — update img src + bg image
+  wp.customize('phantom_hero_banner_image', function (value) {
+    value.bind(function (newval) {
+      var img = document.querySelector('[data-hero-area] img.hero-image, [data-phantom-hero-img]');
+      if (img) img.src = newval;
+      var bgEls = document.querySelectorAll('[data-phantom-bg="hero"]');
+      bgEls.forEach(function (el) {
+        el.style.backgroundImage = newval ? 'url("' + newval.replace(/[^a-zA-Z0-9\-._~:\/?#@!$&'(*+,;=%]/g, '') + '")' : '';
+      });
+    });
+  });
+
+  // Tablet Hero Image — update <source media="(max-width:1024px)">
+  wp.customize('phantom_hero_image_tablet', function (value) {
+    value.bind(function (newval) {
+      var source = document.querySelector('[data-hero-area] picture source[data-device="tablet"]');
+      if (source) {
+        if (newval) { source.srcset = newval; source.removeAttribute('disabled'); }
+        else { source.disabled = true; }
+      }
+    });
+  });
+
+  // Mobile Hero Image — update <source media="(max-width:768px)">
+  wp.customize('phantom_hero_image_mobile', function (value) {
+    value.bind(function (newval) {
+      var source = document.querySelector('[data-hero-area] picture source[data-device="mobile"]');
+      if (source) {
+        if (newval) { source.srcset = newval; source.removeAttribute('disabled'); }
+        else { source.disabled = true; }
+      }
+    });
+  });
+
+  // Image Loading
+  wp.customize('phantom_hero_loading', function (value) {
+    value.bind(function (newval) {
+      document.querySelectorAll('[data-hero-area] img.hero-image').forEach(function (el) {
+        el.loading = newval || 'auto';
+      });
+    });
+  });
+
+  // Hero Fit — CSS var
+  wp.customize('phantom_hero_fit', function (value) {
+    value.bind(function (newval) {
+      document.documentElement.style.setProperty('--hero-object-fit', newval || 'cover');
+    });
+  });
+
+  // Hero Position — CSS var + background position
+  wp.customize('phantom_hero_position', function (value) {
+    value.bind(function (newval) {
+      var pos = newval || 'center';
+      document.documentElement.style.setProperty('--hero-object-position', pos);
+      var bgPos = '50%';
+      if (pos === 'top') bgPos = '50% 0%';
+      else if (pos === 'bottom') bgPos = '50% 100%';
+      else if (pos === 'left') bgPos = '0% 50%';
+      else if (pos === 'right') bgPos = '100% 50%';
+      document.documentElement.style.setProperty('--hero-bg-position', bgPos);
+    });
+  });
+
+  // Overlay Opacity — CSS var
+  wp.customize('phantom_hero_overlay_opacity', function (value) {
+    value.bind(function (newval) {
+      document.documentElement.style.setProperty('--hero-overlay-opacity', (parseInt(newval, 10) || 0) + '%');
     });
   });
 

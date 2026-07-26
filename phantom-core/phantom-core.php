@@ -26,14 +26,6 @@ define( 'PHANTOM_CORE_FILE', __FILE__ );
 define( 'PHANTOM_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PHANTOM_CORE_URL', plugin_dir_url( __FILE__ ) );
 
-add_action( 'plugins_loaded', function (): void {
-	load_plugin_textdomain(
-		'phantom-core',
-		false,
-		dirname( plugin_basename( __FILE__ ) ) . '/languages'
-	);
-}, 1 );
-
 spl_autoload_register(
 	function ( string $class ): void {
 		$prefix = 'PhantomCore\\';
@@ -68,8 +60,9 @@ require_once PHANTOM_CORE_PATH . 'includes/class-customizer.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-custom-css.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-phantom-global-palette.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-phantom-version-compatibility.php';
-require_once PHANTOM_CORE_PATH . 'includes/class-fonts.php';
+// Must load before class-fonts.php (Fonts references Phantom_Font_Families)
 require_once PHANTOM_CORE_PATH . 'includes/class-phantom-font-families.php';
+require_once PHANTOM_CORE_PATH . 'includes/class-fonts.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-phantom-webfont-loader.php';
 require_once PHANTOM_CORE_PATH . 'includes/partial-renderers.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/colors.php';
@@ -80,7 +73,19 @@ require_once PHANTOM_CORE_PATH . 'includes/custom-css/layout.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/buttons.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/product.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/responsive.php';
+require_once PHANTOM_CORE_PATH . 'includes/custom-css/hero.php';
 require_once PHANTOM_CORE_PATH . 'admin/class-settings-page.php';
+
+load_plugin_textdomain(
+	'phantom-core',
+	false,
+	dirname( plugin_basename( __FILE__ ) ) . '/languages'
+);
+$td_locale = determine_locale();
+$td_mofile = PHANTOM_CORE_PATH . 'languages/phantom-core-' . $td_locale . '.mo';
+if ( file_exists( $td_mofile ) ) {
+	load_textdomain( 'phantom-core', $td_mofile );
+}
 
 $rest_path = PHANTOM_CORE_PATH . 'includes/class-rest-controller.php';
 if ( file_exists( $rest_path ) ) {
@@ -203,7 +208,7 @@ function phantom_enqueue_google_fonts(): void {
 
 	$fonts = array_unique( array_filter( $fonts ) );
 
-	$url = \Phantom_Font_Families::instance()->get_font_enqueue_url( $fonts );
+	$url = \PhantomCore\Fonts::instance()->get_enqueue_url( $fonts );
 
 	wp_enqueue_style(
 		'phantom-google-fonts',
