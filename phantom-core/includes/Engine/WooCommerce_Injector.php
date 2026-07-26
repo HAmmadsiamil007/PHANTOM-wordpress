@@ -9,6 +9,7 @@ use PhantomCore\Adapters\Hero_Adapter;
 use PhantomCore\Renderer\Product_Card;
 use PhantomCore\Renderer\Category_Card;
 use PhantomCore\Renderer\Hero;
+use PhantomCore\Renderer\Footer;
 
 defined('ABSPATH') || exit;
 
@@ -21,6 +22,7 @@ class WooCommerce_Injector {
   private Product_Card $product_card;
   private Category_Card $category_card;
   private Hero $hero;
+  private Footer $footer;
 
   public function __construct(Render_Engine $engine) {
     $this->engine = $engine;
@@ -30,9 +32,23 @@ class WooCommerce_Injector {
     $this->product_card = new Product_Card();
     $this->category_card = new Category_Card();
     $this->hero = new Hero();
+    $this->footer = new Footer();
   }
 
   public function inject(string $html, string $slug): string {
+    // Inject hero section (replace static page-hero block)
+    try {
+      $hero_html = $this->hero->render($this->hero_adapter->normalize());
+      $html = preg_replace(
+        '/<section[^>]*class="[^"]*page-hero[^"]*"[^>]*>.*?<\/section>/s',
+        $hero_html,
+        $html,
+        1
+      );
+    } catch (\Throwable $e) {
+      // Fall through — keep static template hero
+    }
+
     switch (true) {
       case 'shop' === $slug:
       case strpos($slug, 'category/') === 0:
@@ -62,7 +78,34 @@ class WooCommerce_Injector {
         $html = $this->inject_account_content($html);
         break;
     }
+
+    // Inject footer section (replace static footer block)
+    try {
+      $footer_html = $this->footer->render($this->get_footer_data());
+      $html = preg_replace(
+        '/<footer[^>]*class="[^"]*footer[^"]*"[^>]*>.*?<\/footer>/s',
+        $footer_html,
+        $html,
+        1
+      );
+    } catch (\Throwable $e) {
+      // Fall through — keep static template footer
+    }
+
     return $html;
+  }
+
+  private function get_footer_data(): array {
+    $widgets = '';
+    if (function_exists('dynamic_sidebar') && is_active_sidebar('phantom-footer-widgets-1')) {
+      ob_start();
+      dynamic_sidebar('phantom-footer-widgets-1');
+      $widgets = ob_get_clean();
+    }
+    return [
+      'widgets' => $widgets ?: '<div class="footer-widget-placeholder"><p>Add widgets to the Footer area.</p></div>',
+      'copyright' => get_option('phantom_footer_copyright', '&copy; ' . date('Y') . ' All rights reserved.'),
+    ];
   }
 
   private function inject_shop_content(string $html): string {
