@@ -83,3 +83,10 @@ require_once PHANTOM_CORE_PATH . 'includes/class-phantom-font-families.php';
 
 // Load global palette
 require_once PHANTOM_CORE_PATH . 'includes/class-phantom-global-palette.php';
+
+// Load Engine classes
+require_once PHANTOM_CORE_PATH . 'includes/Engine/PhpEventStore.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/EventDispatcher.php';
+
+// Load Engine Container
+require_once PHANTOM_CORE_PATH . 'includes/Engine/Container.php';
