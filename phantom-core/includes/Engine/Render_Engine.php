@@ -11,24 +11,23 @@ class Render_Engine {
   private SEO_Engine $seo;
   private Security_Headers $security;
   private Asset_Loader $assets;
+  private EventDispatcher $events;
   private ?int $resolved_product_id = null;
   private ?int $resolved_post_id = null;
   private ?string $category_slug = null;
 
-	public function __construct() {
-		$this->template_loader = new Template_Loader();
-		$this->seo = new SEO_Engine();
-		$this->security = new Security_Headers();
-		$this->assets = new Asset_Loader();
-
-		$pack = 'kids';
-		if (class_exists('\PhantomCore\Settings_Registry')) {
-			$registry = \PhantomCore\Settings_Registry::get_instance();
-			if ($registry->has('template_pack')) {
-				$pack = $registry->get('template_pack');
-			}
-		}
-		$this->template_loader->set_pack($pack);
+	public function __construct(
+		Template_Loader $template_loader,
+		SEO_Engine $seo,
+		Security_Headers $security,
+		Asset_Loader $assets,
+		EventDispatcher $events
+	) {
+		$this->template_loader = $template_loader;
+		$this->seo = $seo;
+		$this->security = $security;
+		$this->assets = $assets;
+		$this->events = $events;
 	}
 
   public function with_product_id(int $id): self {
@@ -56,6 +55,10 @@ class Render_Engine {
 
   public function get_category_slug(): ?string {
     return $this->category_slug;
+  }
+
+  public function get_template_loader(): Template_Loader {
+    return $this->template_loader;
   }
 
   public function render(string $slug): string {
@@ -223,7 +226,7 @@ class Render_Engine {
   private function inject_woocommerce_content(string $html, string $slug, string $template): string {
     if (!class_exists('WooCommerce')) return $html;
 
-    $wc_injector = new WooCommerce_Injector($this);
+    $wc_injector = new WooCommerce_Injector($this, $this->events);
     return $wc_injector->inject($html, $slug);
   }
 
