@@ -35,4 +35,5 @@
     resetPassword: function(email) {
       return w.PhantomServices.Api.post('/auth/reset-password', { user_email: email });
     }
+  };
 })(window);
