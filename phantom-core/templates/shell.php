@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace PhantomCore;
 
+use PhantomCore\Engine\Container;
+use PhantomCore\Engine\Container_Config;
 use PhantomCore\Engine\Render_Engine;
 
 defined('ABSPATH') || exit;
@@ -26,8 +28,11 @@ class Shell {
         return self::$instance;
     }
 
-    public function init(): void {
-        $this->engine = new Render_Engine();
+    public function init(?Container $container = null): void {
+        $container = $container ?? new Container();
+        Container_Config::configure($container);
+
+        $this->engine = $container->get(Render_Engine::class);
 
         // WooCommerce SPA shell compatibility filters
         if (class_exists('WooCommerce')) {
