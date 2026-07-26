@@ -45,6 +45,20 @@
       for (var i = 0; i < list.length; i++) {
         try { list[i](value, key); } catch (e) { console.warn('[PhantomEvents] setting handler error', e); }
       }
+    },
+
+    consumeStore: function() {
+      var events = w.PhantomData && w.PhantomData.events;
+      if (!events || !events.length) return;
+      for (var i = 0; i < events.length; i++) {
+        this.emit(events[i].event, events[i].payload);
+      }
     }
   };
+
+  if (w.addEventListener) {
+    w.addEventListener('DOMContentLoaded', function() {
+      w.PhantomEvents.consumeStore();
+    });
+  }
 })(window);
