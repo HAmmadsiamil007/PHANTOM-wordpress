@@ -1,0 +1,20 @@
+<div class="product-card" data-product-id="{{PRODUCT_ID}}">
+    <div class="product-card__badge">{{BADGE}}</div>
+    <a href="{{PERMALINK}}" class="product-card__image-link">
+        <img src="{{IMAGE}}" alt="{{TITLE}}" loading="lazy" class="product-card__image">
+    </a>
+    <div class="product-card__body">
+        <h3 class="product-card__title">
+            <a href="{{PERMALINK}}">{{TITLE}}</a>
+        </h3>
+        <div class="product-card__rating">
+            <span class="product-card__stars">{{RATING_HTML}}</span>
+            <span class="product-card__reviews">({{REVIEW_COUNT}})</span>
+        </div>
+        <div class="product-card__categories">{{CATEGORIES}}</div>
+        <div class="product-card__price">{{PRICE}}</div>
+        <div class="product-card__actions">
+            <a href="{{ADD_TO_CART_URL}}" class="product-card__atc-btn">{{ADD_TO_CART_TEXT}}</a>
+        </div>
+    </div>
+</div>
