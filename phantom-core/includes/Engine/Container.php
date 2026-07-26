@@ -126,17 +126,19 @@ class Container implements ContainerInterface
 
                 if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
                     $typeName = $type->getName();
-                    try {
-                        $args[] = $this->get($typeName);
-                    } catch (NotFoundException $e) {
-                        if ($param->allowsNull()) {
-                            $args[] = null;
-                        } elseif ($param->isDefaultValueAvailable()) {
-                            $args[] = $param->getDefaultValue();
-                        } else {
-                            throw new ContainerException(
-                                "Cannot resolve parameter \${$param->getName()} of type {$typeName} in {$class}"
-                            );
+                    if ($param->allowsNull()) {
+                        $args[] = null;
+                    } else {
+                        try {
+                            $args[] = $this->get($typeName);
+                        } catch (NotFoundException $e) {
+                            if ($param->isDefaultValueAvailable()) {
+                                $args[] = $param->getDefaultValue();
+                            } else {
+                                throw new ContainerException(
+                                    "Cannot resolve parameter \${$param->getName()} of type {$typeName} in {$class}"
+                                );
+                            }
                         }
                     }
                 } elseif ($param->isDefaultValueAvailable()) {
