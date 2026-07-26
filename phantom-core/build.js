@@ -1,49 +1,55 @@
 /**
- * Phantom Core — JS Build Pipeline
+ * Phantom Core Build Script
+ * Concatenates modular JS files into phantom-data.js for backward compatibility.
  *
- * Minifies frontend JS files using Terser.
- * Run: node build.js
+ * Usage: node build.js
  */
+
 const fs = require('fs');
 const path = require('path');
-const { minify } = require('terser');
 
 const JS_DIR = path.join(__dirname, 'frontend', 'assets', 'js');
-const ADMIN_JS_DIR = path.join(__dirname, 'admin', 'js');
 
 const files = [
-  path.join(JS_DIR, 'phantom-data.js'),
-  path.join(JS_DIR, 'phantom-bridge.js'),
-
-  path.join(JS_DIR, 'contact-form.js'),
+  // Adapters
+  'adapters/product-adapter.js',
+  'adapters/category-adapter.js',
+  'adapters/post-adapter.js',
+  // Renderer
+  'renderer/component-renderer.js',
+  'renderer/product-card.js',
+  'renderer/category-card.js',
+  'renderer/blog-card.js',
+  'renderer/navigation.js',
+  'renderer/hero.js',
+  // Services
+  'services/api-service.js',
+  'services/cart-service.js',
+  'services/auth-service.js',
+  'services/event-services.js',
+  // Entry point
+  'phantom-core.js',
 ];
 
-async function build() {
-  for (const filepath of files) {
-    if (!fs.existsSync(filepath)) {
-      console.log('SKIP (not found):', path.basename(filepath));
-      continue;
-    }
-    const code = fs.readFileSync(filepath, 'utf8');
-    const ext = path.extname(filepath);
-    const basename = path.basename(filepath, ext);
-    const outpath = path.join(path.dirname(filepath), basename + '.min' + ext);
+let bundle = '';
 
-    try {
-      const result = await minify(code, {
-        sourceMap: false,
-        compress: { drop_console: false },
-        output: { comments: false },
-      });
-      fs.writeFileSync(outpath, result.code, 'utf8');
-      const inSize = (code.length / 1024).toFixed(1);
-      const outSize = (result.code.length / 1024).toFixed(1);
-      const pct = ((1 - result.code.length / code.length) * 100).toFixed(0);
-      console.log(`MINIFY ${path.basename(filepath)}: ${inSize}K → ${outSize}K (${pct}% savings)`);
-    } catch (err) {
-      console.error(`ERROR ${path.basename(filepath)}:`, err.message);
-    }
+files.forEach(function(relPath) {
+  var fullPath = path.join(JS_DIR, relPath);
+  if (fs.existsSync(fullPath)) {
+    bundle += '/* ' + relPath + ' */\n';
+    bundle += fs.readFileSync(fullPath, 'utf8');
+    bundle += '\n\n';
+  } else {
+    console.warn('WARN: File not found:', relPath);
   }
-}
+});
 
-build();
+// Write phantom-data.js (backward-compatible bundle)
+var outputPath = path.join(JS_DIR, 'phantom-data.js');
+fs.writeFileSync(outputPath, bundle, 'utf8');
+console.log('OK: Wrote ' + outputPath + ' (' + (bundle.length / 1024).toFixed(1) + ' KB)');
+
+// Also write phantom-core.min.js (just a copy for now, replace with terser in production)
+var minPath = path.join(JS_DIR, 'phantom-core.min.js');
+fs.writeFileSync(minPath, bundle, 'utf8');
+console.log('OK: Wrote ' + minPath + ' (' + (bundle.length / 1024).toFixed(1) + ' KB)');
