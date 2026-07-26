@@ -88,6 +88,10 @@ class Background_Control extends Control_Base {
 				<input type="hidden" class="ast-bg-overlay-color" value="<?php echo esc_attr( $parsed['overlay_color'] ); ?>" />
 				<input type="hidden" class="ast-bg-overlay-opacity" value="<?php echo esc_attr( (string) $parsed['overlay_opacity'] ); ?>" />
 			</div>
+			<div class="phantom-background-fallback" style="margin-top:8px;padding:8px;background:#f0f0f1;border-radius:4px;">
+				<span style="display:inline-block;width:20px;height:20px;vertical-align:middle;background:<?php echo esc_attr( $parsed['color'] ?: '#fff' ); ?>;border:1px solid #ccc;margin-right:8px;"></span>
+				<small><?php echo esc_html( sprintf( '%s | %s %s', $parsed['color'] ?: 'transparent', $parsed['position'], $parsed['repeat'] ) ); ?></small>
+			</div>
 		</div>
 		<?php
 	}

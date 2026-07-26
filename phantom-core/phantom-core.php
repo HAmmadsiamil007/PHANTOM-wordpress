@@ -46,6 +46,28 @@ spl_autoload_register(
 			}
 		}
 
+		// Adapters use includes/adapters/ with class-{name}.php naming
+		$adapters_prefix = 'Adapters\\';
+		if ( strncmp( $adapters_prefix, $relative_class, strlen( $adapters_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $adapters_prefix ) );
+			$file  = PHANTOM_CORE_PATH . 'includes/adapters/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Renderer uses includes/renderer/ with class-{name}.php naming
+		$renderer_prefix = 'Renderer\\';
+		if ( strncmp( $renderer_prefix, $relative_class, strlen( $renderer_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $renderer_prefix ) );
+			$file  = PHANTOM_CORE_PATH . 'includes/renderer/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
 		$file = PHANTOM_CORE_PATH . 'includes/' . str_replace( '\\', '/', $relative_class ) . '.php';
 		if ( file_exists( $file ) ) {
 			require_once $file;

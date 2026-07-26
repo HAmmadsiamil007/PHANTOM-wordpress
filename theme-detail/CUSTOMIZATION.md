@@ -6,11 +6,11 @@
 |--------|----------|---------------|
 | WordPress Core | 100+ | WP native (Users, Posts, Pages, Media, etc.) |
 | WooCommerce | 250+ | WC native admin |
-| Phantom Theme Settings | **555 settings** | Customizer + Admin Page + REST API |
+| Phantom Theme Settings | **564 settings** | Customizer + Admin Page + REST API |
 | Customizer Panels | 15 panels, 44 sections | `/wp-admin/customize.php` |
 | Admin Page Tabs | 15 tabs | `/wp-admin/themes.php?page=phantom-core-settings` |
-| CSS Custom Properties | 90 design tokens | Injected as `<style id="phantom-customizer-css">` |
-| REST Endpoints | 34 routes | `/wp-json/phantom/v1` |
+| CSS Custom Properties | 96 design tokens | Injected as `<style id="phantom-customizer-css">` |
+| REST Endpoints | 43 routes | `/wp-json/phantom/v1` |
 | **Total Controls** | **~900+** | Three independent access paths |
 
 ---
@@ -25,6 +25,7 @@
 **Live preview works for:**
 - ✅ All `color` type settings → instant update via `postMessage`
 - ✅ 7 hero settings → explicit `postMessage` binding
+- ✅ **Responsive Hero Media** (hero_enable_responsive, hero_image_tablet, hero_image_mobile) → partial refresh
 - ✅ ~42 CSS var changes update instantly (via color transport)
 - ❌ Everything else → requires page refresh
 
@@ -153,7 +154,7 @@ container_width    → --container--width
 button_radius      → --button--radius
 ```
 
-### Complete 90 CSS Variable Map
+### Complete 96 CSS Variable Map
 
 | Group | Count | Vars |
 |-------|-------|------|
@@ -164,7 +165,7 @@ button_radius      → --button--radius
 | Gradients | 2 | `--gradient--start--color`, `--gradient--end--color` |
 | Header | 10 | `--header--bg`, `--header--text`, `--header--padding`, `--header--padding--x`, `--header--padding--y`, `--header--fullwidth`, `--sticky--header`, `--header--height`, `--header--mobile--height`, `--header--border--width` |
 | Navigation | 4 | `--menu--font--size`, `--menu--font--weight`, `--nav--menu--height`, `--nav--submenu--width` |
-| Hero | 5 | `--hero--height`, `--hero--overlay--color`, `--hero--overlay--opacity`, `--hero--bg`, `--hero--text` |
+| Hero | 11 | `--hero--height`, `--hero--overlay--color`, `--hero--overlay--opacity`, `--hero--bg`, `--hero--text`, `--hero-image`, `--hero-object-fit`, `--hero-object-position`, `--hero-bg-position`, `--hero-overlay-opacity`, `--hero-image-url` |
 | Footer | 5 | `--footer--bg`, `--footer--text`, `--footer--padding`, `--footer--fullwidth`, `--footer--heading` |
 | Buttons | 8 | `--btn--bg`, `--btn--text`, `--btn--hover--bg`, `--btn--hover--text`, `--border--radius`, `--btn--pad--y`, `--btn--pad--x`, `--btn--font--size` |
 | Forms | 2 | `--input--radius`, `--input--height` |
@@ -197,9 +198,9 @@ The CSS var maps and px key lists are centralized in one file:
 
 | File | Method | What's Defined |
 |------|--------|----------------|
-| `includes/class-settings-registry.php` | `get_css_var_map()` (~line 208) | 90 var-to-setting mappings |
+| `includes/class-settings-registry.php` | `get_css_var_map()` (~line 208) | 96 var-to-setting mappings |
 | `includes/class-settings-registry.php` | `get_px_keys()` (~line 309) | 43 px keys |
-| `includes/class-customizer.php` | `get_css_var_map()` | 90 var mappings (duplicate from registry) |
+| `includes/class-customizer.php` | `get_css_var_map()` | 96 var mappings (duplicate from registry) |
 | `includes/class-custom-css.php` | CSS generation | Consumes the registry's var maps |
 
 **If adding a CSS var, add to `class-settings-registry.php` first**, then sync `class-customizer.php`. The custom-css engine automatically picks up registry changes.

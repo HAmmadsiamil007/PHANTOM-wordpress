@@ -43,7 +43,7 @@
 						<?php the_custom_logo(); ?>
 					<?php else : ?>
 						<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
-							<img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/logo.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>" class="logo">
+							<img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/logo.png' ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" class="logo">
 						</a>
 					<?php endif; ?>
 				</div>
@@ -58,7 +58,7 @@
 						'theme_location' => 'primary',
 						'container'      => false,
 						'menu_class'     => 'navbar-nav ms-auto',
-						'fallback_cb'    => 'phantom_theme_primary_fallback',
+						'fallback_cb'    => false,
 						'depth'          => 3,
 					) );
 					?>
@@ -71,7 +71,7 @@
 					<?php if ( class_exists( 'WooCommerce' ) ) : ?>
 						<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="cart-icon" aria-label="<?php esc_attr_e( 'Cart', 'phantom-theme' ); ?>">
 							<img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/header-cart.png' ); ?>" alt="<?php esc_attr_e( 'Cart', 'phantom-theme' ); ?>">
-							<span class="cart-count"><?php echo esc_html( WC()->cart->get_cart_contents_count() ); ?></span>
+							<span class="cart-count"><?php echo esc_html( isset( WC()->cart ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0 ); ?></span>
 						</a>
 					<?php endif; ?>
 				</div>

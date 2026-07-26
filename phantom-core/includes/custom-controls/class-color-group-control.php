@@ -46,6 +46,8 @@ class Color_Group_Control extends Control_Base {
 	public function render_content(): void {
 		$label = $this->label ?? '';
 		$desc  = $this->description ?? '';
+		$value = $this->value();
+		$display = is_array( $value ) ? implode( ', ', $value ) : (string) $value;
 		?>
 		<div class="ast-color-group-wrapper">
 			<?php if ( $label ) : ?>
@@ -54,7 +56,9 @@ class Color_Group_Control extends Control_Base {
 			<?php if ( $desc ) : ?>
 				<span class="description customize-control-description"><?php echo esc_html( $desc ); ?></span>
 			<?php endif; ?>
-			<div class="ast-color-group-items" data-group-id="<?php echo esc_attr( $this->id ); ?>"></div>
+			<div class="ast-color-group-items" data-group-id="<?php echo esc_attr( $this->id ); ?>">
+				<input type="text" class="phantom-fallback-value" value="<?php echo esc_attr( $display ); ?>" disabled />
+			</div>
 		</div>
 		<?php
 	}

@@ -97,6 +97,10 @@
 
   // ─── MENUS ───────────────────────────────────────────────
 
+  function getCurrencySymbol() {
+    return (_settings && _settings.currency_symbol) || '$';
+  }
+
   function stripHtml(str) {
     if (!str) return '';
     return str.replace(/<[^>]*>/g, '');
@@ -194,7 +198,7 @@
 
   function buildProductCard(p, showSaleBadge, saleBadgeText, settings) {
     const imgSrc = p.image || '';
-    const priceHtml = p.price_html || '$' + (p.price || '0');
+    const priceHtml = p.price_html || getCurrencySymbol() + (p.price || '0');
     const detailUrl = '/product/?product_id=' + (p.id || '');
     const isSale = p.on_sale;
     const isFeatured = p.is_featured;
@@ -323,13 +327,13 @@
     if (isSale) {
       const saleSpan = document.createElement('span');
       saleSpan.className = 'd-inline-block';
-      saleSpan.textContent = '$' + salePrice;
+      saleSpan.textContent = getCurrencySymbol() + salePrice;
       priceDiv.appendChild(saleSpan);
       priceDiv.appendChild(document.createTextNode(' '));
       const delSpan = document.createElement('span');
       delSpan.className = 'd-inline-block';
       const del = document.createElement('del');
-      del.textContent = '$' + regPrice;
+      del.textContent = getCurrencySymbol() + regPrice;
       delSpan.appendChild(del);
       priceDiv.appendChild(delSpan);
     } else {
@@ -493,9 +497,9 @@
     const priceEl = el.querySelector('.types_content .price');
     if (priceEl) {
       if (p.on_sale) {
-        priceEl.innerHTML = '<ins>$' + (p.sale_price || p.price) + '</ins> <del>$' + (p.regular_price || p.price) + '</del>';
+        priceEl.innerHTML = '<ins>' + getCurrencySymbol() + (p.sale_price || p.price) + '</ins> <del>' + getCurrencySymbol() + (p.regular_price || p.price) + '</del>';
       } else {
-      priceEl.innerHTML = p.price_html || '$' + (p.price || 0);
+      priceEl.innerHTML = p.price_html || getCurrencySymbol() + (p.price || 0);
       }
     }
 
@@ -510,20 +514,52 @@
     if (mainImg) mainImg.src = p.image || '';
 
     // Gallery thumbnails
+    const thumbsTab = document.getElementById('myTab');
     const thumbs = el.querySelectorAll('#myTab ul.nav-tabs li.nav-item a.nav-link figure.auction-img img');
+    const panesContainer = document.getElementById('myTabContent');
     const gallery = p.gallery || [];
+    const totalImgs = gallery.length + 1;
     if (thumbs.length && p.image) {
       thumbs[0].src = p.image;
       for (let gi = 1; gi < thumbs.length && gi <= gallery.length; gi++) {
         thumbs[gi].src = gallery[gi - 1] || p.image;
       }
+      for (let gi = thumbs.length; gi < totalImgs; gi++) {
+        const li = document.createElement('li');
+        li.className = 'nav-item';
+        const a = document.createElement('a');
+        a.className = 'nav-link';
+        a.href = '#tab-' + gi;
+        a.setAttribute('data-bs-toggle', 'tab');
+        const figure = document.createElement('figure');
+        figure.className = 'auction-img';
+        const img = document.createElement('img');
+        img.src = gallery[gi - 1] || p.image;
+        img.alt = 'Gallery image ' + (gi + 1);
+        figure.appendChild(img);
+        a.appendChild(figure);
+        li.appendChild(a);
+        if (thumbsTab) thumbsTab.querySelector('ul.nav-tabs').appendChild(li);
+      }
     }
-    // Also update tab pane images for gallery
     const panes = el.querySelectorAll('#myTabContent .tab-pane figure.auction-img img');
     if (panes.length && p.image) {
       panes[0].src = p.image;
       for (let pi = 1; pi < panes.length && pi <= gallery.length; pi++) {
         panes[pi].src = gallery[pi - 1] || p.image;
+      }
+      for (let pi = panes.length; pi < totalImgs; pi++) {
+        const tabPane = document.createElement('div');
+        tabPane.className = 'tab-pane fade';
+        tabPane.id = 'tab-' + pi;
+        const figure = document.createElement('figure');
+        figure.className = 'auction-img';
+        const img = document.createElement('img');
+        img.src = gallery[pi - 1] || p.image;
+        img.alt = 'Gallery image ' + (pi + 1);
+        figure.appendChild(img);
+        tabPane.appendChild(figure);
+        if (panesContainer) panesContainer.appendChild(tabPane);
       }
     }
 
@@ -628,13 +664,13 @@
               if (matched) {
             if (priceEl) {
               if (matched.sale_price) {
-                priceEl.textContent = '$' + matched.sale_price;
+                priceEl.textContent = getCurrencySymbol() + matched.sale_price;
                 var strike = document.createElement('span');
                 strike.className = 'd-inline-block strike';
-                strike.textContent = '$' + matched.regular_price;
+                strike.textContent = getCurrencySymbol() + matched.regular_price;
                 priceEl.appendChild(strike);
               } else {
-                priceEl.textContent = '$' + matched.price;
+                priceEl.textContent = getCurrencySymbol() + matched.price;
               }
             }
             if (matched.image && mainImg) mainImg.src = matched.image;
@@ -1117,7 +1153,7 @@
         key = btn.getAttribute('data-cart-key');
         if (!key) return;
         setButtonLoading(btn, true);
-        fetchJSON('/cart/remove', { method: 'POST', body: { key: key } }).then(function (data) {
+        fetchJSON('/cart/remove', { method: 'DELETE', body: { key: key } }).then(function (data) {
           setButtonLoading(btn, false);
           showToast('Item removed', 'success');
           renderCartUI(data);
@@ -1161,7 +1197,7 @@
           var prevQty = parseInt(numEl.textContent);
           var newQty = prevQty - 1;
           numEl.textContent = newQty;
-          fetchJSON('/cart/update', { method: 'POST', body: { key: key, quantity: newQty } }).then(function (data) {
+          fetchJSON('/cart/update', { method: 'PUT', body: { key: key, quantity: newQty } }).then(function (data) {
             setButtonLoading(btn, false);
             showToast('Cart updated', 'success');
             renderCartUI(data);
@@ -1186,7 +1222,7 @@
           var prevQty2 = parseInt(numEl2.textContent);
           var newQty2 = prevQty2 + 1;
           numEl2.textContent = newQty2;
-          fetchJSON('/cart/update', { method: 'POST', body: { key: key, quantity: newQty2 } }).then(function (data) {
+          fetchJSON('/cart/update', { method: 'PUT', body: { key: key, quantity: newQty2 } }).then(function (data) {
             setButtonLoading(btn, false);
             showToast('Cart updated', 'success');
             renderCartUI(data);
@@ -1212,8 +1248,8 @@
       var totalEl = document.querySelector('.checkout-total');
       var shippingCostEl = document.querySelector('.checkout-shipping-cost');
       var itemsContainer = document.querySelector('.checkout-items');
-      if (subtotalEl) subtotalEl.textContent = data.subtotal || data.total || '$0.00';
-      if (totalEl) totalEl.textContent = data.total || '$0.00';
+      if (subtotalEl) subtotalEl.textContent = data.subtotal || data.total || getCurrencySymbol() + '0.00';
+      if (totalEl) totalEl.textContent = data.total || getCurrencySymbol() + '0.00';
       if (shippingCostEl) shippingCostEl.textContent = data.shipping_total || '$0.00';
       if (itemsContainer) {
         itemsContainer.innerHTML = '';
@@ -1281,7 +1317,7 @@
             errEl.className = 'checkout-errors alert alert-danger mt-3';
             form.appendChild(errEl);
           }
-          errEl.textContent = data.messages;
+          errEl.innerHTML = data.messages;
         }
       }).catch(function (err) {
         console.error('[PhantomCore] Checkout error:', err);
@@ -1317,7 +1353,7 @@
         });
         label.appendChild(radio);
         var cost = parseFloat(method.cost) + parseFloat(method.tax);
-        label.appendChild(document.createTextNode(' ' + method.label + ' - $' + cost.toFixed(2)));
+        label.appendChild(document.createTextNode(' ' + method.label + ' - ' + getCurrencySymbol() + cost.toFixed(2)));
         shippingList.appendChild(label);
       });
     }).catch(function (err) {
@@ -1645,7 +1681,7 @@
       if (!p || p.code) { showToast('Product not found', 'error'); return; }
       imgEl.src = p.image || '';
       titleEl.textContent = p.name || '';
-      priceEl.textContent = stripHtml(p.price_html) || '$' + (p.price || '0');
+      priceEl.textContent = stripHtml(p.price_html) || getCurrencySymbol() + (p.price || '0');
       descEl.textContent = p.short_description ? p.short_description.replace(/<[^>]+>/g, '') : (p.description ? p.description.replace(/<[^>]+>/g, '') : '');
       atcEl.setAttribute('data-product_id', p.id || '');
       atcEl.setAttribute('data-product_sku', p.sku || '');

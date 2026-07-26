@@ -135,3 +135,65 @@ function phantom_render_nav_partial(): void {
 		'fallback_cb'    => false,
 	) );
 }
+
+function phantom_render_header_partial_v2(): void {
+	$style = get_option( 'phantom_header_style', 'default' );
+	?>
+	<header id="masthead" class="site-header header-<?php echo esc_attr( $style ); ?>">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-auto">
+					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="brand-logo" rel="home">
+						<?php $logo = get_option( 'phantom_general_site_logo', '' ); ?>
+						<?php if ( '' !== $logo ) : ?>
+							<img src="<?php echo esc_url( $logo ); ?>" alt="<?php bloginfo( 'name' ); ?>" height="40">
+						<?php else : ?>
+							<?php bloginfo( 'name' ); ?>
+						<?php endif; ?>
+					</a>
+				</div>
+				<div class="col">
+					<nav class="main-navigation">
+						<?php wp_nav_menu( array(
+							'theme_location' => 'phantom_primary',
+							'container'      => false,
+							'menu_class'     => 'primary-menu',
+							'fallback_cb'    => false,
+							'depth'          => 3,
+						) ); ?>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</header>
+	<?php
+}
+
+function phantom_render_blog_partial_v2(): void {
+	$layout = get_option( 'phantom_blog_layout', 'grid' );
+	$posts = get_posts( array( 'numberposts' => 6 ) );
+	if ( empty( $posts ) ) {
+		echo '<p>' . esc_html__( 'No posts found.', 'phantom-core' ) . '</p>';
+		return;
+	}
+	?>
+	<div class="blog-posts blog-<?php echo esc_attr( $layout ); ?>">
+		<div class="row row-cols-<?php echo 'list' === $layout ? 1 : 3; ?>">
+			<?php foreach ( $posts as $post ) : setup_postdata( $post ); ?>
+				<div class="col mb-4">
+					<article class="post-card">
+						<?php if ( has_post_thumbnail( $post ) ) : ?>
+							<a href="<?php the_permalink(); ?>" class="post-thumb">
+								<?php echo get_the_post_thumbnail( $post, 'medium' ); ?>
+							</a>
+						<?php endif; ?>
+						<h3><a href="<?php the_permalink(); ?>"><?php echo esc_html( get_the_title( $post ) ); ?></a></h3>
+						<small><?php echo esc_html( get_the_date( '', $post ) ); ?></small>
+						<p><?php echo esc_html( wp_trim_words( get_the_excerpt( $post ), 20, '...' ) ); ?></p>
+					</article>
+				</div>
+			<?php endforeach; wp_reset_postdata(); ?>
+		</div>
+	</div>
+	<?php
+}

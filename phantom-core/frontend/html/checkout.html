@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — AETHER</title>
+    <meta name="description" content="Complete your AETHER order. Secure checkout with free shipping on orders over $200.">
+        <link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicon/apple-icon-180x180.png">
+    <meta name="msapplication-TileColor" content="#09090B">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AETHER">
+    <meta property="og:url" content="https://aethershoes.com">
+    <link rel="canonical" href="https://aethershoes.com/checkout.html">
+    
+    <meta property="og:title" content="Checkout — AETHER">
+    <meta property="og:description" content="Complete your AETHER order. Secure checkout with free shipping on orders over $200.">
+    <meta name="twitter:title" content="Checkout — AETHER">
+    <meta name="twitter:description" content="Complete your AETHER order. Secure checkout with free shipping on orders over $200.">
+    <meta name="twitter:image" content="https://aethershoes.com/assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@aethershoes">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "AETHER",
+        "url": "https://aethershoes.com",
+        "logo": "https://aethershoes.com/assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg",
+        "sameAs": [
+            "https://instagram.com/aethershoes",
+            "https://twitter.com/aethershoes",
+            "https://tiktok.com/@aethershoes",
+            "https://youtube.com/@aethershoes"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+1-555-123-4567",
+            "contactType": "customer service",
+            "email": "support@aethershoes.com"
+        }
+    }
+    </script>
+    <meta name="theme-color" content="#09090B">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/motion.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/a11y.css">
+    <style>
+        .page-hero { padding:160px 0 60px; background-color:var(--void); text-align:center; }
+        .page-hero h1 { font-family:var(--font-heading); font-size:2.5rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+        .page-hero .breadcrumb { justify-content:center; margin-top:15px; }
+        .page-hero .breadcrumb-item a { color:var(--chrome); font-size:0.85rem; text-decoration:none; transition:color 0.2s; }
+        .page-hero .breadcrumb-item a:hover { color:var(--gold); }
+        .page-hero .breadcrumb-item.active { color:var(--gold); font-size:0.85rem; }
+        .page-hero .breadcrumb-item + .breadcrumb-item::before { color:var(--chrome); }
+        .checkout-section { padding:60px 0 100px; background-color:var(--void); }
+        .checkout-form-wrap { background:var(--surface); padding:40px; }
+        .checkout-form-wrap h3 { font-family:var(--font-heading); font-size:1.3rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #1A1A1A; }
+        .form-group { margin-bottom:20px; }
+        .form-group label { display:block; font-size:0.8rem; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; color:var(--chrome); margin-bottom:6px; }
+        .form-group input, .form-group select { width:100%; padding:12px 16px; font-family:var(--font-body); font-size:0.9rem; background:rgba(9,9,11,0.6); border:1px solid rgba(168,181,192,0.15); color:var(--white); outline:none; transition:border-color 0.3s ease; }
+        .form-group input:focus, .form-group select:focus { border-color:var(--gold); }
+        .form-group input::placeholder { color:rgba(168,181,192,0.4); }
+        .form-group select option { background:var(--void); color:var(--white); }
+        .form-row-custom { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .order-summary { background:var(--surface); padding:40px; position:sticky; top:140px; }
+        .order-summary h3 { font-family:var(--font-heading); font-size:1.3rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #1A1A1A; }
+        .order-item { display:flex; gap:16px; padding:16px 0; border-bottom:1px solid #1A1A1A; }
+        .order-item-img { width:64px; height:64px; object-fit:cover; background:rgba(168,181,192,0.1); flex-shrink:0; }
+        .order-item-info { flex:1; }
+        .order-item-name { font-size:0.9rem; font-weight:500; margin-bottom:2px; }
+        .order-item-variant { font-size:0.8rem; color:var(--chrome); }
+        .order-item-price { font-size:0.9rem; font-weight:600; white-space:nowrap; }
+        .checkout-total { display:flex; justify-content:space-between; align-items:center; padding-top:20px; margin-top:20px; border-top:1px solid #1A1A1A; }
+        .checkout-total .label { font-size:1rem; font-weight:700; color:var(--white); }
+        .checkout-total .value { font-size:1.4rem; font-weight:700; color:var(--gold); }
+        .place-order-btn { display:block; width:100%; padding:18px; margin-top:24px; background:var(--gold); color:var(--void); border:none; font-family:var(--font-body); font-size:0.9rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.3s ease; }
+        .place-order-btn:hover { background:#D4A574; transform:translateY(-2px); }
+        .secure-badge { text-align:center; margin-top:16px; font-size:0.8rem; color:var(--chrome); }
+        .secure-badge i { margin-right:6px; }
+        @media (max-width:768px) { .form-row-custom { grid-template-columns:1fr; } .checkout-form-wrap, .order-summary { padding:24px; } }
+    </style>
+</head>
+<body class="checkout-page">
+
+<!-- Preloader -->
+<div id="preloader" aria-hidden="true">
+    <div class="preloader-inner">
+        <div class="preloader-logo">AETHER</div>
+        <div class="preloader-bar">
+            <div class="preloader-progress"></div>
+        </div>
+    </div>
+</div>
+<!-- Global Cinematic Fog -->
+<div id="fog-system">
+    <div id="foglayer_01" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+    </div>
+    <div id="foglayer_02" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+    </div>
+    <div id="foglayer_03" class="fog">
+        <div class="image01"></div>
+        <div class="image02"></div>
+    </div>
+</div>
+
+<a class="skip-to-content visually-hidden" href="#main">Skip to main content</a>
+<div class="page-content">
+
+
+<!-- Mobile Header (=768px) -->
+<div class="mobile-header" id="mobileHeader">
+    <button class="mobile-hamburger" id="mobileHamburger" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="mobile-announcement" id="mobileAnnouncement">
+        <span class="mobile-announcement-text active">FREE SHIPPING ON ORDERS OVER $200</span>
+        <span class="mobile-announcement-text">FREE SHIPPING ON ALL ORDERS</span>
+    </div>
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="/" class="mobile-menu-logo">AETHER</a>
+            <div class="mobile-menu-spacer"></div>
+        </div>
+        <div class="mobile-menu-body">
+            <div class="mobile-search">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search products...">
+            </div>
+            <nav class="mobile-nav" data-phantom-menu="primary"></nav>
+            <div class="mobile-divider"></div>
+            <div class="mobile-meta">
+                <span>Language</span>
+                <span>Currency</span>
+            </div>
+            <a href="shop.html" class="mobile-cta">Shop Now</a>
+            <div class="mobile-socials">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="announcement-bar" id="announcementBar">
+        <div class="announcement-content">
+            <span>Free Shipping On Orders Over $200</span>
+            <span class="separator">|</span>
+            <span>New Collection Dropping Soon</span>
+        </div>
+    </div>
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="/" class="brand-logo">AETHER</a>
+            <nav class="main-nav" id="mainNav" data-phantom-menu="primary">
+                <div class="nav-mobile-logo">
+                    <a href="/" class="brand-logo">AETHER</a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li class="nav-dropdown">
+                        <a href="shop.html" class="nav-link nav-dropdown-toggle">Collection <i class="fas fa-chevron-down"></i></a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="shop.html" class="nav-dropdown-link">Men</a></li>
+                            <li><a href="shop.html" class="nav-dropdown-link">Women</a></li>
+                            <li><a href="shop.html" class="nav-dropdown-link">Kid</a></li>
+                            <li><a href="shop.html" class="nav-dropdown-link">New Arrivals</a></li>
+                            <li><a href="shop.html" class="nav-dropdown-link">Bestsellers</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="blog.html" class="nav-link">Blog</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="nav-mobile-icons">
+                    <a href="shop.html" class="header-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+                    <a href="wishlist.html" class="header-icon" aria-label="Wishlist"><i class="fas fa-heart"></i></a>
+                    <a href="cart.html" class="header-icon" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-count">2</span></a>
+                <a href="login.html" class="header-icon" aria-label="Account"><i class="fas fa-user"></i></a>
+                </div>
+            </nav>
+            <div class="header-actions">
+                <a href="shop.html" class="header-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+                <a href="wishlist.html" class="header-icon" aria-label="Wishlist"><i class="fas fa-heart"></i></a>
+                <a href="cart.html" class="header-icon" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-count">2</span></a>
+                <a href="login.html" class="header-icon" aria-label="Account"><i class="fas fa-user"></i></a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+<div id="main" tabindex="-1" class="visually-hidden-focusable" style="position:absolute;top:0"></div>
+    <main id="swup">
+
+    <section class="page-hero" data-parallax-section data-phantom-bg="hero">
+                <div class="hero-fog" aria-hidden="true">
+                    <div id="hl_01" class="hf-fog">
+                        <div class="hf-img"></div>
+                        <div class="hf-img"></div>
+                    </div>
+                    <div id="hl_02" class="hf-fog">
+                        <div class="hf-img"></div>
+                        <div class="hf-img"></div>
+                    </div>
+                    <div id="hl_03" class="hf-fog">
+                        <div class="hf-img"></div>
+                        <div class="hf-img"></div>
+                    </div>
+                </div>
+    <div class="container">
+            <h1 data-motion-text="words" data-phantom="page_title">Checkout</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="cart.html">Cart</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <section class="checkout-section">
+        <div class="container">
+            <form id="checkout-form">
+            <div class="row g-5">
+                <div class="col-lg-7">
+                    <div class="checkout-form-wrap">
+                        <h3>Contact</h3>
+                        <div class="form-group">
+                            <label for="billing_email">Email</label>
+                            <input type="email" id="billing_email" name="billing_email" class="form-control" placeholder="your@email.com" required>
+                        </div>
+
+                        <h3 style="margin-top:32px;">Shipping</h3>
+                        <div class="form-row-custom">
+                            <div class="form-group">
+                                <label for="billing_first_name">First Name</label>
+                                <input type="text" id="billing_first_name" name="billing_first_name" placeholder="First name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="billing_last_name">Last Name</label>
+                                <input type="text" id="billing_last_name" name="billing_last_name" placeholder="Last name" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="billing_address_1">Address</label>
+                            <input type="text" id="billing_address_1" name="billing_address_1" placeholder="Street address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="billing_address_2">Apartment, suite, etc. (optional)</label>
+                            <input type="text" id="billing_address_2" name="billing_address_2" placeholder="Apartment, suite, etc.">
+                        </div>
+                        <div class="form-row-custom">
+                            <div class="form-group">
+                                <label for="billing_city">City</label>
+                                <input type="text" id="billing_city" name="billing_city" placeholder="City" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="billing_state">State</label>
+                                <select id="billing_state" name="billing_state" required>
+                                    <option value="">Select state</option>
+                                    <option value="CA">California</option>
+                                    <option value="NY">New York</option>
+                                    <option value="TX">Texas</option>
+                                    <option value="FL">Florida</option>
+                                    <option value="IL">Illinois</option>
+                                    <option value="WA">Washington</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row-custom">
+                            <div class="form-group">
+                                <label for="billing_postcode">ZIP Code</label>
+                                <input type="text" id="billing_postcode" name="billing_postcode" placeholder="12345" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="billing_country">Country</label>
+                                <select id="billing_country" name="billing_country" required>
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="billing_phone">Phone</label>
+                            <input type="tel" id="billing_phone" name="billing_phone" placeholder="(555) 123-4567" required>
+                        </div>
+
+                        <h3 style="margin-top:32px;">Shipping Details</h3>
+                        <div class="form-row-custom">
+                            <div class="form-group">
+                                <label for="shipping_first_name">First Name</label>
+                                <input type="text" id="shipping_first_name" name="shipping_first_name" placeholder="First name">
+                            </div>
+                            <div class="form-group">
+                                <label for="shipping_last_name">Last Name</label>
+                                <input type="text" id="shipping_last_name" name="shipping_last_name" placeholder="Last name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="shipping_address_1">Address</label>
+                            <input type="text" id="shipping_address_1" name="shipping_address_1" placeholder="Street address">
+                        </div>
+                        <div class="form-row-custom">
+                            <div class="form-group">
+                                <label for="shipping_city">City</label>
+                                <input type="text" id="shipping_city" name="shipping_city" placeholder="City">
+                            </div>
+                            <div class="form-group">
+                                <label for="shipping_state">State</label>
+                                <select id="shipping_state" name="shipping_state">
+                                    <option value="">Select state</option>
+                                    <option value="CA">California</option>
+                                    <option value="NY">New York</option>
+                                    <option value="TX">Texas</option>
+                                    <option value="FL">Florida</option>
+                                    <option value="IL">Illinois</option>
+                                    <option value="WA">Washington</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row-custom">
+                            <div class="form-group">
+                                <label for="shipping_postcode">ZIP Code</label>
+                                <input type="text" id="shipping_postcode" name="shipping_postcode" placeholder="12345">
+                            </div>
+                            <div class="form-group">
+                                <label for="shipping_country">Country</label>
+                                <select id="shipping_country" name="shipping_country">
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top:32px;">Payment</h3>
+                        <div id="payment-method-container">
+                            <!-- Payment gateway (Stripe/PayPal) will be injected here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="order-summary">
+                        <h3>Order Summary</h3>
+                        <div class="order-item" data-phantom="order_item">
+                            <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Void Runner" class="order-item-img" data-phantom-alt="order_product_image">
+                            <div class="order-item-info">
+                                <div class="order-item-name" data-phantom="order_product_name">Void Runner — Obsidian</div>
+                                <div class="order-item-variant" data-phantom="order_product_variant">Size: 10 / Qty: 1</div>
+                            </div>
+                            <div class="order-item-price" data-phantom="order_product_price">$285.00</div>
+                        </div>
+                        <div class="order-item" data-phantom="order_item">
+                            <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Void Runner" class="order-item-img" data-phantom-alt="order_product_image">
+                            <div class="order-item-info">
+                                <div class="order-item-name" data-phantom="order_product_name">Void Runner — Arctic</div>
+                                <div class="order-item-variant" data-phantom="order_product_variant">Size: 9 / Qty: 1</div>
+                            </div>
+                            <div class="order-item-price" data-phantom="order_product_price">$285.00</div>
+                        </div>
+                        <div style="padding:16px 0;border-bottom:1px solid #1A1A1A;">
+                            <div class="summary-row" style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.9rem;"><span style="color:var(--chrome);">Subtotal</span><span>$570.00</span></div>
+                            <div class="summary-row" style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.9rem;"><span style="color:var(--chrome);">Shipping</span><span>Free</span></div>
+                            <div class="summary-row" style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.9rem;"><span style="color:var(--chrome);">Tax</span><span>$47.02</span></div>
+                        </div>
+                        <div class="checkout-total">
+                            <span class="label">Total</span>
+                            <span class="value">$617.02</span>
+                        </div>
+                        <button type="submit" class="place-order-btn" id="placeOrderBtn" data-magnetic="0.12">Place Order</button>
+                        <div class="secure-badge"><i class="fas fa-lock"></i> Secured with 256-bit encryption</div>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+    </section>
+
+    </main>
+    <footer class="footer" id="footer" role="contentinfo" aria-label="Site footer" data-phantom-menu="footer">
+        <div class="container">
+            <!-- Footer Widget Area -->
+            <div class="footer-widgets" id="phantom-widget-area-footer">
+                <!-- Footer widgets will be rendered here -->
+            </div>
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">AETHER</a>
+                    <p class="footer-tagline">Step Into The Void</p>
+                    <div class="footer-social" aria-label="Social media links">
+                        <a href="https://instagram.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://twitter.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="https://tiktok.com/@aethershoes" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://youtube.com/@aethershoes" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4 class="footer-heading">Shop</h4>
+                    <ul>
+                        <li><a href="shop.html">Men</a></li>
+                        <li><a href="shop.html">Women</a></li>
+                        <li><a href="shop.html">Kids</a></li>
+                        <li><a href="shop.html">New Arrivals</a></li>
+                        <li><a href="shop.html">Bestsellers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4 class="footer-heading">Support</h4>
+                    <ul>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="term-of-use.html">Terms of Use</a></li>
+                        <li><a href="cookie-policy.html">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4 class="footer-heading">Stay in the Loop</h4>
+                    <p>Get exclusive drops, early access, and AETHER news.</p>
+                    <form id="contactpage" class="footer-newsletter-form" aria-label="Newsletter subscription" >
+                        <input type="email" placeholder="Your email" required aria-label="Email address">
+                        <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <span>&copy; 2026 AETHER. All Rights Reserved.</span>
+                    <a href="privacy-policy.html">Privacy</a>
+                    <a href="term-of-use.html">Terms</a>
+                    <a href="cookie-policy.html">Cookies</a>
+                </div>
+                <div class="footer-payments">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                    <i class="fab fa-apple-pay"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+        <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+        <!-- Custom JS -->
+        
+        <script src="assets/js/lenis-scroll.js"></script>
+        <script src="assets/js/animations.js"></script>
+    <script src="assets/js/phantom-bridge.js"></script>
+    <script src="assets/js/phantom-data.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

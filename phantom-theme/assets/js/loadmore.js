@@ -1,6 +1,6 @@
 // load more hidden blog js
 
-$(function () {
+jQuery(function ($) {
   $(".hide-blog").slice(0, 3).show();
   if ($(".hide-blog:hidden").length == 0) {
     $("#loadMore").css("display", "none");

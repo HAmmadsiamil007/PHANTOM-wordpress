@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - AETHER</title>
+    <meta name="description" content="Sign in to your AETHER account.">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
+    <meta name="theme-color" content="#09090B">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Satoshi:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/motion.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/a11y.css">
+    <style>
+        main#swup{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:120px 20px 80px;width:100%}
+        .auth-card{position:relative;z-index:1;width:100%;max-width:440px;padding:48px 40px;background:rgba(20,20,22,0.6);border:1px solid rgba(168,181,192,0.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+        .auth-logo{font-family:var(--font-heading);font-size:1.8rem;font-weight:800;letter-spacing:0.35em;text-transform:uppercase;text-align:center;margin-bottom:32px;color:var(--white)}
+        .auth-title{font-family:var(--font-heading);font-size:1.6rem;font-weight:700;text-align:center;margin-bottom:8px}
+        .auth-subtitle{text-align:center;font-size:0.9rem;color:var(--chrome);margin-bottom:36px}
+        .form-group{margin-bottom:20px;position:relative}
+        .form-label{display:block;font-size:0.8rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;color:var(--chrome);margin-bottom:8px}
+        .form-input{width:100%;padding:14px 16px;font-family:var(--font-body);font-size:0.95rem;background:rgba(9,9,11,0.6);border:1px solid rgba(168,181,192,0.15);color:var(--white);outline:none;transition:border-color 0.3s ease,box-shadow 0.3s ease}
+        .form-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,149,108,0.1)}
+        .form-input::placeholder{color:rgba(168,181,192,0.4)}
+        .password-wrapper{position:relative}
+        .password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--chrome);cursor:pointer;font-size:0.9rem;padding:4px;transition:color 0.2s ease}
+        .password-toggle:hover{color:var(--gold)}
+        .form-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+        .form-check{display:flex;align-items:center;gap:8px}
+        .form-check input[type="checkbox"]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer}
+        .form-check label{font-size:0.85rem;color:var(--chrome);cursor:pointer}
+        .forgot-link{font-size:0.85rem;color:var(--gold);transition:color 0.2s ease;cursor:pointer;background:none;border:none}
+        .forgot-link:hover{color:#D4A574}
+        .btn-signin{width:100%;padding:16px;font-family:var(--font-body);font-size:0.9rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:var(--gold);color:var(--void);border:none;cursor:pointer;transition:all 0.3s ease;position:relative;overflow:hidden}
+        .btn-signin:hover{background:#D4A574;transform:translateY(-1px)}
+        .btn-signin:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+        .auth-divider{display:flex;align-items:center;gap:16px;margin:28px 0}
+        .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(168,181,192,0.15)}
+        .auth-divider span{font-size:0.8rem;color:var(--chrome);text-transform:uppercase;letter-spacing:0.1em}
+        .social-btn{width:100%;padding:14px;font-family:var(--font-body);font-size:0.9rem;font-weight:500;display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(9,9,11,0.6);border:1px solid rgba(168,181,192,0.15);color:var(--white);cursor:pointer;transition:all 0.3s ease;margin-bottom:12px;position:relative}
+        .social-btn:hover{border-color:rgba(168,181,192,0.3);background:rgba(20,20,22,0.8)}
+        .social-btn:disabled{opacity:0.6;cursor:not-allowed}
+        .social-btn i{font-size:1.1rem}
+        .social-btn.google i{color:#EA4335}
+        .auth-footer{text-align:center;margin-top:32px;font-size:0.9rem;color:var(--chrome)}
+        .auth-footer a{color:var(--gold);font-weight:500;transition:color 0.2s ease}
+        .auth-footer a:hover{color:#D4A574}
+        .auth-message{padding:12px 16px;border-radius:4px;font-size:0.85rem;margin-bottom:20px;display:none;align-items:center;gap:8px;animation:authSlideDown 0.3s ease}
+        .auth-message.error{display:flex;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.2);color:#E74C3C}
+        .auth-message.success{display:flex;background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.2);color:#2ECC71}
+        @keyframes authSlideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+        .forgot-modal{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity 0.3s ease,visibility 0.3s ease}
+        .forgot-modal.active{opacity:1;visibility:visible}
+        .forgot-modal-content{width:100%;max-width:400px;padding:40px;background:rgba(20,20,22,0.95);border:1px solid rgba(168,181,192,0.1);position:relative;transform:translateY(20px);transition:transform 0.3s ease}
+        .forgot-modal.active .forgot-modal-content{transform:translateY(0)}
+        .forgot-modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--chrome);font-size:1.1rem;cursor:pointer;padding:8px}
+        .forgot-modal-close:hover{color:var(--white)}
+        .forgot-modal-title{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;margin-bottom:8px}
+        .forgot-modal-text{font-size:0.85rem;color:var(--chrome);margin-bottom:24px;line-height:1.5}
+        @media(max-width:480px){.auth-card{padding:36px 24px}.forgot-modal-content{margin:16px;padding:32px 24px}}
+    </style>
+</head>
+<body class="login-page">
+<div id="preloader" aria-hidden="true"><div class="preloader-inner"><div class="preloader-logo">AETHER</div><div class="preloader-bar"><div class="preloader-progress"></div></div></div></div>
+<div id="fog-system"><div id="foglayer_01" class="fog"><div class="image01"></div><div class="image02"></div></div><div id="foglayer_02" class="fog"><div class="image01"></div><div class="image02"></div></div><div id="foglayer_03" class="fog"><div class="image01"></div><div class="image02"></div></div></div>
+<div class="page-content">
+<div class="announcement-bar" id="announcementBar"><div class="announcement-content"><span><i class="fas fa-truck"></i> Free Shipping On Orders Over $200</span><span class="separator">|</span><span><i class="fas fa-bolt"></i> New Collection Dropping Soon</span><span class="separator">|</span><span><i class="fas fa-undo"></i> 30-Day Free Returns</span></div></div>
+<header class="header" id="header"><div class="header-container"><a href="/" class="brand-logo">AETHER</a><nav class="main-nav" id="mainNav" data-phantom-menu="primary"><div class="nav-mobile-logo"><a href="/" class="brand-logo">AETHER</a></div><ul class="nav-links"><li><a href="/" class="nav-link">Home</a></li><li class="nav-dropdown"><a href="shop.html" class="nav-link nav-dropdown-toggle">Collection <i class="fas fa-chevron-down"></i></a><ul class="nav-dropdown-menu"><li><a href="shop.html" class="nav-dropdown-link">Men</a></li><li><a href="shop.html" class="nav-dropdown-link">Women</a></li><li><a href="shop.html" class="nav-dropdown-link">Kids</a></li><li><a href="shop.html" class="nav-dropdown-link">New Arrivals</a></li><li><a href="shop.html" class="nav-dropdown-link">Bestsellers</a></li></ul></li><li><a href="about.html" class="nav-link">About</a></li><li><a href="blog.html" class="nav-link">Blog</a></li><li><a href="contact.html" class="nav-link">Contact</a></li></ul><div class="nav-mobile-icons"><a href="shop.html" class="header-icon" aria-label="Search"><i class="fas fa-search"></i></a><a href="wishlist.html" class="header-icon" aria-label="Wishlist"><i class="fas fa-heart"></i></a><a href="cart.html" class="header-icon" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
+                <a href="login.html" class="header-icon" aria-label="Account" id="navAuthIcon"><i class="fas fa-user"></i></a></div></nav><div class="header-actions"><a href="shop.html" class="header-icon" aria-label="Search"><i class="fas fa-search"></i></a><a href="wishlist.html" class="header-icon" aria-label="Wishlist"><i class="fas fa-heart"></i></a><a href="cart.html" class="header-icon" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
+                <a href="login.html" class="header-icon" aria-label="Account" id="desktopAuthIcon"><i class="fas fa-user"></i></a><button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><span></span><span></span><span></span></button></div></div></header>
+<main id="swup"><section class="page-hero auth-hero"><div class="hero-fog" aria-hidden="true"><div id="hl_01" class="hf-fog"><div class="hf-img"></div><div class="hf-img"></div></div><div id="hl_02" class="hf-fog"><div class="hf-img"></div><div class="hf-img"></div></div><div id="hl_03" class="hf-fog"><div class="hf-img"></div><div class="hf-img"></div></div></div><div class="container"><div class="auth-card" data-tilt><div class="auth-logo">AETHER</div><h1 class="auth-title">Welcome Back</h1><p class="auth-subtitle">Sign in to access your account</p><div class="auth-message" id="authMessage" aria-live="polite"><i class="fas fa-exclamation-circle"></i><span id="authMessageText"></span></div><form id="phantom-login-form" data-phantom="login_form" novalidate><div class="form-group"><label class="form-label" for="email">Email</label><input type="email" id="login-email" name="log" class="form-input" placeholder="your@email.com" required autocomplete="email"></div><div class="form-group"><label class="form-label" for="password">Password</label><div class="password-wrapper"><input type="password" id="login-password" name="pwd" class="form-input" placeholder="Enter your password" required autocomplete="current-password"><button type="button" class="password-toggle" id="togglePassword" aria-label="Show password"><i class="fas fa-eye"></i></button></div></div><div class="form-row"><div class="form-check"><input type="checkbox" id="remember" name="rememberme"><label for="remember">Remember me</label></div><button type="button" class="forgot-link" id="forgotPasswordLink">Forgot Password?</button></div><button type="submit" class="btn-signin" id="signInBtn">Sign In</button></form><div class="auth-divider"><span>or</span></div><button type="button" class="social-btn google" id="googleSignInBtn"><i class="fab fa-google"></i> Continue with Google</button><div class="auth-footer">Don't have an account? <a href="join-now.html">Join the Void</a></div></div></div></section></main>
+<div class="forgot-modal" id="forgotModal"><div class="forgot-modal-content"><button class="forgot-modal-close" id="forgotModalClose" aria-label="Close"><i class="fas fa-times"></i></button><h2 class="forgot-modal-title">Reset Password</h2><p class="forgot-modal-text">Enter your email and we'll send you a reset link.</p><div class="auth-message" id="forgotMessage" aria-live="polite"><i class="fas fa-exclamation-circle"></i><span id="forgotMessageText"></span></div><form id="forgotForm"><div class="form-group"><label class="form-label" for="forgotEmail">Email Address</label><input type="email" id="forgotEmail" name="user_login" class="form-input" placeholder="your@email.com" required></div><button type="submit" class="btn-signin" id="resetBtn">Send Reset Link</button></form></div></div>
+<footer class="footer" id="footer" role="contentinfo" data-phantom-menu="footer"><div class="container"><!-- Footer Widget Area --><div class="footer-widgets" id="phantom-widget-area-footer"><!-- Footer widgets will be rendered here --></div><div class="footer-top"><div class="footer-brand"><a href="/" class="footer-logo">AETHER</a><p class="footer-tagline">Step Into The Void</p><div class="footer-social"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-tiktok"></i></a><a href="#"><i class="fab fa-youtube"></i></a></div></div><div class="footer-links"><h4 class="footer-heading">Shop</h4><ul><li><a href="shop.html">Men</a></li><li><a href="shop.html">Women</a></li><li><a href="shop.html">Kids</a></li><li><a href="shop.html">New Arrivals</a></li></ul></div><div class="footer-links"><h4 class="footer-heading">Support</h4><ul><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact Us</a></li><li><a href="privacy-policy.html">Privacy Policy</a></li><li><a href="term-of-use.html">Terms</a></li><li><a href="cookie-policy.html">Cookies</a></li></ul></div><div class="footer-newsletter"><h4 class="footer-heading">Stay Connected</h4><p>Get exclusive drops and AETHER news.</p><form class="footer-newsletter-form"><input type="email" placeholder="Your email" required><button type="submit"><i class="fas fa-arrow-right"></i></button></form></div></div><div class="footer-bottom"><div class="footer-legal"><span>&copy; 2026 AETHER. All Rights Reserved.</span><a href="privacy-policy.html">Privacy</a><a href="term-of-use.html">Terms</a><a href="cookie-policy.html">Cookies</a></div><div class="footer-payments"><i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><i class="fab fa-cc-amex"></i><i class="fab fa-cc-paypal"></i><i class="fab fa-apple-pay"></i></div></div></div></footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="assets/js/lenis-scroll.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/phantom-bridge.js"></script>
+    <script src="assets/js/phantom-data.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

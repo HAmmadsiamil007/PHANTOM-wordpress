@@ -1,0 +1,76 @@
+- generic [active] [ref=f2e1]:
+  - link "Skip to main content" [ref=f2e2] [cursor=pointer]:
+    - /url: "#phantom-main-content"
+  - link "Skip to main content" [ref=f2e8] [cursor=pointer]:
+    - /url: "#main"
+  - generic [ref=f2e9]:
+    - text:     
+    - generic [ref=f2e11]: Free Shipping On Orders Over $200 | New Collection Dropping Soon | 30-Day Free Returns
+    - banner [ref=f2e12]:
+      - generic [ref=f2e13]:
+        - link "AETHER" [ref=f2e14] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=f2e15]:
+          - list [ref=f2e16]
+          - text:    
+        - generic [ref=f2e28]:
+          - link "Search" [ref=f2e29] [cursor=pointer]:
+            - /url: shop.html
+          - link "Wishlist" [ref=f2e31] [cursor=pointer]:
+            - /url: wishlist.html
+          - link "Cart" [ref=f2e33] [cursor=pointer]:
+            - /url: cart.html
+          - link "Account" [ref=f2e36] [cursor=pointer]:
+            - /url: login.html
+    - main [ref=f2e39]:
+      - navigation "Breadcrumb" [ref=f2e42]:
+        - link "Home" [ref=f2e43] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f2e44]: /
+        - link "Collection" [ref=f2e45] [cursor=pointer]:
+          - /url: shop.html
+        - generic [ref=f2e46]: /
+        - link "Men" [ref=f2e47] [cursor=pointer]:
+          - /url: shop.html
+        - generic [ref=f2e48]: /
+        - generic [ref=f2e49]: Void Runner — Obsidian
+      - region "Product details" [ref=f2e227]:
+        - generic [ref=f2e52]:
+          - generic [ref=f2e53]
+          - generic [ref=f2e73]
+      - generic [ref=f2e135]:
+        - generic [ref=f2e136]:
+          - img "Void Runner" [ref=f2e137]
+          - generic [ref=f2e138]
+        - combobox "Select size" [ref=f2e143] [cursor=pointer]:
+          - option "Size"
+          - option "US 7"
+          - option "US 7.5"
+          - option "US 8"
+          - option "US 8.5"
+          - option "US 9"
+          - option "US 9.5"
+          - option "US 10" [selected]
+          - option "US 10.5"
+          - option "US 11"
+          - option "US 11.5"
+          - option "US 12"
+          - option "US 13"
+      - generic [ref=f2e146]:
+        - heading "Customer Reviews" [level=2] [ref=f2e147]
+        - generic [ref=f2e150]:
+          - generic [ref=f2e151]
+          - generic [ref=f2e159]
+  - generic:
+    - generic:
+      - button "Close size guide":
+        - generic: 
+      - heading "Size Guide" [level=3]
+      - paragraph: AETHER Void Runner — Unisex Sizing
+      - generic:
+        - table:
+          - rowgroup
+          - rowgroup
+      - generic:
+        - generic: 
+        - paragraph: Measure your foot from heel to longest toe. If between sizes, we recommend going half size up.

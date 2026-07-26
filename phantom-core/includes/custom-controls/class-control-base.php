@@ -16,7 +16,6 @@ abstract class Control_Base extends \WP_Customize_Control {
     public static function register_all( WP_Customize_Manager $wp_customize ): void {
         $base = __DIR__ . '/';
         $controls = array(
-            'class-font-families.php',
             'class-toggle-control.php',
             'class-select-control.php',
             'class-radio-image-control.php',

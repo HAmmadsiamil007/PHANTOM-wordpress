@@ -9,6 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 class Rest_Controller extends \WP_REST_Controller {
 
+	private const PAGE_DATA_CACHE_KEY = 'phantom_page_data_v2';
+
 	private static ?Rest_Controller $instance = null;
 	protected $namespace = 'phantom/v1';
 
@@ -21,6 +23,8 @@ class Rest_Controller extends \WP_REST_Controller {
 
 	public function init(): void {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'wp_update_nav_menu', array( $this, 'invalidate_page_cache' ), 10, 0 );
+		add_action( 'wp_create_nav_menu', array( $this, 'invalidate_page_cache' ), 10, 0 );
 	}
 
 	public function register_routes(): void {
@@ -188,6 +192,31 @@ class Rest_Controller extends \WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
+			'/post-types',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_post_types' ),
+					'permission_callback' => '__return_true',
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/pages',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_pages' ),
+					'permission_callback' => '__return_true',
+					'args'                => $this->get_pages_args(),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
 			'/pages/(?P<slug>[\w-]+)',
 			array(
 				array(
@@ -207,6 +236,19 @@ class Rest_Controller extends \WP_REST_Controller {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_categories' ),
 					'permission_callback' => '__return_true',
+					'args'                => $this->get_categories_args(),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/menu-locations',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_menu_locations' ),
+					'permission_callback' => '__return_true',
 				),
 			)
 		);
@@ -220,6 +262,18 @@ class Rest_Controller extends \WP_REST_Controller {
 					'callback'            => array( $this, 'get_menu' ),
 					'permission_callback' => '__return_true',
 					'args'                => $this->get_menu_args(),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/product-tags',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_product_tags' ),
+					'permission_callback' => '__return_true',
 				),
 			)
 		);
@@ -343,7 +397,7 @@ class Rest_Controller extends \WP_REST_Controller {
 			'/cart/update',
 			array(
 				array(
-					'methods'             => \WP_REST_Server::CREATABLE,
+					'methods'             => \WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_cart_item_endpoint' ),
 					'permission_callback' => array( $this, 'cart_write_permission_check' ),
 					'args'                => array(
@@ -367,7 +421,7 @@ class Rest_Controller extends \WP_REST_Controller {
 			'/cart/remove',
 			array(
 				array(
-					'methods'             => \WP_REST_Server::CREATABLE,
+					'methods'             => \WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'remove_cart_item_endpoint' ),
 					'permission_callback' => array( $this, 'cart_write_permission_check' ),
 					'args'                => array(
@@ -377,6 +431,18 @@ class Rest_Controller extends \WP_REST_Controller {
 							'sanitize_callback' => 'sanitize_text_field',
 						),
 					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/cart/coupons',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_cart_coupons' ),
+					'permission_callback' => array( $this, 'verify_nonce' ),
 				),
 			)
 		);
@@ -469,7 +535,13 @@ class Rest_Controller extends \WP_REST_Controller {
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'submit_woo_review' ),
-					'permission_callback' => function () { return is_user_logged_in(); },
+					'permission_callback' => function ( $request ) {
+					$nonce = $this->verify_nonce( $request );
+					if ( is_wp_error( $nonce ) ) {
+						return $nonce;
+					}
+					return is_user_logged_in();
+				},
 					'args'                => $this->get_submit_review_args(),
 				),
 			)
@@ -481,7 +553,7 @@ class Rest_Controller extends \WP_REST_Controller {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_page_data' ),
+					'callback'            => array( $this, 'get_public_page_data' ),
 					'permission_callback' => '__return_true',
 				),
 			)
@@ -565,6 +637,40 @@ class Rest_Controller extends \WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
+			'/widgets',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_widget_areas' ),
+					'permission_callback' => '__return_true',
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/widgets/(?P<sidebar_id>[\w-]+)',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_widget_area' ),
+					'permission_callback' => '__return_true',
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/user/profile',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_user_profile' ),
+				'permission_callback' => array( $this, 'verify_nonce' ),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
 			'/user/orders',
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
@@ -588,7 +694,11 @@ class Rest_Controller extends \WP_REST_Controller {
 		);
 	}
 
-	public function settings_permission_check(): bool {
+	public function settings_permission_check( $request ) {
+		$nonce_check = $this->verify_nonce( $request );
+		if ( is_wp_error( $nonce_check ) ) {
+			return $nonce_check;
+		}
 		return current_user_can( 'edit_theme_options' );
 	}
 
@@ -600,11 +710,15 @@ class Rest_Controller extends \WP_REST_Controller {
 		return current_user_can( 'manage_options' );
 	}
 
-	public function partial_permission_check(): bool {
+	public function partial_permission_check( $request ) {
+		$nonce_check = $this->verify_nonce( $request );
+		if ( is_wp_error( $nonce_check ) ) {
+			return $nonce_check;
+		}
 		return current_user_can( 'edit_theme_options' );
 	}
 
-	private function verify_nonce( $request = null ) {
+	public function verify_nonce( $request = null ) {
 		if ( ! function_exists( 'wp_verify_nonce' ) ) {
 			return true;
 		}
@@ -615,18 +729,27 @@ class Rest_Controller extends \WP_REST_Controller {
 		if ( '' === $nonce ) {
 			$nonce = isset( $_SERVER['HTTP_X_PHANTOM_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_PHANTOM_NONCE'] ) ) : '';
 		}
-		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'phantom_api' ) ) {
-			return new \WP_Error(
-				'rest_forbidden',
-				__( 'Invalid or missing nonce.', 'phantom-core' ),
-				array( 'status' => 401 )
-			);
+		if ( '' !== $nonce && wp_verify_nonce( $nonce, 'phantom_api' ) ) {
+			return true;
 		}
-		return true;
+		if ( $request instanceof \WP_REST_Request ) {
+			$nonce = $request->get_header( 'X-WP-Nonce' ) ?? '';
+		}
+		if ( '' === $nonce ) {
+			$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
+		}
+		if ( '' !== $nonce && wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+			return true;
+		}
+		return new \WP_Error(
+			'rest_forbidden',
+			__( 'Invalid or missing nonce.', 'phantom-core' ),
+			array( 'status' => 401 )
+		);
 	}
 
-	public function settings_write_permission_check() {
-		$nonce = $this->verify_nonce();
+	public function settings_write_permission_check( $request ) {
+		$nonce = $this->verify_nonce( $request );
 		if ( is_wp_error( $nonce ) ) {
 			return $nonce;
 		}
@@ -634,6 +757,9 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function cart_write_permission_check( $request ) {
+		if ( ! is_user_logged_in() ) {
+			return true;
+		}
 		return $this->verify_nonce( $request );
 	}
 
@@ -761,7 +887,7 @@ class Rest_Controller extends \WP_REST_Controller {
 
 		\PhantomCore\Customizer::get_instance()->sync_options();
 
-		delete_transient( 'phantom_page_data' );
+		delete_transient( self::PAGE_DATA_CACHE_KEY );
 		\Phantom_Custom_CSS::flush_cache();
 
 		return new \WP_REST_Response(
@@ -784,7 +910,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		Settings_Registry::get_instance()->set( $key, $value );
 
 		\PhantomCore\Customizer::get_instance()->sync_options();
-		delete_transient( 'phantom_page_data' );
+		delete_transient( self::PAGE_DATA_CACHE_KEY );
 		\Phantom_Custom_CSS::flush_cache();
 
 		return new \WP_REST_Response( $this->format_entry( $key, $entry, true ), 200 );
@@ -802,7 +928,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		Settings_Registry::get_instance()->set( $key, $default );
 
 		\PhantomCore\Customizer::get_instance()->sync_options();
-		delete_transient( 'phantom_page_data' );
+		delete_transient( self::PAGE_DATA_CACHE_KEY );
 		\Phantom_Custom_CSS::flush_cache();
 
 		return new \WP_REST_Response(
@@ -831,7 +957,7 @@ class Rest_Controller extends \WP_REST_Controller {
 	 * converts WP_Error to a proper JSON error response automatically.
 	 */
 	private function check_rate_limit( string $action, int $max_attempts = 5, int $window = 60 ): ?\WP_Error {
-		$ip      = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+		$ip      = isset( $_SERVER['HTTP_X_REAL_IP'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_REAL_IP'] ) ) : ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) : ( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown' ) );
 		$key     = 'phantom_rate_' . $action . '_' . md5( $ip );
 		$attempts = (int) get_transient( $key );
 
@@ -845,6 +971,21 @@ class Rest_Controller extends \WP_REST_Controller {
 
 		set_transient( $key, $attempts + 1, $window );
 		return null;
+	}
+
+	public function invalidate_page_cache(): void {
+		delete_transient( self::PAGE_DATA_CACHE_KEY );
+	}
+
+	private function check_cart_rate_limit( \WP_REST_Request $request ) {
+		$ip = $request->get_header( 'X-Real-IP' ) ?: $request->get_header( 'X-Forwarded-For' ) ?: sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+		$key = 'rate_cart_' . md5( $ip );
+		$count = (int) get_transient( $key );
+		if ( $count > 30 ) {
+			return $this->wp_error( 'rate_limit', __( 'Too many cart requests.', 'phantom-core' ), 429 );
+		}
+		set_transient( $key, $count + 1, 60 );
+		return true;
 	}
 
 	public function wp_error( string $code, string $message, int $status = 400 ): \WP_Error {
@@ -955,7 +1096,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		}
 
 		$registry->flush_cache();
-		delete_transient( 'phantom_page_data' );
+		delete_transient( self::PAGE_DATA_CACHE_KEY );
 		\Phantom_Custom_CSS::flush_cache();
 
 		return new \WP_REST_Response(
@@ -969,7 +1110,7 @@ class Rest_Controller extends \WP_REST_Controller {
 
 	public function flush_cache(): \WP_REST_Response {
 		Settings_Registry::get_instance()->flush_cache();
-		delete_transient( 'phantom_page_data' );
+		delete_transient( self::PAGE_DATA_CACHE_KEY );
 		\Phantom_Custom_CSS::flush_cache();
 		return new \WP_REST_Response(
 			array(
@@ -1095,6 +1236,62 @@ class Rest_Controller extends \WP_REST_Controller {
 		return new \WP_REST_Response( $data, 200 );
 	}
 
+	public function get_pages( \WP_REST_Request $request ): \WP_REST_Response {
+		$per_page = max( 1, min( 100, absint( $request->get_param( 'per_page' ) ?: 50 ) ) );
+		$page     = max( 1, absint( $request->get_param( 'page' ) ?: 1 ) );
+
+		$args = array(
+			'post_type'      => 'page',
+			'posts_per_page' => $per_page,
+			'paged'          => $page,
+			'post_status'    => 'publish',
+		);
+
+		$query = new \WP_Query( $args );
+		$items = array();
+
+		foreach ( $query->posts as $p ) {
+			$items[] = array(
+				'id'             => $p->ID,
+				'title'          => get_the_title( $p ),
+				'slug'           => $p->post_name,
+				'excerpt'        => get_the_excerpt( $p ),
+				'date'           => get_the_date( 'c', $p ),
+				'modified'       => get_the_modified_date( 'c', $p ),
+				'featured_image' => get_the_post_thumbnail_url( $p->ID, 'large' ) ?: '',
+				'url'            => get_permalink( $p ),
+			);
+		}
+
+		$response = new \WP_REST_Response(
+			array(
+				'pages'      => $items,
+				'total'      => $query->found_posts,
+				'totalPages' => $query->max_num_pages,
+				'page'       => $page,
+			),
+			200
+		);
+		$response->header( 'X-WP-Total', (string) $query->found_posts );
+		$response->header( 'X-WP-TotalPages', (string) $query->max_num_pages );
+		return $response;
+	}
+
+	public function get_post_types(): \WP_REST_Response {
+		$types = get_post_types( array( 'public' => true ), 'objects' );
+		$items = array();
+		foreach ( $types as $type ) {
+			$items[] = array(
+				'name'         => $type->name,
+				'label'        => $type->label,
+				'description'  => $type->description,
+				'hierarchical' => $type->hierarchical,
+				'rest_base'    => $type->rest_base ?: $type->name,
+			);
+		}
+		return new \WP_REST_Response( $items, 200 );
+	}
+
 	public function get_page_by_slug( \WP_REST_Request $request ) {
 		$slug = sanitize_title( $request->get_param( 'slug' ) );
 		$page = get_page_by_path( $slug, OBJECT, 'page' );
@@ -1123,56 +1320,128 @@ class Rest_Controller extends \WP_REST_Controller {
 		);
 	}
 
-	public function get_categories(): \WP_REST_Response {
-		$items = array();
+	public function get_categories( \WP_REST_Request $request ): \WP_REST_Response {
+		$per_page = max( 1, min( 100, absint( $request->get_param( 'per_page' ) ?: 50 ) ) );
+		$page     = max( 1, absint( $request->get_param( 'page' ) ?: 1 ) );
+		$taxonomy = $request->get_param( 'taxonomy' ) ?: '';
+		$items    = array();
 
-		if ( class_exists( 'WooCommerce' ) ) {
-			$product_cats = get_terms(
+		if ( '' !== $taxonomy && ! in_array( $taxonomy, array( 'category', 'post_tag', 'product_cat', 'product_tag' ), true ) ) {
+			$taxonomy = '';
+		}
+
+		if ( '' === $taxonomy || 'product_cat' === $taxonomy ) {
+			if ( class_exists( 'WooCommerce' ) ) {
+				$product_cats = get_terms(
+					array(
+						'taxonomy'   => 'product_cat',
+						'hide_empty' => true,
+						'orderby'    => 'name',
+						'order'      => 'ASC',
+					)
+				);
+				if ( is_array( $product_cats ) ) {
+					foreach ( $product_cats as $cat ) {
+						$cat_url = get_term_link( $cat );
+						$parent_name = $cat->parent ? get_term( $cat->parent )->name : '';
+						$cat_image = '';
+						$thumbnail_id = absint( get_term_meta( $cat->term_id, 'thumbnail_id', true ) );
+						if ( $thumbnail_id ) {
+							$cat_image = wp_get_attachment_image_url( $thumbnail_id, 'medium_large' );
+						}
+						if ( ! $cat_image ) {
+							$products_in_cat = wc_get_products( array(
+								'limit'    => 1,
+								'status'   => 'publish',
+								'category' => array( $cat->slug ),
+							) );
+							if ( ! empty( $products_in_cat ) ) {
+								$img_id = $products_in_cat[0]->get_image_id();
+								if ( $img_id ) {
+									$cat_image = wp_get_attachment_image_url( $img_id, 'medium_large' );
+								}
+							}
+						}
+						if ( ! $cat_image ) {
+							$cat_image = wc_placeholder_img_src( 'medium_large' );
+						}
+						$items[] = array(
+							'id'          => $cat->term_id,
+							'name'        => $cat->name,
+							'slug'        => $cat->slug,
+							'count'       => $cat->count,
+							'url'         => is_wp_error( $cat_url ) ? '' : $cat_url,
+							'image'       => $cat_image,
+							'parent'      => $cat->parent,
+							'parent_name' => $parent_name,
+							'taxonomy'    => 'product_cat',
+						);
+					}
+				}
+			}
+		}
+
+		if ( '' === $taxonomy || 'category' === $taxonomy ) {
+			$post_cats = get_categories(
 				array(
-					'taxonomy'   => 'product_cat',
 					'hide_empty' => true,
 					'orderby'    => 'name',
 					'order'      => 'ASC',
 				)
 			);
-			if ( is_array( $product_cats ) ) {
-				foreach ( $product_cats as $cat ) {
-					$cat_url = get_term_link( $cat );
-					$items[] = array(
-						'id'       => $cat->term_id,
-						'name'     => $cat->name,
-						'slug'     => $cat->slug,
-						'count'    => $cat->count,
-						'url'      => is_wp_error( $cat_url ) ? '' : $cat_url,
-						'parent'   => $cat->parent,
-						'taxonomy' => 'product_cat',
-					);
-				}
+			foreach ( $post_cats as $cat ) {
+				$parent_name = $cat->parent ? get_term( $cat->parent )->name : '';
+				$items[] = array(
+					'id'          => $cat->term_id,
+					'name'        => $cat->name,
+					'slug'        => $cat->slug,
+					'count'       => $cat->count,
+					'url'         => get_category_link( $cat->term_id ),
+					'parent'      => $cat->parent,
+					'parent_name' => $parent_name,
+					'taxonomy'    => 'category',
+				);
 			}
 		}
 
-		$post_cats = get_categories(
-			array(
-				'hide_empty' => true,
-				'orderby'    => 'name',
-				'order'      => 'ASC',
-			)
-		);
-		foreach ( $post_cats as $cat ) {
-			$items[] = array(
-				'id'       => $cat->term_id,
-				'name'     => $cat->name,
-				'slug'     => $cat->slug,
-				'count'    => $cat->count,
-				'url'      => get_category_link( $cat->term_id ),
-				'parent'   => $cat->parent,
-				'taxonomy' => 'category',
-			);
+		// Enrich with children
+		$id_map = array();
+		foreach ( $items as $i => $item ) {
+			$id_map[ $item['id'] ] = $i;
+		}
+		foreach ( $items as $i => $item ) {
+			$items[ $i ]['children'] = array();
+		}
+		foreach ( $items as $i => $item ) {
+			if ( $item['parent'] && isset( $id_map[ $item['parent'] ] ) ) {
+				$items[ $id_map[ $item['parent'] ] ]['children'][] = $item;
+			}
 		}
 
+		$total  = count( $items );
+		$offset = ( $page - 1 ) * $per_page;
+		$items  = array_slice( $items, $offset, $per_page );
+
 		$response = new \WP_REST_Response( $items, 200 );
+		$response->header( 'X-WP-Total', (string) $total );
+		$response->header( 'X-WP-TotalPages', (string) (int) ceil( $total / $per_page ) );
 		$this->set_cache_headers( $response, 3600 );
 		return $response;
+	}
+
+	public function get_menu_locations(): \WP_REST_Response {
+		$locations = get_registered_nav_menus();
+		$theme_locations = get_nav_menu_locations();
+		$items = array();
+		foreach ( $locations as $location => $description ) {
+			$items[] = array(
+				'location' => $location,
+				'description' => $description,
+				'assigned' => isset( $theme_locations[ $location ] ) && $theme_locations[ $location ] > 0,
+				'menu_id'  => $theme_locations[ $location ] ?? 0,
+			);
+		}
+		return new \WP_REST_Response( $items, 200 );
 	}
 
 	public function get_menu( \WP_REST_Request $request ) {
@@ -1191,7 +1460,6 @@ class Rest_Controller extends \WP_REST_Controller {
 		}
 
 		$tree = $this->build_menu_tree( $items );
-		$tree = $this->enrich_menu_tree( $tree );
 
 		return new \WP_REST_Response(
 			array(
@@ -1201,6 +1469,30 @@ class Rest_Controller extends \WP_REST_Controller {
 			),
 			200
 		);
+	}
+
+	public function get_widget_areas(): \WP_REST_Response {
+		global $wp_registered_sidebars;
+		$areas = array();
+		foreach ( $wp_registered_sidebars as $id => $sidebar ) {
+			$areas[] = array(
+				'id'          => $id,
+				'name'        => $sidebar['name'],
+				'description' => $sidebar['description'] ?? '',
+			);
+		}
+		return new \WP_REST_Response( $areas, 200 );
+	}
+
+	public function get_widget_area( \WP_REST_Request $request ): \WP_REST_Response {
+		$sidebar_id = sanitize_key( $request->get_param( 'sidebar_id' ) );
+		ob_start();
+		dynamic_sidebar( $sidebar_id );
+		$html = ob_get_clean();
+		return new \WP_REST_Response( array(
+			'sidebar_id' => $sidebar_id,
+			'html'       => $html ?: '',
+		), 200 );
 	}
 
 	public function get_products( \WP_REST_Request $request ) {
@@ -1340,6 +1632,14 @@ class Rest_Controller extends \WP_REST_Controller {
 		return $response;
 	}
 
+	public function get_product_tags( \WP_REST_Request $request ) {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			return new \WP_REST_Response( array( 'tags' => array() ), 200 );
+		}
+		$tags = get_terms( array( 'taxonomy' => 'product_tag', 'hide_empty' => false ) );
+		return new \WP_REST_Response( array( 'tags' => $tags ), 200 );
+	}
+
 	public function get_featured_products() {
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return $this->wp_error( 'woocommerce_inactive', __( 'WooCommerce is not active.', 'phantom-core' ), 400 );
@@ -1370,7 +1670,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		}
 		wp_reset_postdata();
 
-		$response = new \WP_REST_Response( $products, 200 );
+		$response = new \WP_REST_Response( array( 'products' => $products ), 200 );
 		$this->set_cache_headers( $response, 600 );
 		return $response;
 	}
@@ -1550,15 +1850,20 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function add_to_cart_endpoint( \WP_REST_Request $request ) {
+		$rate = $this->check_cart_rate_limit( $request );
+		if ( is_wp_error( $rate ) ) { return $rate; }
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return $this->wp_error( 'woocommerce_inactive', __( 'WooCommerce is not active.', 'phantom-core' ), 400 );
 		}
 		try {
-			$product_id    = $request->get_param( 'product_id' );
-			$quantity      = $request->get_param( 'quantity' );
-			$variation_id  = $request->get_param( 'variation_id' );
-			$variation     = $request->get_param( 'variation' );
-			$cart_item_key = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, (array) $variation );
+			if ( null === WC()->cart ) {
+				wc_load_cart();
+			}
+			$product_id   = absint( $request->get_param( 'product_id' ) );
+			$quantity     = absint( $request->get_param( 'quantity' ) );
+			$variation_id = absint( $request->get_param( 'variation_id' ) );
+			$variation    = (array) $request->get_param( 'variation' );
+			$cart_item_key = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation );
 			if ( false === $cart_item_key ) {
 				return $this->wp_error( 'add_to_cart_failed', __( 'Could not add item to cart.', 'phantom-core' ), 400 );
 			}
@@ -1569,13 +1874,19 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function update_cart_item_endpoint( \WP_REST_Request $request ) {
+		$rate = $this->check_cart_rate_limit( $request );
+		if ( is_wp_error( $rate ) ) { return $rate; }
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return $this->wp_error( 'woocommerce_inactive', __( 'WooCommerce is not active.', 'phantom-core' ), 400 );
 		}
 		try {
+			if ( null === WC()->cart ) {
+				wc_load_cart();
+			}
 			$key      = $request->get_param( 'key' );
-			$quantity = $request->get_param( 'quantity' );
-			if ( null === WC()->cart->get_cart_item( $key ) ) {
+			$quantity = absint( $request->get_param( 'quantity' ) );
+			$cart = WC()->cart->get_cart();
+			if ( ! isset( $cart[ $key ] ) ) {
 				return $this->wp_error( 'invalid_key', __( 'Cart item not found.', 'phantom-core' ), 400 );
 			}
 			WC()->cart->set_quantity( $key, $quantity );
@@ -1586,12 +1897,18 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function remove_cart_item_endpoint( \WP_REST_Request $request ) {
+		$rate = $this->check_cart_rate_limit( $request );
+		if ( is_wp_error( $rate ) ) { return $rate; }
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return $this->wp_error( 'woocommerce_inactive', __( 'WooCommerce is not active.', 'phantom-core' ), 400 );
 		}
 		try {
+			if ( null === WC()->cart ) {
+				wc_load_cart();
+			}
 			$key = $request->get_param( 'key' );
-			if ( null === WC()->cart->get_cart_item( $key ) ) {
+			$cart = WC()->cart->get_cart();
+			if ( ! isset( $cart[ $key ] ) ) {
 				return $this->wp_error( 'invalid_key', __( 'Cart item not found.', 'phantom-core' ), 400 );
 			}
 			WC()->cart->remove_cart_item( $key );
@@ -1601,7 +1918,28 @@ class Rest_Controller extends \WP_REST_Controller {
 		}
 	}
 
+	public function get_cart_coupons( \WP_REST_Request $request ) {
+		if ( ! class_exists( 'WooCommerce' ) || ! isset( WC()->cart ) ) {
+			return new \WP_REST_Response( array( 'coupons' => array() ), 200 );
+		}
+		$coupons = WC()->cart->get_applied_coupons();
+		$data = array();
+		foreach ( $coupons as $code ) {
+			$coupon = new \WC_Coupon( $code );
+			$data[] = array(
+				'code'          => $code,
+				'amount'        => $coupon->get_amount(),
+				'discount_type' => $coupon->get_discount_type(),
+				'description'   => $coupon->get_description(),
+				'expiry_date'   => $coupon->get_date_expires() ? $coupon->get_date_expires()->date_i18n( 'Y-m-d' ) : '',
+			);
+		}
+		return new \WP_REST_Response( array( 'coupons' => $data ), 200 );
+	}
+
 	public function apply_coupon_endpoint( \WP_REST_Request $request ) {
+		$rate = $this->check_cart_rate_limit( $request );
+		if ( is_wp_error( $rate ) ) { return $rate; }
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return $this->wp_error( 'woocommerce_inactive', __( 'WooCommerce is not active.', 'phantom-core' ), 400 );
 		}
@@ -1618,6 +1956,8 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function remove_coupon_endpoint( \WP_REST_Request $request ) {
+		$rate = $this->check_cart_rate_limit( $request );
+		if ( is_wp_error( $rate ) ) { return $rate; }
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			return $this->wp_error( 'woocommerce_inactive', __( 'WooCommerce is not active.', 'phantom-core' ), 400 );
 		}
@@ -1677,15 +2017,42 @@ class Rest_Controller extends \WP_REST_Controller {
 			return $this->wp_error( 'woocommerce_inactive', __( 'WooCommerce is not active.', 'phantom-core' ), 400 );
 		}
 		try {
+			if ( null === WC()->cart ) {
+				wc_load_cart();
+			}
 			return new \WP_REST_Response( $this->get_cart_data(), 200 );
 		} catch ( \Throwable $e ) {
 			return new \WP_REST_Response( array( 'items' => array(), 'total' => '', 'totalItems' => 0, 'currency' => '' ), 200 );
 		}
 	}
 
+	public function get_public_page_data(): \WP_REST_Response {
+		$registry   = Settings_Registry::get_instance();
+		$all_entries = $registry->get_entries();
+		$allowed_sections = array( 'colors', 'typography', 'layout', 'spacing', 'header', 'footer', 'buttons', 'branding' );
+		$settings    = array();
+		foreach ( $all_entries as $key => $entry ) {
+			$section = $entry['section'] ?? '';
+			if ( ! in_array( $section, $allowed_sections, true ) ) {
+				continue;
+			}
+			if ( preg_match( '/^(admin_|secret_|api_key)/i', $key ) ) {
+				continue;
+			}
+			$settings[ $key ] = $registry->get( $key );
+		}
+		if ( function_exists( 'get_woocommerce_currency_symbol' ) ) {
+			$settings['currency_symbol'] = get_woocommerce_currency_symbol();
+		} else {
+			$settings['currency_symbol'] = '$';
+		}
+		$data = array( 'settings' => $settings );
+		return new \WP_REST_Response( $data, 200 );
+	}
+
 	public function get_page_data(): \WP_REST_Response {
 		try {
-			$cached = get_transient( 'phantom_page_data' );
+			$cached = get_transient( self::PAGE_DATA_CACHE_KEY );
 			if ( false !== $cached ) {
 				$cached['cart'] = $this->get_cart_data();
 				return new \WP_REST_Response( $cached, 200 );
@@ -1696,6 +2063,11 @@ class Rest_Controller extends \WP_REST_Controller {
 			foreach ( $registry->get_entries() as $key => $entry ) {
 				$settings[ $key ] = $registry->get( $key );
 			}
+			if ( function_exists( 'get_woocommerce_currency_symbol' ) ) {
+				$settings['currency_symbol'] = get_woocommerce_currency_symbol();
+			} else {
+				$settings['currency_symbol'] = '$';
+			}
 
 			$menus     = array();
 			$locations = get_nav_menu_locations();
@@ -1703,7 +2075,6 @@ class Rest_Controller extends \WP_REST_Controller {
 				$menu_items = wp_get_nav_menu_items( $menu_id );
 				if ( $menu_items ) {
 				$tree = $this->build_menu_tree( $menu_items );
-				$tree = $this->enrich_menu_tree( $tree );
 				$menus[ $location ] = array(
 					'location' => $location,
 					'menu_id'  => $menu_id,
@@ -1758,33 +2129,49 @@ class Rest_Controller extends \WP_REST_Controller {
 		$data['pagination']['totalPosts'] = (int) wp_count_posts( 'post' )->publish;
 
 		$data['categories'] = array();
+		$data['product_categories'] = array();
+
+		$post_cats = get_categories( array( 'hide_empty' => false ) );
+		foreach ( $post_cats as $cat ) {
+			$entry = array(
+				'name'  => $cat->name,
+				'slug'  => $cat->slug,
+				'count' => $cat->count,
+				'url'   => get_category_link( $cat->term_id ),
+				'image' => '',
+			);
+			$thumb_id = get_term_meta( $cat->term_id, 'thumbnail_id', true );
+			if ( $thumb_id ) {
+				$entry['image'] = wp_get_attachment_url( $thumb_id ) ?: '';
+			}
+			$data['categories'][] = $entry;
+		}
+
 		if ( class_exists( 'WooCommerce' ) ) {
-			$cats = get_terms(
+			$product_cats = get_terms(
 				array(
 					'taxonomy'   => 'product_cat',
-					'hide_empty' => true,
+					'hide_empty' => false,
 				)
 			);
-			foreach ( $cats as $cat ) {
-				$data['categories'][] = array(
-					'name' => $cat->name,
-					'slug' => $cat->slug,
+			foreach ( $product_cats as $cat ) {
+				$entry = array(
+					'name'  => $cat->name,
+					'slug'  => $cat->slug,
 					'count' => $cat->count,
+					'url'   => get_term_link( $cat ),
+					'image' => '',
 				);
-			}
-		} else {
-			$cats = get_categories( array( 'hide_empty' => true ) );
-			foreach ( $cats as $cat ) {
-				$data['categories'][] = array(
-					'name' => $cat->name,
-					'slug' => $cat->slug,
-					'count' => $cat->count,
-				);
+				$thumb_id = get_term_meta( $cat->term_id, 'thumbnail_id', true );
+				if ( $thumb_id ) {
+					$entry['image'] = wp_get_attachment_url( $thumb_id ) ?: '';
+				}
+				$data['product_categories'][] = $entry;
 			}
 		}
 
 		$cache_data = $data;
-		set_transient( 'phantom_page_data', $cache_data, HOUR_IN_SECONDS );
+		set_transient( self::PAGE_DATA_CACHE_KEY, $cache_data, HOUR_IN_SECONDS );
 		$data['cart'] = $this->get_cart_data();
 
 		return new \WP_REST_Response( $data, 200 );
@@ -1798,9 +2185,12 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	private function set_cache_headers( \WP_REST_Response $response, int $max_age = 3600 ): void {
-		$etag = md5( serialize( $response->get_data() ) );
-		$response->header( 'Cache-Control', 'public, max-age=' . $max_age . ', must-revalidate' );
-		$response->header( 'ETag', '"' . $etag . '"' );
+		$data = $response->get_data();
+		$raw  = serialize( $data );
+		if ( strlen( $raw ) < 102400 ) {
+			$response->header( 'Cache-Control', 'public, max-age=' . $max_age . ', must-revalidate' );
+			$response->header( 'ETag', '"' . md5( $raw ) . '"' );
+		}
 	}
 
 	private function format_entry( string $key, array $entry, bool $fresh = false ): array {
@@ -1981,13 +2371,18 @@ class Rest_Controller extends \WP_REST_Controller {
 			}
 
 			$sorted[ $item->ID ] = array(
-				'id'       => $item->ID,
-				'title'    => $item->title,
-				'url'      => $url,
-				'parent'   => (int) $item->menu_item_parent,
-				'classes'  => implode( ' ', array_filter( $item->classes ?? array() ) ),
-				'target'   => $item->target,
-				'children' => array(),
+				'id'          => $item->ID,
+				'title'       => $item->title,
+				'url'         => $url,
+				'parent'      => (int) $item->menu_item_parent,
+				'classes'     => implode( ' ', array_filter( $item->classes ?? array() ) ),
+				'target'      => $item->target,
+				'description' => $item->description ?? '',
+				'attr_title'  => $item->attr_title ?? '',
+				'xfn'         => $item->xfn ?? '',
+				'object'      => $item->object ?? '',
+				'object_id'   => $item->object_id ?? 0,
+				'children'    => array(),
 			);
 		}
 
@@ -2000,62 +2395,6 @@ class Rest_Controller extends \WP_REST_Controller {
 		}
 		unset( $node );
 
-		return $tree;
-	}
-
-	/**
-	 * Auto-enrich menu tree with important page routes missing from the WordPress menu.
-	 * Groups extra pages under a "Pages" dropdown parent.
-	 */
-	private function enrich_menu_tree( array $tree ): array {
-		$existing_urls = array();
-		foreach ( $tree as $node ) {
-			$existing_urls[ $node['url'] ] = true;
-		}
-		$next_id = 999;
-		$extra_children = array();
-		$wc_active = class_exists( 'WooCommerce' );
-		$page_routes = array(
-			array( 'title' => __( 'FAQ', 'phantom-core' ),          'url' => home_url( '/faq/' ) ),
-			array( 'title' => __( 'Team', 'phantom-core' ),         'url' => home_url( '/team/' ) ),
-			array( 'title' => __( 'Testimonials', 'phantom-core' ), 'url' => home_url( '/testimonials/' ) ),
-		);
-		if ( $wc_active ) {
-			$page_routes = array_merge(
-				$page_routes,
-				array(
-					array( 'title' => __( 'Cart', 'phantom-core' ),      'url' => wc_get_cart_url() ),
-					array( 'title' => __( 'Checkout', 'phantom-core' ),  'url' => wc_get_checkout_url() ),
-					array( 'title' => __( 'My Account', 'phantom-core' ),'url' => wc_get_page_permalink( 'myaccount' ) ),
-				)
-			);
-		}
-		foreach ( $page_routes as $pr ) {
-			if ( ! isset( $existing_urls[ $pr['url'] ] ) ) {
-				$cid = $next_id++;
-				$extra_children[] = array(
-					'id'       => $cid,
-					'title'    => $pr['title'],
-					'url'      => $pr['url'],
-					'parent'   => 0,
-					'classes'  => '',
-					'target'   => '',
-					'children' => array(),
-				);
-			}
-		}
-		if ( ! empty( $extra_children ) ) {
-			$pages_parent_id = $next_id++;
-			$tree[] = array(
-				'id'       => $pages_parent_id,
-				'title'    => __( 'Pages', 'phantom-core' ),
-				'url'      => '#',
-				'parent'   => 0,
-				'classes'  => '',
-				'target'   => '',
-				'children' => $extra_children,
-			);
-		}
 		return $tree;
 	}
 
@@ -2110,6 +2449,17 @@ class Rest_Controller extends \WP_REST_Controller {
 		if ( $full ) {
 			$data['cross_sell_ids'] = $product->get_cross_sell_ids();
 			$data['up_sell_ids']    = $product->get_upsell_ids();
+			$tags_raw = wp_get_post_terms( $product->get_id(), 'product_tag' );
+			$data['tags'] = array();
+			if ( is_array( $tags_raw ) ) {
+				foreach ( $tags_raw as $tag ) {
+					$data['tags'][] = array(
+						'id'   => $tag->term_id,
+						'name' => $tag->name,
+						'slug' => $tag->slug,
+					);
+				}
+			}
 		}
 
 		if ( $full ) {
@@ -2254,6 +2604,26 @@ class Rest_Controller extends \WP_REST_Controller {
 		);
 	}
 
+	private function get_pages_args(): array {
+		return array(
+			'per_page' => array(
+				'description'       => __( 'Number of items per page.', 'phantom-core' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'maximum'           => 100,
+				'sanitize_callback' => 'absint',
+				'default'           => 50,
+			),
+			'page' => array(
+				'description'       => __( 'Page number.', 'phantom-core' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'sanitize_callback' => 'absint',
+				'default'           => 1,
+			),
+		);
+	}
+
 	private function get_posts_args(): array {
 		return array(
 			'per_page' => array(
@@ -2276,6 +2646,32 @@ class Rest_Controller extends \WP_REST_Controller {
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => '',
+			),
+		);
+	}
+
+	private function get_categories_args(): array {
+		return array(
+			'per_page' => array(
+				'description'       => __( 'Number of items per page.', 'phantom-core' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'maximum'           => 100,
+				'default'           => 50,
+				'sanitize_callback' => 'absint',
+			),
+			'page' => array(
+				'description'       => __( 'Page number.', 'phantom-core' ),
+				'type'              => 'integer',
+				'minimum'           => 1,
+				'default'           => 1,
+				'sanitize_callback' => 'absint',
+			),
+			'taxonomy' => array(
+				'description'       => __( 'Taxonomy slug (category, post_tag, product_cat, product_tag).', 'phantom-core' ),
+				'type'              => 'string',
+				'default'           => '',
+				'sanitize_callback' => 'sanitize_text_field',
 			),
 		);
 	}
@@ -2910,6 +3306,23 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function handle_contact( \WP_REST_Request $request ) {
+		$nonce = $request->get_header( 'X-Phantom-Nonce' ) ?? '';
+		if ( '' === $nonce ) {
+			$nonce = isset( $_SERVER['HTTP_X_PHANTOM_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_PHANTOM_NONCE'] ) ) : '';
+		}
+		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'contact_form_public' ) ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'Invalid or missing nonce.', 'phantom-core' ),
+				array( 'status' => 401 )
+			);
+		}
+
+		$rate_error = $this->check_rate_limit( 'contact', 3, 60 );
+		if ( $rate_error ) {
+			return $this->wp_error( 'rate_limit_exceeded', __( 'Too many submissions. Please try again later.', 'phantom-core' ), 429 );
+		}
+
 		$fname   = sanitize_text_field( $request->get_param( 'fname' ) );
 		$email   = sanitize_email( $request->get_param( 'email' ) );
 		$phone   = sanitize_text_field( $request->get_param( 'phone' ) );
@@ -2946,6 +3359,46 @@ class Rest_Controller extends \WP_REST_Controller {
 			),
 			200
 		);
+	}
+
+	public function get_user_profile( \WP_REST_Request $request ) {
+		if ( ! is_user_logged_in() ) {
+			return $this->wp_error( 'not_logged_in', __( 'You must be logged in.', 'phantom-core' ), 401 );
+		}
+		$user = wp_get_current_user();
+		$data = array(
+			'id'           => $user->ID,
+			'email'        => $user->user_email,
+			'display_name' => $user->display_name,
+			'first_name'   => $user->first_name,
+			'last_name'    => $user->last_name,
+		);
+		if ( class_exists( 'WooCommerce' ) ) {
+			$customer            = new \WC_Customer( $user->ID );
+			$data['billing']     = array(
+				'first_name' => $customer->get_billing_first_name(),
+				'last_name'  => $customer->get_billing_last_name(),
+				'address_1'  => $customer->get_billing_address_1(),
+				'address_2'  => $customer->get_billing_address_2(),
+				'city'       => $customer->get_billing_city(),
+				'state'      => $customer->get_billing_state(),
+				'postcode'   => $customer->get_billing_postcode(),
+				'country'    => $customer->get_billing_country(),
+				'phone'      => $customer->get_billing_phone(),
+				'email'      => $customer->get_billing_email(),
+			);
+			$data['shipping']    = array(
+				'first_name' => $customer->get_shipping_first_name(),
+				'last_name'  => $customer->get_shipping_last_name(),
+				'address_1'  => $customer->get_shipping_address_1(),
+				'address_2'  => $customer->get_shipping_address_2(),
+				'city'       => $customer->get_shipping_city(),
+				'state'      => $customer->get_shipping_state(),
+				'postcode'   => $customer->get_shipping_postcode(),
+				'country'    => $customer->get_shipping_country(),
+			);
+		}
+		return new \WP_REST_Response( $data, 200 );
 	}
 
 	public function get_user_orders( \WP_REST_Request $request ): \WP_REST_Response {

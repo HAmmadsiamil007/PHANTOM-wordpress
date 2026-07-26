@@ -13,6 +13,16 @@ add_filter(
 		$keys = array(
 			'color_rating',
 			'color_sale',
+			'color_card_bg',
+			'color_card_text',
+			'color_card_border',
+			'color_button_bg',
+			'color_button_text',
+			'color_button_hover_bg',
+			'color_badge_sale_bg',
+			'color_badge_sale_text',
+			'color_badge_new_bg',
+			'color_badge_new_text',
 		);
 
 		$map    = \PhantomCore\Settings_Registry::get_css_var_map();

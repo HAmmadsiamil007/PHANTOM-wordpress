@@ -6,14 +6,14 @@ The frontend is completely decoupled from WordPress. It consists of:
 
 ```
 frontend/
-├── *.html              # 31 static HTML page templates
+├── html/*.html          # 22 static HTML page templates
 ├── assets/
 │   ├── css/            # 10 CSS files (Bootstrap, theme, a11y, vendor)
 │   ├── js/             # 22 JS files (phantom-data.js + vendor libs)
 │   └── images/         # Static images (logos, products, icons)
 ```
 
-**No PHP templates. No server-side rendering.** All dynamic data injected client-side via REST API.
+**No PHP templates. No server-side rendering.** All dynamic data injected client-side via REST API (43 endpoints).
 
 ---
 
@@ -22,7 +22,7 @@ frontend/
 ### Channel 1: Server Injection (Shell.php → HTML)
 On every request, `Shell::handle_request()` injects into the HTML:
 ```
-<style id="phantom-customizer-css">  ← 90 CSS vars from settings
+<style id="phantom-customizer-css">  ← 96 CSS vars from settings
 <script>window.phantomData = {...}</script>  ← REST URL, nonce, site info
 <title>, <meta>  ← SEO metadata
 Security Headers  ← CSP, X-Frame-Options, etc.
@@ -39,7 +39,7 @@ window.phantomData.rest_url + 'phantom/v1/page-data'
 ### Channel 3: CSS Vars (Settings → CSS → Styling)
 Backend settings become CSS custom properties:
 ```
-primary_color → --primary--color (90 vars total)
+primary_color → --primary--color (96 vars total)
 Frontend CSS: background: var(--primary--color, #default);
 ```
 
@@ -118,6 +118,75 @@ window.phantomData = {
 ```
 
 Then `phantom-data.js` does `fetch(phantomData.rest_url + 'phantom/v1/page-data')` to get ALL page data in one call (cached for 1 hour via transient).
+
+---
+
+## Data Adapter + Component Renderer Pattern (v2.0)
+
+Since v2.0, phantom-data.js uses a **Data Adapter + Component Renderer** architecture instead of `document.createElement` for building product and category cards. This ensures the JS output always matches the frontend HTML templates.
+
+### Architecture
+
+```
+WooCommerce REST API  ──→  adaptProductCard()  ──→  {NAME, URL, IMAGE, PRICE, ...}
+                              │
+                              ▼
+                         renderTemplate(PRODUCT_CARD_TPL, data)
+                              │
+                              ▼
+                         innerHTML / insertAdjacentHTML
+```
+
+### Template Strings (Source of Truth)
+
+Two template strings live at the top of `phantom-data.js`:
+
+**`PRODUCT_CARD_TPL`** — Exact HTML structure for product cards:
+```html
+<div class="product-card" data-tilt data-reveal-item>
+  <div class="product-image" data-image-zoom>
+    {{BADGE}}
+    <a href="{{URL}}"><img loading="lazy" src="{{IMAGE}}" alt="{{NAME}}"></a>
+    {{ACTIONS}}
+  </div>
+  <div class="product-info">
+    {{CATEGORIES}}
+    {{RATING}}
+    {{TAGLINE}}
+    <div class="product-price-row">
+      <span class="product-price">{{PRICE}}</span>
+      {{ATC_BUTTON}}
+    </div>
+  </div>
+</div>
+```
+
+**`CATEGORY_CARD_TPL`** — Exact HTML structure for category cards:
+```html
+<a href="{{URL}}" class="{{CLASSES}}" data-tilt data-reveal-item>
+  <div class="category-card-bg">
+    <img loading="lazy" src="{{IMAGE}}" alt="{{ALT}}">
+    <div class="category-card-overlay"></div>
+  </div>
+  <div class="category-card-content">
+    <span class="category-count">{{COUNT}}</span>
+    <h3 class="category-name">{{NAME}}</h3>
+    <span class="category-cta">{{CTA}} <i class="fas fa-arrow-right"></i></span>
+  </div>
+</a>
+```
+
+### Key Functions
+
+| Function | Purpose |
+|----------|---------|
+| `renderTemplate(tpl, data)` | 3-line `{{KEY}}` → value replacement. No dependencies, no DOM. |
+| `adaptProductCard(raw, settings, showSaleBadge, saleBadgeText)` | Normalizes WooCommerce product data — handles badges, catalog mode, wishlist/quickview, categories, rating stars, price (sale/regular/HTML), ATC button type. |
+| `adaptCategoryCard(raw, idx, total)` | Normalizes category data — large card for first item, accent card for odd-last. |
+
+### How to Update Card Design
+
+If you change the HTML card structure in templates, update the corresponding template string in `phantom-data.js`. Do NOT modify `adaptProductCard()` or `buildProductCard()` for HTML changes — only if the data fields change.
 
 ---
 
@@ -274,7 +343,7 @@ Permissions-Policy: geolocation=(), microphone=(), camera=()
 | File | Purpose | When to Edit |
 |------|---------|-------------|
 | `frontend/*.html` | Page templates | Change layout, add/remove sections |
-| `frontend/assets/js/phantom-data.js` | Core data bridge (2007 lines) | Change data injection logic |
+| `frontend/assets/js/phantom-data.js` | Core data bridge (2364 lines) | Change data injection logic |
 | `frontend/assets/js/phantom-bridge.js` | Utility helpers | Add shared helper functions |
 | `frontend/assets/js/phantom-dark-mode.js` | Dark mode toggle | Change dark mode behavior |
 | `frontend/assets/css/style.css` | Theme CSS | Change visual styling |
@@ -282,7 +351,7 @@ Permissions-Policy: geolocation=(), microphone=(), camera=()
 | `frontend/assets/css/a11y.css` | Accessibility styles | Skip link, focus, reduced motion |
 | `frontend/assets/images/` | Static assets | Add/replace images |
 
-### phantom-data.js Function Reference (2,007 lines, 35+ functions)
+### phantom-data.js Function Reference (2,364 lines, 38+ functions)
 
 | Function | Lines | Purpose |
 |----------|-------|---------|
@@ -290,16 +359,19 @@ Permissions-Policy: geolocation=(), microphone=(), camera=()
 | `sanitizeUrl()` | 18 | URL validation (http/https/mailto/tel only) |
 | `resolveUrl()` | 12 | Resolves relative URLs using plugin_url |
 | `getSetting()` | 8 | Get setting value from cached settings |
+| `renderTemplate()` | 5 | Mustache-style `{{KEY}}` template string renderer |
+| `adaptProductCard()` | ~110 | Data adapter: normalizes raw WooCommerce product → flat object for template |
+| `adaptCategoryCard()` | ~16 | Data adapter: normalizes category → flat object for template |
 | `buildMenuHTML()` | 50 | Build menu tree from API data |
 | `injectMenus()` | 25 | Populate `[data-phantom-menu]` elements |
 | `injectSettings()` | 50 | Process all `[data-phantom]` attributes |
 | `injectBanner()` | 30 | Hero/banner content injection |
 | `injectFooter()` | 25 | Footer content injection |
 | `injectSEO()` | 20 | Meta tag injection |
-| `injectProducts()` | 80 | Product grid renderer |
+| `injectProducts()` | 80 | Product grid renderer (uses adaptProductCard + renderTemplate + PRODUCT_CARD_TPL) |
 | `injectPosts()` | 60 | Blog post grid renderer |
 | `injectCart()` | 35 | Cart display from REST API |
-| `injectCategories()` | 25 | Category list injection |
+| `injectCategories()` | 15 | Category list injection (uses adaptCategoryCard + renderTemplate + CATEGORY_CARD_TPL) |
 | `injectSinglePost()` | 40 | Single blog post content |
 | `injectSingleProduct()` | 50 | Single product page content |
 | `initWooCommerce()` | 40 | Bind cart/checkout events |

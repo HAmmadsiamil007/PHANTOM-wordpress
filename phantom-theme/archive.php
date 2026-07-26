@@ -50,7 +50,7 @@ get_header(); ?>
 								</h2>
 								<div class="post-meta">
 									<span class="post-date"><?php echo get_the_date(); ?></span>
-									<span class="post-author"><?php the_author(); ?></span>
+									<span class="post-author"><?php echo esc_html( get_the_author() ); ?></span>
 									<span class="post-categories"><?php the_category( ', ' ); ?></span>
 								</div>
 								<div class="post-excerpt">

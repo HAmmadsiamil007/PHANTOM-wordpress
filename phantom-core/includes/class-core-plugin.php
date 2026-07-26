@@ -40,6 +40,8 @@ class Plugin {
 						'phantom_secondary' => __( 'Secondary Menu', 'phantom-core' ),
 						'phantom_footer'    => __( 'Footer Menu', 'phantom-core' ),
 						'phantom_mobile'    => __( 'Mobile Menu', 'phantom-core' ),
+						'primary'           => __( 'Primary Menu (Theme Compat)', 'phantom-core' ),
+						'footer'            => __( 'Footer Menu (Theme Compat)', 'phantom-core' ),
 					) )
 				);
 			}
@@ -68,14 +70,6 @@ class Plugin {
 					),
 				);
 
-				for ( $i = 1; $i <= 4; $i++ ) {
-					$widget_areas[] = array(
-						'id'          => 'phantom-footer-' . $i,
-						'name'        => sprintf( __( 'Footer Widgets %d', 'phantom-core' ), $i ),
-						'description' => sprintf( __( 'Footer widget column %d', 'phantom-core' ), $i ),
-					);
-				}
-
 				foreach ( $widget_areas as $area ) {
 					register_sidebar(
 						array(
@@ -84,6 +78,20 @@ class Plugin {
 							'description'   => $area['description'],
 							'before_widget' => '<section id="%1$s" class="widget %2$s">',
 							'after_widget'  => '</section>',
+							'before_title'  => '<h3 class="widget-title">',
+							'after_title'   => '</h3>',
+						)
+					);
+				}
+
+				for ( $i = 1; $i <= 4; $i++ ) {
+					register_sidebar(
+						array(
+							'id'            => 'phantom-footer-' . $i,
+							'name'          => sprintf( __( 'Footer Widgets %d', 'phantom-core' ), $i ),
+							'description'   => sprintf( __( 'Footer widget column %d', 'phantom-core' ), $i ),
+							'before_widget' => '<div id="%1$s" class="col-lg-3 col-md-6 widget %2$s">',
+							'after_widget'  => '</div>',
 							'before_title'  => '<h3 class="widget-title">',
 							'after_title'   => '</h3>',
 						)

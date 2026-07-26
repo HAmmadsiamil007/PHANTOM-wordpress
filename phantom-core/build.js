@@ -20,13 +20,10 @@ const files = [
   // Adapters
   'adapters/product-adapter.js',
   'adapters/category-adapter.js',
-  'adapters/post-adapter.js',
   // Renderer
   'renderer/component-renderer.js',
   'renderer/product-card.js',
   'renderer/category-card.js',
-  'renderer/blog-card.js',
-  'renderer/navigation.js',
   'renderer/hero.js',
   // Entry point
   'phantom-core.js',

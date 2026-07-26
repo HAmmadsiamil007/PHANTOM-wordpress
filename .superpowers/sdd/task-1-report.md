@@ -1,27 +1,30 @@
-# Task 1 Report — 7 Registry Files
+# Task 1 Report: Remove Section Headings from Homepage
 
-## Files Created
+**Status:** DONE
 
-| # | File | Status |
-|---|------|--------|
-| 1 | `class-layout-registry.php` | ✓ PHP lint: No syntax errors |
-| 2 | `class-woocommerce-registry.php` | ✓ PHP lint: No syntax errors |
-| 3 | `class-typography-registry.php` | ✓ PHP lint: No syntax errors |
-| 4 | `class-color-registry.php` | ✓ PHP lint: No syntax errors |
-| 5 | `class-responsive-registry.php` | ✓ PHP lint: No syntax errors |
-| 6 | `class-animation-registry.php` | ✓ PHP lint: No syntax errors |
-| 7 | `class-hook-registry.php` | ✓ PHP lint: No syntax errors |
+## Changes Made
 
-## Summary
-- **7 files created** in `optix-core/includes/registry/`
-- **All pass** `php -l` syntax check (no errors)
-- Each extends `Base_Registry` with namespace `OptixCore\Registry`
-- Singleton via inherited `get_instance()`
-- Entries include `type`, `default`, `label` (translated), `sanitize`
-- Select entries include `options` array
-- Bool entries use `true`/`false` defaults
-- Int entries use integer values
-- Hook_Registry uses documentation-only schema (`type` = action/filter, `description`, `params`)
+### 1. Categories section (formerly lines 325-328)
+Removed `<div class="section-header">` block containing:
+- `<span class="section-label">Shop by Category</span>`
+- `<h2 class="section-title">Find Your Fit</h2>`
 
-## Issues Encountered
-- None
+After edit, `<div class="container">` (line 324) flows directly to `<div class="category-grid">` (now line 325).
+
+### 2. Bestsellers section (formerly lines 351-355)
+Removed `<div class="section-header">` block containing:
+- `<span class="section-label">Bestsellers</span>`
+- `<h2 class="section-title">Most Loved</h2>`
+- `<p class="section-subtitle">The shoes everyone's talking about...</p>`
+
+After edit, `<div class="container">` (line 345) flows directly to `<div class="products-grid">` (now line 346).
+
+## Concerns
+None.
+
+## Self-Review Findings
+- HTML is well-formed after edits
+- Categories section: container → category-grid ✓
+- Bestsellers section: container → products-grid ✓
+- Review and FAQ section headings untouched ✓
+- Net removal: 11 lines (813 → 802 total)

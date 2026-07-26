@@ -6,3 +6,9 @@ phantom-core-remediation-todo.md
 nul
 *.phar
 .phpunit.result.cache
+
+# Debug files
+*.log
+*.zip
+.DS_Store
+Thumbs.db

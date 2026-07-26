@@ -1,29 +1,31 @@
+/**
+ * Phantom Dark Mode - Toggle with cookie persistence
+ */
 (function() {
-    var storageKey = 'phantom_dark_mode';
-    var body = document.body;
-    var toggle = document.querySelector('[data-phantom-dark-toggle]');
-
-    function setDarkMode(enabled) {
-        if (enabled) {
-            body.setAttribute('data-phantom-dark-mode', 'true');
-            localStorage.setItem(storageKey, '1');
-        } else {
-            body.removeAttribute('data-phantom-dark-mode');
-            localStorage.setItem(storageKey, '0');
-        }
+  'use strict';
+  var STORAGE_KEY = 'phantom_theme';
+  function getPreferredTheme() {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  function setTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
     }
-
-    if (localStorage.getItem(storageKey) === '1') {
-        setDarkMode(true);
-    } else if (localStorage.getItem(storageKey) === null && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        setDarkMode(true);
-    }
-
-    if (toggle) {
-        toggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            var isDark = body.getAttribute('data-phantom-dark-mode') === 'true';
-            setDarkMode(!isDark);
-        });
-    }
+    localStorage.setItem(STORAGE_KEY, theme);
+  }
+  function toggleTheme() {
+    var current = document.documentElement.getAttribute('data-theme');
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  setTheme(getPreferredTheme());
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-phantom-dark-toggle]').forEach(function(btn) {
+      btn.addEventListener('click', toggleTheme);
+    });
+  });
+  window.PhantomDarkMode = { toggle: toggleTheme, set: setTheme, get: getPreferredTheme };
 })();

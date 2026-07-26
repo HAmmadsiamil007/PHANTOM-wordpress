@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection — MAISON</title>
+    <meta name="description" content="Browse the MAISON collection — curated luxury fashion for the discerning.">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
+    <meta name="theme-color" content="#1A1A1A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MAISON">
+    <meta property="og:title" content="Collection — MAISON">
+    <meta property="og:description" content="Curated luxury fashion for the discerning.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/fashion.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <button class="menu-toggle" aria-label="Toggle menu" data-phantom-menu-toggle>
+                <span></span><span></span><span></span>
+            </button>
+            <a href="/" class="site-logo" aria-label="MAISON Home">
+                <span class="logo-text">MAISON</span>
+                <span class="logo-tagline">Luxe Edition</span>
+            </a>
+            <nav class="primary-nav" aria-label="Main navigation" data-phantom-nav="primary">
+                <ul>
+                    <li><a href="/shop" class="active" data-phantom-route="shop">Collection</a></li>
+                    <li><a href="/about" data-phantom-route="about">The Atelier</a></li>
+                    <li><a href="/blog" data-phantom-route="blog">Journal</a></li>
+                    <li><a href="/contact" data-phantom-route="contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="search-toggle" aria-label="Search" data-phantom-search-toggle>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </button>
+                <a href="/wishlist" class="wishlist-link" aria-label="Wishlist" data-phantom-route="wishlist">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </a>
+                <a href="/cart" class="cart-link" aria-label="Shopping cart" data-phantom-route="cart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span class="cart-count" data-phantom-cart-count>0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main id="main" role="main">
+        <div class="collection-header">
+            <div class="collection-header-content">
+                <span class="collection-suptitle">Spring Summer 2026</span>
+                <h1 class="collection-title">The Collection</h1>
+                <p class="collection-description">Every piece tells a story of craftsmanship and intention</p>
+            </div>
+        </div>
+
+        <div class="collection-toolbar">
+            <div class="toolbar-left">
+                <span class="result-count" data-phantom-result-count>Showing 0 products</span>
+            </div>
+            <div class="toolbar-right">
+                <div class="filter-group">
+                    <label for="category-filter" class="filter-label">Category</label>
+                    <select id="category-filter" data-phantom-filter="category">
+                        <option value="">All</option>
+                        <option value="outerwear">Outerwear</option>
+                        <option value="tops">Tops</option>
+                        <option value="bottoms">Bottoms</option>
+                        <option value="dresses">Dresses</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sort-filter" class="filter-label">Sort By</label>
+                    <select id="sort-filter" data-phantom-filter="sort">
+                        <option value="popularity">Popularity</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="collection-grid" data-phantom-product-grid>
+            <div class="product-card" data-phantom-product>
+                <div class="product-card-image">
+                    <img src="assets/images/product-1.jpg" alt="Product" loading="lazy">
+                    <button class="wishlist-btn" aria-label="Add to wishlist"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+                </div>
+                <div class="product-card-info">
+                    <span class="product-card-category" data-phantom-product-category>Category</span>
+                    <h3 class="product-card-name" data-phantom-product-name>Product Name</h3>
+                    <div class="product-card-pricing">
+                        <span class="product-card-price" data-phantom-product-price>$0.00</span>
+                        <span class="product-card-original-price" data-phantom-product-original-price></span>
+                    </div>
+                    <div class="product-card-colors" data-phantom-product-colors></div>
+                    <button class="btn btn-primary add-to-cart" data-phantom-add-to-cart>Add to Bag</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination" data-phantom-pagination>
+            <button class="btn btn-outline pagination-prev" disabled data-phantom-pagination-prev>Previous</button>
+            <span class="pagination-info" data-phantom-pagination-info>Page 1 of 1</span>
+            <button class="btn btn-outline pagination-next" disabled data-phantom-pagination-next>Next</button>
+        </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="footer-logo">MAISON</span>
+                <p>Redefining luxury since 2026</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                    <a href="#" aria-label="Pinterest"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.3 9.3-.1-.8-.2-2.1 0-3 .2-.9 1.4-5.9 1.4-5.9s-.4-.7-.4-1.8c0-1.7 1-3 2.2-3 .9 0 1.4.7 1.4 1.5 0 .9-.6 2.3-.9 3.6-.3 1.1.5 2 1.5 2 1.8 0 3.2-1.9 3.2-4.7 0-2.5-1.8-4.2-4.3-4.2-2.9 0-4.6 2.2-4.6 4.4 0 .9.3 1.8.8 2.4.1.1.1.3-.1.5-.1.3-.3 1-.4 1.3-.1.2-.4.3-.6.2-1.6-.7-2.6-3-2.6-4.8 0-3.9 2.8-7.5 8.2-7.5 4.3 0 7.6 3.1 7.6 7.2 0 4.3-2.7 7.7-6.5 7.7-1.3 0-2.5-.7-2.9-1.5l-.8 3c-.3 1.1-1.1 2.5-1.6 3.4 1.2.4 2.5.6 3.8.6 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></a>
+                    <a href="#" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
+                </div>
+            </div>
+            <div class="footer-nav" data-phantom-footer-nav>
+                <div class="footer-col">
+                    <h4>The Atelier</h4>
+                    <ul>
+                        <li><a href="/about" data-phantom-route="about">About Us</a></li>
+                        <li><a href="/team" data-phantom-route="team">Our Team</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/sustainability">Sustainability</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Client Services</h4>
+                    <ul>
+                        <li><a href="/contact" data-phantom-route="contact">Contact</a></li>
+                        <li><a href="/faq" data-phantom-route="faq">FAQ</a></li>
+                        <li><a href="/shipping">Shipping & Returns</a></li>
+                        <li><a href="/size-guide">Size Guide</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Policies</h4>
+                    <ul>
+                        <li><a href="/privacy-policy" data-phantom-route="privacy-policy">Privacy Policy</a></li>
+                        <li><a href="/term-of-use" data-phantom-route="term-of-use">Terms of Use</a></li>
+                        <li><a href="/cookie-policy" data-phantom-route="cookie-policy">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 MAISON. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/fashion.js"></script>
+</body>
+</html>

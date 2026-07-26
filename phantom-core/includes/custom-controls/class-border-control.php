@@ -83,6 +83,17 @@ class Border_Control extends Control_Base {
 				<input type="hidden" class="ast-border-radius" value="<?php echo esc_attr( (string) $parsed['radius'] ); ?>" />
 				<input type="hidden" class="ast-border-linked" value="<?php echo esc_attr( $parsed['linked'] ? '1' : '0' ); ?>" />
 			</div>
+			<div class="phantom-border-fallback" style="margin-top:8px;padding:8px;background:#f0f0f1;border-radius:4px;">
+				<small>
+					<?php echo esc_html( sprintf(
+						'↕ %spx | ↔ %spx | ↺ r%s | %s',
+						$parsed['top'],
+						$parsed['left'],
+						$parsed['radius'],
+						$parsed['color'] ?: '—'
+					) ); ?>
+				</small>
+			</div>
 		</div>
 		<?php
 	}

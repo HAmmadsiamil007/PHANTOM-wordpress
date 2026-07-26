@@ -311,6 +311,43 @@
     });
   });
 
+  // Header Style — toggle class on body
+  wp.customize('phantom_header_style', function (value) {
+    value.bind(function (newval) {
+      var body = document.body;
+      ['header-default', 'header-centered', 'header-minimal'].forEach(function (c) {
+        body.classList.remove(c);
+      });
+      if (newval) body.classList.add('header-' + newval);
+    });
+  });
+
+  // Blog Layout — toggle class
+  wp.customize('phantom_blog_layout', function (value) {
+    value.bind(function (newval) {
+      var el = document.querySelector('#main-content .blog-posts, .blog-grid, [data-phantom="blog"]');
+      if (!el) el = document.querySelector('main .row, main .container');
+      if (el) {
+        ['blog-grid', 'blog-list', 'blog-masonry'].forEach(function (c) {
+          el.classList.remove(c);
+        });
+        if (newval && newval !== 'default') el.classList.add('blog-' + newval);
+      }
+    });
+  });
+
+  // Footer Columns — toggle layout class
+  wp.customize('phantom_footer_columns', function (value) {
+    value.bind(function (newval) {
+      var el = document.querySelector('footer .row, footer .footer-main .row');
+      if (el) {
+        var cols = parseInt(newval, 10) || 4;
+        el.className = el.className.replace(/\brow-cols-\d+/g, '');
+        el.classList.add('row-cols-' + cols);
+      }
+    });
+  });
+
   // Selective Refresh - Partials
   if (typeof PhantomPartials !== 'undefined') {
     Object.keys(PhantomPartials).forEach(function (key) {

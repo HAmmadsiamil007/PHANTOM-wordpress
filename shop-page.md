@@ -1,0 +1,71 @@
+- generic [active] [ref=f1e1]:
+  - link "Skip to main content" [ref=f1e2] [cursor=pointer]:
+    - /url: "#phantom-main-content"
+  - link "Skip to main content" [ref=f1e7] [cursor=pointer]:
+    - /url: "#main"
+  - generic [ref=f1e8]:
+    - text:     
+    - generic [ref=f1e10]: Free Shipping On Orders Over $200 | New Collection Dropping Soon
+    - banner [ref=f1e11]:
+      - generic [ref=f1e12]:
+        - link "AETHER" [ref=f1e13] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=f1e14]:
+          - list [ref=f1e15]:
+            - listitem [ref=f1e16]:
+              - link "Home" [ref=f1e17] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=f1e18]:
+              - link "Collection " [ref=f1e19] [cursor=pointer]:
+                - /url: shop.html
+                - text: Collection
+                - generic [ref=f1e20]: 
+            - listitem [ref=f1e21]:
+              - link "About" [ref=f1e22] [cursor=pointer]:
+                - /url: about.html
+            - listitem [ref=f1e23]:
+              - link "Blog" [ref=f1e24] [cursor=pointer]:
+                - /url: blog.html
+            - listitem [ref=f1e25]:
+              - link "Contact" [ref=f1e26] [cursor=pointer]:
+                - /url: contact.html
+          - text:    
+        - generic [ref=f1e27]:
+          - link "Search" [ref=f1e28] [cursor=pointer]:
+            - /url: shop.html
+            - generic [ref=f1e29]: 
+          - link "Wishlist" [ref=f1e30] [cursor=pointer]:
+            - /url: wishlist.html
+            - generic [ref=f1e31]: 
+          - link "Cart" [ref=f1e32] [cursor=pointer]:
+            - /url: cart.html
+            - generic [ref=f1e33]: 
+            - generic [ref=f1e34]: "0"
+          - link "Account" [ref=f1e35] [cursor=pointer]:
+            - /url: login.html
+            - generic [ref=f1e36]: 
+    - main [ref=f1e38]:
+      - generic [ref=f1e40]:
+        - generic [ref=f1e41]: Collection
+        - heading "The Void Runner Series" [level=1] [ref=f1e42]:
+          - generic [ref=f1e44]: The
+          - generic [ref=f1e46]: Void
+          - generic [ref=f1e48]: Runner
+          - generic [ref=f1e50]: Series
+      - generic [ref=f1e53]:
+        - button "All" [ref=f1e54] [cursor=pointer]
+        - button "Men" [ref=f1e55] [cursor=pointer]
+        - button "Women" [ref=f1e56] [cursor=pointer]
+        - button "New Arrivals" [ref=f1e57] [cursor=pointer]
+        - button "Sale" [ref=f1e58] [cursor=pointer]
+      - generic [ref=f1e104]:
+        - button "Previous page" [disabled] [ref=f1e105]:
+          - generic [ref=f1e106]: 
+        - generic [ref=f1e107]:
+          - generic [ref=f1e108] [cursor=pointer]: "1"
+          - generic [ref=f1e109] [cursor=pointer]: "2"
+          - generic [ref=f1e110] [cursor=pointer]: "3"
+          - generic [ref=f1e111] [cursor=pointer]: "4"
+          - generic [ref=f1e112] [cursor=pointer]: "5"
+        - button "Next page" [ref=f1e113] [cursor=pointer]:
+          - generic [ref=f1e114]: 

@@ -12,21 +12,21 @@ PHP Backend (NEVER change this)
   │
   ├─ Shell.php: Routes URL → Loads HTML template
   │     ├─ Matches URL to internal route
-  │     ├─ Injects 90 CSS vars as <style>
+  │     ├─ Injects 96 CSS vars as <style>
   │     ├─ Injects SEO meta tags
   │     ├─ Injects phantomData JS config object
   │     ├─ Injects phantom-data.js
   │     └─ Outputs HTML + exit
   │
   ├─ rest-controller.php: phantom/v1 API
-  │     └─ 34 endpoints: settings, menus, products, posts, cart, auth
+  │     └─ 43 endpoints: settings, menus, products, posts, cart, auth
   │
   └─ class-customizer.php: CSS var generation
-        └─ 90 CSS vars injected into every page
+        └─ 96 CSS vars injected into every page
 
 Frontend (100% replaceable)
   │
-  ├─ frontend/*.html — 31 page templates
+  ├─ frontend/html/*.html — 22 page templates
   ├─ frontend/assets/js/phantom-data.js — Core data bridge
   └─ frontend/assets/css/ — CSS files
 ```
@@ -38,6 +38,7 @@ Frontend (100% replaceable)
 | 1 | **Route slug** → Shell.php maps URL to HTML file | `/shop` → `frontend/shop.html` | 404 on page |
 | 2 | **CSS var names** → Injected as `<style id="phantom-customizer-css">` | Changes colors/fonts/layout via Customizer | Customizer has no effect |
 | 3 | **`data-phantom` attributes** → JS injects content | Text, images, links from settings | Static fallback content shows |
+| 3b | **Template strings** → `PRODUCT_CARD_TPL` / `CATEGORY_CARD_TPL` in phantom-data.js | If changing card HTML, update template string, not JS DOM logic | Cards silently diverge from template |
 | 4 | **CSS class names** → phantom-data.js queries by class | Cart badge, menu toggle, search | Feature silently breaks |
 | 5 | **`phantomData` JS object** → Injected by Shell, consumed by JS | Contains REST URL, nonce, settings | Everything breaks |
 | 6 | **REST API URL** → Fetch target for all dynamic data | `phantomData.rest_url + 'phantom/v1/...'` | No data loads |
@@ -139,7 +140,7 @@ For each dynamic element, add `data-phantom` attributes:
 6. Use WordPress for REST API only (headless CMS)
 
 ### Option C: Mixed (Existing Pages + New App)
-1. Keep Shell serving 31 static templates for existing pages
+1. Keep Shell serving 22 static templates for existing pages
 2. Add a single route in Shell that serves your new app
 3. New app runs independently alongside static templates
 
@@ -285,8 +286,8 @@ console.log(window.phantomData.rest_url);
 ### Phase 1: Audit (do this first)
 - [ ] Show current templates in `frontend/`
 - [ ] List all `data-phantom` attributes and their types
-- [ ] Map all 34 REST API endpoints
-- [ ] Note all 90 CSS var usages in CSS files
+- [ ] Map all 43 REST API endpoints
+- [ ] Note all 96 CSS var usages in CSS files
 - [ ] Identify hardcoded vs dynamic content
 
 ### Phase 2: Build New Templates

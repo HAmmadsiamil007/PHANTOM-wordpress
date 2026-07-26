@@ -1,18 +1,38 @@
-# Task 2 — Block_Registry — Report
+# Task 2 — Remove Product Name Headings (h3) from Homepage
 
 ## Status: DONE
 
-### File Created
-`optix-core/includes/registry/class-block-registry.php`
+## Changes
 
-### Structure
-- Namespace: `OptixCore\Registry`
-- Extends: `Base_Registry` (inherits singleton `get_instance()`, `register()`, `get()`, `set()`, etc.)
-- 2 entries in `define_entries()`: `portfolio-grid` (→ `product_card`), `project-highlight` (→ `promo_box`)
-- 2 extra lookup methods:
-  - `get_component_id(string $block_name): ?string` — maps `acf_block` → `component_id`
-  - `get_block_for_component(string $component_id): ?string` — maps `component_id` → first matching `acf_block`
+### Part A: index.html (4 edits)
+**File:** `phantom-core/frontend/html/index.html`
 
-### Verification
-- `php -l` — **No syntax errors detected**
-- Pattern matches `Component_Registry` and `Section_Registry` style
+Removed `<h3 class="product-name">` from all 4 static product cards in the bestsellers section:
+
+| Product | Line removed |
+|---------|-------------|
+| AETHER Void Runner | ~366 |
+| AETHER Cloud Stride | ~394 |
+| AETHER Midnight | ~422 |
+| AETHER Aero Sprint | ~449 |
+
+Each card now goes directly from `product-rating` div to `product-tagline` p element. No structural change — the `product-info` div, rating, tagline, price row, and CTA button all remain intact.
+
+### Part B: shell.php (2 edits)
+**File:** `phantom-core/templates/shell.php`, method `render_product_card_html()` (~line 877)
+
+1. **Template string** (line 908): Removed `<h3 class="product-name"><a href="%s">%s</a></h3>` from the sprintf template.
+2. **Arguments** (lines 917-918): Removed `esc_url( $permalink )` and `esc_html( $name )` arguments.
+
+**Before:** 8 sprintf placeholders, 8 arguments  
+**After:** 6 sprintf placeholders, 6 arguments
+
+## Verification
+- ✅ 6 `%s` placeholders match 6 arguments in sprintf
+- ✅ Zero `product-name` h3 elements remain in `index.html` (grep confirmed)
+- ✅ `render_product_card_html()` affects ALL pages: homepage, shop, category pages
+- ✅ No other files modified
+
+## Concerns
+- The product name is removed from ALL server-side rendered product cards (shop, category, homepage). If any downstream code references `.product-name` or `h3.product-name` for JS behavior, that will silently fail. This is expected per the task spec.
+- Static HTML in `shop.html`, `product-detail.html`, and `wishlist.html` still have `h3.product-name` elements — those are out of scope for this task.

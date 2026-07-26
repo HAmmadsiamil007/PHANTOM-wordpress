@@ -26,7 +26,7 @@
 				<div class="row">
 					<div class="col-lg-4 col-md-6 col-sm-12">
 						<div class="footer-about">
-							<img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/footer-logo.png' ); ?>" alt="<?php bloginfo( 'name' ); ?>" class="footer-logo">
+							<img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/footer-logo.png' ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" class="footer-logo">
 							<p><?php echo esc_html( get_theme_mod( 'footer_about_text', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.' ) ); ?></p>
 						</div>
 					</div>
@@ -54,11 +54,15 @@
 					</div>
 					<div class="col-lg-3 col-md-6 col-sm-12">
 						<h4><?php esc_html_e( 'Contact', 'phantom-theme' ); ?></h4>
+						<?php if ( is_active_sidebar( 'sidebar-footer' ) ) : ?>
+							<?php dynamic_sidebar( 'sidebar-footer' ); ?>
+						<?php else : ?>
 						<ul class="footer-contact">
 							<li><img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/loc-img.png' ); ?>" alt=""> <?php echo esc_html( get_theme_mod( 'footer_address', '123 Street, New York, USA' ) ); ?></li>
 							<li><img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/email-img.png' ); ?>" alt=""> <?php echo esc_html( get_theme_mod( 'footer_email', 'info@phantom.test' ) ); ?></li>
 							<li><img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/buttondown-img.png' ); ?>" alt=""> <?php echo esc_html( get_theme_mod( 'footer_phone', '+1 234 567 890' ) ); ?></li>
 						</ul>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>
@@ -69,7 +73,7 @@
 				<div class="row align-items-center">
 					<div class="col-lg-6 col-md-6 col-sm-12">
 						<p class="copyright">
-							&copy; <?php echo esc_html( date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?>. <?php esc_html_e( 'All rights reserved.', 'phantom-theme' ); ?>
+							&copy; <?php echo esc_html( date( 'Y' ) ); ?> <?php echo esc_html( get_bloginfo( 'name' ) ); ?>. <?php esc_html_e( 'All rights reserved.', 'phantom-theme' ); ?>
 						</p>
 					</div>
 					<div class="col-lg-6 col-md-6 col-sm-12 text-end">

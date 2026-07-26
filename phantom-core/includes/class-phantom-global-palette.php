@@ -25,10 +25,16 @@ class Phantom_Global_Palette {
 	}
 
 	public function init(): void {
-		$this->palettes = $this->get_default_presets();
 		add_action( 'init', array( $this, 'register_gutenberg_palette' ) );
 		add_filter( 'phantom_dynamic_css', array( $this, 'output_palette_css' ), 5 );
 		add_filter( 'phantom_dynamic_css', array( $this, 'output_dark_mode_css' ), 6 );
+	}
+
+	private function get_palettes(): array {
+		if ( empty( $this->palettes ) ) {
+			$this->palettes = $this->get_default_presets();
+		}
+		return $this->palettes;
 	}
 
 	public function get_default_presets(): array {
@@ -95,7 +101,8 @@ class Phantom_Global_Palette {
 	public function get_current_palette(): array {
 		$saved = get_option( self::OPTION_KEY, array() );
 		$slug  = $saved['current'] ?? 'light';
-		$palette = $this->palettes[ $slug ] ?? $this->palettes['light'];
+		$palettes = $this->get_palettes();
+		$palette = $palettes[ $slug ] ?? $palettes['light'];
 		$colors  = $saved['overrides'] ?? array();
 
 		$i = 0;
@@ -133,13 +140,14 @@ class Phantom_Global_Palette {
 		if ( 'dark' === $active ) {
 			return $css;
 		}
-		if ( empty( $this->palettes['dark'] ) ) {
+		$palettes = $this->get_palettes();
+		if ( empty( $palettes['dark'] ) ) {
 			return $css;
 		}
 		$dark_css = '@media (prefers-color-scheme: dark) {' . "\n";
 		$dark_css .= "\t" . ':root {' . "\n";
 		$i = 0;
-		foreach ( $this->palettes['dark']['colors'] as $label => $hex ) {
+		foreach ( $palettes['dark']['colors'] as $label => $hex ) {
 			$dark_css .= "\t\t--phantom-color-{$i}: {$hex};\n";
 			$i++;
 		}

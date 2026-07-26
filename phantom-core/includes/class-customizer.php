@@ -29,82 +29,87 @@ class Customizer {
 		add_action( 'customize_preview_init', array( $this, 'preview_js' ) );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'controls_js' ) );
 		add_action( 'customize_save_after', array( $this, 'sync_options' ) );
+		add_action( 'wp_head', array( $this, 'output_inline_css' ), 100 );
+	}
+
+	public function output_inline_css(): void {
+		echo $this->get_inline_css();
 	}
 
 	public function define_panels(): array {
 		return array(
 			'phantom_branding'      => array(
-				'title'    => __( 'Branding', 'phantom-core' ),
+				'title'    => 'Branding',
 				'sections' => array( 'branding' ),
 				'priority' => 10,
 			),
 			'phantom_header'        => array(
-				'title'    => __( 'Header & Navigation', 'phantom-core' ),
+				'title'    => 'Header & Navigation',
 				'sections' => array( 'header', 'topbar', 'navigation', 'announcement_bar' ),
 				'priority' => 20,
 			),
 			'phantom_hero'          => array(
-				'title'    => __( 'Hero & Home', 'phantom-core' ),
+				'title'    => 'Hero & Home',
 				'sections' => array( 'hero', 'home_sections', 'collections' ),
 				'priority' => 30,
 			),
 			'phantom_products'      => array(
-				'title'    => __( 'Products & Shop', 'phantom-core' ),
+				'title'    => 'Products & Shop',
 				'sections' => array( 'product_cards', 'shop_page', 'product_page' ),
 				'priority' => 40,
 			),
 			'phantom_woocommerce'   => array(
-				'title'    => __( 'WooCommerce', 'phantom-core' ),
+				'title'    => 'WooCommerce',
 				'sections' => array( 'woocommerce' ),
 				'priority' => 50,
 			),
 			'phantom_blog'          => array(
-				'title'    => __( 'Blog', 'phantom-core' ),
+				'title'    => 'Blog',
 				'sections' => array( 'blog' ),
 				'priority' => 60,
 			),
 			'phantom_footer'        => array(
-				'title'    => __( 'Footer', 'phantom-core' ),
+				'title'    => 'Footer',
 				'sections' => array( 'footer' ),
 				'priority' => 70,
 			),
 			'phantom_typography'    => array(
-				'title'    => __( 'Typography & Fonts', 'phantom-core' ),
+				'title'    => 'Typography & Fonts',
 				'sections' => array( 'typography' ),
 				'priority' => 80,
 			),
 			'phantom_colors'        => array(
-				'title'    => __( 'Colors & Buttons', 'phantom-core' ),
+				'title'    => 'Colors & Buttons',
 				'sections' => array( 'colors', 'buttons', 'forms', 'spacing' ),
 				'priority' => 90,
 			),
 			'phantom_layout'        => array(
-				'title'    => __( 'Layout & Effects', 'phantom-core' ),
+				'title'    => 'Layout & Effects',
 				'sections' => array( 'layout', 'responsive', 'animations', 'effects_3d' ),
 				'priority' => 100,
 			),
 			'phantom_search'        => array(
-				'title'    => __( 'Search', 'phantom-core' ),
+				'title'    => 'Search',
 				'sections' => array( 'search' ),
 				'priority' => 110,
 			),
 			'phantom_performance'   => array(
-				'title'    => __( 'Performance & SEO', 'phantom-core' ),
+				'title'    => 'Performance & SEO',
 				'sections' => array( 'performance', 'seo' ),
 				'priority' => 120,
 			),
 			'phantom_accessibility' => array(
-				'title'    => __( 'Accessibility', 'phantom-core' ),
+				'title'    => 'Accessibility',
 				'sections' => array( 'accessibility' ),
 				'priority' => 130,
 			),
 			'phantom_advanced'      => array(
-				'title'    => __( 'Advanced', 'phantom-core' ),
+				'title'    => 'Advanced',
 				'sections' => array( 'integrations', 'custom_code', 'import_export' ),
 				'priority' => 140,
 			),
 			'phantom_pages'         => array(
-				'title'    => __( 'Pages', 'phantom-core' ),
+				'title'    => 'Pages',
 				'sections' => array(
 					'about_page', 'contact_page', 'faq_page', 'coming_soon',
 					'error_404', 'login_page', 'register_page', 'portfolio',
@@ -121,7 +126,7 @@ class Customizer {
 
 		foreach ( $this->panels as $panel_id => $panel ) {
 			$wp_customize->add_panel( $panel_id, array(
-				'title'    => $panel['title'],
+				'title'    => __( $panel['title'], 'phantom-core' ),
 				'priority' => $panel['priority'],
 			) );
 
@@ -146,7 +151,7 @@ class Customizer {
 					$setting_id = 'phantom_' . $key;
 					$default = $entry['default'] ?? '';
 					if ( is_array( $default ) ) {
-						$default = wp_json_encode( $default, JSON_UNESCAPED_SLASHES );
+						$default = wp_json_encode( $default, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 						if ( false === $default || '[]' === $default ) {
 							$default = '';
 						}
@@ -162,6 +167,24 @@ class Customizer {
 					$this->add_control( $wp_customize, $key, $entry, $section_id, $setting_id, $control_priority );
 				}
 			}
+		}
+
+		$this->register_partials( $wp_customize );
+	}
+
+	public function register_partials( WP_Customize_Manager $wp_customize ): void {
+		foreach ( $this->entries as $key => $entry ) {
+			if ( empty( $entry['partial'] ) || ! is_array( $entry['partial'] ) ) {
+				continue;
+			}
+			$partial = $entry['partial'];
+			$setting_id = 'phantom_' . $key;
+			$wp_customize->selective_refresh->add_partial( 'phantom_partial_' . $key, array(
+				'selector'            => $partial['selector'],
+				'settings'            => array( $setting_id ),
+				'render_callback'     => $partial['render_callback'] ?? '__return_empty_string',
+				'container_inclusive' => false,
+			) );
 		}
 	}
 
@@ -481,30 +504,21 @@ class Customizer {
 	 * used by the Shell and inline CSS injection.
 	 */
 	public function sync_options(): void {
-		global $wpdb;
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$wpdb->esc_like( 'phantom_' ) . '%'
-			)
-		);
-		$prefix     = 'phantom_';
-		$options    = get_option( 'phantom_options', array() );
-		$changed    = false;
-		$known_keys = array_keys( Settings_Registry::get_instance()->get_entries() );
-		foreach ( $rows as $row ) {
-			$key = substr( $row->option_name, strlen( $prefix ) );
-			if ( 'options' === $key || ! in_array( $key, $known_keys, true ) ) {
-				continue;
-			}
-			$value = maybe_unserialize( $row->option_value );
-			if ( ! isset( $options[ $key ] ) || $options[ $key ] !== $value ) {
+		$options = get_option( 'phantom_options', array() );
+		$changed = false;
+		$entries = Settings_Registry::get_instance()->get_entries();
+		foreach ( array_keys( $entries ) as $key ) {
+			$value = get_option( 'phantom_' . $key, null );
+			if ( null !== $value && ( ! array_key_exists( $key, $options ) || $options[ $key ] !== $value ) ) {
+				if ( is_array( $value ) && empty( $value ) ) {
+					continue;
+				}
 				$options[ $key ] = $value;
 				$changed = true;
 			}
 		}
 		if ( $changed ) {
-			update_option( 'phantom_options', $options );
+			update_option( 'phantom_options', $options, false );
 		}
 	}
 
@@ -523,10 +537,29 @@ class Customizer {
 				}
 			}
 			if ( null !== $val ) {
-				if ( in_array( $key, Settings_Registry::get_px_keys(), true ) ) {
-					$val = is_numeric( $val ) ? $val . 'px' : $val;
+				if ( is_array( $val ) ) {
+					$responsive_bps = array(
+						'desktop' => '',
+						'tablet'  => 768,
+						'mobile'  => 544,
+					);
+					$desktop_val   = $val['desktop'] ?? '';
+					if ( '' !== $desktop_val ) {
+						$bp_val = in_array( $key, Settings_Registry::get_px_keys(), true ) && is_numeric( $desktop_val ) ? $desktop_val . 'px' : $desktop_val;
+						$css   .= $var . ':' . esc_attr( $bp_val ) . ';';
+					}
+					foreach ( array( 'tablet', 'mobile' ) as $bp ) {
+						if ( isset( $val[ $bp ] ) && '' !== $val[ $bp ] ) {
+							$bp_val = in_array( $key, Settings_Registry::get_px_keys(), true ) && is_numeric( $val[ $bp ] ) ? $val[ $bp ] . 'px' : $val[ $bp ];
+							$css   .= '@media (max-width: ' . $responsive_bps[ $bp ] . 'px) {:root{' . $var . ':' . esc_attr( $bp_val ) . ';}}';
+						}
+					}
+				} else {
+					if ( in_array( $key, Settings_Registry::get_px_keys(), true ) ) {
+						$val = is_numeric( $val ) ? $val . 'px' : $val;
+					}
+					$css .= $var . ':' . esc_attr( $val ) . ';';
 				}
-				$css .= $var . ':' . esc_attr( $val ) . ';';
 			}
 		}
 		if ( '' === $css ) {

@@ -73,12 +73,12 @@ class Typography_Control extends Control_Base {
                 <select class="ast-typography-family">
                     <option value=""><?php esc_html_e( 'Default', 'phantom-core' ); ?></option>
                     <optgroup label="System Fonts">
-                        <?php foreach ( Font_Families::get_system_fonts() as $name => $stack ) : ?>
+                        <?php foreach ( \Phantom_Font_Families::instance()->get_system_fonts() as $name => $stack ) : ?>
                             <option value="<?php echo esc_attr( $name ); ?>" <?php selected( $val['family'], $name ); ?>><?php echo esc_html( $name ); ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                     <optgroup label="Google Fonts">
-                        <?php foreach ( Font_Families::get_google_fonts() as $name => $data ) : ?>
+                        <?php foreach ( \Phantom_Font_Families::instance()->get_google_fonts() as $name => $data ) : ?>
                             <option value="<?php echo esc_attr( $name ); ?>" <?php selected( $val['family'], $name ); ?>><?php echo esc_html( $name ); ?></option>
                         <?php endforeach; ?>
                     </optgroup>

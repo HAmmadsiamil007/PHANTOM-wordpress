@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Three Columns
+ * Template Name: Three Column
  *
  * @package Phantom_Theme
  */

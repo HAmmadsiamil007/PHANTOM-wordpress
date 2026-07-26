@@ -12,7 +12,7 @@ class Settings_Page {
 	private static ?Settings_Page $instance = null;
 
 	private array $entries   = array();
-	private array $tabs      = array();
+	private ?array $tabs     = null;
 	private array $grouped   = array();
 
 	final public static function get_instance(): self {
@@ -24,7 +24,16 @@ class Settings_Page {
 
 	public function init(): void {
 		$this->entries = Settings_Registry::get_instance()->get_entries();
-		$this->tabs    = $this->define_tabs();
+
+		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+	}
+
+	private function get_tabs(): array {
+		if ( null !== $this->tabs ) {
+			return $this->tabs;
+		}
+		$this->tabs = $this->define_tabs();
 
 		foreach ( $this->tabs as $tab_id => &$tab ) {
 			$tab['fields'] = array();
@@ -42,8 +51,7 @@ class Settings_Page {
 		}
 		unset( $tab );
 
-		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		return $this->tabs;
 	}
 
 	public function add_admin_menu(): void {
@@ -100,8 +108,9 @@ class Settings_Page {
 		$this->handle_submission();
 
 		$active_tab = sanitize_key( wp_unslash( $_GET['tab'] ?? 'branding' ) );
-		if ( ! isset( $this->tabs[ $active_tab ] ) ) {
-			$active_tab = array_key_first( $this->tabs );
+		$tabs = $this->get_tabs();
+		if ( ! isset( $tabs[ $active_tab ] ) ) {
+			$active_tab = array_key_first( $tabs );
 		}
 
 		?>
@@ -109,7 +118,7 @@ class Settings_Page {
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<?php settings_errors( 'phantom_core_messages' ); ?>
 			<h2 class="nav-tab-wrapper">
-				<?php foreach ( $this->tabs as $tab_id => $tab ) : ?>
+				<?php foreach ( $this->get_tabs() as $tab_id => $tab ) : ?>
 					<a href="?page=phantom-core&tab=<?php echo esc_attr( $tab_id ); ?>"
 					   class="nav-tab<?php echo $active_tab === $tab_id ? ' nav-tab-active' : ''; ?>">
 						<?php echo esc_html( $tab['label'] ); ?>
@@ -136,7 +145,8 @@ class Settings_Page {
 	}
 
 	private function render_tab_fields( string $tab_id ): void {
-		$fields = $this->tabs[ $tab_id ]['fields'] ?? array();
+		$tabs   = $this->get_tabs();
+		$fields = $tabs[ $tab_id ]['fields'] ?? array();
 		if ( empty( $fields ) ) {
 			echo '<tr><td colspan="2"><p><em>';
 			esc_html_e( 'No settings available for this section.', 'phantom-core' );
@@ -615,6 +625,10 @@ class Settings_Page {
 
 			$raw_value = $raw[ $key ];
 
+			if ( ! is_string( $raw_value ) && ! is_numeric( $raw_value ) ) {
+				continue;
+			}
+
 			if ( is_string( $sanitize ) && function_exists( $sanitize ) ) {
 				if ( 'wp_kses_post' === $sanitize ) {
 					$new_value = wp_kses_post( (string) $raw_value );
@@ -627,10 +641,10 @@ class Settings_Page {
 				} elseif ( 'floatval' === $sanitize || 'float' === $type ) {
 					$new_value = floatval( $raw_value );
 				} else {
-					$new_value = is_string( $raw_value ) ? call_user_func( $sanitize, $raw_value ) : sanitize_text_field( (string) $raw_value );
+					$new_value = call_user_func( $sanitize, (string) $raw_value );
 				}
 			} elseif ( is_callable( $sanitize ) ) {
-				$new_value = is_string( $raw_value ) ? call_user_func( $sanitize, $raw_value ) : sanitize_text_field( (string) $raw_value );
+				$new_value = call_user_func( $sanitize, (string) $raw_value );
 			} else {
 				$new_value = sanitize_text_field( (string) $raw_value );
 			}
@@ -727,7 +741,7 @@ class Settings_Page {
 			),
 			'advanced'      => array(
 				'label'    => __( 'Advanced', 'phantom-core' ),
-				'sections' => array( 'integrations', 'custom_code', 'import_export' ),
+				'sections' => array( 'template_pack', 'integrations', 'custom_code', 'import_export' ),
 			),
 			'pages'         => array(
 				'label'    => __( 'Pages', 'phantom-core' ),

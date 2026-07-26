@@ -128,6 +128,7 @@ class Settings_Registry {
 			'team'               => $this->section_team(),
 			'testimonials'       => $this->section_testimonials(),
 			'announcement_bar'   => $this->section_announcement_bar(),
+			'template_pack'      => $this->section_template_pack(),
 		);
 		$keys_seen = array();
 		$merged    = array();
@@ -405,11 +406,12 @@ class Settings_Registry {
 	private function section_branding(): array {
 		return array(
 			'general_site_logo'            => array(
-				'section'  => 'branding',
-				'type'     => 'image',
-				'default'  => '',
-				'sanitize' => 'esc_url_raw',
-				'label'    => __( 'Site Logo', 'phantom-core' ),
+				'section'   => 'branding',
+				'type'      => 'image',
+				'default'   => '',
+				'sanitize'  => 'esc_url_raw',
+				'label'     => __( 'Site Logo', 'phantom-core' ),
+				'transport' => 'postMessage',
 			),
 			'general_preloader_enable'     => array(
 				'section'  => 'branding',
@@ -426,11 +428,12 @@ class Settings_Registry {
 				'label'    => __( 'Image Base Path', 'phantom-core' ),
 			),
 			'branding_favicon'             => array(
-				'section'  => 'branding',
-				'type'     => 'image',
-				'default'  => '',
-				'sanitize' => 'esc_url_raw',
-				'label'    => __( 'Favicon', 'phantom-core' ),
+				'section'   => 'branding',
+				'type'      => 'image',
+				'default'   => '',
+				'sanitize'  => 'esc_url_raw',
+				'label'     => __( 'Favicon', 'phantom-core' ),
+				'transport' => 'postMessage',
 			),
 			'branding_apple_touch_icon'    => array(
 				'section'  => 'branding',
@@ -537,13 +540,14 @@ class Settings_Registry {
 					'transparent' => 'Transparent',
 				),
 				'sanitize'     => 'sanitize_text_field',
+				'transport'    => 'postMessage',
 				'label'        => __( 'Header Style', 'phantom-core' ),
 				'dependencies' => array(
 					array( 'key' => 'display_header', 'value' => true ),
 				),
 				'partial'      => array(
 					'selector'        => 'header.header',
-					'render_callback' => 'phantom_render_header_partial',
+					'render_callback' => 'phantom_render_header_partial_v2',
 				),
 			),
 			'header_sticky_bg'              => array(
@@ -2609,6 +2613,7 @@ class Settings_Registry {
 					'classic' => 'Classic',
 				),
 				'sanitize'     => 'sanitize_text_field',
+				'transport'    => 'postMessage',
 				'label'        => __( 'Blog Layout', 'phantom-core' ),
 				'partial'      => array(
 'selector' => 'div.blog-grid',
@@ -2962,25 +2967,28 @@ class Settings_Registry {
 	private function section_footer(): array {
 		return array(
 			'footer_logo'                 => array(
-				'section'  => 'footer',
-				'type'     => 'string',
-				'default'  => PHANTOM_CORE_URL . 'frontend/assets/images/footer-logo.png',
-				'sanitize' => 'esc_url_raw',
-				'label'    => __( 'Footer Logo', 'phantom-core' ),
+				'section'   => 'footer',
+				'type'      => 'string',
+				'default'   => PHANTOM_CORE_URL . 'frontend/assets/images/footer-logo.png',
+				'sanitize'  => 'esc_url_raw',
+				'label'     => __( 'Footer Logo', 'phantom-core' ),
+				'transport' => 'postMessage',
 			),
 			'footer_about_text'           => array(
-				'section'  => 'footer',
-				'type'     => 'text',
-				'default'  => 'Duis aute irure dolor in reprehenderit in voluptate velit cillum dolore eu fugiat nulla pariatur ccaecat cupidata proident, sunt in culpa officia deserunt mollit.',
-				'sanitize' => 'sanitize_textarea_field',
-				'label'    => __( 'About Text', 'phantom-core' ),
+				'section'   => 'footer',
+				'type'      => 'text',
+				'default'   => 'Duis aute irure dolor in reprehenderit in voluptate velit cillum dolore eu fugiat nulla pariatur ccaecat cupidata proident, sunt in culpa officia deserunt mollit.',
+				'sanitize'  => 'sanitize_textarea_field',
+				'label'     => __( 'About Text', 'phantom-core' ),
+				'transport' => 'postMessage',
 			),
 			'footer_copyright'            => array(
-				'section'  => 'footer',
-				'type'     => 'text',
-				'default'  => 'Copyright (c) %d aethershoes.com All rights reserved.',
-				'sanitize' => 'sanitize_textarea_field',
-				'label'    => __( 'Copyright Text', 'phantom-core' ),
+				'section'   => 'footer',
+				'type'      => 'text',
+				'default'   => 'Copyright (c) %d aethershoes.com All rights reserved.',
+				'sanitize'  => 'sanitize_textarea_field',
+				'label'     => __( 'Copyright Text', 'phantom-core' ),
+				'transport' => 'postMessage',
 			),
 			'footer_payment_cards'        => array(
 				'section'  => 'footer',
@@ -3004,11 +3012,12 @@ class Settings_Registry {
 				'label'    => __( 'Email', 'phantom-core' ),
 			),
 			'footer_address'              => array(
-				'section'  => 'footer',
-				'type'     => 'text',
-				'default'  => '121 King Street Melbourne, <br>3000, Australia',
-				'sanitize' => 'wp_kses_post',
-				'label'    => __( 'Address', 'phantom-core' ),
+				'section'   => 'footer',
+				'type'      => 'text',
+				'default'   => '121 King Street Melbourne, <br>3000, Australia',
+				'sanitize'  => 'wp_kses_post',
+				'label'     => __( 'Address', 'phantom-core' ),
+				'transport' => 'postMessage',
 			),
 			'footer_text'                 => array(
 				'section'      => 'footer',
@@ -3115,11 +3124,12 @@ class Settings_Registry {
 				'label'    => __( 'Enable Footer', 'phantom-core' ),
 			),
 			'footer_columns'              => array(
-				'section'  => 'footer',
-				'type'     => 'int',
-				'default'  => 4,
-				'sanitize' => 'absint',
-				'label'    => __( 'Footer Columns', 'phantom-core' ),
+				'section'   => 'footer',
+				'type'      => 'int',
+				'default'   => 4,
+				'sanitize'  => 'absint',
+				'label'     => __( 'Footer Columns', 'phantom-core' ),
+				'transport' => 'postMessage',
 			),
 			'footer_width'                => array(
 				'section'  => 'footer',
@@ -3217,10 +3227,10 @@ class Settings_Registry {
 				'dependencies' => array(
 					array( 'key' => 'display_footer', 'value' => true ),
 				),
-				'partial'      => array(
+			'partial'      => array(
 'selector'        => 'footer.footer',
-		'render_callback' => 'phantom_render_footer_partial',
-				),
+'render_callback' => 'phantom_render_footer_partial',
+			),
 			),
 		);
 	}
@@ -5636,6 +5646,28 @@ class Settings_Registry {
 				'label'        => __( 'Text Color', 'phantom-core' ),
 				'css_property' => '--announcement-bar-color',
 				'css_selector' => ':root',
+			),
+		);
+	}
+
+	private function section_template_pack(): array {
+		$packs = array('kids' => 'Kids Collection (Default)');
+		$dir = PHANTOM_CORE_PATH . 'frontend/templates/';
+		if (is_dir($dir)) {
+			foreach (scandir($dir) as $entry) {
+				if ($entry !== '.' && $entry !== '..' && is_dir($dir . $entry)) {
+					$packs[$entry] = ucwords(str_replace('-', ' ', $entry));
+				}
+			}
+		}
+		return array(
+			'template_pack' => array(
+				'section'  => 'template_pack',
+				'type'     => 'ast-select',
+				'default'  => 'kids',
+				'options'  => $packs,
+				'sanitize' => 'sanitize_text_field',
+				'label'    => __('Template Pack', 'phantom-core'),
 			),
 		);
 	}

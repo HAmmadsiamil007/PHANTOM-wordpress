@@ -1,4 +1,4 @@
-$(function () {
+jQuery(function ($) {
 	$(document).on('click', '#submit', function () {
 		$.validator.addMethod('phone', function (value, element) {
 			return this.optional(element) || /^[\d\s\-\+\(\)]{7,20}$/.test(value);

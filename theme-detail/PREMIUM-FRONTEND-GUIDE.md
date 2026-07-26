@@ -1,6 +1,6 @@
 # Premium Frontend Template — CLI Agent Guide
 
-> **Purpose:** Complete guide for any AI coding agent to build premium, animated, 3D-enabled, scrollable frontend templates that connect to **Phantom Core** (decoupled WordPress framework with 555 settings, 34 REST endpoints, 89 CSS vars).
+> **Purpose:** Complete guide for any AI coding agent to build premium, animated, 3D-enabled, scrollable frontend templates that connect to **Phantom Core** (decoupled WordPress framework with 564 settings, 43 REST endpoints, 96 CSS vars).
 >
 > **Stack:** Phantom Core Data Bridge + Bootstrap 5 + GSAP + Three.js + Lenis + Swiper
 >
@@ -15,11 +15,11 @@ WordPress
 
 WooCommerce
 
-Settings Registry (555 settings, 44 sections)
+Settings Registry (564 settings, 44 sections)
 
 Theme Options (Customizer → CSS vars → Frontend)
 
-Customizer (15 panels, 13 custom controls, 89 CSS vars)
+Customizer (15 panels, 44 sections, 13 custom controls, 96 CSS vars)
 
 Menus (data-phantom-menu → WP Nav Menus)
 
@@ -29,7 +29,7 @@ Products (WooCommerce product grids via data-phantom-products)
 
 Categories (data-phantom-categories via REST)
 
-API (34 endpoints under phantom/v1)
+API (43 endpoints under phantom/v1)
       │
       ▼
           Render Engine
@@ -41,7 +41,7 @@ API (34 endpoints under phantom/v1)
               Security headers, auth state
                    │
                    ▼
-          phantom-data.js (2007 lines)
+          phantom-data.js (35+ functions)
               Fetches /phantom/v1/page-data
               Injects settings, menus, products, posts
               Initializes cart, checkout, auth, search
@@ -99,7 +99,7 @@ Swappable Frontend
 
 | Channel | Direction | What | Mechanism |
 |---------|-----------|------|-----------|
-| **1. Server Injection** | PHP → HTML | 89 CSS vars, SEO meta, phantomData JS config, security headers | Shell.php injects into `<head>` before serving |
+| **1. Server Injection** | PHP → HTML | 96 CSS vars, SEO meta, phantomData JS config, security headers | Shell.php injects into `<head>` before serving |
 | **2. REST API** | PHP → JSON → JS | Settings, menus, products, posts, cart, auth | phantom-data.js fetches `/phantom/v1/page-data` |
 | **3. CSS Variables** | Settings → CSS → Style | All design tokens as `--custom-properties` | `:root { --primary--color: #... }` via `<style id="phantom-customizer-css">` |
 
@@ -178,7 +178,7 @@ These attributes tell `phantom-data.js` what data to inject where:
 | `data-phantom-reset-url` | `<a>` | Site URL | Password reset link |
 | `data-phantom-categories` | Container `<div>` | Categories REST | Renders category list |
 
-**Setting keys source:** 555 keys in `Settings_Registry::define_entries()` under 44 sections including: `hero_title`, `hero_subtitle`, `hero_description`, `site_title`, `site_logo`, `footer_text`, `footer_description`, `copyright_text`, `banner_heading`, `banner_description`, `contact_email`, `contact_phone`, `contact_address`, `social_facebook`, `social_twitter`, `social_instagram`, `social_youtube`, `social_linkedin`, etc.
+**Setting keys source:** 564 keys in `Settings_Registry::define_entries()` under 44 sections including: `hero_title`, `hero_subtitle`, `hero_description`, `site_title`, `site_logo`, `footer_text`, `footer_description`, `copyright_text`, `banner_heading`, `banner_description`, `contact_email`, `contact_phone`, `contact_address`, `social_facebook`, `social_twitter`, `social_instagram`, `social_youtube`, `social_linkedin`, etc.
 
 ### 1.4 CSS Class Names Used by phantom-data.js
 
@@ -227,7 +227,7 @@ These class names are hardcoded in JS. Templates MUST use them:
 
 | Feature | How It Works In Phantom Core |
 |---------|------------------------------|
-| **Routing** | `Shell.php` hooks `template_redirect` (priority 1), maps URL slug → HTML file. 34 routes. |
+| **Routing** | `Shell.php` hooks `template_redirect` (priority 1), maps URL slug → HTML file. 43 routes. |
 | **SEO** | Shell injects `<title>`, meta description, OG tags, Twitter Card, JSON-LD schema per page type |
 | **Auth** | 4 REST endpoints: login, register, password-reset, logout. Nonce-based. JS handles forms. |
 | **Users** | My account page fetches user orders via `/phantom/v1/user/orders` |
@@ -241,7 +241,7 @@ These class names are hardcoded in JS. Templates MUST use them:
 - `join-now.html` → form with `#phantom-register-form`, fields `#register-name`, `#register-email`, `#register-password`
 - `password-reset.html` → form with `#phantom-reset-form`, field `#reset-email`
 
-### 2.2 Settings Registry (555 settings)
+### 2.2 Settings Registry (564 settings)
 
 Settings are the backbone. Every visual element starts as a setting entry.
 
@@ -284,7 +284,7 @@ Settings are the backbone. Every visual element starts as a setting entry.
 | 15 | Colors | `primary_color`, `secondary_color`, `accent_color` | All pages |
 | 16–44 | Buttons, Forms, Spacing, Layout, Responsive, Animations, SEO, Custom Code, Privacy, About, Contact, FAQ, Coming Soon, 404, etc. | Various | Various pages |
 
-### 2.3 CSS Variable Contract (89 Vars)
+### 2.3 CSS Variable Contract (96 Vars)
 
 These CSS custom properties are injected into EVERY page. Templates MUST reference them for dynamic theming.
 
@@ -568,21 +568,31 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 </div>
 ```
 
-**Product card HTML generated by JS:**
+**Product card HTML — generated via Data Adapter + Component Renderer (v2.0):**
 ```html
-<div class="product-card">
-  <div class="product-image">
-    <img src="..." alt="Product Name" loading="lazy">
-    <span class="product-badge sale-badge">Sale!</span>
-    <button class="add-to-cart-trigger" data-product-id="123">Add to Cart</button>
+<div class="product-card" data-tilt data-reveal-item>
+  <div class="product-image" data-image-zoom>
+    <span class="product-badge">Sale!</span>
+    <a href="/product/slug"><img loading="lazy" src="..." alt="Product Name"></a>
+    <div class="product-actions">
+      <button class="product-action-btn phantom-wishlist-trigger" aria-label="Wishlist"><i class="far fa-heart"></i></button>
+      <button class="product-action-btn phantom-quickview-trigger" aria-label="Quick view"><i class="far fa-eye"></i></button>
+    </div>
   </div>
   <div class="product-info">
-    <h3 class="product-title">Product Name</h3>
-    <span class="product-price"><span class="woocommerce-Price-amount">$19.99</span></span>
-    <div class="product-rating">★★★★☆ (12)</div>
+    <div class="product-categories"><span class="product-category-badge">Category</span></div>
+    <div class="product-rating"><i class="fas fa-star"></i><span>(5)</span></div>
+    <div class="product-price-row">
+      <span class="product-price"><span class="price-sale">$14.99</span><span class="price-original">$19.99</span></span>
+      <a href="#" class="btn btn-sm btn-primary phantom-add-to-cart" data-product_id="123">Add to Cart</a>
+    </div>
   </div>
 </div>
 ```
+
+**Template string source (in `phantom-data.js`):** `PRODUCT_CARD_TPL` — exact copy of the above structure with `{{PLACEHOLDER}}` tokens.
+
+**Data adapter:** `adaptProductCard(raw, settings, showSaleBadge, saleBadgeText)` normalizes all fields. `buildProductCard()` is now 4 lines: `adaptProductCard()` + `renderTemplate()` + `innerHTML`. If the card HTML changes, update `PRODUCT_CARD_TPL`, not the adapter or builder.
 
 **Data attributes on product cards:**
 - `data-product-id` — Product ID (for add-to-cart)
@@ -602,7 +612,15 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 
 <!-- Category 1 (product_cat taxonomy) uses #category1 ID -->
 <div id="category1" class="category-grid">
-  <!-- JS renders category cards with images -->
+  <!-- JS renders category cards via adaptCategoryCard() + renderTemplate(CATEGORY_CARD_TPL):
+       <a href="{{URL}}" class="category-card {{CLASSES}}" data-tilt data-reveal-item>
+         <div class="category-card-bg"><img src="{{IMAGE}}"><div class="category-card-overlay"></div></div>
+         <div class="category-card-content">
+           <span class="category-count">{{COUNT}}</span>
+           <h3 class="category-name">{{NAME}}</h3>
+           <span class="category-cta">{{CTA}} <i class="fas fa-arrow-right"></i></span>
+         </div>
+       </a> -->
 </div>
 ```
 
@@ -675,7 +693,7 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 | Get shipping | `POST /phantom/v1/cart/shipping-methods` | POST |
 | Checkout | `wc-ajax=checkout` | POST (WC native) |
 
-### 2.10 REST API (34 Endpoints Under `phantom/v1`)
+### 2.10 REST API (43 Endpoints Under `phantom/v1`)
 
 | # | Endpoint | Methods | Permission | Purpose |
 |---|----------|---------|------------|---------|
@@ -709,10 +727,10 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 | 28 | `/page-data` | GET | public | **Mega-endpoint** — all data in 1 call |
 | 29 | `/auth/login` | POST | public | User login |
 | 30 | `/auth/register` | POST | public | User registration |
-| 31 | `/auth/password-reset` | POST | public | Password reset |
+| 38 | `/auth/password-reset` | POST | public | Password reset |
 | 32 | `/auth/logout` | POST | nonce | User logout |
 | 33 | `/contact` | POST | public | Contact form → email |
-| 34 | `/user/orders` | GET | nonce + logged-in | Order history |
+| 41 | `/user/orders` | GET | nonce + logged-in | Order history |
 
 **How templates call the API:**
 ```javascript
@@ -1291,26 +1309,28 @@ Achieving Lighthouse 100/100 across all 6 categories (Performance, Accessibility
 | Focus trap | Modals and cart drawers trap focus while open |
 
 ```html
-<!-- ✅ Accessible product card -->
-<article class="product-card" aria-label="Product: Blue T-Shirt, $29.99">
-  <div class="product-image">
+<!-- ✅ Accessible product card (matches PRODUCT_CARD_TPL in phantom-data.js) -->
+<article class="product-card" data-tilt data-reveal-item aria-label="Product: Blue T-Shirt, $29.99">
+  <div class="product-image" data-image-zoom>
     <img data-phantom="product_image_123"
          data-phantom-alt="product_name_123"
          alt="Blue T-Shirt"
          width="300" height="300"
          loading="lazy">
+    <button class="add-to-cart-trigger"
+            data-product-id="123"
+            aria-label="Add Blue T-Shirt to cart">
+      Add to Cart
+    </button>
   </div>
-  <h3 class="product-title">
-    <span data-phantom="product_name_123">Blue T-Shirt</span>
-  </h3>
-  <span class="product-price" aria-label="Price: $29.99">
-    <span data-phantom="product_price_123">$29.99</span>
-  </span>
-  <button class="add-to-cart-trigger"
-          data-product-id="123"
-          aria-label="Add Blue T-Shirt to cart">
-    Add to Cart
-  </button>
+  <div class="product-info">
+    <div class="product-rating" aria-label="4 out of 5 stars">★★★★☆</div>
+    <div class="product-price-row">
+      <span class="product-price" aria-label="Price: $29.99">
+        <span data-phantom="product_price_123">$29.99</span>
+      </span>
+    </div>
+  </div>
 </article>
 ```
 

@@ -1,0 +1,3 @@
+Total messages: 1 (Errors: 0, Warnings: 1)
+
+[WARNING] AETHER Motion: GSAP or ScrollTrigger not loaded @ http://localhost:8080/wp-content/plugins/phantom-core/frontend/assets/js/animations.js?v=1.5.3:16

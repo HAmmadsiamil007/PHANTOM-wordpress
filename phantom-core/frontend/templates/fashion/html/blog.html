@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal — MAISON</title>
+    <meta name="description" content="The MAISON Journal — stories on craftsmanship, fashion, and the art of living.">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon/favicon.ico">
+    <meta name="theme-color" content="#1A1A1A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MAISON">
+    <meta property="og:title" content="Journal — MAISON">
+    <meta property="og:description" content="Stories on craftsmanship, fashion, and the art of living.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/fashion.css">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <button class="menu-toggle" aria-label="Toggle menu" data-phantom-menu-toggle>
+                <span></span><span></span><span></span>
+            </button>
+            <a href="/" class="site-logo" aria-label="MAISON Home">
+                <span class="logo-text">MAISON</span>
+                <span class="logo-tagline">Luxe Edition</span>
+            </a>
+            <nav class="primary-nav" aria-label="Main navigation" data-phantom-nav="primary">
+                <ul>
+                    <li><a href="/shop" data-phantom-route="shop">Collection</a></li>
+                    <li><a href="/about" data-phantom-route="about">The Atelier</a></li>
+                    <li><a href="/blog" class="active" data-phantom-route="blog">Journal</a></li>
+                    <li><a href="/contact" data-phantom-route="contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="/cart" class="cart-link" aria-label="Shopping cart" data-phantom-route="cart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span class="cart-count" data-phantom-cart-count>0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main id="main" role="main">
+        <div class="journal-header">
+            <span class="journal-suptitle">Since 2026</span>
+            <h1 class="journal-title">The Journal</h1>
+            <p class="journal-description">Stories on craftsmanship, fashion, and the art of living</p>
+        </div>
+
+        <div class="journal-grid" data-phantom-blog-grid>
+            <article class="journal-card">
+                <div class="journal-card-image">
+                    <img src="assets/images/blog-1.jpg" alt="Blog post" loading="lazy">
+                    <span class="journal-card-date" data-phantom-post-date>Jan 15, 2026</span>
+                </div>
+                <div class="journal-card-content">
+                    <span class="journal-card-category" data-phantom-post-category>Design</span>
+                    <h2 class="journal-card-title" data-phantom-post-title><a href="/blog/post-1" data-phantom-route="blog/post-1">The Art of Slow Fashion</a></h2>
+                    <p class="journal-card-excerpt" data-phantom-post-excerpt>Discover why taking time with each piece creates garments that transcend seasons.</p>
+                    <a href="/blog/post-1" class="journal-card-link" data-phantom-route="blog/post-1">Read More <span aria-hidden="true">→</span></a>
+                </div>
+            </article>
+        </div>
+
+        <div class="pagination" data-phantom-pagination>
+            <button class="btn btn-outline pagination-prev" disabled data-phantom-pagination-prev>Previous</button>
+            <span class="pagination-info" data-phantom-pagination-info>Page 1 of 1</span>
+            <button class="btn btn-outline pagination-next" disabled data-phantom-pagination-next>Next</button>
+        </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="footer-logo">MAISON</span>
+                <p>Redefining luxury since 2026</p>
+            </div>
+            <div class="footer-nav" data-phantom-footer-nav>
+                <div class="footer-col">
+                    <h4>The Atelier</h4>
+                    <ul>
+                        <li><a href="/about" data-phantom-route="about">About Us</a></li>
+                        <li><a href="/contact" data-phantom-route="contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Policies</h4>
+                    <ul>
+                        <li><a href="/privacy-policy" data-phantom-route="privacy-policy">Privacy Policy</a></li>
+                        <li><a href="/term-of-use" data-phantom-route="term-of-use">Terms of Use</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 MAISON. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/fashion.js"></script>
+</body>
+</html>

@@ -142,7 +142,8 @@ class Phantom_Custom_CSS {
 			$rules = '';
 			foreach ( $properties as $property => $value ) {
 				if ( '' !== $value ) {
-					$rules .= "\t" . $property . ': ' . esc_attr( $value ) . ";\n";
+					$css_val = is_array( $value ) ? implode( ' ', $value ) : $value;
+					$rules  .= "\t" . $property . ': ' . esc_attr( $css_val ) . ";\n";
 				}
 			}
 			if ( '' !== $rules ) {

@@ -6,8 +6,6 @@
  * @version 1.5.0
  */
 
-declare(strict_types=1);
-
 defined( 'ABSPATH' ) || exit;
 
 define( 'PHANTOM_THEME_VERSION', '1.5.0' );
@@ -50,9 +48,10 @@ function phantom_theme_setup(): void {
 
 	if ( class_exists( 'WooCommerce' ) ) {
 		add_theme_support( 'woocommerce' );
-		add_theme_support( 'wc-product-gallery-zoom' );
-		add_theme_support( 'wc-product-gallery-lightbox' );
-		add_theme_support( 'wc-product-gallery-slider' );
+		// SPA uses own Swiper gallery instead of WC built-in
+		// add_theme_support( 'wc-product-gallery-zoom' );
+		// add_theme_support( 'wc-product-gallery-lightbox' );
+		// add_theme_support( 'wc-product-gallery-slider' );
 	}
 }
 add_action( 'after_setup_theme', 'phantom_theme_setup' );
@@ -74,8 +73,9 @@ function phantom_theme_enqueue(): void {
 	wp_enqueue_style( 'phantom-responsive', PHANTOM_THEME_URL . '/assets/css/responsive.css', array(), $ver );
 	wp_enqueue_style( 'phantom-a11y', PHANTOM_THEME_URL . '/assets/css/a11y.css', array(), $ver );
 
-	wp_deregister_script( 'jquery' );
-	wp_register_script( 'jquery', PHANTOM_THEME_URL . '/assets/js/jquery-3.7.1.min.js', array(), '3.7.1', false );
+	if ( ! wp_script_is( 'jquery', 'registered' ) ) {
+		wp_register_script( 'jquery', PHANTOM_THEME_URL . '/assets/js/jquery-3.7.1.min.js', array(), '3.7.1', false );
+	}
 	wp_enqueue_script( 'jquery' );
 
 	wp_enqueue_script( 'bootstrap', PHANTOM_THEME_URL . '/assets/js/bootstrap.min.js', array( 'jquery' ), $ver, true );
@@ -172,6 +172,10 @@ function phantom_theme_customizer_css(): void {
 			--accent-color: <?php echo esc_attr( $accent ); ?>;
 			--text-color: <?php echo esc_attr( $text ); ?>;
 			--bg-color: <?php echo esc_attr( $bg ); ?>;
+			--phantom-color-primary: <?php echo esc_attr( $primary ); ?>;
+			--phantom-color-accent: <?php echo esc_attr( $accent ); ?>;
+			--phantom-color-text: <?php echo esc_attr( $text ); ?>;
+			--phantom-color-background: <?php echo esc_attr( $bg ); ?>;
 		}
 	</style>
 	<?php
@@ -185,9 +189,10 @@ if ( class_exists( 'WooCommerce' ) ) {
 	add_filter( 'woocommerce_show_page_title', '__return_false' );
 
 	function phantom_theme_woocommerce_support(): void {
-		add_theme_support( 'wc-product-gallery-zoom' );
-		add_theme_support( 'wc-product-gallery-lightbox' );
-		add_theme_support( 'wc-product-gallery-slider' );
+		// SPA uses own Swiper gallery instead of WC built-in
+		// add_theme_support( 'wc-product-gallery-zoom' );
+		// add_theme_support( 'wc-product-gallery-lightbox' );
+		// add_theme_support( 'wc-product-gallery-slider' );
 	}
 	add_action( 'after_setup_theme', 'phantom_theme_woocommerce_support', 20 );
 }
@@ -243,3 +248,32 @@ function phantom_theme_pagination(): void {
 		'next_text' => '&raquo;',
 	) );
 }
+
+/**
+ * Newsletter AJAX handler
+ */
+function phantom_theme_newsletter_subscribe(): void {
+	if ( ! isset( $_POST['phantom_newsletter_nonce'] ) || ! wp_verify_nonce( $_POST['phantom_newsletter_nonce'], 'phantom_newsletter' ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'phantom-theme' ) ) );
+	}
+
+	$email = isset( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : '';
+	if ( ! is_email( $email ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid email address.', 'phantom-theme' ) ) );
+	}
+
+	$emails   = get_option( 'phantom_newsletter_emails', array() );
+	if ( ! is_array( $emails ) ) {
+		$emails = array();
+	}
+	if ( in_array( $email, $emails, true ) ) {
+		wp_send_json_error( array( 'message' => __( 'Email already subscribed.', 'phantom-theme' ) ) );
+	}
+
+	$emails[] = $email;
+	update_option( 'phantom_newsletter_emails', $emails );
+
+	wp_send_json_success( array( 'message' => __( 'Thank you for subscribing!', 'phantom-theme' ) ) );
+}
+add_action( 'wp_ajax_phantom_newsletter_subscribe', 'phantom_theme_newsletter_subscribe' );
+add_action( 'wp_ajax_nopriv_phantom_newsletter_subscribe', 'phantom_theme_newsletter_subscribe' );
