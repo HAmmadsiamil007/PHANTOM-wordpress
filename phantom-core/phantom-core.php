@@ -96,6 +96,13 @@ require_once PHANTOM_CORE_PATH . 'includes/custom-css/buttons.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/product.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/responsive.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/hero.php';
+// Phase 1: Service Container + Event System
+require_once PHANTOM_CORE_PATH . 'includes/Engine/Container.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/Container_Config.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/Render_Engine.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/EventDispatcher.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/PhpEventStore.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/WooCommerce_Injector.php';
 require_once PHANTOM_CORE_PATH . 'admin/class-settings-page.php';
 
 load_plugin_textdomain(
@@ -134,8 +141,10 @@ if ( file_exists( $cache_path ) ) {
 $shell_path = PHANTOM_CORE_PATH . 'templates/shell.php';
 if ( file_exists( $shell_path ) ) {
 	require_once $shell_path;
-	\PhantomCore\Shell::get_instance()->init();
 }
+add_action('plugins_loaded', function(): void {
+	\PhantomCore\Shell::get_instance()->init();
+}, 0);
 
 add_action(
 	'plugins_loaded',
