@@ -16,6 +16,7 @@ defined('ABSPATH') || exit;
 class WooCommerce_Injector {
 
   private Render_Engine $engine;
+  private EventDispatcher $events;
   private Product_Adapter $product_adapter;
   private Category_Adapter $category_adapter;
   private Hero_Adapter $hero_adapter;
@@ -24,8 +25,9 @@ class WooCommerce_Injector {
   private Hero $hero;
   private Footer $footer;
 
-  public function __construct(Render_Engine $engine) {
+  public function __construct(Render_Engine $engine, EventDispatcher $events) {
     $this->engine = $engine;
+    $this->events = $events;
     $this->product_adapter = new Product_Adapter();
     $this->category_adapter = new Category_Adapter();
     $this->hero_adapter = new Hero_Adapter();
