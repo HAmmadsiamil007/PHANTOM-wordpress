@@ -19,7 +19,7 @@
     <meta property="og:site_name" content="AETHER">
     <meta property="og:url" content="https://aethershoes.com">
     <link rel="canonical" href="https://aethershoes.com">
-    
+    <meta property="og:image" content="https://aethershoes.com/assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg">
     <meta property="og:title" content="AETHER — Step Into The Void">
     <meta property="og:description" content="AETHER Void Runner — Engineered for the void. Premium athletic footwear with carbon fiber technology.">
     <meta name="twitter:title" content="AETHER — Step Into The Void">
@@ -68,7 +68,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/motion.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
-    <link rel="stylesheet" href="assets/css/a11y.css">
+    <link rel="stylesheet" href="assets/css/a11y.css"">
 </head>
 <body class="home-page">
 
@@ -122,7 +122,7 @@
             <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
                 <i class="fas fa-times"></i>
             </button>
-            <a href="/" class="mobile-menu-logo">AETHER</a>
+            <a href="index.html" class="mobile-menu-logo">AETHER</a>
             <div class="mobile-menu-spacer"></div>
         </div>
         <div class="mobile-menu-body">
@@ -130,7 +130,24 @@
                 <i class="fas fa-search"></i>
                 <input type="text" placeholder="Search products...">
             </div>
-            <nav class="mobile-nav" data-phantom-menu="primary"></nav>
+            <nav class="mobile-nav">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="shop.html" class="mobile-nav-link">Shop</a>
+                <a href="shop.html" class="mobile-nav-link">Collections</a>
+                <a href="shop.html" class="mobile-nav-link">New Arrivals</a>
+                <a href="shop.html" class="mobile-nav-link">Best Sellers</a>
+            </nav>
+            <div class="mobile-divider"></div>
+            <nav class="mobile-nav">
+                <a href="login.html" class="mobile-nav-link">Account</a>
+                <a href="shop.html" class="mobile-nav-link">Wishlist</a>
+                <a href="cart.html" class="mobile-nav-link">Cart</a>
+            </nav>
+            <div class="mobile-divider"></div>
+            <nav class="mobile-nav">
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="about.html" class="mobile-nav-link">About</a>
+            </nav>
             <div class="mobile-divider"></div>
             <div class="mobile-meta">
                 <span>Language</span>
@@ -165,14 +182,14 @@
          ═══════════════════════════════════════════════════════ -->
     <header class="header" id="header">
         <div class="header-container">
-            <a href="/" class="brand-logo">AETHER</a>
+            <a href="index.html" class="brand-logo">AETHER</a>
             
             <nav class="main-nav" id="mainNav" data-phantom-menu="primary">
                 <div class="nav-mobile-logo">
-                    <a href="/" class="brand-logo">AETHER</a>
+                    <a href="index.html" class="brand-logo">AETHER</a>
                 </div>
                 <ul class="nav-links">
-                    <li><a href="/" class="nav-link active">Home</a></li>
+                    <li><a href="index.html" class="nav-link active">Home</a></li>
                     <li class="nav-dropdown">
                         <a href="shop.html" class="nav-link nav-dropdown-toggle">Collection <i class="fas fa-chevron-down"></i></a>
                         <ul class="nav-dropdown-menu">
@@ -214,7 +231,7 @@
     <!-- ═══════════════════════════════════════════════════════
          3. HERO SLIDER
          ═══════════════════════════════════════════════════════ -->
-    <section class="hero-slider" id="heroSlider" data-hero-area data-phantom-bg="hero" data-mouse-parallax data-parallax-section>
+    <section class="hero-slider" id="heroSlider" data-phantom-bg="hero" data-mouse-parallax data-parallax-section>
                 <div class="hero-fog" aria-hidden="true">
                     <div id="hl_01" class="hf-fog">
                         <div class="hf-img"></div>
@@ -234,11 +251,7 @@
                 <!-- Slide 1 — Flagship -->
                 <div class="swiper-slide hero-slide">
                     <div class="hero-slide-bg">
-                        <picture>
-                            <source media="(max-width:768px)" srcset="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" data-device="mobile">
-                            <source media="(max-width:1024px)" srcset="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" data-device="tablet">
-                            <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-hero-img data-phantom-alt="hero_slide_1" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15" class="hero-image">
-                        </picture>
+                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-alt="hero_slide_1" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
                         <div class="hero-slide-overlay"></div>
                     </div>
                     <div class="container hero-slide-content">
@@ -255,11 +268,7 @@
                 <!-- Slide 2 -->
                 <div class="swiper-slide hero-slide">
                     <div class="hero-slide-bg">
-                        <picture>
-                            <source media="(max-width:768px)" srcset="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" data-device="mobile">
-                            <source media="(max-width:1024px)" srcset="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" data-device="tablet">
-                            <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-hero-img data-phantom-alt="hero_slide_2" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15" class="hero-image">
-                        </picture>
+                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-alt="hero_slide_2" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
                         <div class="hero-slide-overlay"></div>
                     </div>
                     <div class="container hero-slide-content">
@@ -276,11 +285,7 @@
                 <!-- Slide 3 -->
                 <div class="swiper-slide hero-slide">
                     <div class="hero-slide-bg">
-                        <picture>
-                            <source media="(max-width:768px)" srcset="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" data-device="mobile">
-                            <source media="(max-width:1024px)" srcset="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" data-device="tablet">
-                            <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-hero-img data-phantom-alt="hero_slide_3" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15" class="hero-image">
-                        </picture>
+                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-alt="hero_slide_3" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
                         <div class="hero-slide-overlay"></div>
                     </div>
                     <div class="container hero-slide-content">
@@ -322,15 +327,56 @@
          ═══════════════════════════════════════════════════════ -->
     <section class="categories" id="categories">
         <div class="container">
-            <div class="category-grid" data-reveal-group data-phantom-categories>
+            <div class="section-header">
+                <span class="section-label" data-phantom="section_label" data-motion-text="words">Shop by Category</span>
+                <h2 class="section-title" data-phantom="section_title" data-motion-text="words">Find Your Fit</h2>
+            </div>
+            
+            <div class="category-grid" data-reveal-group>
                 <a href="shop.html" class="category-card category-card--large" data-tilt data-reveal-item>
                     <div class="category-card-bg">
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Collection">
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Men's Collection" data-phantom-alt="category_men">
                         <div class="category-card-overlay"></div>
                     </div>
                     <div class="category-card-content">
-                        <span class="category-count">0 Products</span>
-                        <h3 class="category-name">Loading...</h3>
+                        <span class="category-count" data-phantom="category_count">24 Products</span>
+                        <h3 class="category-name">Men</h3>
+                        <span class="category-cta">Shop Men <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                
+                <a href="shop.html" class="category-card" data-tilt data-reveal-item>
+                    <div class="category-card-bg">
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Women's Collection" data-phantom-alt="category_women">
+                        <div class="category-card-overlay"></div>
+                    </div>
+                    <div class="category-card-content">
+                        <span class="category-count" data-phantom="category_count">18 Products</span>
+                        <h3 class="category-name">Women</h3>
+                        <span class="category-cta">Shop Women <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                
+                <a href="shop.html" class="category-card" data-tilt data-reveal-item>
+                    <div class="category-card-bg">
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Kids Collection" data-phantom-alt="category_kids">
+                        <div class="category-card-overlay"></div>
+                    </div>
+                    <div class="category-card-content">
+                        <span class="category-count" data-phantom="category_count">12 Products</span>
+                        <h3 class="category-name">Kids</h3>
+                        <span class="category-cta">Shop Kids <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                
+                <a href="shop.html" class="category-card category-card--accent" data-tilt data-reveal-item>
+                    <div class="category-card-bg">
+                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="New Arrivals" data-phantom-alt="category_new">
+                        <div class="category-card-overlay"></div>
+                    </div>
+                    <div class="category-card-content">
+                        <span class="category-count" data-phantom="category_count">Just Dropped</span>
+                        <h3 class="category-name">New Arrivals</h3>
                         <span class="category-cta">Shop Now <i class="fas fa-arrow-right"></i></span>
                     </div>
                 </a>
@@ -343,6 +389,12 @@
          ═══════════════════════════════════════════════════════ -->
     <section class="bestsellers" id="bestsellers">
         <div class="container">
+            <div class="section-header">
+                <span class="section-label" data-phantom="section_label" data-motion-text="words">Bestsellers</span>
+                <h2 class="section-title" data-phantom="section_title" data-motion-text="words">Most Loved</h2>
+                <p class="section-subtitle" data-phantom="section_subtitle" data-motion-text="lines">The shoes everyone's talking about. Tried, tested, and obsessed over.</p>
+            </div>
+            
             <div class="products-grid" data-phantom-products="featured" data-reveal-group>
                 <!-- Product 1 -->
                 <div class="product-card" data-tilt data-reveal-item>
@@ -363,6 +415,7 @@
                             <i class="fas fa-star"></i>
                             <span>(128)</span>
                         </div>
+                        <h3 class="product-name">AETHER Void Runner</h3>
                         <p class="product-tagline">Carbon fiber · 40mm cushion</p>
                         <div class="product-price-row">
                             <span class="product-price">$449</span>
@@ -390,6 +443,7 @@
                             <i class="fas fa-star-half-alt"></i>
                             <span>(86)</span>
                         </div>
+                        <h3 class="product-name">AETHER Cloud Stride</h3>
                         <p class="product-tagline">Ultra-light · Zero gravity</p>
                         <div class="product-price-row">
                             <span class="product-price">$99</span>
@@ -417,6 +471,7 @@
                             <i class="fas fa-star"></i>
                             <span>(64)</span>
                         </div>
+                        <h3 class="product-name">AETHER Midnight</h3>
                         <p class="product-tagline">Stealth black · Reflective</p>
                         <div class="product-price-row">
                             <span class="product-price">$479</span>
@@ -443,6 +498,7 @@
                             <i class="far fa-star"></i>
                             <span>(42)</span>
                         </div>
+                        <h3 class="product-name">AETHER Aero Sprint</h3>
                         <p class="product-tagline">Race-ready · Featherweight</p>
                         <div class="product-price-row">
                             <span class="product-price">$69</span>
@@ -700,13 +756,9 @@
     </main>
     <footer class="footer" id="footer" role="contentinfo" aria-label="Site footer" data-phantom-menu="footer">
         <div class="container">
-            <!-- Footer Widget Area -->
-            <div class="footer-widgets" id="phantom-widget-area-footer">
-                <!-- Footer widgets will be rendered here -->
-            </div>
             <div class="footer-top">
                 <div class="footer-brand">
-                    <a href="/" class="footer-logo">AETHER</a>
+                    <a href="index.html" class="footer-logo">AETHER</a>
                     <p class="footer-tagline">Step Into The Void</p>
                     <div class="footer-social" aria-label="Social media links">
                         <a href="https://instagram.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -791,9 +843,8 @@
     
     <script src="assets/js/lenis-scroll.js"></script>
     <script src="assets/js/animations.js"></script>
-    <script src="assets/js/phantom-bridge.js"></script>
-    <script src="assets/js/phantom-injector.js"></script>
-    <script src="assets/js/phantom-data.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/phantom-data.js"></script>
+    <script src="assets/js/phantom-bridge.js"></script>
 </body>
 </html>

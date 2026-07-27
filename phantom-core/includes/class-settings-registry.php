@@ -94,11 +94,12 @@ class Settings_Registry {
 		}
 
 		// Dedup check — warn if duplicate keys found across sections.
+		// design_tokens section is intentionally allowed to override other sections.
 		$keys_seen = array();
 		$merged    = array();
 		foreach ( $sections as $name => $section_entries ) {
 			foreach ( $section_entries as $key => $entry ) {
-				if ( isset( $keys_seen[ $key ] ) ) {
+				if ( isset( $keys_seen[ $key ] ) && 'design_tokens' !== $name ) {
 					_doing_it_wrong(
 						__METHOD__,
 						sprintf(

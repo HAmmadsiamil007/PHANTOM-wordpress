@@ -37,7 +37,7 @@ class Product_Card extends Component_Renderer {
       $categories = '<div class="product-tagline">' . esc_html(implode(', ', array_column($cats, 'name'))) . '</div>';
     }
 
-    $price = esc_html($data['price']);
+    $price = wp_kses_post($data['price']);
     if (!empty($data['on_sale'])) {
       $price = '<span class="price-sale">' . esc_html($data['sale_price']) . '</span>' .
                '<span class="price-original">' . esc_html($data['regular_price']) . '</span>';

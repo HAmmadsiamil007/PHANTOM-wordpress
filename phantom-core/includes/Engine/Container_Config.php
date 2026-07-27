@@ -196,12 +196,7 @@ class Container_Config {
 			return \PhantomCore\Capability_Manager::get_instance();
 		});
 
-		// 32. Splitting_Bridge — singleton (Phase E)
-		$container->singleton(\PhantomCore\Animation\Splitting_Bridge::class, function () {
-			return \PhantomCore\Animation\Splitting_Bridge::get_instance();
-		});
-
-		// 33-38. Public API facades (Phase E)
+		// 32-37. Public API facades (Phase E)
 		$container->singleton(\PhantomCore\Public\Render_API::class, function () {
 			return \PhantomCore\Public\Render_API::get_instance();
 		});

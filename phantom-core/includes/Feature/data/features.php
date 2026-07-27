@@ -7,6 +7,14 @@ defined('ABSPATH') || exit;
 
 return [
     // ===== MOTION & ANIMATION =====
+    'animations' => [
+        'id' => 'animations',
+        'category' => 'motion',
+        'type' => 'ast-toggle',
+        'label' => 'Animations',
+        'description' => 'Master toggle for all frontend animations (GSAP, ScrollTrigger, entrance effects).',
+        'default' => true,
+    ],
     'animate_on_scroll' => [
         'id' => 'animate_on_scroll',
         'category' => 'motion',
@@ -29,6 +37,22 @@ return [
         'type' => 'ast-toggle',
         'label' => 'Page Preloader',
         'description' => 'Show an animated preloader while the page loads.',
+        'default' => true,
+    ],
+    'smooth_scroll' => [
+        'id' => 'smooth_scroll',
+        'category' => 'motion',
+        'type' => 'ast-toggle',
+        'label' => 'Smooth Scroll',
+        'description' => 'Enable smooth scrolling using Lenis library for a polished scroll experience.',
+        'default' => true,
+    ],
+    'lottie_animations' => [
+        'id' => 'lottie_animations',
+        'category' => 'motion',
+        'type' => 'ast-toggle',
+        'label' => 'Lottie Animations',
+        'description' => 'Enable Lottie animation rendering for rich vector animations.',
         'default' => true,
     ],
     'counter_animations' => [
@@ -75,6 +99,14 @@ return [
     ],
 
     // ===== SHOP FEATURES =====
+    'woocommerce' => [
+        'id' => 'woocommerce',
+        'category' => 'shop',
+        'type' => 'ast-toggle',
+        'label' => 'WooCommerce Integration',
+        'description' => 'Enable WooCommerce integration features including cart, checkout, and product pages.',
+        'default' => true,
+    ],
     'product_quick_view' => [
         'id' => 'product_quick_view',
         'category' => 'shop',

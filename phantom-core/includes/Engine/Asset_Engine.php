@@ -117,14 +117,9 @@ class Asset_Engine {
 
   private function inject_minified_js(string $html): string {
     $injector_url = PHANTOM_CORE_URL . 'frontend/assets/js/phantom-injector.js';
-    $js_url = PHANTOM_CORE_URL . 'frontend/assets/js/phantom-core.min.js';
-    if (!file_exists(PHANTOM_CORE_PATH . 'frontend/assets/js/phantom-core.min.js')) {
-      $js_url = PHANTOM_CORE_URL . 'frontend/assets/js/phantom-data.js';
-    }
     $html = str_replace(
       '</body>',
-      '<script src="' . esc_url($injector_url) . '?v=' . PHANTOM_CORE_VERSION . '"></script>' . "\n" .
-      '<script src="' . esc_url($js_url) . '?v=' . PHANTOM_CORE_VERSION . '" id="phantom-core-js"></script>' . "\n" . '</body>',
+      '<script src="' . esc_url($injector_url) . '?v=' . PHANTOM_CORE_VERSION . '"></script>' . "\n" . '</body>',
       $html
     );
     return $html;

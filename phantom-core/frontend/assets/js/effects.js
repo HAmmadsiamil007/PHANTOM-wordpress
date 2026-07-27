@@ -6,7 +6,6 @@
     // ─── Spark system ───────────────────────────────────────────
     function initFireSparks() {
         if (reducedMotion) return
-        if (!document.querySelector('[data-phantom="particles"]')) return
 
         var canvas = document.createElement('canvas')
         canvas.id = 'fireSparksCanvas'
@@ -132,7 +131,6 @@
     // ─── Gradient overlay (warm bottom glow) ──────────────────
     function initWarmGlow() {
         if (reducedMotion) return
-        if (!document.querySelector('[data-phantom="particles"]')) return
         var div = document.createElement('div')
         div.id = 'warmGlowOverlay'
         div.style.cssText =

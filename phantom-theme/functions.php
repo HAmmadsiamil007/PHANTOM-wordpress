@@ -13,6 +13,11 @@ define( 'PHANTOM_THEME_DIR', get_template_directory() );
 define( 'PHANTOM_THEME_URL', get_template_directory_uri() );
 
 /**
+ * Load Bootstrap Nav Walker for proper Bootstrap 5 dropdown markup
+ */
+require_once PHANTOM_THEME_DIR . '/class-bootstrap-nav-walker.php';
+
+/**
  * Theme Setup
  */
 function phantom_theme_setup(): void {

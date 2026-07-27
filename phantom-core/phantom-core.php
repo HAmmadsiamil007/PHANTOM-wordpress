@@ -254,18 +254,6 @@ spl_autoload_register(
 			}
 		}
 
-		// Layout uses includes/Layout/ with class-{name}.php naming
-		$layout_prefix = 'Layout\\';
-		if ( strncmp( $layout_prefix, $relative_class, strlen( $layout_prefix ) ) === 0 ) {
-			$short = substr( $relative_class, strlen( $layout_prefix ) );
-			$short = $pascal_to_kebab( $short );
-			$file  = PHANTOM_CORE_PATH . 'includes/Layout/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
-			if ( file_exists( $file ) ) {
-				require_once $file;
-				return;
-			}
-		}
-
 		// Public uses includes/Public/ with class-{name}.php naming
 		$public_prefix = 'Public\\';
 		if ( strncmp( $public_prefix, $relative_class, strlen( $public_prefix ) ) === 0 ) {
@@ -296,6 +284,24 @@ spl_autoload_register(
 			$short = substr( $relative_class, strlen( $bridges_prefix ) );
 			$short = $pascal_to_kebab( $short );
 			$file  = PHANTOM_CORE_PATH . 'includes/Bridges/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+			// Fallback: try raw lowercase in case kebab split is wrong (e.g. WooCommerce)
+			$file = PHANTOM_CORE_PATH . 'includes/Bridges/class-' . str_replace( '_', '-', strtolower( substr( $relative_class, strlen( $bridges_prefix ) ) ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Upgrade uses includes/Upgrade/ with class-{name}.php naming
+		$upgrade_prefix = 'Upgrade\\';
+		if ( strncmp( $upgrade_prefix, $relative_class, strlen( $upgrade_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $upgrade_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Upgrade/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
 			if ( file_exists( $file ) ) {
 				require_once $file;
 				return;
@@ -364,19 +370,32 @@ require_once PHANTOM_CORE_PATH . 'includes/Animation/class-gsap-bridge.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-scroll-reveal.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-parallax.php';
 
-// Phase D: Plugin Bridges
+// Phase D: Plugin Bridges — register bridge before init_all()
+\PhantomCore\Bridges\Bridge_Manager::get_instance()->register(
+	new \PhantomCore\Bridges\WooCommerce_Bridge()
+);
 \PhantomCore\Bridges\Bridge_Manager::get_instance()->init_all();
 
-load_plugin_textdomain(
-	'phantom-core',
-	false,
-	dirname( plugin_basename( __FILE__ ) ) . '/languages'
-);
-$td_locale = determine_locale();
-$td_mofile = PHANTOM_CORE_PATH . 'languages/phantom-core-' . $td_locale . '.mo';
-if ( file_exists( $td_mofile ) ) {
-	load_textdomain( 'phantom-core', $td_mofile );
+// Pre-register the textdomain with an empty .mo to prevent
+// _load_textdomain_just_in_time notices in WP 6.7+ when __()
+// is called during bootstrap (Settings_Registry entries).
+$td_empty = PHANTOM_CORE_PATH . 'languages/empty.mo';
+if ( file_exists( $td_empty ) ) {
+	load_textdomain( 'phantom-core', $td_empty );
 }
+// Register textdomain properly on plugins_loaded (WP 6.7+ requires it on init).
+add_action( 'plugins_loaded', function () {
+	load_plugin_textdomain(
+		'phantom-core',
+		false,
+		dirname( plugin_basename( PHANTOM_CORE_FILE ) ) . '/languages'
+	);
+	$td_locale = determine_locale();
+	$td_mofile = PHANTOM_CORE_PATH . 'languages/phantom-core-' . $td_locale . '.mo';
+	if ( file_exists( $td_mofile ) ) {
+		load_textdomain( 'phantom-core', $td_mofile );
+	}
+}, 1 );
 
 $rest_path = PHANTOM_CORE_PATH . 'includes/class-rest-controller.php';
 if ( file_exists( $rest_path ) ) {

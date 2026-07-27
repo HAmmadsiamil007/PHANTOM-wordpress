@@ -1,20 +1,19 @@
-<div class="product-card" data-product-id="{{PRODUCT_ID}}">
-    <div class="product-card__badge">{{BADGE}}</div>
-    <a href="{{PERMALINK}}" class="product-card__image-link">
-        <img src="{{IMAGE}}" alt="{{TITLE}}" loading="lazy" class="product-card__image">
-    </a>
-    <div class="product-card__body">
-        <h3 class="product-card__title">
-            <a href="{{PERMALINK}}">{{TITLE}}</a>
-        </h3>
-        <div class="product-card__rating">
-            <span class="product-card__stars">{{RATING_HTML}}</span>
-            <span class="product-card__reviews">({{REVIEW_COUNT}})</span>
+<div class="product-card" data-tilt data-reveal-item>
+    <div class="product-image" data-image-zoom>
+        {{BADGE}}
+        <a href="{{URL}}"><img loading="lazy" src="{{IMAGE}}" alt="{{NAME}}"></a>
+        <div class="product-actions">
+            <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
+            <button class="product-action-btn" aria-label="Quick view"><i class="fas fa-eye"></i></button>
         </div>
-        <div class="product-card__categories">{{CATEGORIES}}</div>
-        <div class="product-card__price">{{PRICE}}</div>
-        <div class="product-card__actions">
-            <a href="{{ADD_TO_CART_URL}}" class="product-card__atc-btn">{{ADD_TO_CART_TEXT}}</a>
+    </div>
+    <div class="product-info">
+        {{RATING}}
+        <h3 class="product-name">{{NAME}}</h3>
+        {{CATEGORIES}}
+        <div class="product-price-row">
+            <span class="product-price">{{PRICE}}</span>
+            {{ATC_BUTTON}}
         </div>
     </div>
 </div>

@@ -648,12 +648,6 @@
 
     .category-grid {
         grid-template-columns: 1fr;
-        grid-template-areas:
-            "large"
-            "top-mid"
-            "bottom-left"
-            "accent";
-        min-height: auto;
     }
 
     .category-card {
@@ -661,11 +655,6 @@
     }
 
     .category-card--large {
-        aspect-ratio: 16/9;
-    }
-
-    .category-grid a:nth-child(2) .category-card,
-    .category-grid a:nth-child(3) .category-card {
         aspect-ratio: 16/9;
     }
 

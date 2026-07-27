@@ -36,7 +36,7 @@ class View_Engine {
   private function inject_skip_link(string $html): string {
     return preg_replace(
       '/<body(\s[^>]*)?>/',
-      '<body$1>' . "\n" . '<a class="skip-link screen-reader-text" href="#phantom-main-content">Skip to main content</a>',
+      '<body$1>' . "\n" . '<a class="skip-link screen-reader-text" href="#main">Skip to main content</a>',
       $html,
       1
     );

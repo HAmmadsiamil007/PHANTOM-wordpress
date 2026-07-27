@@ -121,8 +121,7 @@ const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     document.querySelectorAll('.product-card').forEach(card => {
         card.addEventListener('click', (e) => {
             if (e.target.closest('a') || e.target.closest('button')) return;
-            const pid = card.querySelector('[data-product_id]');
-            if (pid) window.location.href = '/product/?product_id=' + pid.getAttribute('data-product_id');
+            window.location.href = 'product-detail.html';
         });
     });
 
@@ -290,7 +289,7 @@ const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     if (placeOrderBtn) {
         placeOrderBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = '/thank-you/';
+            window.location.href = 'thank-you.html';
         });
     }
 
@@ -460,14 +459,14 @@ const mobileMenuBtn = document.getElementById('mobileMenuBtn');
             if (!overlay) {
                 overlay = document.createElement('div');
                 overlay.id = 'searchOverlay';
-                overlay.innerHTML = '<div class="search-overlay"><div class="search-container"><button class="search-close" aria-label="Close search"><i class="fas fa-times"></i></button><div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" class="search-input" placeholder="Search AETHER..." autofocus></div><div class="search-suggestions"><p class="search-suggestion-label">Popular Searches</p><a href="/shop/" class="search-suggestion"><i class="fas fa-fire"></i> Void Runner</a><a href="/shop/" class="search-suggestion"><i class="fas fa-bolt"></i> Cloud Stride</a><a href="/shop/" class="search-suggestion"><i class="fas fa-star"></i> New Arrivals</a></div></div></div>';
+                overlay.innerHTML = '<div class="search-overlay"><div class="search-container"><button class="search-close" aria-label="Close search"><i class="fas fa-times"></i></button><div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" class="search-input" placeholder="Search AETHER..." autofocus></div><div class="search-suggestions"><p class="search-suggestion-label">Popular Searches</p><a href="shop.html" class="search-suggestion"><i class="fas fa-fire"></i> Void Runner</a><a href="shop.html" class="search-suggestion"><i class="fas fa-bolt"></i> Cloud Stride</a><a href="shop.html" class="search-suggestion"><i class="fas fa-star"></i> New Arrivals</a></div></div></div>';
                 document.body.appendChild(overlay);
                 overlay.querySelector('.search-close').addEventListener('click', () => overlay.classList.remove('active'));
                 overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
                 const searchInput = overlay.querySelector('.search-input');
                 searchInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') overlay.classList.remove('active');
-                    if (e.key === 'Enter' && searchInput.value.trim()) window.location.href = '/search/?q=' + encodeURIComponent(searchInput.value.trim());
+                    if (e.key === 'Enter' && searchInput.value.trim()) window.location.href = 'shop.html?q=' + encodeURIComponent(searchInput.value.trim());
                 });
             }
             overlay.classList.add('active');

@@ -88,9 +88,9 @@ final class Product_ViewModel implements ViewModelInterface {
 	 */
 	public function formatted_price(): string {
 		if ($this->sale_price && $this->sale_price !== $this->regular_price) {
-			return '<span class="price-sale">' . esc_html($this->sale_price) . '</span> <span class="price-original">' . esc_html($this->regular_price) . '</span>';
+			return '<span class="price-sale">' . wp_kses_post($this->sale_price) . '</span> <span class="price-original">' . wp_kses_post($this->regular_price) . '</span>';
 		}
-		return '<span class="product-price">' . esc_html($this->price) . '</span>';
+		return wp_kses_post($this->price);
 	}
 
 	/**
@@ -118,6 +118,23 @@ final class Product_ViewModel implements ViewModelInterface {
 			$html .= '<div class="swiper-slide"><img src="' . esc_url($img) . '" alt="' . esc_attr($this->title) . '" loading="lazy"></div>';
 		}
 		$html .= '</div><div class="swiper-pagination"></div></div>';
+		return $html;
+	}
+
+	/**
+	 * Get gallery thumbnail HTML (for thumbnails Swiper).
+	 */
+	public function gallery_thumbnails_html(): string {
+		if (empty($this->gallery)) {
+			return '';
+		}
+		$html = '';
+		foreach ($this->gallery as $i => $img) {
+			$active = $i === 0 ? ' pd-thumb-active' : '';
+			$html .= '<div class="swiper-slide' . $active . '">';
+			$html .= '<img loading="lazy" src="' . esc_url($img) . '" alt="' . esc_attr($this->title . ' Thumbnail ' . ($i + 1)) . '">';
+			$html .= '</div>';
+		}
 		return $html;
 	}
 

@@ -77,8 +77,8 @@ class TemplateManagerPage {
                     <tbody>
                         <?php foreach ($templates as $template): ?>
                             <tr>
-                                <td><code>/<?php echo esc_html($template->route); ?></code></td>
-                                <td><code><?php echo esc_html($template->template); ?></code></td>
+                                <td><code>/<?php echo esc_html($template->slug); ?></code></td>
+                                <td><code><?php echo esc_html($template->file); ?></code></td>
                                 <td><?php echo esc_html($template->pack ?: '—'); ?></td>
                                 <td><?php echo $template->is_404 ? '⚠️ ' . esc_html__('Yes', 'phantom-core') : '—'; ?></td>
                             </tr>

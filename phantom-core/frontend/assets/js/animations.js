@@ -11,15 +11,15 @@
     return;
   }
 
-  function boot() {
-    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-      document.documentElement.classList.add('no-motion');
-      return;
-    }
+  document.documentElement.classList.add('has-motion');
 
-    document.documentElement.classList.add('has-motion');
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.defaults({ ease: 'power3.out', duration: 0.85 });
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    console.warn('AETHER Motion: GSAP or ScrollTrigger not loaded');
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.defaults({ ease: 'power3.out', duration: 0.85 });
 
   // ═══════════════════════════════════════════════════════════════
   // PREMIUM REVEAL PRESETS — Left/Right directional entrances
@@ -937,25 +937,5 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
-  }
-  } // end boot()
-
-  // Wait for GSAP to load dynamically from CDN, then boot
-  var bootAttempts = 0;
-  function tryBoot() {
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      boot();
-    } else if (bootAttempts < 50) {
-      bootAttempts++;
-      setTimeout(tryBoot, 100);
-    } else {
-      document.documentElement.classList.add('no-motion');
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryBoot);
-  } else {
-    tryBoot();
   }
 })();

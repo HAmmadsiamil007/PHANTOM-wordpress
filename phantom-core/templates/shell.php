@@ -60,13 +60,13 @@ class Shell {
         if (Feature_Registry::get_instance()->enabled('animations')) {
             \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_gsap();
         }
-        if (Feature_Registry::get_instance()->enabled('parallax')) {
+        if (Feature_Registry::get_instance()->enabled('parallax_effects')) {
             \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_gsap();
         }
         if (Feature_Registry::get_instance()->enabled('smooth_scroll')) {
             \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_lenis();
         }
-        if (Feature_Registry::get_instance()->enabled('three_d_effects')) {
+        if (Feature_Registry::get_instance()->enabled('three_js_effects')) {
             \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_three();
         }
         if (Feature_Registry::get_instance()->enabled('lottie_animations')) {
@@ -77,7 +77,7 @@ class Shell {
     public function init_wc_session(): void {
         if (!class_exists('WooCommerce') || isset(WC()->session)) return;
 
-        $wc_slugs = ['shop', 'product', 'product-detail', 'cart', 'checkout', 'wishlist', 'account'];
+        $wc_slugs = ['shop', 'product', 'product-detail', 'cart', 'checkout', 'wishlist', 'account', 'my-account'];
         $request_uri = esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'] ?? '/'));
         $path = parse_url($request_uri, PHP_URL_PATH);
         $slug = trim($path ?: '', '/');

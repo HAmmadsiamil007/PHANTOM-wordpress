@@ -12,6 +12,9 @@ use PhantomCore\ViewModels\Product_ViewModel;
 
 defined('ABSPATH') || exit;
 
+// Ensure ViewModel is loaded (autoloader edge case)
+require_once PHANTOM_CORE_PATH . 'includes/ViewModels/product-view-model.php';
+
 class WooCommerce_Injector {
 
   private Render_Engine $engine;
@@ -202,9 +205,25 @@ class WooCommerce_Injector {
       );
       $pagination .= '</div>';
 
-      $html = preg_replace(
-        '/<div class="shop-pagination">.*?<\/div>\s*<\/section>/s',
-        $pagination . '</section>',
+      $html = preg_replace_callback(
+        '/<div class="shop-pagination">.*?<\/div>\s*/s',
+        function($m) use ($pagination) {
+          $depth = 0;
+          $len = strlen($m[0]);
+          for ($i = 0; $i < $len; $i++) {
+            if (substr($m[0], $i, 4) === '<div') { $depth++; $i += 3; }
+            elseif (substr($m[0], $i, 6) === '</div>') {
+              $depth--;
+              if ($depth === 0) {
+                $matched = substr($m[0], 0, $i + 6);
+                $after = substr($m[0], $i + 6);
+                return $pagination . $after;
+              }
+              $i += 5;
+            }
+          }
+          return $pagination . "\n";
+        },
         $html,
         1
       );
@@ -255,8 +274,11 @@ class WooCommerce_Injector {
     // Rating (use ViewModel's rating stars)
     $rating_html = $vm->rating_stars();
 
+    $gallery_thumbs = $vm->gallery_thumbnails_html();
+
     $search = [
       '[product_gallery]',
+      '[product_gallery_thumbs]',
       '[product_title]',
       '[product_price]',
       '[product_rating]',
@@ -269,14 +291,15 @@ class WooCommerce_Injector {
     ];
 
     $replace = [
-      $gallery_html ?: '<img src="' . esc_url($data['image']) . '" alt="' . esc_attr($data['name']) . '">',
-      '<h1 class="product-title">' . esc_html($data['name']) . '</h1>',
-      '<div class="product-price-wrap">' . $price_html . '</div>',
+      $gallery_html ? $gallery_html : '<img src="' . esc_url($data['image']) . '" alt="' . esc_attr($data['name']) . '">',
+      $gallery_thumbs ? $gallery_thumbs : '',
+      esc_html($data['name']),
+      $price_html,
       $rating_html,
       $stock_html,
-      $data['sku'] ? '<span class="product-sku">SKU: ' . esc_html($data['sku']) . '</span>' : '',
-      '<div class="product-short-desc">' . wp_kses_post($data['short_description']) . '</div>',
-      '<div class="product-description">' . wp_kses_post($data['description']) . '</div>',
+      $data['sku'] ? 'SKU: ' . esc_html($data['sku']) : '',
+      '<p class="pd-description-txt">' . wp_kses_post($data['short_description']) . '</p>',
+      '<div class="pd-description-full">' . wp_kses_post($data['description']) . '</div>',
       $atc_html,
       $this->render_product_categories($data['categories']),
     ];
@@ -286,40 +309,50 @@ class WooCommerce_Injector {
 
   private function render_add_to_cart($product): string {
     if (!$product->is_in_stock()) {
-      return '<p class="stock out-of-stock">Out of Stock</p>';
+      return '<p class="pd-stock-out">Out of Stock</p>';
     }
 
     if ($product->is_type('variable')) {
-      $atc = '<form class="variations-form phantom-add-to-cart-form" data-product_id="' . $product->get_id() . '">';
+      $atc = '<form class="pd-variations-form" data-product_id="' . $product->get_id() . '">';
       foreach ($product->get_variation_attributes() as $name => $options) {
         $tax = str_replace('attribute_', '', $name);
         $label = wc_attribute_label($tax, $product);
-        $atc .= '<div class="variation-select">';
-        $atc .= '<label for="' . esc_attr($tax) . '">' . esc_html($label) . ':</label>';
-        $atc .= '<select name="' . esc_attr($name) . '" id="' . esc_attr($tax) . '" class="form-select">';
+        $atc .= '<div class="pd-option-group">';
+        $atc .= '<div class="pd-option-header">';
+        $atc .= '<label class="pd-option-label">' . esc_html($label) . '</label>';
+        $atc .= '</div>';
+        $atc .= '<select name="' . esc_attr($name) . '" class="pd-variation-select">';
         $atc .= '<option value="">Choose ' . esc_html($label) . '</option>';
         foreach ($options as $opt) {
           $atc .= '<option value="' . esc_attr($opt) . '">' . esc_html(ucfirst(str_replace('-', ' ', $opt))) . '</option>';
         }
         $atc .= '</select></div>';
       }
-      $atc .= '<button type="submit" class="btn btn-primary add-to-cart-btn" data-product_id="' . $product->get_id() . '">Add to Cart</button>';
+      $atc .= '<div class="pd-actions">';
+      $atc .= '<button type="submit" class="btn btn-primary pd-add-to-cart" data-magnetic="0.12" data-product_id="' . $product->get_id() . '"><i class="fas fa-shopping-bag"></i> Add to Cart</button>';
+      $atc .= '</div>';
       $atc .= '</form>';
       return $atc;
     }
 
     if ($product->is_type('simple')) {
-      return '<form class="phantom-add-to-cart-form" data-product_id="' . $product->get_id() . '">
-        <div class="quantity-wrap">
-          <button type="button" class="qty-btn qty-minus" aria-label="Decrease quantity">-</button>
-          <input type="number" class="qty-input form-control" value="1" min="1" max="999" step="1">
-          <button type="button" class="qty-btn qty-plus" aria-label="Increase quantity">+</button>
+      return '<form class="pd-simple-form" data-product_id="' . $product->get_id() . '">
+        <div class="pd-option-group">
+          <label class="pd-option-label">Quantity</label>
+          <div class="pd-qty">
+            <button type="button" class="pd-qty-btn pd-qty-minus" aria-label="Decrease quantity">&minus;</button>
+            <span class="pd-qty-value">1</span>
+            <button type="button" class="pd-qty-btn pd-qty-plus" aria-label="Increase quantity">+</button>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary add-to-cart-btn" data-product_id="' . $product->get_id() . '">Add to Cart</button>
+        <div class="pd-actions">
+          <button type="submit" class="btn btn-primary pd-add-to-cart" data-magnetic="0.12" data-product_id="' . $product->get_id() . '"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          <button type="button" class="pd-wishlist-btn" aria-label="Add to wishlist"><i class="far fa-heart"></i></button>
+        </div>
       </form>';
     }
 
-    return '<a href="' . esc_url($product->get_permalink()) . '" class="btn btn-primary">View Product</a>';
+    return '<a href="' . esc_url($product->get_permalink()) . '" class="btn btn-primary pd-view-product">View Product</a>';
   }
 
   private function render_product_categories(array $categories): string {
@@ -374,8 +407,8 @@ class WooCommerce_Injector {
     }
 
     return preg_replace(
-      '/<div class="featured-products-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-      '<div class="featured-products-grid" data-reveal-group>' . $cards . '</div></section>',
+      '/<div class="products-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
+      '<div class="products-grid" data-reveal-group>' . $cards . '</div></section>',
       $html,
       1
     );
@@ -401,7 +434,7 @@ class WooCommerce_Injector {
     }
 
     return preg_replace(
-      '/<div class="category-grid">.*?<\/div>\s*<\/section>/s',
+      '/<div class="category-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
       '<div class="category-grid" data-reveal-group>' . $cards . '</div></section>',
       $html,
       1
@@ -410,7 +443,7 @@ class WooCommerce_Injector {
 
   private function inject_wishlist_content(string $html): string {
     // Feature flag: only show wishlist if enabled
-    $wishlist_enabled = Feature_Registry::get_instance()->enabled('shop_wishlist');
+    $wishlist_enabled = Feature_Registry::get_instance()->enabled('wishlist');
     if (!$wishlist_enabled) {
       return str_replace(
         '[wishlist_content]',

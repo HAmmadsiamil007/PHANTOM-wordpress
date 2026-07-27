@@ -1,9 +1,11 @@
-<div class="category-card" data-category-id="{{CATEGORY_ID}}">
-    <a href="{{PERMALINK}}" class="category-card__link">
-        <div class="category-card__image-wrap">
-            <img src="{{IMAGE}}" alt="{{NAME}}" loading="lazy" class="category-card__image">
-        </div>
-        <h3 class="category-card__title">{{NAME}}</h3>
-        <span class="category-card__count">{{COUNT}} {{PRODUCTS_TEXT}}</span>
-    </a>
-</div>
+<a href="{{URL}}" class="category-card" data-tilt data-reveal-item>
+    <div class="category-card-bg">
+        <img loading="lazy" src="{{IMAGE}}" alt="{{NAME}}">
+        <div class="category-card-overlay"></div>
+    </div>
+    <div class="category-card-content">
+        <span class="category-count">{{COUNT}}</span>
+        <h3 class="category-name">{{NAME}}</h3>
+        <span class="category-cta">{{CTA}} <i class="fas fa-arrow-right"></i></span>
+    </div>
+</a>

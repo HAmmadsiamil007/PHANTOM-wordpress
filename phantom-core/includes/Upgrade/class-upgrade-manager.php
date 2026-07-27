@@ -53,11 +53,13 @@ class Upgrade_Manager {
                     $callback();
                     update_option(self::VERSION_OPTION, $version, false);
                 } catch (\Throwable $e) {
-                    error_log(sprintf(
-                        '[PhantomCore] Upgrade migration %s failed: %s',
-                        $version,
-                        $e->getMessage()
-                    ));
+                    if (defined('WP_DEBUG') && WP_DEBUG) {
+                        error_log(sprintf(
+                            '[PhantomCore] Upgrade migration %s failed: %s',
+                            $version,
+                            $e->getMessage()
+                        ));
+                    }
                 }
             }
         }

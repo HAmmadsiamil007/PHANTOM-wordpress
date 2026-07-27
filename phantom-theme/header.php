@@ -60,6 +60,7 @@
 						'menu_class'     => 'navbar-nav ms-auto',
 						'fallback_cb'    => false,
 						'depth'          => 3,
+						'walker'         => new Bootstrap_Nav_Walker(),
 					) );
 					?>
 				</div>
