@@ -490,7 +490,7 @@ class Rest_Controller extends \WP_REST_Controller {
 				'/cart/shipping-methods',
 			array(
 				array(
-					'methods'             => \WP_REST_Server::CREATABLE,
+					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_shipping_methods' ),
 					'permission_callback' => '__return_true',
 				),
@@ -2050,140 +2050,6 @@ class Rest_Controller extends \WP_REST_Controller {
 		return new \WP_REST_Response( $data, 200 );
 	}
 
-	public function get_page_data(): \WP_REST_Response {
-		try {
-			$cached = get_transient( self::PAGE_DATA_CACHE_KEY );
-			if ( false !== $cached ) {
-				$cached['cart'] = $this->get_cart_data();
-				return new \WP_REST_Response( $cached, 200 );
-			}
-
-			$registry = Settings_Registry::get_instance();
-			$settings = array();
-			foreach ( $registry->get_entries() as $key => $entry ) {
-				$settings[ $key ] = $registry->get( $key );
-			}
-			if ( function_exists( 'get_woocommerce_currency_symbol' ) ) {
-				$settings['currency_symbol'] = get_woocommerce_currency_symbol();
-			} else {
-				$settings['currency_symbol'] = '$';
-			}
-
-			$menus     = array();
-			$locations = get_nav_menu_locations();
-			foreach ( $locations as $location => $menu_id ) {
-				$menu_items = wp_get_nav_menu_items( $menu_id );
-				if ( $menu_items ) {
-				$tree = $this->build_menu_tree( $menu_items );
-				$menus[ $location ] = array(
-					'location' => $location,
-					'menu_id'  => $menu_id,
-					'items'    => $tree,
-				);
-				}
-			}
-
-			$data = array(
-				'settings' => $settings,
-				'menus'    => $menus,
-			);
-
-		$data['pagination'] = array();
-
-		$product_count = $registry->get_int( 'home_products_count', 8 );
-		if ( class_exists( 'WooCommerce' ) ) {
-			$products = wc_get_products(
-				array(
-					'limit'  => $product_count,
-					'status' => 'publish',
-				)
-			);
-			$data['products'] = array();
-			foreach ( $products as $product ) {
-				$data['products'][] = $this->format_product( $product );
-			}
-			$product_total = wp_count_posts( 'product' );
-			$data['pagination']['totalProducts'] = (int) ( $product_total->publish ?? 0 );
-		}
-
-		$post_count = $registry->get_int( 'home_blog_count', 3 );
-		$posts      = get_posts(
-			array(
-				'post_type'      => 'post',
-				'posts_per_page' => $post_count,
-				'post_status'    => 'publish',
-			)
-		);
-		$data['posts'] = array();
-		foreach ( $posts as $post ) {
-			$data['posts'][] = array(
-				'id'             => $post->ID,
-				'title'          => get_the_title( $post ),
-				'slug'           => $post->post_name,
-				'excerpt'        => get_the_excerpt( $post ) ?: wp_trim_words( $post->post_content, 40, '...' ),
-				'date'           => get_the_date( 'c', $post ),
-				'featured_image' => get_the_post_thumbnail_url( $post->ID, 'large' ) ?: '',
-				'url'            => get_permalink( $post ),
-			);
-		}
-		$data['pagination']['totalPosts'] = (int) wp_count_posts( 'post' )->publish;
-
-		$data['categories'] = array();
-		$data['product_categories'] = array();
-
-		$post_cats = get_categories( array( 'hide_empty' => false ) );
-		foreach ( $post_cats as $cat ) {
-			$entry = array(
-				'name'  => $cat->name,
-				'slug'  => $cat->slug,
-				'count' => $cat->count,
-				'url'   => get_category_link( $cat->term_id ),
-				'image' => '',
-			);
-			$thumb_id = get_term_meta( $cat->term_id, 'thumbnail_id', true );
-			if ( $thumb_id ) {
-				$entry['image'] = wp_get_attachment_url( $thumb_id ) ?: '';
-			}
-			$data['categories'][] = $entry;
-		}
-
-		if ( class_exists( 'WooCommerce' ) ) {
-			$product_cats = get_terms(
-				array(
-					'taxonomy'   => 'product_cat',
-					'hide_empty' => false,
-				)
-			);
-			foreach ( $product_cats as $cat ) {
-				$entry = array(
-					'name'  => $cat->name,
-					'slug'  => $cat->slug,
-					'count' => $cat->count,
-					'url'   => get_term_link( $cat ),
-					'image' => '',
-				);
-				$thumb_id = get_term_meta( $cat->term_id, 'thumbnail_id', true );
-				if ( $thumb_id ) {
-					$entry['image'] = wp_get_attachment_url( $thumb_id ) ?: '';
-				}
-				$data['product_categories'][] = $entry;
-			}
-		}
-
-		$cache_data = $data;
-		set_transient( self::PAGE_DATA_CACHE_KEY, $cache_data, HOUR_IN_SECONDS );
-		$data['cart'] = $this->get_cart_data();
-
-		return new \WP_REST_Response( $data, 200 );
-		} catch ( \Throwable $e ) {
-			defined( 'WP_DEBUG' ) && WP_DEBUG && error_log( 'Phantom Core get_page_data error: ' . $e->getMessage() );
-			return new \WP_REST_Response(
-				array( 'code' => 'page_data_error', 'message' => __( 'An unexpected error occurred.', 'phantom-core' ), 'status' => 500 ),
-				500
-			);
-		}
-	}
-
 	private function set_cache_headers( \WP_REST_Response $response, int $max_age = 3600 ): void {
 		$data = $response->get_data();
 		$raw  = serialize( $data );
@@ -2398,79 +2264,49 @@ class Rest_Controller extends \WP_REST_Controller {
 		return $tree;
 	}
 
-	private function format_product( $product, bool $full = false ): array {
-		$image_id = $product->get_image_id();
-		$gallery  = array();
-		if ( $full ) {
-			$gallery_ids = $product->get_gallery_image_ids();
-			foreach ( $gallery_ids as $gid ) {
-				$gallery[] = wp_get_attachment_image_url( $gid, 'large' ) ?: '';
-			}
-		}
-
-		$categories_raw = wp_get_post_terms( $product->get_id(), 'product_cat' );
-		$categories     = array();
-		if ( is_array( $categories_raw ) ) {
-			foreach ( $categories_raw as $cat ) {
-				$categories[] = array(
-					'id'          => $cat->term_id,
-					'name'        => $cat->name,
-					'slug'        => $cat->slug,
-					'description' => $cat->description,
-					'image'       => function_exists( 'get_term_meta' ) ? wp_get_attachment_image_url( get_term_meta( $cat->term_id, 'thumbnail_id', true ), 'large' ) ?: '' : '',
-				);
-			}
+private function format_product( $product, bool $full = false ): array {
+		$adapter = new \PhantomCore\Adapters\Product_Adapter();
+		$base    = $adapter->normalize( $product );
+		if ( empty( $base['id'] ) ) {
+			return $base;
 		}
 
 		$data = array(
-			'id'             => $product->get_id(),
-			'name'           => $product->get_name(),
-			'slug'           => $product->get_slug(),
+			'id'             => $base['id'],
+			'name'           => $base['name'],
+			'slug'           => $base['slug'],
 			'price'          => $product->get_price(),
 			'price_html'     => $product->get_price_html(),
 			'regular_price'  => $product->get_regular_price(),
 			'sale_price'     => $product->get_sale_price(),
-			'on_sale'        => $product->is_on_sale(),
+			'on_sale'        => $base['on_sale'],
 			'is_featured'    => $product->is_featured(),
-			'in_stock'       => $product->is_in_stock(),
+			'in_stock'       => $base['in_stock'],
 			'stock_status'   => $product->get_stock_status(),
 			'stock_quantity' => $product->get_stock_quantity(),
 			'backorders'     => $product->get_backorders(),
-			'rating'         => $product->get_average_rating(),
-			'review_count'   => $product->get_review_count(),
-			'image'          => wp_get_attachment_image_url( $image_id, 'large' ) ?: wc_placeholder_img_src(),
-			'gallery'        => $gallery,
-			'url'            => $product->get_permalink(),
-			'type'           => $product->get_type(),
-			'sku'            => $product->get_sku(),
-			'categories'     => $categories,
+			'rating'         => $base['rating'],
+			'review_count'   => $base['reviews_count'],
+			'image'          => $base['image'],
+			'gallery'        => $base['gallery'],
+			'url'            => $base['url'],
+			'type'           => $base['type'],
+			'sku'            => $base['sku'],
+			'categories'     => $base['categories'],
 		);
 
 		if ( $full ) {
 			$data['cross_sell_ids'] = $product->get_cross_sell_ids();
 			$data['up_sell_ids']    = $product->get_upsell_ids();
-			$tags_raw = wp_get_post_terms( $product->get_id(), 'product_tag' );
-			$data['tags'] = array();
-			if ( is_array( $tags_raw ) ) {
-				foreach ( $tags_raw as $tag ) {
-					$data['tags'][] = array(
-						'id'   => $tag->term_id,
-						'name' => $tag->name,
-						'slug' => $tag->slug,
-					);
-				}
-			}
-		}
-
-		if ( $full ) {
-			$data['description']      = $product->get_description();
-			$data['short_description'] = $product->get_short_description();
-			$data['attributes']        = $product->get_attributes();
-			$data['weight']            = $product->get_weight();
-			$data['dimensions']        = wc_format_dimensions( $product->get_dimensions( false ) );
-			$data['video_url']         = get_post_meta( $product->get_id(), '_product_video', true ) ?: '';
-			$raw_360                   = get_post_meta( $product->get_id(), '_product_360_images', true );
-			$data['images_360']        = ! empty( $raw_360 ) ? array_map( 'trim', explode( ',', $raw_360 ) ) : array();
+			$data['tags']           = $base['tags'];
+			$data['description']    = $base['description'];
+			$data['short_description'] = $base['short_description'];
+			$data['attributes']     = $product->get_attributes();
+			$data['weight']         = $product->get_weight();
+			$data['dimensions']     = wc_format_dimensions( $product->get_dimensions( false ) );
+			$data['video_url']      = get_post_meta( $product->get_id(), '_product_video', true ) ?: '';
+			$raw_360                = get_post_meta( $product->get_id(), '_product_360_images', true );
+			$data['images_360']     = ! empty( $raw_360 ) ? array_map( 'trim', explode( ',', $raw_360 ) ) : array();
 		}
 
 		if ( $full && $product->is_type( 'variable' ) ) {
@@ -2509,9 +2345,9 @@ class Rest_Controller extends \WP_REST_Controller {
 					);
 				}
 				$attr_data[] = array(
-					'name'    => wc_attribute_label( $attr_name ),
+					'name'     => wc_attribute_label( $attr_name ),
 					'taxonomy' => $attr_name,
-					'options' => $opts,
+					'options'  => $opts,
 				);
 			}
 			$data['variation_attributes'] = $attr_data;
@@ -3293,7 +3129,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		);
 	}
 
-	public function auth_logout(): \WP_REST_Response {
+	public function auth_logout( \WP_REST_Request $request ): \WP_REST_Response {
 		wp_logout();
 		return new \WP_REST_Response(
 			array(

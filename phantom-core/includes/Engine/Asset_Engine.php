@@ -3,9 +3,19 @@ declare(strict_types=1);
 
 namespace PhantomCore\Engine;
 
+use PhantomCore\Feature\Feature_Registry;
+
 defined('ABSPATH') || exit;
 
-class Asset_Loader {
+class Asset_Engine {
+
+  private Data_Engine $data;
+  private Security_Headers $security;
+
+  public function __construct(Data_Engine $data, Security_Headers $security) {
+    $this->data = $data;
+    $this->security = $security;
+  }
 
   public function inject_all(string $html, string $slug, bool $is_customizer_preview): string {
     $html = $this->inject_css_by_route($html, $slug);
@@ -13,10 +23,28 @@ class Asset_Loader {
     $html = $this->inject_google_fonts($html);
     $html = $this->inject_minified_js($html);
     $html = $this->inject_cdn_fallbacks($html);
-    $html = $this->inject_lazy_loading($html);
+
+    // Feature-gated: lazy loading (uses actual feature ID 'lazy_load_images')
+    if (Feature_Registry::get_instance()->enabled('lazy_load_images')) {
+      $html = $this->inject_lazy_loading($html);
+    }
+
     $html = $this->inject_woo_scripts($html);
     $html = $this->inject_a11y($html);
-    $html = $this->inject_scroll_reveal($html);
+
+    // Feature-gated: scroll animations (uses actual feature ID 'animate_on_scroll')
+    if (Feature_Registry::get_instance()->enabled('animate_on_scroll')) {
+      $html = $this->inject_scroll_reveal($html);
+    }
+
+    if (!$is_customizer_preview) {
+      $html = $this->inject_bridge($html, $slug);
+    }
+
+    $html = $this->inject_auth_nonces($html);
+    $html = $this->inject_customizer_css($html);
+    $html = $this->inject_plugin_hooks($html);
+    $this->security->send($is_customizer_preview);
 
     return $html;
   }
@@ -88,12 +116,14 @@ class Asset_Loader {
   }
 
   private function inject_minified_js(string $html): string {
+    $injector_url = PHANTOM_CORE_URL . 'frontend/assets/js/phantom-injector.js';
     $js_url = PHANTOM_CORE_URL . 'frontend/assets/js/phantom-core.min.js';
     if (!file_exists(PHANTOM_CORE_PATH . 'frontend/assets/js/phantom-core.min.js')) {
       $js_url = PHANTOM_CORE_URL . 'frontend/assets/js/phantom-data.js';
     }
     $html = str_replace(
       '</body>',
+      '<script src="' . esc_url($injector_url) . '?v=' . PHANTOM_CORE_VERSION . '"></script>' . "\n" .
       '<script src="' . esc_url($js_url) . '?v=' . PHANTOM_CORE_VERSION . '" id="phantom-core-js"></script>' . "\n" . '</body>',
       $html
     );
@@ -154,7 +184,7 @@ class Asset_Loader {
       . 'var path=window.location.pathname;'
       . 'document.querySelectorAll(".nav-link,.mobile-nav-link,.footer-menu a,.primary-menu a").forEach(function(l){'
       . 'var h=l.getAttribute("href");'
-      . 'if(h&&(h===path||h===path.replace(/\/$/,"")||(h.indexOf("#")!==-1&&path===h.split("#")[0]))){l.setAttribute("aria-current","page")}'
+      . 'if(h&&(h===path||h===path.replace(/\/$/,"")||(h.indexOf("#")!==-1&&path===h.split("#")[0])){l.setAttribute("aria-current","page")}'
       . 'else if(l.getAttribute("aria-current")==="page"){l.removeAttribute("aria-current")}'
       . '})}'
       . 'document.addEventListener("DOMContentLoaded",function(){'
@@ -187,4 +217,50 @@ class Asset_Loader {
       . '})();</script>';
     return str_replace('</body>', $js . '</body>', $html);
   }
+
+  private function inject_bridge(string $html, string $slug): string {
+    $data = $this->data->get_bridge_data();
+    $json = wp_json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    $script = '<script id="phantom-bridge-data" type="application/json">' . $json . '</script>';
+    $script .= '<script id="phantom-bridge-js">'
+      . 'window.PhantomData=' . $json . ';'
+      . 'window.PhantomData.api_nonce=document.getElementById("phantom-bridge-data")'
+      . '?document.getElementById("phantom-bridge-data").textContent:JSON.stringify(window.PhantomData);'
+      . 'try{window.PhantomData=JSON.parse(document.getElementById("phantom-bridge-data").textContent)}catch(e){}'
+      . '</script>';
+
+    return str_replace('</head>', $script . "\n" . '</head>', $html);
+  }
+
+  private function inject_auth_nonces(string $html): string {
+    $nonces = $this->data->get_auth_nonces();
+    $json = wp_json_encode($nonces);
+    $script = '<script id="phantom-nonces">window.PhantomNonces=' . $json . ';</script>';
+    return str_replace('</body>', $script . '</body>', $html);
+  }
+
+  private function inject_customizer_css(string $html): string {
+    $all_css = $this->data->get_customizer_css();
+    if ('' === $all_css) return $html;
+    return str_replace('</head>', $all_css . '</head>', $html);
+  }
+
+  private function inject_plugin_hooks(string $html): string {
+    ob_start();
+    do_action('phantom_before_head_close');
+    $head_hook = ob_get_clean();
+    if ($head_hook) {
+      $html = str_replace('</head>', $head_hook . '</head>', $html);
+    }
+
+    ob_start();
+    do_action('phantom_before_body_close');
+    $body_hook = ob_get_clean();
+    if ($body_hook) {
+      $html = str_replace('</body>', $body_hook . '</body>', $html);
+    }
+
+    return $html;
+  }
+
 }

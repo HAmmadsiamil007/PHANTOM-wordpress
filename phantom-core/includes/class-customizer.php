@@ -108,15 +108,20 @@ class Customizer {
 				'sections' => array( 'integrations', 'custom_code', 'import_export' ),
 				'priority' => 140,
 			),
-			'phantom_pages'         => array(
-				'title'    => 'Pages',
-				'sections' => array(
-					'about_page', 'contact_page', 'faq_page', 'coming_soon',
-					'error_404', 'login_page', 'register_page', 'portfolio',
-					'thank_you', 'load_more', 'privacy', 'terms', 'team', 'testimonials',
-				),
-				'priority' => 150,
+		'phantom_pages'         => array(
+			'title'    => 'Pages',
+			'sections' => array(
+				'about_page', 'contact_page', 'faq_page', 'coming_soon',
+				'error_404', 'login_page', 'register_page', 'portfolio',
+				'thank_you', 'load_more', 'privacy', 'terms', 'team', 'testimonials',
 			),
+			'priority' => 150,
+		),
+		'phantom_design'        => array(
+			'title'    => 'Design System',
+			'sections' => array( 'design_tokens' ),
+			'priority' => 5,
+		),
 		);
 	}
 
@@ -135,11 +140,21 @@ class Customizer {
 				$section_id = 'phantom_section_' . $section_slug;
 				$section_label = $this->get_section_label( $section_slug );
 
-				$wp_customize->add_section( $section_id, array(
-					'title'    => $section_label,
-					'panel'    => $panel_id,
-					'priority' => $section_priority,
-				) );
+			$description = '';
+			if ($section_slug === 'design_tokens') {
+				$design_studio_url = admin_url('admin.php?page=phantom-design-studio');
+				$description = sprintf(
+					'<a href="%s" target="_blank">%s</a>',
+					esc_url($design_studio_url),
+					__('Open Design Studio &rarr;', 'phantom-core')
+				);
+			}
+			$wp_customize->add_section( $section_id, array(
+				'title'       => $section_label,
+				'description' => $description,
+				'panel'       => $panel_id,
+				'priority'    => $section_priority,
+			) );
 
 				$control_priority = 0;
 				foreach ( $this->entries as $key => $entry ) {
@@ -459,6 +474,7 @@ class Customizer {
 			'terms'             => __( 'Terms of Use', 'phantom-core' ),
 			'team'              => __( 'Team', 'phantom-core' ),
 			'testimonials'      => __( 'Testimonials', 'phantom-core' ),
+			'design_tokens'     => __( 'Design Tokens', 'phantom-core' ),
 		);
 		return $labels[ $slug ] ?? ucfirst( str_replace( '_', ' ', $slug ) );
 	}

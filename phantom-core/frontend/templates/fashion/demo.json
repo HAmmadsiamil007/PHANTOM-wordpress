@@ -1,0 +1,1 @@
+{"name":"Fashion Store","slug":"fashion","version":"1.0.0","description":"A modern fashion e-commerce demo","author":"Phantom Core","requires":{"php":"7.4","wordpress":"6.4","woocommerce":"9.0","phantom_core":"1.5.0"},"templates":["index","shop","product-detail","blog","contact"],"tags":["fashion","ecommerce","modern"]}

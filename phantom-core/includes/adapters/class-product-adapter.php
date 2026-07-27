@@ -9,7 +9,8 @@ defined('ABSPATH') || exit;
 
 class Product_Adapter implements AdapterInterface {
 
-  public function normalize($product): array {
+  public function normalize($input = null): array {
+    $product = $input;
     if (is_numeric($product)) {
       $product = wc_get_product((int) $product);
     }

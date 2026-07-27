@@ -1,0 +1,587 @@
+Absolutely. Based on **our complete PHANTOM vision** (not just the current implementation), below is the **Master Architecture Blueprint** you can give to OpenCode. Its purpose is **not to implement new features**, but to **verify that every subsystem exists, every dependency is correct, nothing has been removed, nothing is duplicated, and the architecture still follows the original vision**.
+
+---
+
+# PHANTOM CORE — MASTER ARCHITECTURE VERIFICATION
+
+## Mission
+
+Perform a complete architectural audit of PHANTOM Core.
+
+Do **NOT** redesign, refactor, rename, or replace working systems.
+
+The objective is to verify that the implementation matches the approved architecture and that every layer is connected correctly.
+
+---
+
+# MASTER ARCHITECTURE
+
+```text
+PHANTOM CORE
+══════════════════════════════════════════════════════════════
+
+BOOTSTRAP
+│
+├── Autoloader
+├── Constants
+├── Helpers
+├── Environment
+├── Configuration
+└── Initialization
+
+══════════════════════════════════════════════════════════════
+
+CORE SERVICES
+│
+├── Service Container
+├── Event System
+├── Hook Registry
+├── Feature Registry
+├── Capability Manager
+├── Upgrade Manager
+├── Diagnostics
+└── Developer Tools
+
+══════════════════════════════════════════════════════════════
+
+WORDPRESS INTEGRATION
+│
+├── WordPress Core
+├── WooCommerce
+├── Customizer
+├── Theme Options
+├── Settings Registry
+├── Menus
+├── Widgets
+├── Sidebars
+├── Navigation
+├── Media
+├── Users
+├── Pages
+├── Posts
+├── Products
+├── Categories
+├── Search
+├── REST API
+└── WP APIs
+
+══════════════════════════════════════════════════════════════
+
+DESIGN SYSTEM
+│
+├── DesignSystemManager
+│
+├── Token Registry
+├── Token Resolver
+├── Token Validator
+├── Token Compiler
+├── CSS Variable Generator
+│
+├── Theme DNA Engine
+│
+├── Preset Registry
+├── Preset Manager
+├── Preset Providers
+│   ├── Core Provider
+│   ├── Demo Provider
+│   ├── User Provider
+│   └── Import Provider
+│
+├── Component Tokens
+├── Global Tokens
+├── CSS Output
+└── Design API
+
+══════════════════════════════════════════════════════════════
+
+DATA LAYER
+│
+├── Data Adapters
+│   ├── Product Adapter
+│   ├── Category Adapter
+│   ├── Menu Adapter
+│   ├── Post Adapter
+│   ├── Page Adapter
+│   ├── User Adapter
+│   ├── Hero Adapter
+│   ├── Footer Adapter
+│   └── Settings Adapter
+│
+├── View Models
+│
+├── Data Normalization
+│
+└── Data Providers
+
+══════════════════════════════════════════════════════════════
+
+RENDER PIPELINE
+│
+├── Request Router
+├── Template Resolver
+├── Component Registry
+├── Component Metadata
+├── Component Renderers
+├── Render Pipeline
+├── Response Builder
+└── HTML Output
+
+══════════════════════════════════════════════════════════════
+
+FRONTEND SYSTEM
+│
+├── HTML
+├── SCSS
+├── Bootstrap
+├── Vendor CSS
+├── Theme CSS
+├── JavaScript ES6+
+├── GSAP
+├── ScrollTrigger
+├── Three.js
+├── Lenis
+├── Swiper
+├── Splitting.js
+├── Lottie
+├── Responsive System
+├── Motion System
+├── Accessibility
+└── SEO Markup
+
+══════════════════════════════════════════════════════════════
+
+ASSET SYSTEM
+│
+├── Asset Registry
+├── CSS Loader
+├── JS Loader
+├── Font Loader
+├── Vendor Loader
+├── Conditional Loading
+├── Lazy Loading
+├── Cache Busting
+├── Versioning
+└── Performance Optimizer
+
+══════════════════════════════════════════════════════════════
+
+ANIMATION SYSTEM
+│
+├── Animation Registry
+├── GSAP Integration
+├── ScrollTrigger
+├── Lenis
+├── Three.js
+├── Lottie
+├── Motion Presets
+└── Animation API
+
+══════════════════════════════════════════════════════════════
+
+TEMPLATE SYSTEM
+│
+├── Template Registry
+├── Layout Registry
+├── Component Library
+├── Component Metadata
+├── Theme Manifest
+├── Demo Manifest
+└── Template Manifest
+
+══════════════════════════════════════════════════════════════
+
+ADMIN SYSTEM
+│
+├── Dashboard
+├── Design Studio
+├── Demo Manager
+├── Theme Options
+├── Component Library
+├── Template Manager
+├── Animation Studio
+├── Asset Manager
+├── Performance
+├── SEO
+├── Import / Export
+├── Backup / Restore
+├── Developer
+└── System
+
+══════════════════════════════════════════════════════════════
+
+PERFORMANCE
+│
+├── Cache
+├── Image Optimization
+├── Lazy Loading
+├── Critical CSS
+├── Asset Optimization
+├── Database Optimization
+└── Performance Monitor
+
+══════════════════════════════════════════════════════════════
+
+IMPORT / EXPORT
+│
+├── Theme Settings
+├── Design Tokens
+├── Presets
+├── Theme DNA
+├── Components
+├── Demo Packs
+├── Templates
+└── Full Backup
+
+══════════════════════════════════════════════════════════════
+
+DEMO SYSTEM
+│
+├── Demo Manager
+├── Demo Packs
+├── Demo Assets
+├── Demo Presets
+├── Demo Templates
+├── Demo Content
+└── Demo Configuration
+
+══════════════════════════════════════════════════════════════
+
+PLUGIN BRIDGES
+│
+├── WooCommerce
+├── Contact Forms
+├── SEO Plugins
+├── Cache Plugins
+├── Translation Plugins
+├── Security Plugins
+└── Future Integrations
+
+══════════════════════════════════════════════════════════════
+
+PUBLIC API
+│
+├── Design API
+├── Render API
+├── Component API
+├── Animation API
+├── Settings API
+├── Template API
+└── Developer API
+
+══════════════════════════════════════════════════════════════
+```
+
+---
+
+# VERIFIED DATA FLOW
+
+Every page must follow this pipeline.
+
+```text
+WordPress
+
+↓
+
+WooCommerce
+
+↓
+
+Settings Registry
+
+↓
+
+Feature Registry
+
+↓
+
+Data Adapters
+
+↓
+
+View Models
+
+↓
+
+Template Resolver
+
+↓
+
+Component Registry
+
+↓
+
+Component Renderer
+
+↓
+
+Design System
+
+↓
+
+Asset Manager
+
+↓
+
+Premium Frontend
+
+↓
+
+Final HTML
+```
+
+No component should bypass this flow.
+
+---
+
+# DESIGN FLOW
+
+```text
+Customizer
+
+↓
+
+Theme Options
+
+↓
+
+Options API
+
+↓
+
+Settings Registry
+
+↓
+
+Token Resolver
+
+↓
+
+Token Compiler
+
+↓
+
+CSS Variables
+
+↓
+
+Frontend
+```
+
+---
+
+# PRODUCT FLOW
+
+```text
+WooCommerce Product
+
+↓
+
+Product Adapter
+
+↓
+
+Product ViewModel
+
+↓
+
+Product Renderer
+
+↓
+
+Product Card
+
+↓
+
+Frontend
+```
+
+---
+
+# PAGE FLOW
+
+```text
+WordPress Page
+
+↓
+
+Page Adapter
+
+↓
+
+ViewModel
+
+↓
+
+Component Renderer
+
+↓
+
+Frontend
+```
+
+---
+
+# COMPONENT FLOW
+
+```text
+Component Registry
+
+↓
+
+Component Metadata
+
+↓
+
+Template Resolver
+
+↓
+
+Renderer
+
+↓
+
+Frontend
+```
+
+---
+
+# PRESET FLOW
+
+```text
+Preset
+
+↓
+
+Theme DNA
+
+↓
+
+Token Resolver
+
+↓
+
+CSS Generator
+
+↓
+
+Frontend
+```
+
+---
+
+# ASSET FLOW
+
+```text
+Feature Registry
+
+↓
+
+Asset Registry
+
+↓
+
+Conditional Loading
+
+↓
+
+Enqueue
+
+↓
+
+Frontend
+```
+
+---
+
+# VERIFICATION CHECKLIST
+
+Verify every subsystem against these rules:
+
+### Architecture
+
+* All planned modules exist.
+* No duplicate responsibilities.
+* Single Responsibility Principle is respected.
+* No circular dependencies.
+* Modules communicate through defined APIs.
+
+### Registries
+
+Confirm these registries exist and are used:
+
+* Settings Registry
+* Token Registry
+* Preset Registry
+* Component Registry
+* Template Registry
+* Asset Registry
+* Animation Registry
+* Hook Registry
+* Feature Registry
+
+No hardcoded alternatives.
+
+### Data Layer
+
+* WordPress objects never reach components directly.
+* Adapters normalize data.
+* View Models prepare UI data.
+* Renderers consume only normalized data.
+
+### Rendering
+
+* Components never output raw WooCommerce markup.
+* Renderers own all HTML.
+* Templates remain swappable.
+* Frontend is independent of WordPress markup.
+
+### Frontend
+
+* HTML structure remains framework-agnostic.
+* Bootstrap, vendor CSS, theme CSS, and animations are preserved.
+* GSAP, Three.js, Lenis, Swiper, and Lottie load through the Asset Manager.
+* No business logic is embedded in the frontend.
+
+### Design System
+
+* Settings Registry remains the single source of truth.
+* Tokens resolve dynamically.
+* Presets update tokens without duplicating settings.
+* CSS variables are generated centrally.
+* Theme DNA controls design behavior.
+
+### Admin
+
+* Admin pages use services and APIs rather than direct database access.
+* Customizer and Theme Options update the Settings Registry.
+* Design Studio interacts only with the Design System API.
+* Demo Manager does not duplicate preset logic.
+
+### Performance
+
+* Assets load conditionally.
+* Cache busting works.
+* Lazy loading is implemented where appropriate.
+* Critical CSS is supported.
+
+### Extensibility
+
+* New demos can be added without modifying the core.
+* New components can register themselves.
+* New presets can be added through providers.
+* New plugins integrate through bridges.
+
+### Safety
+
+* No duplicate classes.
+* No orphaned services.
+* No dead code.
+* No missing dependencies.
+* No broken namespaces.
+* No circular service registrations.
+
+---
+
+## Final Instruction to OpenCode
+
+> Treat this document as the canonical architecture for PHANTOM Core. Perform a complete audit of the current implementation against it. Verify every subsystem, service, registry, pipeline, and dependency. Confirm that nothing from the approved architecture is missing, duplicated, renamed unexpectedly, bypassed, or broken. Report any deviations with their impact and recommended fixes. Do not introduce new features or refactor working systems unless required to restore alignment with this architecture. The goal is to ensure the framework is stable, modular, registry-driven, and fully aligned with the long-term vision before additional frontend demos and features are built.

@@ -1,0 +1,35 @@
+{
+    "name": "Luxury Collection",
+    "slug": "luxury",
+    "version": "1.0.0",
+    "description": "A premium luxury e-commerce demo with dark gold aesthetic, serif typography, and refined animations.",
+    "author": "Phantom Core",
+    "demo_url": "https://phantom.test/?demo=luxury",
+    "preset": "luxury",
+    "requires": {
+        "php": "7.4",
+        "wordpress": "6.4",
+        "woocommerce": "9.0",
+        "phantom_core": "1.5.0"
+    },
+    "settings": {
+        "phantom_primary_color": "#1A1A2E",
+        "phantom_secondary_color": "#C9A94E",
+        "phantom_typography_body_font": "Cormorant Garamond",
+        "phantom_typography_heading_font": "Playfair Display",
+        "phantom_layout_columns": "3",
+        "phantom_animations_scroll_reveal": "fade-up",
+        "phantom_animations_hover_type": "glow"
+    },
+    "templates": ["index", "shop", "product-detail", "about", "contact", "cart", "checkout", "404"],
+    "tags": ["luxury", "premium", "gold", "elegant"],
+    "features": {
+        "animations": true,
+        "parallax": true,
+        "smooth_scroll": true,
+        "dark_mode": false,
+        "shop_wishlist": true,
+        "shop_compare": true,
+        "search_live": true
+    }
+}

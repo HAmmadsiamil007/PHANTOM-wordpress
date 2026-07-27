@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Archive Template
  *
@@ -18,13 +19,13 @@ get_header(); ?>
 					elseif ( is_tag() ) :
 						single_tag_title();
 					elseif ( is_author() ) :
-						printf( esc_html__( 'Author: %s', 'phantom-theme' ), '<span>' . get_the_author() . '</span>' );
+						printf( '<span class="archive-label">' . esc_html__( 'Author: %s', 'phantom-theme' ) . '</span>', esc_html( get_the_author() ) );
 					elseif ( is_day() ) :
-						printf( esc_html__( 'Day: %s', 'phantom-theme' ), '<span>' . get_the_date() . '</span>' );
+						printf( '<span class="archive-label">' . esc_html__( 'Day: %s', 'phantom-theme' ) . '</span>', esc_html( get_the_date() ) );
 					elseif ( is_month() ) :
-						printf( esc_html__( 'Month: %s', 'phantom-theme' ), '<span>' . get_the_date( 'F Y' ) . '</span>' );
+						printf( '<span class="archive-label">' . esc_html__( 'Month: %s', 'phantom-theme' ) . '</span>', esc_html( get_the_date( 'F Y' ) ) );
 					elseif ( is_year() ) :
-						printf( esc_html__( 'Year: %s', 'phantom-theme' ), '<span>' . get_the_date( 'Y' ) . '</span>' );
+						printf( '<span class="archive-label">' . esc_html__( 'Year: %s', 'phantom-theme' ) . '</span>', esc_html( get_the_date( 'Y' ) ) );
 					else :
 						esc_html_e( 'Archives', 'phantom-theme' );
 					endif;
@@ -39,24 +40,24 @@ get_header(); ?>
 						<article id="post-<?php the_ID(); ?>" <?php post_class( 'archive-post' ); ?>>
 							<?php if ( has_post_thumbnail() ) : ?>
 								<div class="post-thumbnail">
-									<a href="<?php the_permalink(); ?>">
+									<a href="<?php echo esc_url( get_permalink() ); ?>">
 										<?php the_post_thumbnail( 'medium' ); ?>
 									</a>
 								</div>
 							<?php endif; ?>
 							<div class="post-content">
 								<h2 class="post-title">
-									<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+									<a href="<?php echo esc_url( get_permalink() ); ?>"><?php echo esc_html( get_the_title() ); ?></a>
 								</h2>
 								<div class="post-meta">
-									<span class="post-date"><?php echo get_the_date(); ?></span>
+									<span class="post-date"><?php echo esc_html( get_the_date() ); ?></span>
 									<span class="post-author"><?php echo esc_html( get_the_author() ); ?></span>
 									<span class="post-categories"><?php the_category( ', ' ); ?></span>
 								</div>
 								<div class="post-excerpt">
 									<?php the_excerpt(); ?>
 								</div>
-								<a href="<?php the_permalink(); ?>" class="read-more"><?php esc_html_e( 'Read More', 'phantom-theme' ); ?></a>
+								<a href="<?php echo esc_url( get_permalink() ); ?>" class="read-more"><?php esc_html_e( 'Read More', 'phantom-theme' ); ?></a>
 							</div>
 						</article>
 					<?php endwhile; ?>

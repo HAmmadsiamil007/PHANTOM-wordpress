@@ -9,7 +9,8 @@ defined('ABSPATH') || exit;
 
 class Category_Adapter implements AdapterInterface {
 
-  public function normalize($term): array {
+  public function normalize($input = null): array {
+    $term = $input;
     if (is_numeric($term)) $term = get_term((int) $term, 'product_cat');
     if (!$term || is_wp_error($term)) return $this->empty();
 

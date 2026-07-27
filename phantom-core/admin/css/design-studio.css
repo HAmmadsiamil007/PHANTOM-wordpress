@@ -1,0 +1,106 @@
+.phantom-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.phantom-stat-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.phantom-stat-card .stat-label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.phantom-stat-card .stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1d2327;
+}
+
+.phantom-stat-card .stat-value.healthy {
+    color: #2e7d32;
+}
+
+.phantom-stat-card .stat-value.unhealthy {
+    color: #d32f2f;
+}
+
+.phantom-quick-actions {
+    margin: 30px 0;
+}
+
+.phantom-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.phantom-preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.phantom-preset-card {
+    background: #fff;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    transition: border-color 0.2s;
+}
+
+.phantom-preset-card.active {
+    border-color: #2271b1;
+}
+
+.phantom-preset-card h3 {
+    margin: 0 0 8px;
+}
+
+.phantom-preset-card .preset-source {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.phantom-preset-card .preset-description {
+    color: #444;
+    margin: 8px 0;
+}
+
+.phantom-css-preview {
+    background: #1d2327;
+    color: #c9d1d9;
+    border-radius: 4px;
+    padding: 12px;
+}
+
+.phantom-token-table {
+    font-size: 13px;
+}
+
+.phantom-import-section,
+.phantom-export-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.phantom-import-section h2,
+.phantom-export-section h2 {
+    margin-top: 0;
+}

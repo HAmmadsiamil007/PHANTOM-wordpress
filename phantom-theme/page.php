@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Default Page Template
  *
@@ -13,7 +14,7 @@ get_header(); ?>
 		the_post();
 		?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-			<h1 class="page-title"><?php the_title(); ?></h1>
+			<h1 class="page-title"><?php echo esc_html( get_the_title() ); ?></h1>
 			<div class="page-content">
 				<?php the_content(); ?>
 			</div>

@@ -1,0 +1,35 @@
+{
+    "name": "Modern Minimal",
+    "slug": "modern",
+    "version": "1.0.0",
+    "description": "A clean, modern e-commerce demo with bold color accents, sans-serif typography, and crisp animations.",
+    "author": "Phantom Core",
+    "demo_url": "https://phantom.test/?demo=modern",
+    "preset": "modern",
+    "requires": {
+        "php": "7.4",
+        "wordpress": "6.4",
+        "woocommerce": "9.0",
+        "phantom_core": "1.5.0"
+    },
+    "settings": {
+        "phantom_primary_color": "#7C3AED",
+        "phantom_secondary_color": "#1E1B4B",
+        "phantom_typography_body_font": "Inter",
+        "phantom_typography_heading_font": "Cabinet Grotesk",
+        "phantom_layout_columns": "4",
+        "phantom_animations_scroll_reveal": "zoom-in",
+        "phantom_animations_hover_type": "shine"
+    },
+    "templates": ["index", "shop", "product-detail", "blog", "contact", "about"],
+    "tags": ["modern", "minimal", "purple", "clean"],
+    "features": {
+        "animations": true,
+        "parallax": false,
+        "smooth_scroll": true,
+        "dark_mode": true,
+        "shop_wishlist": true,
+        "shop_compare": false,
+        "search_live": true
+    }
+}

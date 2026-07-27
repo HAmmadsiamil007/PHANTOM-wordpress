@@ -25,7 +25,6 @@ class Settings_Page {
 	public function init(): void {
 		$this->entries = Settings_Registry::get_instance()->get_entries();
 
-		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
 
@@ -65,7 +64,7 @@ class Settings_Page {
 	}
 
 	public function enqueue_assets( string $hook ): void {
-		if ( 'appearance_page_phantom-core' !== $hook ) {
+		if ( ! str_contains( $hook, '_page_phantom-theme-options' ) && ! str_contains( $hook, '_page_phantom-core' ) ) {
 			return;
 		}
 
@@ -112,6 +111,7 @@ class Settings_Page {
 		if ( ! isset( $tabs[ $active_tab ] ) ) {
 			$active_tab = array_key_first( $tabs );
 		}
+		$is_features_tab = 'features' === $active_tab;
 
 		?>
 		<div class="wrap phantom-core-wrap">
@@ -125,6 +125,9 @@ class Settings_Page {
 					</a>
 				<?php endforeach; ?>
 			</h2>
+			<?php if ( $is_features_tab ) : ?>
+				<?php $this->render_features_tab(); ?>
+			<?php else : ?>
 			<form method="post" action="" class="phantom-core-form">
 				<?php wp_nonce_field( 'phantom_core_save', 'phantom_core_nonce' ); ?>
 				<input type="hidden" name="action" value="phantom_core_save" />
@@ -140,12 +143,23 @@ class Settings_Page {
 					</button>
 				</p>
 			</form>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
 
 	private function render_tab_fields( string $tab_id ): void {
 		$tabs   = $this->get_tabs();
+
+		// Check for custom render callbacks
+		if ( ! empty( $tabs[ $tab_id ]['custom_render'] ) ) {
+			$method = $tabs[ $tab_id ]['custom_render'];
+			if ( method_exists( $this, $method ) ) {
+				$this->$method();
+				return;
+			}
+		}
+
 		$fields = $tabs[ $tab_id ]['fields'] ?? array();
 		if ( empty( $fields ) ) {
 			echo '<tr><td colspan="2"><p><em>';
@@ -160,6 +174,14 @@ class Settings_Page {
 			$value = $registry->has( $key ) ? $registry->get( $key ) : ( $entry['default'] ?? '' );
 			$this->render_field_row( $key, $entry, $value );
 		}
+	}
+
+	/**
+	 * Render the Feature Flags tab — delegates to Feature_Manager.
+	 * Feature_Manager has its own <form> + nonce, so called standalone.
+	 */
+	private function render_features_tab(): void {
+		\PhantomCore\Feature\Feature_Manager::get_instance()->render_admin_page();
 	}
 
 	private function render_field_row( string $key, array $entry, $value ): void {
@@ -742,6 +764,11 @@ class Settings_Page {
 			'advanced'      => array(
 				'label'    => __( 'Advanced', 'phantom-core' ),
 				'sections' => array( 'template_pack', 'integrations', 'custom_code', 'import_export' ),
+			),
+			'features'     => array(
+				'label'    => __( 'Feature Flags', 'phantom-core' ),
+				'sections' => array(),
+				'custom_render' => 'render_features_tab',
 			),
 			'pages'         => array(
 				'label'    => __( 'Pages', 'phantom-core' ),

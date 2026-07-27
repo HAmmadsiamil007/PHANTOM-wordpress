@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Search Results Template
  *
@@ -13,7 +14,7 @@ get_header(); ?>
 			<?php
 			printf(
 				esc_html__( 'Search Results for: %s', 'phantom-theme' ),
-				'<span>' . get_search_query() . '</span>'
+				'<span>' . esc_html( get_search_query() ) . '</span>'
 			);
 			?>
 		</h1>
@@ -27,21 +28,21 @@ get_header(); ?>
 						<article id="post-<?php the_ID(); ?>" <?php post_class( 'search-result' ); ?>>
 							<?php if ( has_post_thumbnail() ) : ?>
 								<div class="post-thumbnail">
-									<a href="<?php the_permalink(); ?>">
+									<a href="<?php echo esc_url( get_permalink() ); ?>">
 										<?php the_post_thumbnail( 'thumbnail' ); ?>
 									</a>
 								</div>
 							<?php endif; ?>
 							<div class="post-content">
 								<h2 class="post-title">
-									<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+									<a href="<?php echo esc_url( get_permalink() ); ?>"><?php echo esc_html( get_the_title() ); ?></a>
 								</h2>
 								<div class="post-excerpt">
 									<?php the_excerpt(); ?>
 								</div>
 								<div class="post-meta">
-									<span class="post-date"><?php echo get_the_date(); ?></span>
-									<span class="post-type"><?php echo get_post_type(); ?></span>
+									<span class="post-date"><?php echo esc_html( get_the_date() ); ?></span>
+									<span class="post-type"><?php echo esc_html( get_post_type() ); ?></span>
 								</div>
 							</div>
 						</article>

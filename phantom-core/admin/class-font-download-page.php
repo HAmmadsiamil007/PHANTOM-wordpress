@@ -14,19 +14,7 @@ class Phantom_Font_Download_Page {
 	}
 
 	public function init(): void {
-		add_action( 'admin_menu', array( $this, 'add_admin_page' ), 20 );
 		add_action( 'admin_post_phantom_download_font', array( $this, 'handle_download' ) );
-	}
-
-	public function add_admin_page(): void {
-		add_submenu_page(
-			'phantom-core',
-			__( 'Download Fonts', 'phantom-core' ),
-			__( 'Download Fonts', 'phantom-core' ),
-			'manage_options',
-			'phantom-font-download',
-			array( $this, 'render_page' )
-		);
 	}
 
 	public function render_page(): void {

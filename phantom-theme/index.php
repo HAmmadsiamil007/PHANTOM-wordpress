@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Main template file — fallback for all requests
  *
@@ -17,24 +18,24 @@ if ( is_home() && ! is_front_page() ) : ?>
 							<article id="post-<?php the_ID(); ?>" <?php post_class( 'blog-post' ); ?>>
 								<?php if ( has_post_thumbnail() ) : ?>
 									<div class="post-thumbnail">
-										<a href="<?php the_permalink(); ?>">
+										<a href="<?php echo esc_url( get_permalink() ); ?>">
 											<?php the_post_thumbnail( 'large' ); ?>
 										</a>
 									</div>
 								<?php endif; ?>
 								<div class="post-content">
 									<h2 class="post-title">
-										<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+										<a href="<?php echo esc_url( get_permalink() ); ?>"><?php echo esc_html( get_the_title() ); ?></a>
 									</h2>
 									<div class="post-meta">
-										<span class="post-date"><?php echo get_the_date(); ?></span>
+										<span class="post-date"><?php echo esc_html( get_the_date() ); ?></span>
 										<span class="post-author"><?php echo esc_html( get_the_author() ); ?></span>
 										<span class="post-categories"><?php the_category( ', ' ); ?></span>
 									</div>
 									<div class="post-excerpt">
 										<?php the_excerpt(); ?>
 									</div>
-									<a href="<?php the_permalink(); ?>" class="read-more"><?php esc_html_e( 'Read More', 'phantom-theme' ); ?></a>
+									<a href="<?php echo esc_url( get_permalink() ); ?>" class="read-more"><?php esc_html_e( 'Read More', 'phantom-theme' ); ?></a>
 								</div>
 							</article>
 						<?php endwhile; ?>

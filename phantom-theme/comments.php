@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Comments Template
  *
@@ -16,9 +17,9 @@ if ( post_password_required() ) {
 			<?php
 			$comment_count = get_comments_number();
 			printf(
-				esc_html( _nx( '%1$s thought on &ldquo;%2$s&rdquo;', '%1$s thoughts on &ldquo;%2$s&rdquo;', $comment_count, 'comments title', 'phantom-theme' ) ),
+				_nx( '%1$s thought on &ldquo;%2$s&rdquo;', '%1$s thoughts on &ldquo;%2$s&rdquo;', $comment_count, 'comments title', 'phantom-theme' ),
 				number_format_i18n( $comment_count ),
-				'<span>' . get_the_title() . '</span>'
+				'<span>' . esc_html( get_the_title() ) . '</span>'
 			);
 			?>
 		</h2>

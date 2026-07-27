@@ -13,6 +13,8 @@ namespace PhantomCore;
 use PhantomCore\Engine\Container;
 use PhantomCore\Engine\Container_Config;
 use PhantomCore\Engine\Render_Engine;
+use PhantomCore\Registry\Template_Registry;
+use PhantomCore\Feature\Feature_Registry;
 
 defined('ABSPATH') || exit;
 
@@ -34,11 +36,17 @@ class Shell {
 
         $this->engine = $container->get(Render_Engine::class);
 
-        // WooCommerce SPA shell compatibility filters
-        if (class_exists('WooCommerce')) {
+        // WooCommerce features gated by feature flag
+        $woo_enabled = Feature_Registry::get_instance()->enabled('woocommerce');
+        if ($woo_enabled && class_exists('WooCommerce')) {
             add_filter('woocommerce_disable_template_redirect', '__return_true');
             add_filter('woocommerce_cart_redirect_after_add', '__return_false');
             add_filter('woocommerce_enable_ajax_add_to_cart', '__return_false');
+        }
+
+        // Animations gated by feature flag (register only if enabled)
+        if (Feature_Registry::get_instance()->enabled('animations')) {
+            add_action('wp_enqueue_scripts', [$this, 'enqueue_animation_libs'], 20);
         }
 
         add_action('template_redirect', [$this, 'init_wc_session'], 5);
@@ -46,6 +54,24 @@ class Shell {
         add_action('delete_post', [$this, 'invalidate_cache_on_save'], 10, 1);
         add_action('woocommerce_delete_product', [$this, 'invalidate_cache_on_save'], 10, 1);
         add_action('template_redirect', [$this, 'handle_request'], 10);
+    }
+
+    public function enqueue_animation_libs(): void {
+        if (Feature_Registry::get_instance()->enabled('animations')) {
+            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_gsap();
+        }
+        if (Feature_Registry::get_instance()->enabled('parallax')) {
+            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_gsap();
+        }
+        if (Feature_Registry::get_instance()->enabled('smooth_scroll')) {
+            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_lenis();
+        }
+        if (Feature_Registry::get_instance()->enabled('three_d_effects')) {
+            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_three();
+        }
+        if (Feature_Registry::get_instance()->enabled('lottie_animations')) {
+            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_lottie();
+        }
     }
 
     public function init_wc_session(): void {
@@ -136,10 +162,10 @@ class Shell {
         // Render via Engine
         $html = $this->engine->render($slug);
 
-        // Apply asset base path substitution
+        // Apply asset base path substitution — only relative paths, not already-absolute URLs
         $html = preg_replace(
-            '/\.?\/?assets\/(bootstrap|css|js|images)\/([a-zA-Z0-9_\-.\/]+)/i',
-            $asset_base . '/$1/$2' . $v,
+            '/(["\'=\(\s])(\.?\/?)assets\/(bootstrap|css|js|images)\/([a-zA-Z0-9_\-.\/]+)/i',
+            '$1' . $asset_base . '/$3/$4' . $v,
             $html
         );
 

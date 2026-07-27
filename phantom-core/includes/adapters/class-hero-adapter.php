@@ -9,7 +9,7 @@ defined('ABSPATH') || exit;
 
 class Hero_Adapter implements AdapterInterface {
 
-  public function normalize(): array {
+  public function normalize($input = null): array {
     $prefix = 'phantom_';
     return [
       'title' => get_option($prefix . 'home_banner_title', 'Summer Collection'),

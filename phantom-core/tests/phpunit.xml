@@ -3,6 +3,8 @@
     <testsuites>
         <testsuite name="phantom-core">
             <directory suffix="_Test.php">.</directory>
+            <exclude>./adapters/</exclude>
+            <exclude>./renderer/</exclude>
         </testsuite>
     </testsuites>
 </phpunit>

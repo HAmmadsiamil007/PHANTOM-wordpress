@@ -48,10 +48,9 @@ function phantom_theme_setup(): void {
 
 	if ( class_exists( 'WooCommerce' ) ) {
 		add_theme_support( 'woocommerce' );
-		// SPA uses own Swiper gallery instead of WC built-in
-		// add_theme_support( 'wc-product-gallery-zoom' );
-		// add_theme_support( 'wc-product-gallery-lightbox' );
-		// add_theme_support( 'wc-product-gallery-slider' );
+		add_theme_support( 'wc-product-gallery-zoom' );
+		add_theme_support( 'wc-product-gallery-lightbox' );
+		add_theme_support( 'wc-product-gallery-slider' );
 	}
 }
 add_action( 'after_setup_theme', 'phantom_theme_setup' );
@@ -63,6 +62,7 @@ function phantom_theme_enqueue(): void {
 	$ver = PHANTOM_THEME_VERSION;
 
 	wp_enqueue_style( 'bootstrap', PHANTOM_THEME_URL . '/assets/bootstrap/bootstrap.min.css', array(), $ver );
+	wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', array(), '6.5.1' );
 	wp_enqueue_style( 'owl-carousel', PHANTOM_THEME_URL . '/assets/css/owl.carousel.min.css', array(), $ver );
 	wp_enqueue_style( 'owl-theme', PHANTOM_THEME_URL . '/assets/css/owl.theme.default.min.css', array(), $ver );
 	wp_enqueue_style( 'animate', PHANTOM_THEME_URL . '/assets/css/animate.css', array(), $ver );
@@ -82,6 +82,7 @@ function phantom_theme_enqueue(): void {
 	wp_enqueue_script( 'popper', PHANTOM_THEME_URL . '/assets/js/popper.min.js', array(), $ver, true );
 	wp_enqueue_script( 'owl-carousel', PHANTOM_THEME_URL . '/assets/js/owl.carousel.js', array( 'jquery' ), $ver, true );
 	wp_enqueue_script( 'wow', PHANTOM_THEME_URL . '/assets/js/wow.js', array( 'jquery' ), $ver, true );
+	wp_add_inline_script( 'wow', 'document.addEventListener("DOMContentLoaded", function() { if (typeof WOW !== "undefined") { new WOW().init(); } });' );
 	wp_enqueue_script( 'phantom-preloader', PHANTOM_THEME_URL . '/assets/js/preloader.js', array( 'jquery' ), $ver, true );
 	wp_enqueue_script( 'phantom-counter', PHANTOM_THEME_URL . '/assets/js/counter.js', array( 'jquery' ), $ver, true );
 	wp_enqueue_script( 'phantom-carousel', PHANTOM_THEME_URL . '/assets/js/carousel.js', array( 'jquery' ), $ver, true );
@@ -187,14 +188,6 @@ add_action( 'wp_head', 'phantom_theme_customizer_css', 5 );
  */
 if ( class_exists( 'WooCommerce' ) ) {
 	add_filter( 'woocommerce_show_page_title', '__return_false' );
-
-	function phantom_theme_woocommerce_support(): void {
-		// SPA uses own Swiper gallery instead of WC built-in
-		// add_theme_support( 'wc-product-gallery-zoom' );
-		// add_theme_support( 'wc-product-gallery-lightbox' );
-		// add_theme_support( 'wc-product-gallery-slider' );
-	}
-	add_action( 'after_setup_theme', 'phantom_theme_woocommerce_support', 20 );
 }
 
 /**

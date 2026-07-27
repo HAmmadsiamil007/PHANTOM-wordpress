@@ -1,0 +1,35 @@
+{
+    "name": "Vibrant Life",
+    "slug": "vibrant",
+    "version": "1.0.0",
+    "description": "A colorful, playful e-commerce demo with gradient backgrounds, bold animations, and energetic typography.",
+    "author": "Phantom Core",
+    "demo_url": "https://phantom.test/?demo=vibrant",
+    "preset": "vibrant",
+    "requires": {
+        "php": "7.4",
+        "wordpress": "6.4",
+        "woocommerce": "9.0",
+        "phantom_core": "1.5.0"
+    },
+    "settings": {
+        "phantom_primary_color": "#FF6B35",
+        "phantom_secondary_color": "#004E89",
+        "phantom_typography_body_font": "Satoshi",
+        "phantom_typography_heading_font": "Clash Display",
+        "phantom_layout_columns": "4",
+        "phantom_animations_scroll_reveal": "flip-up",
+        "phantom_animations_hover_type": "lift"
+    },
+    "templates": ["index", "shop", "product-detail", "blog", "contact", "about", "team"],
+    "tags": ["vibrant", "colorful", "playful", "energetic"],
+    "features": {
+        "animations": true,
+        "parallax": true,
+        "smooth_scroll": true,
+        "dark_mode": false,
+        "shop_wishlist": true,
+        "shop_compare": true,
+        "search_live": true
+    }
+}

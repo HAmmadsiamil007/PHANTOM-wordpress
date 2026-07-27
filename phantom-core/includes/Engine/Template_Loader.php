@@ -3,15 +3,65 @@ declare(strict_types=1);
 
 namespace PhantomCore\Engine;
 
+use PhantomCore\Registry\Template_Registry;
+
 defined('ABSPATH') || exit;
 
 class Template_Loader {
 
-  private array $routes = [];
   private string $pack = 'kids';
 
-  public function __construct() {
-    $this->routes = [
+  public function set_pack(string $pack): self {
+    $this->pack = $pack;
+    return $this;
+  }
+
+  public function get_pack(): string {
+    return $this->pack;
+  }
+
+  /**
+   * Resolve a slug to a template filename.
+   * Delegates to Template_Registry for route definitions,
+   * with fallback for regex-based dynamic routes.
+   */
+  public function resolve(string $slug): string {
+    // Dynamic route patterns handled first
+    if (preg_match('/^product\/(.+)$/', $slug)) {
+      return 'product-detail.html';
+    }
+    if (preg_match('/^blog\/(.+)$/', $slug)) {
+      return 'single-blog.html';
+    }
+    if (preg_match('/^category\/(.+)$/', $slug)) {
+      return 'shop.html';
+    }
+    if (preg_match('/^tag\/(.+)$/', $slug)) {
+      return '404.html';
+    }
+    if (preg_match('/^search\/(.+)$/', $slug)) {
+      return '404.html';
+    }
+    if (preg_match('/^author\/(.+)$/', $slug)) {
+      return '404.html';
+    }
+
+    // Delegate static routes to Template_Registry
+    $registry = Template_Registry::get_instance();
+    if ($registry->has($slug)) {
+      $template = $registry->get($slug);
+      if ($template) return $template->file;
+    }
+
+    // Strip .html extension and retry
+    $without_ext = preg_replace('/\.html$/', '', $slug);
+    if ($without_ext !== $slug && $registry->has($without_ext)) {
+      $template = $registry->get($without_ext);
+      if ($template) return $template->file;
+    }
+
+    // Fall back to default hardcoded routes for backward compatibility
+    $routes = [
       ''                => 'index.html',
       'index'           => 'index.html',
       'index.html'      => 'index.html',
@@ -40,44 +90,10 @@ class Template_Loader {
       'term-of-use'     => 'term-of-use.html',
       'cookie-policy'   => 'cookie-policy.html',
       '404'             => '404.html',
-      'category'        => '404.html',
-      'tag'             => '404.html',
-      'author'          => '404.html',
-      'search'          => '404.html',
     ];
-  }
 
-  public function set_pack(string $pack): self {
-    $this->pack = $pack;
-    return $this;
-  }
-
-  public function get_pack(): string {
-    return $this->pack;
-  }
-
-  public function resolve(string $slug): string {
-    if (preg_match('/^product\/(.+)$/', $slug)) {
-      return 'product-detail.html';
-    }
-    if (preg_match('/^blog\/(.+)$/', $slug)) {
-      return 'single-blog.html';
-    }
-    if (preg_match('/^category\/(.+)$/', $slug)) {
-      return 'shop.html';
-    }
-    if (preg_match('/^tag\/(.+)$/', $slug)) {
-      return '404.html';
-    }
-    if (preg_match('/^search\/(.+)$/', $slug)) {
-      return '404.html';
-    }
-    if (preg_match('/^author\/(.+)$/', $slug)) {
-      return '404.html';
-    }
-
-    return $this->routes[$slug]
-      ?? $this->routes[preg_replace('/\.html$/', '', $slug)]
+    return $routes[$slug]
+      ?? $routes[preg_replace('/\.html$/', '', $slug)]
       ?? '404.html';
   }
 
@@ -118,6 +134,17 @@ class Template_Loader {
   }
 
   public function get_supported_templates(): array {
-    return array_values(array_unique(array_filter($this->routes)));
+    $registry = Template_Registry::get_instance();
+    $files = $registry->get_supported_templates();
+    if (empty($files)) {
+      $files = array_values(array_unique([
+        'index.html','shop.html','product-detail.html','about.html','blog.html',
+        'single-blog.html','contact.html','cart.html','checkout.html','account.html',
+        'coming-soon.html','faq.html','team.html','testimonials.html','join-now.html',
+        'login.html','thank-you.html','wishlist.html','privacy-policy.html',
+        'term-of-use.html','cookie-policy.html','404.html',
+      ]));
+    }
+    return $files;
   }
 }

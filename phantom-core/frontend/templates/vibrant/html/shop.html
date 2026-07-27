@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop — Radiant</title>
+    <meta name="description" content="Browse the Radiant collection. Colorful home goods for vibrant living.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Satoshi:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="vibrant-demo">
+<div class="page-content">
+    <div class="announcement-bar text-center py-2 small fw-bold">Free Shipping On Orders Over $50 · 30-Day Returns</div>
+    <header class="header py-3">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="/" class="brand-logo" style="font-size:1.8rem;">RADIANT</a>
+                <nav class="main-nav" data-phantom-menu="primary">
+                    <ul class="nav d-flex gap-4 list-unstyled mb-0">
+                        <li><a href="/" class="nav-link fw-bold">Home</a></li>
+                        <li><a href="shop.html" class="nav-link active fw-bold">Shop</a></li>
+                        <li><a href="about.html" class="nav-link fw-bold">About</a></li>
+                        <li><a href="blog.html" class="nav-link fw-bold">Blog</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions d-flex gap-3">
+                    <a href="shop.html" class="header-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+                    <a href="wishlist.html" class="header-icon" aria-label="Wishlist"><i class="far fa-heart"></i></a>
+                    <a href="cart.html" class="header-icon" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+    <section class="page-hero py-5">
+        <div class="container text-center">
+            <span class="section-label d-inline-block px-3 py-1 rounded-pill bg-white bg-opacity-75 small fw-bold mb-3" style="color:var(--vibrant-primary);">All Products</span>
+            <h1 class="display-3 fw-black mt-2" style="color:var(--vibrant-text);">Shop Radiant</h1>
+            <p class="text-muted" style="max-width:500px;margin:0 auto;color:var(--vibrant-secondary) !important;">Every piece is designed to bring more color and joy into your everyday life.</p>
+        </div>
+    </section>
+    <section class="filter-bar py-3">
+        <div class="container">
+            <div class="filter-buttons d-flex gap-2 justify-content-center flex-wrap">
+                <button data-category="" class="filter-btn active">All</button>
+                <button data-category="decor" class="filter-btn">Decor</button>
+                <button data-category="lighting" class="filter-btn">Lighting</button>
+                <button data-category="kitchen" class="filter-btn">Kitchen</button>
+                <button data-category="textiles" class="filter-btn">Textiles</button>
+                <button data-category="sale" class="filter-btn">Sale</button>
+            </div>
+        </div>
+    </section>
+    <section class="shop-grid-section py-5">
+        <div class="container">
+            <div class="products-grid row g-4" data-phantom-products="9" data-reveal-group>
+                <div class="col-lg-4 col-md-6">
+                    <div class="product-card" data-tilt data-reveal-item>
+                        <div class="product-image position-relative">
+                            <span class="product-badge position-absolute top-0 end-0 m-2 px-3 py-1 small fw-bold">Best Seller</span>
+                            <img loading="lazy" src="assets/images/product-vib-1.jpg" alt="Rainbow Vase Set" class="img-fluid w-100" style="height:260px;object-fit:cover;">
+                        </div>
+                        <div class="product-info p-3 text-center">
+                            <h3 class="product-name h6 fw-bold">Rainbow Vase Set</h3>
+                            <p class="product-tagline small text-muted">Decor</p>
+                            <div class="product-price-row d-flex justify-content-center align-items-center gap-2 mt-2">
+                                <span class="product-price fw-bold" style="color:var(--vibrant-primary);">$65</span>
+                                <button class="btn btn-primary btn-sm rounded-pill">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="product-card" data-tilt data-reveal-item>
+                        <div class="product-image position-relative">
+                            <span class="product-badge position-absolute top-0 end-0 m-2 px-3 py-1 small fw-bold" style="background:var(--vibrant-primary);">New</span>
+                            <img loading="lazy" src="assets/images/product-vib-2.jpg" alt="Geometric Candle Set" class="img-fluid w-100" style="height:260px;object-fit:cover;">
+                        </div>
+                        <div class="product-info p-3 text-center">
+                            <h3 class="product-name h6 fw-bold">Geometric Candle Set</h3>
+                            <p class="product-tagline small text-muted">Decor</p>
+                            <div class="product-price-row d-flex justify-content-center align-items-center gap-2 mt-2">
+                                <span class="product-price fw-bold" style="color:var(--vibrant-primary);">$42</span>
+                                <button class="btn btn-primary btn-sm rounded-pill">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="product-card" data-tilt data-reveal-item>
+                        <div class="product-image position-relative">
+                            <span class="product-badge position-absolute top-0 end-0 m-2 px-3 py-1 small fw-bold" style="background:var(--vibrant-secondary);">Sale</span>
+                            <img loading="lazy" src="assets/images/product-vib-3.jpg" alt="Textured Throw Blanket" class="img-fluid w-100" style="height:260px;object-fit:cover;">
+                        </div>
+                        <div class="product-info p-3 text-center">
+                            <h3 class="product-name h6 fw-bold">Textured Throw Blanket</h3>
+                            <p class="product-tagline small text-muted">Textiles</p>
+                            <div class="product-price-row d-flex justify-content-center align-items-center gap-2 mt-2">
+                                <span class="product-price fw-bold" style="color:var(--vibrant-primary);"><span class="text-decoration-line-through text-muted me-1">$89</span> $59</span>
+                                <button class="btn btn-primary btn-sm rounded-pill">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="product-card" data-tilt data-reveal-item>
+                        <div class="product-image position-relative">
+                            <img loading="lazy" src="assets/images/product-vib-4.jpg" alt="Marbled Coaster Set" class="img-fluid w-100" style="height:260px;object-fit:cover;">
+                        </div>
+                        <div class="product-info p-3 text-center">
+                            <h3 class="product-name h6 fw-bold">Marbled Coaster Set</h3>
+                            <p class="product-tagline small text-muted">Kitchen</p>
+                            <div class="product-price-row d-flex justify-content-center align-items-center gap-2 mt-2">
+                                <span class="product-price fw-bold" style="color:var(--vibrant-primary);">$28</span>
+                                <button class="btn btn-primary btn-sm rounded-pill">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="product-card" data-tilt data-reveal-item>
+                        <div class="product-image position-relative">
+                            <img loading="lazy" src="assets/images/product-vib-5.jpg" alt="Colorful Floor Lamp" class="img-fluid w-100" style="height:260px;object-fit:cover;">
+                        </div>
+                        <div class="product-info p-3 text-center">
+                            <h3 class="product-name h6 fw-bold">Colorful Floor Lamp</h3>
+                            <p class="product-tagline small text-muted">Lighting</p>
+                            <div class="product-price-row d-flex justify-content-center align-items-center gap-2 mt-2">
+                                <span class="product-price fw-bold" style="color:var(--vibrant-primary);">$129</span>
+                                <button class="btn btn-primary btn-sm rounded-pill">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="product-card" data-tilt data-reveal-item>
+                        <div class="product-image position-relative">
+                            <img loading="lazy" src="assets/images/product-vib-6.jpg" alt="Art Print Set" class="img-fluid w-100" style="height:260px;object-fit:cover;">
+                        </div>
+                        <div class="product-info p-3 text-center">
+                            <h3 class="product-name h6 fw-bold">Art Print Set</h3>
+                            <p class="product-tagline small text-muted">Decor</p>
+                            <div class="product-price-row d-flex justify-content-center align-items-center gap-2 mt-2">
+                                <span class="product-price fw-bold" style="color:var(--vibrant-primary);">$35</span>
+                                <button class="btn btn-primary btn-sm rounded-pill">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </main>
+    <footer class="footer py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <a href="/" class="brand-logo text-white h4 text-decoration-none">RADIANT</a>
+                    <p class="small text-white-50 mt-2">Colorful living for the bold and the curious.</p>
+                </div>
+                <div class="col-lg-2 offset-lg-2">
+                    <h6 class="fw-bold text-white">Explore</h6>
+                    <ul class="list-unstyled small mt-2">
+                        <li><a href="shop.html" class="text-white-50 text-decoration-none">Shop All</a></li>
+                        <li><a href="contact.html" class="text-white-50 text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold text-white">Help</h6>
+                    <ul class="list-unstyled small mt-2">
+                        <li><a href="faq.html" class="text-white-50 text-decoration-none">FAQ</a></li>
+                        <li><a href="contact.html" class="text-white-50 text-decoration-none">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color:rgba(255,255,255,0.1);">
+            <div class="text-center small text-white-50">&copy; 2026 Radiant. All Rights Reserved.</div>
+        </div>
+    </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

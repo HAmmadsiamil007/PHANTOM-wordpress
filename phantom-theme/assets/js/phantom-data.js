@@ -1330,7 +1330,7 @@
     var shippingList = document.getElementById('shipping-methods-list');
     if (!shippingList) return;
     var savedMethod = sessionStorage.getItem('phantom_shipping_method');
-    fetchJSON('/cart/shipping-methods', { method: 'POST' }).then(function (data) {
+    fetchJSON('/cart/shipping-methods', { method: 'GET' }).then(function (data) {
       if (!data || !data.methods || data.methods.length === 0) {
         shippingList.innerHTML = '<p>No shipping methods available.</p>';
         return;

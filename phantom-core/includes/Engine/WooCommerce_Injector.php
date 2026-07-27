@@ -6,10 +6,9 @@ namespace PhantomCore\Engine;
 use PhantomCore\Adapters\Product_Adapter;
 use PhantomCore\Adapters\Category_Adapter;
 use PhantomCore\Adapters\Hero_Adapter;
-use PhantomCore\Renderer\Product_Card;
-use PhantomCore\Renderer\Category_Card;
-use PhantomCore\Renderer\Hero;
-use PhantomCore\Renderer\Footer;
+use PhantomCore\Components\Component_Registry;
+use PhantomCore\Feature\Feature_Registry;
+use PhantomCore\ViewModels\Product_ViewModel;
 
 defined('ABSPATH') || exit;
 
@@ -20,10 +19,6 @@ class WooCommerce_Injector {
   private Product_Adapter $product_adapter;
   private Category_Adapter $category_adapter;
   private Hero_Adapter $hero_adapter;
-  private Product_Card $product_card;
-  private Category_Card $category_card;
-  private Hero $hero;
-  private Footer $footer;
 
   public function __construct(Render_Engine $engine, EventDispatcher $events) {
     $this->engine = $engine;
@@ -31,22 +26,21 @@ class WooCommerce_Injector {
     $this->product_adapter = new Product_Adapter();
     $this->category_adapter = new Category_Adapter();
     $this->hero_adapter = new Hero_Adapter();
-    $this->product_card = new Product_Card();
-    $this->category_card = new Category_Card();
-    $this->hero = new Hero();
-    $this->footer = new Footer();
   }
 
   public function inject(string $html, string $slug): string {
     // Inject hero section (replace static page-hero block)
     try {
-      $hero_html = $this->hero->render($this->hero_adapter->normalize());
-      $html = preg_replace(
-        '/<section[^>]*class="[^"]*page-hero[^"]*"[^>]*>.*?<\/section>/s',
-        $hero_html,
-        $html,
-        1
-      );
+      $hero_component = Component_Registry::get_instance()->get('hero');
+      if ($hero_component) {
+        $hero_html = $hero_component->instance()->render($this->hero_adapter->normalize());
+        $html = preg_replace(
+          '/<section[^>]*class=\"[^\"]*page-hero[^\"]*\"[^>]*>.*?<\/section>/s',
+          $hero_html,
+          $html,
+          1
+        );
+      }
     } catch (\Throwable $e) {
       // Fall through — keep static template hero
     }
@@ -83,13 +77,16 @@ class WooCommerce_Injector {
 
     // Inject footer section (replace static footer block)
     try {
-      $footer_html = $this->footer->render($this->get_footer_data());
-      $html = preg_replace(
-        '/<footer[^>]*class="[^"]*footer[^"]*"[^>]*>.*?<\/footer>/s',
-        $footer_html,
-        $html,
-        1
-      );
+      $footer_component = Component_Registry::get_instance()->get('footer');
+      if ($footer_component) {
+        $footer_html = $footer_component->instance()->render($this->get_footer_data());
+        $html = preg_replace(
+          '/<footer[^>]*class=\"[^\"]*footer[^\"]*\"[^>]*>.*?<\/footer>/s',
+          $footer_html,
+          $html,
+          1
+        );
+      }
     } catch (\Throwable $e) {
       // Fall through — keep static template footer
     }
@@ -151,19 +148,27 @@ class WooCommerce_Injector {
     if (empty($products)) {
       $empty = '<div class="shop-grid-empty"><p>No products found in this category.</p><a href="' . esc_url(home_url('/shop')) . '" class="btn btn-outline">View All Products</a></div>';
       return preg_replace(
-        '/<div class="shop-grid[^"]*"[^>]*>.*?<\/div>\s*<\/section>/s',
+        '/<div class="shop-grid[^\"]*"[^>]*>.*?<\/div>\s*<\/section>/s',
         '<div class="shop-grid" data-reveal-group>' . $empty . '</div></section>',
         $html,
         1
       );
     }
 
-    $product_cards = $this->product_card->render_collection(
-      $this->product_adapter->normalize_collection($products)
-    );
+    $product_card = $this->get_product_card_renderer();
+    if ($product_card) {
+      $normalized = $this->product_adapter->normalize_collection($products);
+      $viewmodels = array_map(
+        function (array $data) { return Product_ViewModel::from_adapter_output($data)->to_array(); },
+        $normalized
+      );
+      $product_cards = $product_card->render_collection($viewmodels);
+    } else {
+      $product_cards = $this->render_fallback_products($products);
+    }
 
     $html = preg_replace(
-      '/<div class="shop-grid[^"]*"[^>]*>.*?<\/div>\s*<\/section>/s',
+      '/<div class="shop-grid[^\"]*"[^>]*>.*?<\/div>\s*<\/section>/s',
       '<div class="shop-grid" data-reveal-group>' . $product_cards . '</div></section>',
       $html,
       1
@@ -229,24 +234,15 @@ class WooCommerce_Injector {
       );
     }
 
-    $data = $this->product_adapter->normalize($product);
+    $data_raw = $this->product_adapter->normalize($product);
+    $vm = Product_ViewModel::from_adapter_output($data_raw);
+    $data = $vm->to_array();
 
     // Gallery
-    $gallery_html = '';
-    if (!empty($data['gallery'])) {
-      $gallery_html = '<div class="product-gallery swiper" id="productGallery">';
-      $gallery_html .= '<div class="swiper-wrapper">';
-      foreach ($data['gallery'] as $img) {
-        $gallery_html .= '<div class="swiper-slide"><img src="' . esc_url($img) . '" alt="' . esc_attr($data['name']) . '" loading="lazy"></div>';
-      }
-      $gallery_html .= '</div><div class="swiper-pagination"></div></div>';
-    }
+    $gallery_html = $vm->gallery_html();
 
-    // Price
-    $price_html = esc_html($data['price']);
-    if ($data['on_sale']) {
-      $price_html = '<span class="price-sale">' . esc_html($data['sale_price']) . '</span> <span class="price-original">' . esc_html($data['regular_price']) . '</span>';
-    }
+    // Price (use ViewModel's formatted price)
+    $price_html = $vm->formatted_price();
 
     // Add to cart
     $atc_html = $this->render_add_to_cart($product);
@@ -256,16 +252,8 @@ class WooCommerce_Injector {
       ? '<span class="stock in-stock">In Stock</span>'
       : '<span class="stock out-of-stock">Out of Stock</span>';
 
-    // Rating
-    $rating_html = '';
-    if ($data['rating'] > 0) {
-      $full = floor($data['rating']);
-      $stars = '';
-      for ($i = 0; $i < 5; $i++) {
-        $stars .= $i < $full ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
-      }
-      $rating_html = '<div class="product-rating">' . $stars . ' <span>(' . (int) $data['reviews_count'] . ' reviews)</span></div>';
-    }
+    // Rating (use ViewModel's rating stars)
+    $rating_html = $vm->rating_stars();
 
     $search = [
       '[product_gallery]',
@@ -302,12 +290,6 @@ class WooCommerce_Injector {
     }
 
     if ($product->is_type('variable')) {
-      $attrs = [];
-      foreach ($product->get_variation_attributes() as $name => $options) {
-        $tax = str_replace('attribute_', '', $name);
-        $label = wc_attribute_label($tax, $product);
-        $attrs[] = $label;
-      }
       $atc = '<form class="variations-form phantom-add-to-cart-form" data-product_id="' . $product->get_id() . '">';
       foreach ($product->get_variation_attributes() as $name => $options) {
         $tax = str_replace('attribute_', '', $name);
@@ -382,9 +364,14 @@ class WooCommerce_Injector {
 
     if (empty($products)) return $html;
 
-    $cards = $this->product_card->render_collection(
-      $this->product_adapter->normalize_collection($products)
-    );
+    $product_card = $this->get_product_card_renderer();
+    if ($product_card) {
+      $cards = $product_card->render_collection(
+        $this->prepare_product_data($products)
+      );
+    } else {
+      $cards = $this->render_fallback_products($products);
+    }
 
     return preg_replace(
       '/<div class="featured-products-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
@@ -404,9 +391,14 @@ class WooCommerce_Injector {
 
     if (empty($categories) || is_wp_error($categories)) return $html;
 
-    $cards = $this->category_card->render_collection(
-      $this->category_adapter->normalize_collection($categories)
-    );
+    $category_card = $this->get_category_card_renderer();
+    if ($category_card) {
+      $cards = $category_card->render_collection(
+        $this->category_adapter->normalize_collection($categories)
+      );
+    } else {
+      $cards = $this->render_fallback_categories($categories);
+    }
 
     return preg_replace(
       '/<div class="category-grid">.*?<\/div>\s*<\/section>/s',
@@ -417,10 +409,63 @@ class WooCommerce_Injector {
   }
 
   private function inject_wishlist_content(string $html): string {
+    // Feature flag: only show wishlist if enabled
+    $wishlist_enabled = Feature_Registry::get_instance()->enabled('shop_wishlist');
+    if (!$wishlist_enabled) {
+      return str_replace(
+        '[wishlist_content]',
+        '<div class="wishlist-page"><p class="text-center">Wishlist feature is currently disabled.</p></div>',
+        $html
+      );
+    }
     return str_replace(
       '[wishlist_content]',
-      '<div class="wishlist-page"><p class="text-center">Your wishlist is currently empty.</p></div>',
+      '<div class="wishlist-page"><p class="text-center">Your wishlist is currently empty.</p><a href="' . esc_url(home_url('/shop')) . '" class="btn btn-primary">Browse Products</a></div>',
       $html
     );
+  }
+
+  private function get_product_card_renderer(): ?object {
+    $component = Component_Registry::get_instance()->get('product_card');
+    return $component ? $component->instance() : null;
+  }
+
+  private function get_category_card_renderer(): ?object {
+    $component = Component_Registry::get_instance()->get('category_card');
+    return $component ? $component->instance() : null;
+  }
+
+  private function prepare_product_data(array $products): array {
+    $normalized = $this->product_adapter->normalize_collection($products);
+    return array_map(
+      function (array $data) { return Product_ViewModel::from_adapter_output($data)->to_array(); },
+      $normalized
+    );
+  }
+
+  private function render_fallback_products(array $products): string {
+    $html = '';
+    foreach ($products as $product) {
+      $data = $this->product_adapter->normalize($product);
+      $html .= '<div class="product-card">';
+      $html .= '<a href="' . esc_url($data['url']) . '"><img src="' . esc_url($data['image']) . '" alt="' . esc_attr($data['name']) . '" loading="lazy"></a>';
+      $html .= '<h3>' . esc_html($data['name']) . '</h3>';
+      $html .= '<span class="product-price">' . wp_kses_post($data['price']) . '</span>';
+      $html .= '</div>';
+    }
+    return $html;
+  }
+
+  private function render_fallback_categories(array $categories): string {
+    $html = '';
+    foreach ($categories as $cat) {
+      $image_id = get_term_meta($cat->term_id, 'thumbnail_id', true);
+      $image = $image_id ? wp_get_attachment_url($image_id) : '';
+      $html .= '<a href="' . esc_url(get_term_link($cat)) . '" class="category-card">';
+      $html .= '<h3>' . esc_html($cat->name) . '</h3>';
+      $html .= '<span>' . esc_html((string) $cat->count) . ' items</span>';
+      $html .= '</a>';
+    }
+    return $html;
   }
 }

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — Radiant</title>
+    <meta name="description" content="The Radiant blog — colorful ideas, DIY inspiration, and stories from the vibrant living community.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Satoshi:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="vibrant-demo">
+<div class="page-content">
+    <div class="announcement-bar text-center py-2 small fw-bold" style="background:var(--vibrant-primary);color:white;">Free Shipping On Orders Over $50 · 30-Day Returns · Gift Wrapping Available</div>
+    <header class="header py-3">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="/" class="brand-logo" style="font-size:1.8rem;">RADIANT</a>
+                <nav class="main-nav" data-phantom-menu="primary">
+                    <ul class="nav d-flex gap-4 list-unstyled mb-0">
+                        <li><a href="/" class="nav-link fw-bold">Home</a></li>
+                        <li><a href="shop.html" class="nav-link fw-bold">Shop</a></li>
+                        <li><a href="about.html" class="nav-link fw-bold">About</a></li>
+                        <li><a href="blog.html" class="nav-link active fw-bold">Blog</a></li>
+                        <li><a href="contact.html" class="nav-link fw-bold">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions d-flex gap-3">
+                    <a href="shop.html" class="header-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+                    <a href="wishlist.html" class="header-icon" aria-label="Wishlist"><i class="far fa-heart"></i></a>
+                    <a href="cart.html" class="header-icon" aria-label="Cart"><i class="fas fa-shopping-bag"></i><span class="cart-count">0</span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section class="page-hero py-5 text-center" style="background:var(--vibrant-gradient);">
+            <div class="container">
+                <span class="d-inline-block px-3 py-1 rounded-pill bg-white bg-opacity-25 small fw-bold mb-3" style="color:white;">Our Blog</span>
+                <h1 class="display-3 fw-black text-white">Colorful Ideas</h1>
+                <p class="text-white opacity-90" style="max-width:500px;margin:0 auto;">Inspiration, DIY projects, and stories from the vibrant living community.</p>
+            </div>
+        </section>
+        <section class="featured-post py-4">
+            <div class="container">
+                <div class="row g-0 rounded-4 overflow-hidden shadow">
+                    <div class="col-lg-6">
+                        <img loading="lazy" src="assets/images/featured-blog.jpg" alt="Color Psychology" class="img-fluid w-100" style="height:400px;object-fit:cover;">
+                    </div>
+                    <div class="col-lg-6 p-5 d-flex flex-column justify-content-center" style="background:white;">
+                        <span class="d-inline-block px-2 py-1 rounded-pill small fw-bold mb-2" style="background:var(--vibrant-primary);color:white;width:fit-content;">Featured · Design</span>
+                        <h2 class="fw-black" style="color:var(--vibrant-text);font-size:1.8rem;">The Psychology of Color in Your Home</h2>
+                        <p class="mt-3" style="color:var(--vibrant-secondary);line-height:1.8;">How the colors you choose for your space can influence mood, creativity, and well-being — plus tips for finding your perfect palette.</p>
+                        <div class="d-flex align-items-center gap-3 mt-3">
+                            <span class="small" style="color:var(--vibrant-secondary);">Mar 8, 2026 · 5 min read</span>
+                            <a href="single-blog.html" class="small fw-bold" style="color:var(--vibrant-primary);text-decoration:none;">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="blog-grid py-5">
+            <div class="container">
+                <div class="row g-4" data-reveal-group>
+                    <div class="col-lg-4 col-md-6">
+                        <article class="blog-card rounded-4 overflow-hidden shadow-sm" style="background:white;" data-reveal-item>
+                            <div style="height:240px;overflow:hidden;"><img loading="lazy" src="assets/images/blog-vib-1.jpg" alt="DIY Wall Art" class="img-fluid w-100" style="height:240px;object-fit:cover;"></div>
+                            <div class="p-4">
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="px-2 py-0 rounded-pill small fw-bold" style="background:var(--vibrant-primary);color:white;font-size:0.65rem;">DIY</span>
+                                    <span class="small" style="color:var(--vibrant-secondary);font-size:0.75rem;">Feb 25, 2026</span>
+                                </div>
+                                <h3 class="h5 fw-bold" style="color:var(--vibrant-text);">DIY Abstract Wall Art on a Budget</h3>
+                                <p class="small mt-2" style="color:var(--vibrant-secondary);line-height:1.7;">Create stunning, gallery-worthy abstract art for your walls using supplies from your local craft store.</p>
+                                <a href="single-blog.html" class="small fw-bold" style="color:var(--vibrant-primary);text-decoration:none;">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <article class="blog-card rounded-4 overflow-hidden shadow-sm" style="background:white;" data-reveal-item>
+                            <div style="height:240px;overflow:hidden;"><img loading="lazy" src="assets/images/blog-vib-2.jpg" alt="Gallery Wall" class="img-fluid w-100" style="height:240px;object-fit:cover;"></div>
+                            <div class="p-4">
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="px-2 py-0 rounded-pill small fw-bold" style="background:var(--vibrant-secondary);color:white;font-size:0.65rem;">Decor</span>
+                                    <span class="small" style="color:var(--vibrant-secondary);font-size:0.75rem;">Feb 10, 2026</span>
+                                </div>
+                                <h3 class="h5 fw-bold" style="color:var(--vibrant-text);">How to Style a Gallery Wall</h3>
+                                <p class="small mt-2" style="color:var(--vibrant-secondary);line-height:1.7;">Tips and tricks for arranging a gallery wall that feels curated, personal, and perfectly imperfect.</p>
+                                <a href="single-blog.html" class="small fw-bold" style="color:var(--vibrant-primary);text-decoration:none;">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <article class="blog-card rounded-4 overflow-hidden shadow-sm" style="background:white;" data-reveal-item>
+                            <div style="height:240px;overflow:hidden;"><img loading="lazy" src="assets/images/blog-vib-3.jpg" alt="Plant Styling" class="img-fluid w-100" style="height:240px;object-fit:cover;"></div>
+                            <div class="p-4">
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="px-2 py-0 rounded-pill small fw-bold" style="background:var(--vibrant-primary);color:white;font-size:0.65rem;">Plants</span>
+                                    <span class="small" style="color:var(--vibrant-secondary);font-size:0.75rem;">Jan 28, 2026</span>
+                                </div>
+                                <h3 class="h5 fw-bold" style="color:var(--vibrant-text);">Colorful Plant Styling Ideas</h3>
+                                <p class="small mt-2" style="color:var(--vibrant-secondary);line-height:1.7;">Bring the outdoors in with vibrant pots, plant stands, and styling tips that make your greenery pop.</p>
+                                <a href="single-blog.html" class="small fw-bold" style="color:var(--vibrant-primary);text-decoration:none;">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <article class="blog-card rounded-4 overflow-hidden shadow-sm" style="background:white;" data-reveal-item>
+                            <div style="height:240px;overflow:hidden;"><img loading="lazy" src="assets/images/blog-vib-4.jpg" alt="Color Trends" class="img-fluid w-100" style="height:240px;object-fit:cover;"></div>
+                            <div class="p-4">
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="px-2 py-0 rounded-pill small fw-bold" style="background:var(--vibrant-secondary);color:white;font-size:0.65rem;">Trends</span>
+                                    <span class="small" style="color:var(--vibrant-secondary);font-size:0.75rem;">Jan 12, 2026</span>
+                                </div>
+                                <h3 class="h5 fw-bold" style="color:var(--vibrant-text);">2026's Boldest Color Trends</h3>
+                                <p class="small mt-2" style="color:var(--vibrant-secondary);line-height:1.7;">From electric blue to sunset orange — the colors that will define interiors this year.</p>
+                                <a href="single-blog.html" class="small fw-bold" style="color:var(--vibrant-primary);text-decoration:none;">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <article class="blog-card rounded-4 overflow-hidden shadow-sm" style="background:white;" data-reveal-item>
+                            <div style="height:240px;overflow:hidden;"><img loading="lazy" src="assets/images/blog-vib-5.jpg" alt="Thrift Flip" class="img-fluid w-100" style="height:240px;object-fit:cover;"></div>
+                            <div class="p-4">
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="px-2 py-0 rounded-pill small fw-bold" style="background:var(--vibrant-primary);color:white;font-size:0.65rem;">DIY</span>
+                                    <span class="small" style="color:var(--vibrant-secondary);font-size:0.75rem;">Dec 22, 2025</span>
+                                </div>
+                                <h3 class="h5 fw-bold" style="color:var(--vibrant-text);">Thrift Flip: Before &amp; After</h3>
+                                <p class="small mt-2" style="color:var(--vibrant-secondary);line-height:1.7;">How a can of paint and some creativity turned a flea market find into a statement piece.</p>
+                                <a href="single-blog.html" class="small fw-bold" style="color:var(--vibrant-primary);text-decoration:none;">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <article class="blog-card rounded-4 overflow-hidden shadow-sm" style="background:white;" data-reveal-item>
+                            <div style="height:240px;overflow:hidden;"><img loading="lazy" src="assets/images/blog-vib-6.jpg" alt="Sustainable Living" class="img-fluid w-100" style="height:240px;object-fit:cover;"></div>
+                            <div class="p-4">
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="px-2 py-0 rounded-pill small fw-bold" style="background:var(--vibrant-secondary);color:white;font-size:0.65rem;">Lifestyle</span>
+                                    <span class="small" style="color:var(--vibrant-secondary);font-size:0.75rem;">Dec 8, 2025</span>
+                                </div>
+                                <h3 class="h5 fw-bold" style="color:var(--vibrant-text);">Sustainable Decor on a Budget</h3>
+                                <p class="small mt-2" style="color:var(--vibrant-secondary);line-height:1.7;">Eco-friendly doesn't mean expensive. Discover budget-conscious ways to decorate sustainably.</p>
+                                <a href="single-blog.html" class="small fw-bold" style="color:var(--vibrant-primary);text-decoration:none;">Read More <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item active"><span class="page-link" style="background:var(--vibrant-primary);border-color:var(--vibrant-primary);border-radius:50%;">1</span></li>
+                        <li class="page-item"><a class="page-link" href="#" style="color:var(--vibrant-primary);border-radius:50%;">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#" style="color:var(--vibrant-primary);border-radius:50%;">3</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section>
+    </main>
+    <footer class="footer py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4"><a href="/" class="brand-logo text-white h4 text-decoration-none">RADIANT</a><p class="small text-white-50 mt-2">Colorful living for the bold and the curious.</p><div class="d-flex gap-3 mt-3"><a href="#" class="text-white" aria-label="Instagram"><i class="fab fa-instagram fa-lg"></i></a><a href="#" class="text-white" aria-label="Pinterest"><i class="fab fa-pinterest fa-lg"></i></a><a href="#" class="text-white" aria-label="TikTok"><i class="fab fa-tiktok fa-lg"></i></a></div></div>
+                <div class="col-lg-2 offset-lg-2"><h6 class="fw-bold text-white">Explore</h6><ul class="list-unstyled small mt-2"><li><a href="shop.html" class="text-white-50 text-decoration-none">Shop All</a></li><li><a href="shop.html" class="text-white-50 text-decoration-none">New Arrivals</a></li><li><a href="about.html" class="text-white-50 text-decoration-none">About Us</a></li></ul></div>
+                <div class="col-lg-2"><h6 class="fw-bold text-white">Help</h6><ul class="list-unstyled small mt-2"><li><a href="faq.html" class="text-white-50 text-decoration-none">FAQ</a></li><li><a href="contact.html" class="text-white-50 text-decoration-none">Contact</a></li><li><a href="faq.html#shipping" class="text-white-50 text-decoration-none">Shipping</a></li></ul></div>
+                <div class="col-lg-2"><h6 class="fw-bold text-white">Legal</h6><ul class="list-unstyled small mt-2"><li><a href="privacy-policy.html" class="text-white-50 text-decoration-none">Privacy</a></li><li><a href="term-of-use.html" class="text-white-50 text-decoration-none">Terms</a></li></ul></div>
+            </div>
+            <hr class="my-4" style="border-color:rgba(255,255,255,0.1);"><div class="text-center small text-white-50"><span>&copy; 2026 Radiant. All Rights Reserved. Made with color.</span></div>
+        </div>
+    </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

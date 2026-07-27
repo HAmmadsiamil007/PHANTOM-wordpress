@@ -3,9 +3,9 @@
  * Plugin Name:       Phantom Core Framework
  * Plugin URI:        https://phantom.test
  * Description:       Core REST API layer for Phantom — settings registry, theme options, customizer, import/export, caching. Backend only — no frontend code.
- * Version:           1.5.3
+ * Version:           1.5.4
  * Requires at least: 6.4
- * Requires PHP:      7.4
+ * Requires PHP:      8.0
  * WC requires at least: 9.0
  * WC tested up to:      9.5
  * Author:            Phantom
@@ -21,7 +21,16 @@ namespace PhantomCore;
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PHANTOM_CORE_VERSION', '1.5.3' );
+if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
+	if ( is_admin() ) {
+		add_action( 'admin_notices', function () {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Phantom Core requires PHP 8.0 or later. Please upgrade your PHP version.', 'phantom-core' ) . '</p></div>';
+		} );
+	}
+	return; // Stop loading the plugin
+}
+
+define( 'PHANTOM_CORE_VERSION', '1.5.4' );
 define( 'PHANTOM_CORE_FILE', __FILE__ );
 define( 'PHANTOM_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PHANTOM_CORE_URL', plugin_dir_url( __FILE__ ) );
@@ -35,10 +44,16 @@ spl_autoload_register(
 		}
 		$relative_class = substr( $class, $len );
 
+		$pascal_to_kebab = function ($s) {
+			$s = preg_replace( '/([a-z0-9])([A-Z])/', '$1-$2', $s );
+			return preg_replace( '/([A-Z]+)([A-Z][a-z])/', '$1-$2', $s );
+		};
+
 		// Custom controls use includes/custom-controls/ with class-{name}.php naming
 		$controls_prefix = 'Customizer\\Controls\\';
 		if ( strncmp( $controls_prefix, $relative_class, strlen( $controls_prefix ) ) === 0 ) {
 			$short = substr( $relative_class, strlen( $controls_prefix ) );
+			$short = $pascal_to_kebab( $short );
 			$file  = PHANTOM_CORE_PATH . 'includes/custom-controls/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
 			if ( file_exists( $file ) ) {
 				require_once $file;
@@ -50,6 +65,7 @@ spl_autoload_register(
 		$adapters_prefix = 'Adapters\\';
 		if ( strncmp( $adapters_prefix, $relative_class, strlen( $adapters_prefix ) ) === 0 ) {
 			$short = substr( $relative_class, strlen( $adapters_prefix ) );
+			$short = $pascal_to_kebab( $short );
 			$file  = PHANTOM_CORE_PATH . 'includes/adapters/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
 			if ( file_exists( $file ) ) {
 				require_once $file;
@@ -61,7 +77,225 @@ spl_autoload_register(
 		$renderer_prefix = 'Renderer\\';
 		if ( strncmp( $renderer_prefix, $relative_class, strlen( $renderer_prefix ) ) === 0 ) {
 			$short = substr( $relative_class, strlen( $renderer_prefix ) );
+			$short = $pascal_to_kebab( $short );
 			$file  = PHANTOM_CORE_PATH . 'includes/renderer/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Design Providers (must come before Design\ to match sub-namespace first)
+		$providers_prefix = 'Design\\Providers\\';
+		if ( strncmp( $providers_prefix, $relative_class, strlen( $providers_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $providers_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$base = str_replace( '_', '-', strtolower( $short ) );
+			$file = PHANTOM_CORE_PATH . 'includes/Design/Providers/class-' . $base . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+			$file = PHANTOM_CORE_PATH . 'includes/Design/Providers/interface-' . $base . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Design System uses includes/Design/ with class-{name}.php naming
+		$design_prefix = 'Design\\';
+		if ( strncmp( $design_prefix, $relative_class, strlen( $design_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $design_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Design/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Demo uses includes/Demo/ with class-{name}.php naming
+		$demo_prefix = 'Demo\\';
+		if ( strncmp( $demo_prefix, $relative_class, strlen( $demo_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $demo_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Demo/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Layout uses includes/Layout/ with class-{name}.php naming
+		$layout_prefix = 'Layout\\';
+		if ( strncmp( $layout_prefix, $relative_class, strlen( $layout_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $layout_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Layout/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Contracts use includes/contracts/ with interface-{name}.php naming
+		$contracts_prefix = 'Contracts\\';
+		if ( strncmp( $contracts_prefix, $relative_class, strlen( $contracts_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $contracts_prefix ) );
+			$short = preg_replace( '/Interface$/', '', $short );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/contracts/interface-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Feature uses includes/Feature/ with class-{name}.php naming
+		$feature_prefix = 'Feature\\';
+		if ( strncmp( $feature_prefix, $relative_class, strlen( $feature_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $feature_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Feature/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+			// Data files — only load if they look like class/interface files
+			$data_file = PHANTOM_CORE_PATH . 'includes/Feature/data/' . $short . '.php';
+			if ( file_exists( $data_file ) && preg_match( '/^(class|interface|trait)-/', $short ) ) {
+				require_once $data_file;
+				return;
+			}
+		}
+
+// Components uses includes/Components/ with class-{name}.php naming
+		$components_prefix = 'Components\\';
+		if ( strncmp( $components_prefix, $relative_class, strlen( $components_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $components_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Components/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Animation uses includes/Animation/ with class-{name}.php naming
+		$animation_prefix = 'Animation\\';
+		if ( strncmp( $animation_prefix, $relative_class, strlen( $animation_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $animation_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Animation/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Settings uses includes/settings/ with class-{name}.php naming
+		$settings_prefix = 'Settings\\';
+		if ( strncmp( $settings_prefix, $relative_class, strlen( $settings_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $settings_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/settings/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Manifest uses includes/Manifest/ with class-{name}.php naming
+		$manifest_prefix = 'Manifest\\';
+		if ( strncmp( $manifest_prefix, $relative_class, strlen( $manifest_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $manifest_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Manifest/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Registry uses includes/Registry/ with class-{name}.php naming
+		$registry_prefix = 'Registry\\';
+		if ( strncmp( $registry_prefix, $relative_class, strlen( $registry_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $registry_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Registry/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// ViewModels use includes/ViewModels/ with {name}-view-model.php naming
+		$viewmodels_prefix = 'ViewModels\\';
+		if ( strncmp( $viewmodels_prefix, $relative_class, strlen( $viewmodels_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $viewmodels_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/ViewModels/' . str_replace( '_', '-', strtolower( $short ) ) . '-view-model.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Data namespace uses includes/data/ with class-{name}.php naming
+		$data_prefix = 'Data\\';
+		if ( strncmp( $data_prefix, $relative_class, strlen( $data_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $data_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/data/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Layout uses includes/Layout/ with class-{name}.php naming
+		$layout_prefix = 'Layout\\';
+		if ( strncmp( $layout_prefix, $relative_class, strlen( $layout_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $layout_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Layout/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Public uses includes/Public/ with class-{name}.php naming
+		$public_prefix = 'Public\\';
+		if ( strncmp( $public_prefix, $relative_class, strlen( $public_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $public_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Public/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Hook uses includes/Hook/ with class-{name}.php naming
+		$hook_prefix = 'Hook\\';
+		if ( strncmp( $hook_prefix, $relative_class, strlen( $hook_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $hook_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Hook/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Bridges uses includes/Bridges/ with class-{name}.php naming
+		$bridges_prefix = 'Bridges\\';
+		if ( strncmp( $bridges_prefix, $relative_class, strlen( $bridges_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $bridges_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Bridges/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
 			if ( file_exists( $file ) ) {
 				require_once $file;
 				return;
@@ -87,6 +321,8 @@ require_once PHANTOM_CORE_PATH . 'includes/class-phantom-font-families.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-fonts.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-phantom-webfont-loader.php';
 require_once PHANTOM_CORE_PATH . 'includes/partial-renderers.php';
+require_once PHANTOM_CORE_PATH . 'includes/class-helpers.php';
+require_once PHANTOM_CORE_PATH . 'includes/class-capability-manager.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/colors.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/typography.php';
 require_once PHANTOM_CORE_PATH . 'includes/custom-css/header.php';
@@ -99,11 +335,37 @@ require_once PHANTOM_CORE_PATH . 'includes/custom-css/hero.php';
 // Phase 1: Service Container + Event System
 require_once PHANTOM_CORE_PATH . 'includes/Engine/Container.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/Container_Config.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/RequestRouter.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/ResponseBuilder.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/Render_Engine.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/EventDispatcher.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/PhpEventStore.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/Data_Engine.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/View_Engine.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/Asset_Engine.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/WooCommerce_Injector.php';
 require_once PHANTOM_CORE_PATH . 'admin/class-settings-page.php';
+// Phase 5B: Feature Flags
+require_once PHANTOM_CORE_PATH . 'includes/Feature/class-feature.php';
+require_once PHANTOM_CORE_PATH . 'includes/Feature/class-feature-registry.php';
+require_once PHANTOM_CORE_PATH . 'includes/Feature/class-feature-manager.php';
+// Phase 5D: Component & Template Registries
+require_once PHANTOM_CORE_PATH . 'includes/Components/class-component.php';
+require_once PHANTOM_CORE_PATH . 'includes/Components/class-component-registry.php';
+require_once PHANTOM_CORE_PATH . 'includes/Components/class-component-manager.php';
+require_once PHANTOM_CORE_PATH . 'includes/Registry/class-template.php';
+require_once PHANTOM_CORE_PATH . 'includes/Registry/class-template-registry.php';
+// Phase 5.5: Theme Manifest (ChatGPT P7)
+require_once PHANTOM_CORE_PATH . 'includes/Manifest/class-theme-manifest.php';
+// Phase 5A: Animation Registry
+require_once PHANTOM_CORE_PATH . 'includes/Animation/class-animation.php';
+require_once PHANTOM_CORE_PATH . 'includes/Animation/class-animation-registry.php';
+require_once PHANTOM_CORE_PATH . 'includes/Animation/class-gsap-bridge.php';
+require_once PHANTOM_CORE_PATH . 'includes/Animation/class-scroll-reveal.php';
+require_once PHANTOM_CORE_PATH . 'includes/Animation/class-parallax.php';
+
+// Phase D: Plugin Bridges
+\PhantomCore\Bridges\Bridge_Manager::get_instance()->init_all();
 
 load_plugin_textdomain(
 	'phantom-core',
@@ -126,10 +388,46 @@ if ( file_exists( $settings_page_path ) ) {
 	\PhantomCore\Admin\Settings_Page::get_instance()->init();
 }
 
+// Phase 5B: Feature Flags initialization
+\PhantomCore\Feature\Feature_Manager::get_instance()->init();
+
 $font_download_page_path = PHANTOM_CORE_PATH . 'admin/class-font-download-page.php';
 if ( file_exists( $font_download_page_path ) ) {
 	require_once $font_download_page_path;
 	\Phantom_Font_Download_Page::instance()->init();
+}
+
+$demo_admin_path = PHANTOM_CORE_PATH . 'admin/class-demo-admin.php';
+if ( is_admin() && file_exists( $demo_admin_path ) ) {
+	require_once $demo_admin_path;
+	\PhantomCore\Admin\Demo_Admin::get_instance()->init();
+}
+
+// Phase 4C: Phantom Admin Menu (requires all page classes)
+if ( is_admin() ) {
+	$phantom_admin_files = [
+		'admin/class-phantom-admin.php',
+		'admin/class-dashboard-page.php',
+		'admin/class-design-studio-page.php',
+		'admin/class-component-library-page.php',
+		'admin/class-template-manager-page.php',
+		'admin/class-animation-studio-page.php',
+		'admin/class-asset-manager-page.php',
+		'admin/class-performance-page.php',
+		'admin/class-seo-page.php',
+		'admin/class-import-export-page.php',
+		'admin/class-backup-restore-page.php',
+		'admin/class-developer-page.php',
+		'admin/class-system-page.php',
+		'admin/class-customizer-design-panel.php',
+	];
+	foreach ( $phantom_admin_files as $f ) {
+		$path = PHANTOM_CORE_PATH . $f;
+		if ( file_exists( $path ) ) {
+			require_once $path;
+		}
+	}
+	\PhantomCore\Admin\PhantomAdmin::get_instance()->init();
 }
 
 $cache_path = PHANTOM_CORE_PATH . 'includes/Engine/Cache.php';
@@ -186,9 +484,40 @@ add_action(
 	15
 );
 
+// Phase 4: Design System Engine
+add_action(
+	'plugins_loaded',
+	function (): void {
+		\PhantomCore\Design\DesignSystemManager::get_instance()->init();
+	},
+	20
+);
+
+// Phase 5C: Backup & Restore admin-post handlers
+add_action(
+	'plugins_loaded',
+	function (): void {
+		if ( is_admin() ) {
+			\PhantomCore\Admin\BackupRestorePage::get_instance()->init();
+		}
+	},
+	10
+);
+
+// Phase 5D: Component & Template Registries initialization
+add_action(
+	'plugins_loaded',
+	function (): void {
+		\PhantomCore\Components\Component_Manager::get_instance()->init();
+		\PhantomCore\Registry\Template_Registry::get_instance()->register_defaults();
+	},
+	25
+);
+
 register_activation_hook(
 	__FILE__,
 	function (): void {
+		add_option( 'phantom_active_demo', 'kids' );
 		flush_rewrite_rules();
 	}
 );

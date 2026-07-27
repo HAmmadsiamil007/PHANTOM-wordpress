@@ -1,0 +1,139 @@
+/* Vibrant Demo Pack — Colorful Energetic Theme */
+:root {
+  --vibrant-primary: #FF6B35;
+  --vibrant-secondary: #004E89;
+  --vibrant-accent: #FFD166;
+  --vibrant-bg: #FFF8F0;
+  --vibrant-surface: #FFFFFF;
+  --vibrant-text: #1A1A2E;
+  --vibrant-gradient: linear-gradient(135deg, #FF6B35 0%, #F7C59F 50%, #004E89 100%);
+  --vibrant-gradient-cta: linear-gradient(135deg, #FF6B35, #FF8C42);
+  --font-heading: 'Clash Display', 'Satoshi', sans-serif;
+  --font-body: 'Satoshi', -apple-system, sans-serif;
+}
+
+body.vibrant-demo {
+  background: var(--vibrant-bg);
+  color: var(--vibrant-text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+.vibrant-demo h1, .vibrant-demo h2, .vibrant-demo h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.vibrant-demo .brand-logo {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.5rem;
+  background: var(--vibrant-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.vibrant-demo .btn-primary {
+  background: var(--vibrant-gradient-cta);
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  padding: 14px 32px;
+  color: white;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vibrant-demo .btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(255, 107, 53, 0.35);
+}
+
+.vibrant-demo .btn-outline {
+  border: 2px solid var(--vibrant-primary);
+  color: var(--vibrant-primary);
+  border-radius: 50px;
+  font-weight: 700;
+}
+
+.vibrant-demo .hero-headline {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 700;
+  line-height: 1;
+  background: var(--vibrant-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.vibrant-demo .hero-headline-accent {
+  display: block;
+}
+
+.vibrant-demo .product-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--vibrant-surface);
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vibrant-demo .product-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(255, 107, 53, 0.12);
+}
+
+.vibrant-demo .product-card .product-badge {
+  background: var(--vibrant-gradient-cta);
+  border-radius: 20px;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vibrant-demo .footer {
+  background: var(--vibrant-secondary);
+  color: white;
+}
+
+.vibrant-demo .announcement-bar {
+  background: var(--vibrant-gradient);
+  color: white;
+  font-weight: 700;
+}
+
+.vibrant-demo .section-label {
+  font-weight: 700;
+  color: var(--vibrant-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+}
+
+.vibrant-demo .newsletter-section {
+  background: var(--vibrant-gradient);
+  color: white;
+}
+
+.vibrant-demo .filter-btn {
+  border-radius: 50px;
+  padding: 8px 22px;
+  border: 1px solid var(--vibrant-primary);
+  color: var(--vibrant-primary);
+  background: transparent;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.vibrant-demo .filter-btn.active {
+  background: var(--vibrant-gradient-cta);
+  color: white;
+  border-color: transparent;
+}

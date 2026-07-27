@@ -65,7 +65,7 @@
 				</div>
 
 				<div class="header-icons">
-					<a href="<?php echo esc_url( home_url( '/?s=' ) ); ?>" class="search-toggle" aria-label="<?php esc_attr_e( 'Search', 'phantom-theme' ); ?>">
+					<a href="<?php echo esc_url( home_url( '/' ) . '#search' ); ?>" class="search-toggle" aria-label="<?php esc_attr_e( 'Search', 'phantom-theme' ); ?>">
 						<img src="<?php echo esc_url( PHANTOM_THEME_URL . '/assets/images/header-search.png' ); ?>" alt="<?php esc_attr_e( 'Search', 'phantom-theme' ); ?>">
 					</a>
 					<?php if ( class_exists( 'WooCommerce' ) ) : ?>

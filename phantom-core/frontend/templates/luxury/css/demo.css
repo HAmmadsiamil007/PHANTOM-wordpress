@@ -1,0 +1,137 @@
+/* Luxury Demo Pack — Dark Gold Premium Theme */
+:root {
+  --luxury-primary: #1A1A2E;
+  --luxury-secondary: #C9A94E;
+  --luxury-accent: #E8D5A3;
+  --luxury-bg: #0D0D1A;
+  --luxury-surface: #16213E;
+  --luxury-text: #F0E6D3;
+  --luxury-gold: #C9A94E;
+  --luxury-cream: #F5F0E8;
+  --font-heading: 'Playfair Display', 'Cormorant Garamond', serif;
+  --font-body: 'Cormorant Garamond', Georgia, serif;
+}
+
+body.luxury-demo {
+  background: var(--luxury-bg);
+  color: var(--luxury-text);
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.luxury-demo h1, .luxury-demo h2, .luxury-demo h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--luxury-cream);
+}
+
+.luxury-demo .brand-logo {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  letter-spacing: 0.1em;
+  color: var(--luxury-gold);
+  text-transform: uppercase;
+}
+
+.luxury-demo .btn-primary {
+  background: var(--luxury-gold);
+  border: none;
+  color: var(--luxury-bg);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 16px 40px;
+  border-radius: 0;
+  transition: all 0.4s ease;
+}
+
+.luxury-demo .btn-primary:hover {
+  background: var(--luxury-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(201, 169, 78, 0.3);
+}
+
+.luxury-demo .btn-outline {
+  border: 1px solid var(--luxury-gold);
+  color: var(--luxury-gold);
+  background: transparent;
+  border-radius: 0;
+  font-family: var(--font-heading);
+  letter-spacing: 0.05em;
+}
+
+.luxury-demo .header {
+  background: transparent;
+  border-bottom: 1px solid rgba(201, 169, 78, 0.15);
+  position: absolute;
+  width: 100%;
+  z-index: 100;
+}
+
+.luxury-demo .hero-headline {
+  font-family: var(--font-heading);
+  font-size: clamp(3.5rem, 10vw, 7rem);
+  line-height: 1;
+  color: var(--luxury-cream);
+  letter-spacing: 0.02em;
+}
+
+.luxury-demo .hero-headline-accent {
+  color: var(--luxury-gold);
+  display: block;
+  font-style: italic;
+}
+
+.luxury-demo .product-card {
+  background: var(--luxury-surface);
+  border: 1px solid rgba(201, 169, 78, 0.1);
+}
+
+.luxury-demo .product-card:hover {
+  border-color: var(--luxury-gold);
+  box-shadow: 0 8px 32px rgba(201, 169, 78, 0.15);
+}
+
+.luxury-demo .footer {
+  background: var(--luxury-surface);
+  border-top: 1px solid rgba(201, 169, 78, 0.1);
+}
+
+.luxury-demo .announcement-bar {
+  background: var(--luxury-gold);
+  color: var(--luxury-bg);
+  font-family: var(--font-heading);
+  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+}
+
+.luxury-demo .section-label {
+  color: var(--luxury-gold);
+  font-family: var(--font-heading);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.luxury-demo .newsletter-section {
+  background: var(--luxury-surface);
+  border-top: 1px solid rgba(201, 169, 78, 0.15);
+}
+
+.luxury-demo .filter-btn {
+  border: 1px solid rgba(201, 169, 78, 0.3);
+  color: var(--luxury-gold);
+  background: transparent;
+  font-family: var(--font-heading);
+  letter-spacing: 0.05em;
+  padding: 8px 24px;
+}
+
+.luxury-demo .filter-btn.active,
+.luxury-demo .filter-btn:hover {
+  background: var(--luxury-gold);
+  color: var(--luxury-bg);
+}

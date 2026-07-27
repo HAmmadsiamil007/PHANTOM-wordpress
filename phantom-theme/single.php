@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Single Post Template
  *
@@ -21,10 +22,10 @@ get_header(); ?>
 						</div>
 					<?php endif; ?>
 
-					<h1 class="post-title"><?php the_title(); ?></h1>
+					<h1 class="post-title"><?php echo esc_html( get_the_title() ); ?></h1>
 
 					<div class="post-meta">
-						<span class="post-date"><?php echo get_the_date(); ?></span>
+						<span class="post-date"><?php echo esc_html( get_the_date() ); ?></span>
 						<span class="post-author"><?php echo esc_html( get_the_author() ); ?></span>
 						<span class="post-categories"><?php the_category( ', ' ); ?></span>
 						<?php if ( has_tag() ) : ?>
