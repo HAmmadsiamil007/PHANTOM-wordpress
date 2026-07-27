@@ -12,17 +12,17 @@ PHP Backend (NEVER change this)
   │
   ├─ Shell.php: Routes URL → Loads HTML template
   │     ├─ Matches URL to internal route
-  │     ├─ Injects 96 CSS vars as <style>
+  │     ├─ Injects 136 CSS vars as <style>
   │     ├─ Injects SEO meta tags
   │     ├─ Injects phantomData JS config object
   │     ├─ Injects phantom-data.js
   │     └─ Outputs HTML + exit
   │
   ├─ rest-controller.php: phantom/v1 API
-  │     └─ 43 endpoints: settings, menus, products, posts, cart, auth
+  │     └─ 49 routes (42 unique paths): settings, menus, products, posts, cart, auth
   │
   └─ class-customizer.php: CSS var generation
-        └─ 96 CSS vars injected into every page
+        └─ 136 CSS vars injected into every page
 
 Frontend (100% replaceable)
   │
@@ -31,19 +31,22 @@ Frontend (100% replaceable)
   └─ frontend/assets/css/ — CSS files
 ```
 
-### 6 Critical Connection Points (Must Not Break)
+### 12 Critical Connection Points (Must Not Break)
 
 | # | Connection | What It Does | If Broken |
 |---|-----------|-------------|-----------|
 | 1 | **Route slug** → Shell.php maps URL to HTML file | `/shop` → `frontend/shop.html` | 404 on page |
-| 2 | **CSS var names** → Injected as `<style id="phantom-customizer-css">` | Changes colors/fonts/layout via Customizer | Customizer has no effect |
+| 2 | **CSS var names** → Injected as `<style id="phantom-customizer-css">` (136 vars) | Changes colors/fonts/layout via Customizer | Customizer has no effect |
 | 3 | **`data-phantom` attributes** → JS injects content | Text, images, links from settings | Static fallback content shows |
-| 3b | **Template strings** → `PRODUCT_CARD_TPL` / `CATEGORY_CARD_TPL` in phantom-data.js | If changing card HTML, update template string, not JS DOM logic | Cards silently diverge from template |
-| 4 | **CSS class names** → phantom-data.js queries by class | Cart badge, menu toggle, search | Feature silently breaks |
-| 5 | **`phantomData` JS object** → Injected by Shell, consumed by JS | Contains REST URL, nonce, settings | Everything breaks |
-| 6 | **REST API URL** → Fetch target for all dynamic data | `phantomData.rest_url + 'phantom/v1/...'` | No data loads |
-| 7 | **`#swup` container** → Swup.js replaces content on navigation | SPA page transitions | Full page reload on every click |
-| 8 | **`#contactpage` form** → Checkout form data collection | Shipping, payment, order submission | Checkout breaks |
+| 4 | **Template strings** → `ProductCard.template` / `CategoryCard.template` in phantom-data.js | If changing card HTML, update template string, not JS logic | Cards silently diverge from template |
+| 5 | **CSS class names** → phantom-data.js queries by class | Cart badge, menu toggle, search | Feature silently breaks |
+| 6 | **`PhantomData` JS object** → Injected by Shell, consumed by JS | Contains REST URL, nonce, settings | Everything breaks |
+| 7 | **REST API URL** → Fetch target for all dynamic data | `PhantomServices.Api.baseUrl + '/phantom/v1/...'` | No data loads |
+| 8 | **`#swup` container** → Swup.js replaces content on navigation | SPA page transitions | Full page reload on every click |
+| 9 | **`#contactpage` form** → Checkout form data collection | Shipping, payment, order submission | Checkout breaks |
+| 10 | **Settings Registry** → `define_entries()` defines all ~612 settings | Every `data-phantom` attribute's data source | Missing keys show fallback text |
+| 11 | **Layout Registry** → 7 default layouts control structure | Page template selection and layout variants | Layout options unavailable |
+| 12 | **Plugin Bridges** → Bridge_Manager with WooCommerce bridge | WC product/cart/checkout integration | WooCommerce features fail |
 
 ---
 
@@ -286,8 +289,8 @@ console.log(window.phantomData.rest_url);
 ### Phase 1: Audit (do this first)
 - [ ] Show current templates in `frontend/`
 - [ ] List all `data-phantom` attributes and their types
-- [ ] Map all 43 REST API endpoints
-- [ ] Note all 96 CSS var usages in CSS files
+- [ ] Map all 49 REST API routes (42 unique paths)
+- [ ] Note all 136 CSS var usages in CSS files
 - [ ] Identify hardcoded vs dynamic content
 
 ### Phase 2: Build New Templates

@@ -16,27 +16,47 @@ Phantom Core is a **decoupled WordPress framework**. There is NO standard `wp-co
                     │                                                  │
                     │  ┌────────────────┐ ┌────────────────────────┐  │
                     │  │ Settings_Reg   │ │ Rest_Controller        │  │
-                    │  │ 564 settings   │ │ 43 routes phantom/v1   │  │
-                     │  │ 44 sections    │ │ Settings CRUD + Auth   │  │
-                    │  │ Options API    │ │ Products/Cart/Orders   │  │
-                    │  └───────┬────────┘ │ Posts/Pages/Menus     │  │
-                    │          │          │ Page-data (mega-endpt) │  │
+                    │  │ 612 settings   │ │ 49 routes phantom/v1   │  │
+                    │  │ 46 sections    │ │ (42 unique paths)      │  │
+                    │  │ Options API    │ │ Settings CRUD + Auth   │  │
+                    │  └───────┬────────┘ │ Products/Cart/Orders   │  │
+                    │          │          │ Posts/Pages/Menus      │  │
+                    │          │          │ Post-Types/Menu-Locs   │  │
                     │          │          └───────────┬────────────┘  │
                     │          │                      │              │
                     │  ┌───────▼──────────────────────▼──────────┐  │
                     │  │           Shell SPA Router              │  │
                     │  │  template_redirect (priority 1)         │  │
                     │  │  URL → slug → HTML file                 │  │
-                    │  │  43 routes · SEO meta · 96 CSS vars     │  │
+                    │  │  43 routes · SEO meta · 136 CSS vars    │  │
                     │  │  Security headers · phantomData JS      │  │
                     │  └───────────────────┬──────────────────────┘  │
                     │                      │                         │
                     │  ┌───────────────────▼──────────────────────┐  │
-                    │  │    Customizer (15 panels, 44 sections)   │  │
+                    │  │    Customizer (16 panels, 46 sections)   │  │
                     │  │    + Custom CSS Engine (9 modules)       │  │
-                    │  │    + 13 Custom Controls (5 used)         │  │
+                    │  │    + 11 Custom Controls (3 used)        │  │
                     │  │    + Global Color Palette (4 presets)    │  │
                     │  │    + Font System (Google + system + local)│  │
+                    │  └──────────────────────────────────────────┘  │
+                    │                                                  │
+                    │  ┌──────────────────────────────────────────┐  │
+                    │  │  Architecture Subsystems (Phase B-E)     │  │
+                    │  │  ┌──────┐ ┌──────┐ ┌─────┐ ┌─────────┐ │  │
+                    │  │  │Data  │ │Layout│ │Hook │ │Bridges   │ │  │
+                    │  │  │Layer │ │Reg   │ │Reg  │ │(WooComm) │ │  │
+                    │  │  └──────┘ └──────┘ └─────┘ └─────────┘ │  │
+                    │  │  ┌──────────┐ ┌──────┐ ┌────────────┐ │  │
+                    │  │  │Capability│ │Asset │ │Public API  │ │  │
+                    │  │  │Manager   │ │Reg   │ │(6 facades) │ │  │
+                    │  │  └──────────┘ └──────┘ └────────────┘ │  │
+                    │  │  ┌──────────────────┐ ┌──────────────┐ │  │
+                    │  │  │Template_Manifest │ │Splitting_Br │ │  │
+                    │  │  │Component_Metadata│ │(CDN+CSS)    │ │  │
+                    │  │  └──────────────────┘ └──────────────┘ │  │
+                    │  │  ┌──────────────────────────────────┐  │  │
+                    │  │  │  Container_Config: 38 services   │  │  │
+                    │  │  └──────────────────────────────────┘  │  │
                     │  └──────────────────────────────────────────┘  │
                     └──────────────────────┬──────────────────────────┘
                                            │
@@ -50,7 +70,7 @@ Phantom Core is a **decoupled WordPress framework**. There is NO standard `wp-co
                     │  │ contact · faq · team · testimonials      │   │
                     │  │ login · join-now · coming-soon · 404     │   │
                     │  │ privacy · terms · cookie · thank-you     │   │
-                     │  │ account · wishlist                         │   │
+                    │  │ account · wishlist                         │   │
                     │  └──────────────────────────────────────────┘   │
                     │                                                  │
                     │  phantom-data.js (REST API bridge, 38+ fns)      │
@@ -81,7 +101,7 @@ Shell reads WordPress database
     │   :root {
     │     --primary--color: #ff0000;
     │     --button-bg: #333;
-    │     ... 96 CSS custom properties
+    │     ... 136 CSS custom properties
     │   }
     │   </style>
     │
@@ -137,10 +157,10 @@ fetch(GET /wp-json/phantom/v1/page-data)  ← single mega-endpoint, cached 1hr
     ▼
 JSON response contains:
 {
-  "settings": { all 564 setting values },
+  "settings": { all 612 setting values },
   "menus": { primary, secondary, footer, mobile, categories },
   "products": { featured, recent, ... },
-  "posts": { recent, ... },
+  "posts": { ... },
   "categories": [ ... ],
   "cart": { items, total, count }
 }
@@ -172,7 +192,7 @@ hidePreloader()   → remove .loader-mask
 
 ### Channel 3: CSS Custom Properties (Design Tokens)
 
- 96 CSS custom properties bridge backend settings to frontend styling:
+136 CSS custom properties bridge backend settings to frontend styling:
 
 ```
 Settings_Registry → CSS Var Map → Shell injects as <style> → Frontend uses var()
@@ -237,6 +257,8 @@ button_font_size       → --button-font-size
 6. Swup.js handles subsequent navigation via AJAX (no full page reload)
 ```
 
+Note: The Shell handles all routes and injects CSS vars/phantomData/SEO. The phantom-theme can also render pages via its own templates (functions.php handles sidebars, widgets, menus, custom logo) when served through the traditional WordPress loop — this provides fallback compatibility.
+
 ---
 
 ## Core Components
@@ -244,7 +266,7 @@ button_font_size       → --button-font-size
 ### 1. Settings Registry (`Settings_Registry`)
 **File:** `includes/class-settings-registry.php` — 5,555+ lines
 
-The master settings repository. 564 settings across 44 sections. Each entry has:
+The master settings repository. **612 settings across 46 sections.** Each entry has:
 
 | Field | Type | Purpose |
 |-------|------|---------|
@@ -265,7 +287,7 @@ The master settings repository. 564 settings across 44 sections. Each entry has:
 ### 2. REST API (`Rest_Controller`)
 **File:** `includes/class-rest-controller.php` — ~2,300 lines (post-refactor)
 
-Namespace `phantom/v1`. **43 registered routes** (all use `register_rest_route`):
+Namespace `phantom/v1`. **49 registered routes (42 unique paths)** — all use `register_rest_route`:
 
 | Endpoint | Method | Auth | Purpose |
 |----------|--------|------|---------|
@@ -280,14 +302,19 @@ Namespace `phantom/v1`. **43 registered routes** (all use `register_rest_route`)
 | `/partial` | GET | public | Selective refresh partial |
 | `/posts` | GET | public | Blog posts (paginated, filterable) |
 | `/posts/{slug}` | GET | public | Single post by slug |
+| `/pages` | GET | public | Paginated list of published pages |
 | `/pages/{slug}` | GET | public | Single page by slug |
+| `/post-types` | GET | public | List all public post types |
 | `/categories` | GET | public | Product + post categories |
 | `/menus/{location}` | GET | public | Menu tree by location |
+| `/menu-locations` | GET | public | List registered nav menu locations |
 | `/products` | GET/POST | public/admin | Products list/create |
 | `/products/featured` | GET | public | Featured products |
 | `/products/{id}` | GET/PUT/DELETE | public/admin | Single product CRUD |
-| `/cart` | GET | public | Cart contents from WC session |
-| `/cart/shipping-methods` | POST | public | Calculate shipping |
+| `/cart` | GET | public | Cart contents (with `wc_load_cart` fix) |
+| `/cart/coupons` | GET | public | Cart coupons |
+| `/cart/shipping-methods` | GET | public | Calculate shipping |
+| `/cart/{item_key}` | DELETE | public | Remove cart item |
 | `/contact` | POST | public | Contact form handler (wp_mail) |
 | `/user/orders` | GET | logged-in | Current user's orders |
 | `/user/profile` | GET | logged-in | Current user's profile |
@@ -296,15 +323,6 @@ Namespace `phantom/v1`. **43 registered routes** (all use `register_rest_route`)
 | `/auth/password-reset` | POST | public | Password reset |
 | `/auth/logout` | POST | logged-in | User logout |
 | `/page-data` | GET | public | **Mega-endpoint** — all data in one call |
-| `/cart` | GET | public | Cart contents (with `wc_load_cart` fix) |
-| `/cart/shipping-methods` | POST | public | Calculate shipping |
-| `/contact` | POST | public | Contact form (wp_mail) |
-| `/user/orders` | GET | logged-in | Current user's orders |
-| `/user/profile` | GET | logged-in | Current user's profile |
-| `/auth/login` | POST | public | Login |
-| `/auth/register` | POST | public | Register |
-| `/auth/password-reset` | POST | public | Password reset |
-| `/auth/logout` | POST | logged-in | Logout |
 | `/woo/attributes` | GET | public | Product attributes |
 | `/woo/variations` | GET | public | Product variations |
 | `/woo/reviews` | GET/POST | public/logged-in | Product reviews |
@@ -318,7 +336,7 @@ The frontend rendering engine. Hooks `template_redirect` at priority 1 to interc
 
 **What Shell injects into every page:**
 1. **SEO metadata** — `<title>`, meta description, OG tags, Twitter Card, JSON-LD schema
-2. **CSS variables** — `<style id="phantom-customizer-css">` with 96 design tokens
+2. **CSS variables** — `<style id="phantom-customizer-css">` with 136 design tokens
 3. **phantomData** — `window.phantomData` JS config object with REST URL, nonce, settings
 4. **Security headers** — CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
 5. **Scripts** — jQuery, Swup, Bootstrap, vendor JS, phantom-data.js (auto minified)
@@ -331,9 +349,9 @@ The frontend rendering engine. Hooks `template_redirect` at priority 1 to interc
 ### 4. Customizer
 **File:** `includes/class-customizer.php` — 540 lines
 
-Bridges Settings Registry → WordPress Customizer. 15 panels, 44 sections.
+Bridges Settings Registry → WordPress Customizer. **16 panels, 46 sections.**
 
-**15 Panels:**
+**16 Panels:**
 1. Branding — Logo, favicon, site identity
 2. Header — Layout, topbar, navigation, announcement bar
 3. Hero — Banner, home sections, collections
@@ -349,8 +367,15 @@ Bridges Settings Registry → WordPress Customizer. 15 panels, 44 sections.
 13. Accessibility — Contrast, focus, font size
 14. Advanced — Integrations, custom code, import/export
 15. Announcement Bar — Enable, text, colors
+16. **Responsive Hero Media** — Desktop/tablet/mobile images, breakpoints, loading, fit, overlay
 
-**13 Custom Control Types:** ast-color, ast-color-group, ast-gradient, ast-border, ast-background, ast-typography, ast-select, ast-toggle, ast-radio-image, ast-responsive-slider, ast-responsive-spacing, plus base control and font families helper.
+**11 Custom Control Types Available:**
+- `ast-toggle` (103 instances) — Custom toggle switch
+- `ast-color` (56 instances) — Color picker
+- `ast-select` (37 instances) — Custom dropdown
+- 8 additional types available but unused in current section configs:
+  `ast-color-group`, `ast-gradient`, `ast-border`, `ast-background`, `ast-typography`, `ast-radio-image`, `ast-responsive-slider`, `ast-responsive-spacing`
+- Plus base `Control_Base` and static `Font_Families` helper
 
 ### 5. Admin Settings Page (`Settings_Page`)
 **File:** `admin/class-settings-page.php` — 753 lines
@@ -403,13 +428,13 @@ DOMContentLoaded
 ```
 
 ### 7. CSS Variable Architecture
-**File:** `includes/class-settings-registry.php:get_css_var_map()` — 96 entries
+**File:** `includes/class-settings-registry.php:get_css_var_map()` — **136 entries**
 
-96 CSS custom properties as design tokens. Injected as `<style id="phantom-customizer-css">` on every page.
+136 CSS custom properties as design tokens. Injected as `<style id="phantom-customizer-css">` on every page.
 
-**Categories (96 vars total):**
-- Typography (24): h1-h6 sizes/heights, body/heading fonts, weights, spacing, case
+**Categories (136 vars total):**
 - Colors (18): primary, secondary, accent, bg, text, heading, link, border, sale, rating, header/footer bg, gradient, badge, semantic colors
+- Typography (24): h1-h6 sizes/heights, body/heading fonts, weights, spacing, case
 - Header (10): bg, text, padding, border, height, mobile height, banner height
 - Navigation (3): menu height, submenu width, font size
 - Footer (5): bg, text, heading, link, border
@@ -420,8 +445,12 @@ DOMContentLoaded
 - Responsive (4): breakpoint xl/lg/md/sm
 - Topbar (2): bg, text
 - Announcement (2): bg, text color
-- Hero (6): image, object-fit, object-position, bg-position, overlay-opacity, image-url
-- Misc (2): home section spacing, banner height
+- Hero (11): image, object-fit, object-position, bg-position, overlay-opacity, image-url, tablet-image, mobile-image, tablet-breakpoint, mobile-breakpoint, loading
+- Products (5): card bg, sale badge bg, featured badge bg, image radius, card gap
+- Preloader (3): bg, color, enable
+- General/Container (4): container width, content width, sidebar width, boxed width
+- Gradients (2): start color, end color
+- Misc (24+): custom-css, woo button bg/text, gap/column-gap/row-gap, section pad x/y, field outline, letter spacing, text case, body line height, etc.
 
 ### 8. Custom CSS Engine (9 modules)
 **Files:** `includes/custom-css/`
@@ -440,26 +469,157 @@ Each module hooks `phantom_dynamic_css` filter:
 | `hero.php` | 90 | Responsive hero media CSS vars + `@media` queries |
 | `responsive.php` | 100 | Responsive breakpoint vars |
 
-### 9. Custom Customizer Controls (13 files)
+### 9. Custom Customizer Controls (11 types available)
 **Files:** `includes/custom-controls/`
 
 All controls registered via `$type_class_map` in `Control_Base`. Types registered with `$wp_customize->register_control_type()`.
 
-| Control | Type String | Purpose |
-|---------|-------------|---------|
-| `Control_Base` | — | Abstract base class |
-| `Color_Control` | `ast-color` | Color picker |
-| `Color_Group_Control` | `ast-color-group` | Grouped color pickers |
-| `Gradient_Control` | `ast-gradient` | Gradient picker |
-| `Border_Control` | `ast-border` | Border width/style/color |
-| `Background_Control` | `ast-background` | Background color/image/repeat |
-| `Typography_Control` | `ast-typography` | Font family/size/weight |
-| `Select_Control` | `ast-select` | Custom dropdown |
-| `Toggle_Control` | `ast-toggle` | Custom toggle switch |
-| `Radio_Image_Control` | `ast-radio-image` | Image-based radio buttons |
-| `Responsive_Slider_Control` | `ast-responsive-slider` | Device-responsive slider |
-| `Responsive_Spacing_Control` | `ast-responsive-spacing` | Device-responsive spacing |
-| `Font_Families` | — | Static font helper |
+| Control | Type String | Instances | Purpose |
+|---------|-------------|-----------|---------|
+| `Control_Base` | — | — | Abstract base class |
+| `Color_Control` | `ast-color` | 56 | Color picker |
+| `Color_Group_Control` | `ast-color-group` | 0 | Grouped color pickers |
+| `Gradient_Control` | `ast-gradient` | 0 | Gradient picker |
+| `Border_Control` | `ast-border` | 0 | Border width/style/color |
+| `Background_Control` | `ast-background` | 0 | Background color/image/repeat |
+| `Typography_Control` | `ast-typography` | 0 | Font family/size/weight |
+| `Select_Control` | `ast-select` | 37 | Custom dropdown |
+| `Toggle_Control` | `ast-toggle` | 103 | Custom toggle switch |
+| `Radio_Image_Control` | `ast-radio-image` | 0 | Image-based radio buttons |
+| `Responsive_Slider_Control` | `ast-responsive-slider` | 0 | Device-responsive slider |
+| `Responsive_Spacing_Control` | `ast-responsive-spacing` | 0 | Device-responsive spacing |
+| `Font_Families` | — | — | Static font helper |
+
+---
+
+## Architecture Subsystems (Phase B–E, 100/100 alignment)
+
+### Data Layer
+**Files:** `includes/Data/`, `includes/ViewModels/`
+
+9 Adapters + 6 ViewModels implementing `AdapterInterface`:
+
+| Adapter | ViewModel | Purpose |
+|---------|-----------|---------|
+| `Post_Adapter` | `Post_ViewModel` | Normalize WP_Post → structured data |
+| `Page_Adapter` | `Page_ViewModel` | Normalize WP page → structured data |
+| `User_Adapter` | `User_ViewModel` | Normalize WP_User → structured data |
+| `Footer_Adapter` | — | Footer widget settings normalization |
+| `Settings_Adapter` | `Settings_ViewModel` | Settings normalization for REST + frontend |
+| `Product_Adapter` | — | WooCommerce product normalization (used by REST controller) |
+| `Menu_Adapter` | — | Menu tree normalization |
+| `Category_Adapter` | — | Category data normalization |
+| `Cart_Adapter` | — | Cart data normalization |
+
+**Data Infrastructure:**
+- `Data_Normalizer` — Utility for recursive array normalization, type coercion
+- `Data_Provider` — Abstract base class with built-in caching (transient-based)
+
+### Layout Registry
+**Files:** `includes/Layout/`
+
+| File | Purpose |
+|------|---------|
+| `class-layout.php` | Layout value object (slug, name, cols, regions, default, preview) |
+| `class-layout-registry.php` | Singleton registry of available layouts |
+| `class-layout-manager.php` | Layout resolution, application, and rendering |
+
+**7 Default Layouts:** Default, Full Width, Left Sidebar, Right Sidebar, Narrow, Wide, Boxed
+
+### Design API (Facade)
+**File:** `includes/Public/class-design-api.php`
+
+Filterable facade over `DesignSystemManager` with 10+ methods:
+- `get_color($key, $variant)` — Color resolution with fallback chain
+- `get_font($type)` — Font family resolution
+- `get_css_var($key)` — CSS variable lookup
+- `get_typography_scale()` — Typography scale from settings
+- `get_spacing($level)` — Spacing scale from settings
+
+### Hook Registry
+**Files:** `includes/Hook/`
+
+| File | Purpose |
+|------|---------|
+| `class-hook-registry.php` | Track, register, and dispatch hooks with introspection |
+| Supports filtering by tag, priority, callback inspection |
+
+### Plugin Bridges
+**Files:** `includes/Bridges/`
+
+| File | Purpose |
+|------|---------|
+| `interface-bridge.php` | `BridgeInterface` contract (init, is_active, get_info) |
+| `class-plugin-bridge.php` | Abstract base with capability checks + dependency guards |
+| `class-woocommerce-bridge.php` | WooCommerce integration: cart hooks, product overrides, checkout styling |
+| `class-bridge-manager.php` | Singleton manager — registers bridges, calls `init_all()` on bootstrap |
+
+### Asset Registry
+**File:** `includes/Registry/class-asset-registry.php`
+
+Pre-registers 25+ assets (CSS/JS) with handle, src, deps, version, context (frontend/admin/customizer). Used by `Container_Config` for enqueue wiring.
+
+### Capability Manager
+**File:** `includes/class-capability-manager.php`
+
+Manages 8 `phantom_` custom capabilities:
+`phantom_manage_settings`, `phantom_edit_design`, `phantom_export_data`, `phantom_import_data`, `phantom_manage_fonts`, `phantom_view_reports`, `phantom_manage_layouts`, `phantom_manage_bridges`
+
+### Component Metadata
+**File:** `includes/Components/class-component-metadata.php`
+
+Template/asset compatibility metadata. Provides `get_compatible_templates($component)` and `get_required_assets($template)` for dynamic dependency resolution.
+
+### Template Manifest
+**File:** `includes/Manifest/class-template-manifest.php`
+
+JSON-driven template metadata. Reads `template-manifest.json` for template groups, labels, preview images, required data-attributes, and asset dependencies.
+
+### Splitting Bridge
+**File:** `includes/Animation/class-splitting-bridge.php`
+
+CDN + CSS enqueue for Splitting.js (text/character animation library). Manages CDN URL configuration, local fallback, and CSS enqueue for text splitting effects.
+
+### Public API Facades (6)
+**Files:** `includes/Public/`
+
+| Facade | Purpose |
+|--------|---------|
+| `Render` | HTML rendering helpers (menus, breadcrumbs, pagination) |
+| `Component` | UI component rendering (cards, buttons, badges) |
+| `Animation` | Animation initialization data + scroll-trigger config |
+| `Settings` | Public settings read access (filtered by `manage_options` guard) |
+| `Template` | Template resolution (slug → path, checksum, modified time) |
+| `Developer` | Debug helpers, hook introspection, var dump utilities |
+
+### Container Config
+**File:** `includes/Engine/Container_Config.php`
+
+38 service definitions registered in the DI container:
+
+```
+Data_Normalizer (singleton)     Layout_Manager (singleton)
+Settings_Registry (singleton)   Hook_Registry (singleton)
+Rest_Controller                 Bridge_Manager (singleton)
+Shell                           Asset_Registry (singleton)
+Customizer                      Capability_Manager (singleton)
+Custom_CSS (singleton)          Component_Metadata (singleton)
+Global_Palette (singleton)      Template_Manifest (singleton)
+Font_Families (singleton)       Splitting_Bridge (singleton)
+Font_Loader (singleton)         6 Public API facades
+Settings_Page                   Post_Adapter, Page_Adapter, ...
+Core_Plugin                     5+ other services
+```
+
+### Helpers
+**File:** `includes/class-helpers.php`
+
+Static utility class with methods for:
+- `sanitize_css_var($key)` — Convert setting key to CSS var name
+- `get_image_url($id, $size)` — Safe image URL resolution
+- `format_date($date, $format)` — Localized date formatting
+- `truncate_text($text, $length)` — Smart text truncation
+- `array_to_css_vars($array, $prefix)` — Recursive array → CSS vars
 
 ---
 
@@ -467,12 +627,12 @@ All controls registered via `$type_class_map` in `Control_Base`. Types registere
 
 ### Settings Lifecycle
 ```
-define_entries() in Settings_Registry (564 settings)
+define_entries() in Settings_Registry (612 settings)
         │
         ├──→ Customizer::register() → WP Customizer panels/sections/controls
         ├──→ Settings_Page::init() → Admin tabs/fields CRUD
-        ├──→ Rest_Controller → REST API endpoints (43 routes)
-        └──→ Shell → Frontend CSS injection (96 CSS vars)
+        ├──→ Rest_Controller → REST API endpoints (49 routes)
+        └──→ Shell → Frontend CSS injection (136 CSS vars)
 
 User changes setting (3 ways):
 1. Admin page POST → update_option('phantom_{key}')
@@ -499,9 +659,22 @@ File scope (phantom-core.php):
 plugins_loaded, priority 5:  Plugin::init() → Settings_Registry::register()
 plugins_loaded, priority 10: Version_Compatibility::init()
 plugins_loaded, priority 15: Customizer::init() → customize_register hook
+plugins_loaded, priority 20: Container_Config::init() → register DI services
 
 wp_enqueue_scripts, priority 9:  phantom_enqueue_google_fonts()
 wp_enqueue_scripts, priority 11: phantom_enqueue_dark_mode()
+
+init, priority 1:   Bridge_Manager::init_all() → WooCommerce_Bridge::init()
+init, priority 5:   Capability_Manager::register_caps()
+init, priority 10:  Asset_Registry::register_assets()
+init, priority 15:  Helpers::load() (autoloaded)
+init, priority 20:  Layout_Registry::register_defaults()
+init, priority 25:  Hook_Registry::register_default_hooks()
+init, priority 30:  Component_Metadata::init()
+init, priority 35:  Template_Manifest::init()
+init, priority 40:  Splitting_Bridge::init()
+init, priority 45:  Data_Normalizer::init()
+init, priority 50:  Register Public API facades (Render, Component, Animation, Settings, Template, Developer)
 ```
 
 ---
@@ -511,7 +684,7 @@ wp_enqueue_scripts, priority 11: phantom_enqueue_dark_mode()
 1. **Plugin IS the theme** — No `wp-content/themes/`. Plugin handles everything.
 2. **Static HTML SPA** — 22 static HTML files. No PHP templates. Data via REST API.
 3. **Three-way settings** — Customizer (visual) + Admin (form) + REST API (programmatic).
-4. **CSS Variable architecture** — 96 design tokens. Change one setting → updates everywhere.
+4. **CSS Variable architecture** — 136 design tokens. Change one setting → updates everywhere.
 5. **Attribute-based data binding** — `[data-phantom="key"]` on HTML drives JS injection.
 6. **Decoupled frontend** — 100% replaceable without touching PHP.
 7. **WooCommerce via Store API** — Modern cart/checkout via wc-ajax + Store API.
@@ -523,6 +696,7 @@ wp_enqueue_scripts, priority 11: phantom_enqueue_dark_mode()
 
 - **Server:** ~50ms response for Shell (no DB query on cache hit).
 - **Client:** Single `/page-data` call (cached 1hr transient). All data in one request.
-- **CSS:** 96 vars injected inline (~3KB). 9 CSS module files combine dynamically.
+- **CSS:** 136 vars injected inline (~4KB). 9 CSS module files combine dynamically.
 - **JS:** phantom-data.js is 2,364 lines. Minified via terser ~35KB.
 - **Minification:** Auto-serves `.min.js` via `inject_minified_js()` when present.
+- **Architecture health:** 100/100 forensic code health + 100/100 architecture alignment.

@@ -13,7 +13,7 @@ frontend/
 │   └── images/         # Static images (logos, products, icons)
 ```
 
-**No PHP templates. No server-side rendering.** All dynamic data injected client-side via REST API (43 endpoints).
+**No PHP templates. No server-side rendering.** All dynamic data injected client-side via REST API (49 routes, 42 unique paths).
 
 ---
 
@@ -22,7 +22,7 @@ frontend/
 ### Channel 1: Server Injection (Shell.php → HTML)
 On every request, `Shell::handle_request()` injects into the HTML:
 ```
-<style id="phantom-customizer-css">  ← 96 CSS vars from settings
+<style id="phantom-customizer-css">  ← 136 CSS vars from settings
 <script>window.phantomData = {...}</script>  ← REST URL, nonce, site info
 <title>, <meta>  ← SEO metadata
 Security Headers  ← CSP, X-Frame-Options, etc.
@@ -39,7 +39,7 @@ window.phantomData.rest_url + 'phantom/v1/page-data'
 ### Channel 3: CSS Vars (Settings → CSS → Styling)
 Backend settings become CSS custom properties:
 ```
-primary_color → --primary--color (96 vars total)
+primary_color → --primary--color (136 vars total)
 Frontend CSS: background: var(--primary--color, #default);
 ```
 
@@ -292,7 +292,7 @@ These class names are hardcoded in JS. If you rename them in HTML, the JS functi
 | Cart display | REST `/phantom/v1/cart` | `.shopping-cart-info`, `.cart-count` |
 | Product data | REST `/phantom/v1/products` | `[data-phantom-products]` |
 | Coupon | POST `/phantom/v1/cart/coupon` | `.coupon-input`, `.apply-coupon-btn` |
-| Shipping | POST `/phantom/v1/cart/shipping-methods` | `.checkout-shipping-section` |
+| Shipping | GET `/phantom/v1/cart/shipping-methods` | `.checkout-shipping-section` |
 | Reviews | GET `/phantom/v1/woo/reviews` | `.reviews-container` |
 | Attributes | GET `/phantom/v1/woo/attributes` | Product filters |
 | Variations | GET `/phantom/v1/woo/variations` | Product options |
@@ -343,7 +343,7 @@ Permissions-Policy: geolocation=(), microphone=(), camera=()
 | File | Purpose | When to Edit |
 |------|---------|-------------|
 | `frontend/*.html` | Page templates | Change layout, add/remove sections |
-| `frontend/assets/js/phantom-data.js` | Core data bridge (2364 lines) | Change data injection logic |
+| `frontend/assets/js/phantom-data.js` | Core data bridge (718 lines) | Change data injection logic |
 | `frontend/assets/js/phantom-bridge.js` | Utility helpers | Add shared helper functions |
 | `frontend/assets/js/phantom-dark-mode.js` | Dark mode toggle | Change dark mode behavior |
 | `frontend/assets/css/style.css` | Theme CSS | Change visual styling |
@@ -351,49 +351,23 @@ Permissions-Policy: geolocation=(), microphone=(), camera=()
 | `frontend/assets/css/a11y.css` | Accessibility styles | Skip link, focus, reduced motion |
 | `frontend/assets/images/` | Static assets | Add/replace images |
 
-### phantom-data.js Function Reference (2,364 lines, 38+ functions)
+### phantom-data.js Module Reference (718 lines, 55+ methods)
 
-| Function | Lines | Purpose |
-|----------|-------|---------|
-| `escapeHtml()` | 14 | HTML entity escaping |
-| `sanitizeUrl()` | 18 | URL validation (http/https/mailto/tel only) |
-| `resolveUrl()` | 12 | Resolves relative URLs using plugin_url |
-| `getSetting()` | 8 | Get setting value from cached settings |
-| `renderTemplate()` | 5 | Mustache-style `{{KEY}}` template string renderer |
-| `adaptProductCard()` | ~110 | Data adapter: normalizes raw WooCommerce product → flat object for template |
-| `adaptCategoryCard()` | ~16 | Data adapter: normalizes category → flat object for template |
-| `buildMenuHTML()` | 50 | Build menu tree from API data |
-| `injectMenus()` | 25 | Populate `[data-phantom-menu]` elements |
-| `injectSettings()` | 50 | Process all `[data-phantom]` attributes |
-| `injectBanner()` | 30 | Hero/banner content injection |
-| `injectFooter()` | 25 | Footer content injection |
-| `injectSEO()` | 20 | Meta tag injection |
-| `injectProducts()` | 80 | Product grid renderer (uses adaptProductCard + renderTemplate + PRODUCT_CARD_TPL) |
-| `injectPosts()` | 60 | Blog post grid renderer |
-| `injectCart()` | 35 | Cart display from REST API |
-| `injectCategories()` | 15 | Category list injection (uses adaptCategoryCard + renderTemplate + CATEGORY_CARD_TPL) |
-| `injectSinglePost()` | 40 | Single blog post content |
-| `injectSingleProduct()` | 50 | Single product page content |
-| `initWooCommerce()` | 40 | Bind cart/checkout events |
-| `initCheckout()` | 50 | Checkout form handler |
-| `initShipping()` | 35 | Shipping method fetch + render |
-| `initShopControls()` | 35 | Product pagination + sorting |
-| `initBlogPagination()` | 30 | Blog page navigation |
-| `initAuthForms()` | 40 | Login/register/reset form handlers |
-| `initLogout()` | 15 | Logout click handler |
-| `initMyAccount()` | 35 | Fetch + render user orders |
-| `initSearch()` | 40 | Live search with suggestions |
-| `initQuickViewEvents()` | 30 | Product quick view modal |
-| `initImageZoom()` | 20 | Product image zoom on hover |
-| `initWishlistEvents()` | 25 | Wishlist toggle |
-| `initAnimations()` | 30 | 3D tilt, scroll reveal |
-| `hidePreloader()` | 8 | Remove loading screen |
-| `updateCartCount()` | 12 | Cart badge number |
-| `updateCartTotal()` | 10 | Cart total price |
-| `renderRelatedProducts()` | 30 | Related products grid |
-| `showAddToCartNotification()` | 15 | Toast notification |
-| `closeCartDrawer()` | 10 | Close side cart |
-| `mobileMenuToggle()` | 15 | Hamburger menu |
-| `stickyHeader()` | 12 | Scroll listener |
-| `renderSearchSuggestions()` | 25 | Suggestion dropdown |
-| `init()` | 55 | Main entry — orchestrates all inits |
+The file is organized as 11 IIFE modules under `window.Phantom*` namespaces:
+
+| Module | Namespace | Methods | Purpose |
+|--------|-----------|---------|---------|
+| Event Services | `PhantomEvents` | `on()`, `off()`, `emit()`, `onSettingChange()`, `offSettingChange()`, `emitSettingChange()`, `consumeStore()` | Pub/sub event system for settings and cart changes |
+| API Service | `PhantomServices.Api` | `get()`, `post()`, `invalidateCache()`, `getProducts()`, `getPageData()`, `getCart()`, `postContact()`, `fetchWithRetry()`, `getNonce()`, `setSetting()`, `saveChanges()` | REST API client with caching and retry |
+| Cart Service | `PhantomServices.Cart` | `init()`, `add()`, `remove()`, `updateQuantity()`, `getCount()`, `getTotal()` | Cart CRUD with event emissions |
+| Auth Service | `PhantomServices.Auth` | `login()`, `register()`, `logout()`, `resetPassword()` | Authentication endpoints |
+| Product Adapter | `PhantomAdapters.ProductAdapter` | `normalize()`, `normalizeCollection()` | Normalizes raw WooCommerce product data |
+| Category Adapter | `PhantomAdapters.CategoryAdapter` | `normalize()`, `normalizeCollection()` | Normalizes category data |
+| Component Renderer | `PhantomRenderer.ComponentRenderer` | `renderTemplate()`, `escapeHtml()`, `sanitizeUrl()`, `getCurrencySymbol()`, `createElement()` | Low-level rendering utilities |
+| Product Card | `PhantomRenderer.ProductCard` | `setTemplate()`, `render()`, `renderAll()` | Product card HTML generation via template string |
+| Category Card | `PhantomRenderer.CategoryCard` | `setTemplate()`, `render()`, `renderAll()` | Category card HTML generation via template string |
+| Hero Renderer | `PhantomRenderer.HeroRenderer` | `render()` | Hero/banner responsive `<picture>` rendering |
+| Core Bootstrap | `PhantomCore` | `init()`, `onReady()` | Initializes all modules, fetches page-data, triggers injectors |
+| Bridge Shim | `PhantomBridge` | `init()`, `getSetting()`, `setSetting()`, `saveChanges()`, `onSettingChange()`, `offSettingChange()`, `highlightElement()`, `openEditor()`, `getCssVars()` | Backward-compatible API for editing integration |
+
+**Data injection** is handled by `PhantomInjector` (separate file) which reads `window.PhantomData` for settings, menus, and products — or fetches them via `PhantomServices.Api.getPageData()`. The old monolithic inject/inline functions have been replaced by this modular service/adapter/renderer architecture.

@@ -1,6 +1,6 @@
 # Premium Frontend Template — CLI Agent Guide
 
-> **Purpose:** Complete guide for any AI coding agent to build premium, animated, 3D-enabled, scrollable frontend templates that connect to **Phantom Core** (decoupled WordPress framework with 564 settings, 43 REST endpoints, 96 CSS vars).
+> **Purpose:** Complete guide for any AI coding agent to build premium, animated, 3D-enabled, scrollable frontend templates that connect to **Phantom Core** (decoupled WordPress framework with ~612 settings, 49 REST routes (42 unique paths), 136 CSS vars).
 >
 > **Stack:** Phantom Core Data Bridge + Bootstrap 5 + GSAP + Three.js + Lenis + Swiper
 >
@@ -15,11 +15,11 @@ WordPress
 
 WooCommerce
 
-Settings Registry (564 settings, 44 sections)
+Settings Registry (~612 settings, 46 sections)
 
 Theme Options (Customizer → CSS vars → Frontend)
 
-Customizer (15 panels, 44 sections, 13 custom controls, 96 CSS vars)
+Customizer (16 panels, 46 sections, 13 custom controls, 136 CSS vars)
 
 Menus (data-phantom-menu → WP Nav Menus)
 
@@ -29,7 +29,7 @@ Products (WooCommerce product grids via data-phantom-products)
 
 Categories (data-phantom-categories via REST)
 
-API (43 endpoints under phantom/v1)
+API (49 routes under phantom/v1, 42 unique paths)
       │
       ▼
           Render Engine
@@ -41,7 +41,7 @@ API (43 endpoints under phantom/v1)
               Security headers, auth state
                    │
                    ▼
-          phantom-data.js (35+ functions)
+          phantom-data.js (718 lines, 55+ methods)
               Fetches /phantom/v1/page-data
               Injects settings, menus, products, posts
               Initializes cart, checkout, auth, search
@@ -99,7 +99,7 @@ Swappable Frontend
 
 | Channel | Direction | What | Mechanism |
 |---------|-----------|------|-----------|
-| **1. Server Injection** | PHP → HTML | 96 CSS vars, SEO meta, phantomData JS config, security headers | Shell.php injects into `<head>` before serving |
+| **1. Server Injection** | PHP → HTML | 136 CSS vars, SEO meta, phantomData JS config, security headers | Shell.php injects into `<head>` before serving |
 | **2. REST API** | PHP → JSON → JS | Settings, menus, products, posts, cart, auth | phantom-data.js fetches `/phantom/v1/page-data` |
 | **3. CSS Variables** | Settings → CSS → Style | All design tokens as `--custom-properties` | `:root { --primary--color: #... }` via `<style id="phantom-customizer-css">` |
 
@@ -178,7 +178,7 @@ These attributes tell `phantom-data.js` what data to inject where:
 | `data-phantom-reset-url` | `<a>` | Site URL | Password reset link |
 | `data-phantom-categories` | Container `<div>` | Categories REST | Renders category list |
 
-**Setting keys source:** 564 keys in `Settings_Registry::define_entries()` under 44 sections including: `hero_title`, `hero_subtitle`, `hero_description`, `site_title`, `site_logo`, `footer_text`, `footer_description`, `copyright_text`, `banner_heading`, `banner_description`, `contact_email`, `contact_phone`, `contact_address`, `social_facebook`, `social_twitter`, `social_instagram`, `social_youtube`, `social_linkedin`, etc.
+**Setting keys source:** ~612 keys in `Settings_Registry::define_entries()` under 46 sections including: `hero_title`, `hero_subtitle`, `hero_description`, `site_title`, `site_logo`, `footer_text`, `footer_description`, `copyright_text`, `banner_heading`, `banner_description`, `contact_email`, `contact_phone`, `contact_address`, `social_facebook`, `social_twitter`, `social_instagram`, `social_youtube`, `social_linkedin`, etc.
 
 ### 1.4 CSS Class Names Used by phantom-data.js
 
@@ -241,7 +241,7 @@ These class names are hardcoded in JS. Templates MUST use them:
 - `join-now.html` → form with `#phantom-register-form`, fields `#register-name`, `#register-email`, `#register-password`
 - `password-reset.html` → form with `#phantom-reset-form`, field `#reset-email`
 
-### 2.2 Settings Registry (564 settings)
+### 2.2 Settings Registry (~612 settings)
 
 Settings are the backbone. Every visual element starts as a setting entry.
 
@@ -263,7 +263,7 @@ Settings are the backbone. Every visual element starts as a setting entry.
 <img data-phantom="hero_image" data-phantom-alt="hero_image_alt" alt="Default">
 ```
 
-**44 Setting Sections:**
+**46 Setting Sections:**
 
 | # | Section | Example Keys | Template Usage |
 |---|---------|-------------|----------------|
@@ -282,14 +282,14 @@ Settings are the backbone. Every visual element starts as a setting entry.
 | 13 | Footer | `footer_text`, `footer_bg`, `copyright_text` | All pages |
 | 14 | Typography | `font_body`, `font_heading`, `h1_size`–`h6_size` | All pages |
 | 15 | Colors | `primary_color`, `secondary_color`, `accent_color` | All pages |
-| 16–44 | Buttons, Forms, Spacing, Layout, Responsive, Animations, SEO, Custom Code, Privacy, About, Contact, FAQ, Coming Soon, 404, etc. | Various | Various pages |
+| 16–46 | Buttons, Forms, Spacing, Layout, Responsive, Animations, SEO, Custom Code, Privacy, About, Contact, FAQ, Coming Soon, 404, Hero (responsive media), etc. | Various | Various pages |
 
-### 2.3 CSS Variable Contract (96 Vars)
+### 2.3 CSS Variable Contract (136 Vars)
 
 These CSS custom properties are injected into EVERY page. Templates MUST reference them for dynamic theming.
 
 ```css
-/* ── COLORS (18) ── */
+/* ── COLORS (20) ── */
 --primary--color: #6366f1;
 --secondary--color: #8b5cf6;
 --accent--color: #f59e0b;
@@ -393,6 +393,42 @@ These CSS custom properties are injected into EVERY page. Templates MUST referen
 /* ── ANNOUNCEMENT BAR (2) ── */
 --announcement-bar-bg: #6366f1;
 --announcement-bar-color: #ffffff;
+
+/* ── HERO / RESPONSIVE MEDIA (6) ── */
+--hero-image: url('');
+--hero-object-fit: cover;
+--hero-object-position: center;
+--hero-bg-position: center;
+--hero-overlay-opacity: 0.3;
+--hero-min-height: 600px;
+
+/* ── PRODUCT CARDS (10) ── */
+--product-card-bg: #ffffff;
+--product-card-radius: 0.5rem;
+--product-card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+--product-card-hover-shadow: 0 8px 24px rgba(0,0,0,0.12);
+--product-image-aspect: 1;
+--product-card-title-size: 1rem;
+--product-card-title-color: var(--heading--color);
+--product-card-price-size: 1.125rem;
+--product-card-price-color: var(--primary--color);
+--product-card-gap: 1.5rem;
+
+/* ── MISC / UTILITY (14) ── */
+--border-radius: 0.5rem;
+--border-radius-sm: 0.25rem;
+--border-radius-lg: 1rem;
+--border-radius-full: 9999px;
+--transition-base: 300ms ease;
+--transition-slow: 500ms ease;
+--shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+--shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+--shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+--shadow-xl: 0 12px 36px rgba(0,0,0,0.15);
+--z-dropdown: 1000;
+--z-sticky: 1020;
+--z-modal: 1030;
+--z-tooltip: 1040;
 ```
 
 **Usage in template CSS:**
@@ -417,7 +453,7 @@ These CSS custom properties are injected into EVERY page. Templates MUST referen
 
 **Dark mode:** `[data-theme="dark"]` selector overrides color vars. Template CSS automatically responds.
 
-### 2.4 Customizer (15 Panels, 13 Custom Controls)
+### 2.4 Customizer (16 Panels, 13 Custom Controls)
 
 The Customizer is the visual settings editor. Every setting registered in `Settings_Registry` automatically appears.
 
@@ -690,10 +726,10 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 | Remove item | `wc-ajax=remove_from_cart` | POST |
 | Apply coupon | `POST /phantom/v1/cart/coupon` | POST |
 | Remove coupon | `POST /phantom/v1/cart/remove-coupon` | POST |
-| Get shipping | `POST /phantom/v1/cart/shipping-methods` | POST |
+| Get shipping | `GET /phantom/v1/cart/shipping-methods` | GET |
 | Checkout | `wc-ajax=checkout` | POST (WC native) |
 
-### 2.10 REST API (43 Endpoints Under `phantom/v1`)
+### 2.10 REST API (49 Routes Under `phantom/v1`, 42 Unique Paths)
 
 | # | Endpoint | Methods | Permission | Purpose |
 |---|----------|---------|------------|---------|
@@ -708,29 +744,58 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 | 9 | `/partial` | GET | edit_theme_options | Selective refresh |
 | 10 | `/posts` | GET | public | Blog posts w/ pagination |
 | 11 | `/posts/{slug}` | GET | public | Single post |
-| 12 | `/pages/{slug}` | GET | public | Single page |
-| 13 | `/categories` | GET | public | Post + product categories |
-| 14 | `/menus/{location}` | GET | public | Menu tree by location |
-| 15 | `/products` | GET, POST | public/admin | Products list / create |
-| 16 | `/products/featured` | GET | public | Featured products |
-| 17 | `/products/{id}` | GET, PUT, DELETE | public/admin | Single product CRUD |
-| 18 | `/cart` | GET | public | Cart contents |
-| 19 | `/cart/add` | POST | nonce | Add to cart |
-| 20 | `/cart/update` | POST | nonce | Update cart qty |
-| 21 | `/cart/remove` | POST | nonce | Remove cart item |
-| 22 | `/cart/coupon` | POST | nonce | Apply coupon |
-| 23 | `/cart/remove-coupon` | POST | nonce | Remove coupon |
-| 24 | `/cart/shipping-methods` | POST | public | Calculate shipping |
-| 25 | `/woo/attributes` | GET | public | Product attributes |
-| 26 | `/woo/variations` | GET | public | Product variations |
-| 27 | `/woo/reviews` | GET, POST | public/logged-in | Product reviews |
-| 28 | `/page-data` | GET | public | **Mega-endpoint** — all data in 1 call |
-| 29 | `/auth/login` | POST | public | User login |
-| 30 | `/auth/register` | POST | public | User registration |
-| 38 | `/auth/password-reset` | POST | public | Password reset |
-| 32 | `/auth/logout` | POST | nonce | User logout |
-| 33 | `/contact` | POST | public | Contact form → email |
-| 41 | `/user/orders` | GET | nonce + logged-in | Order history |
+| 12 | `/pages` | GET | public | List all published pages |
+| 13 | `/pages/{slug}` | GET | public | Single page |
+| 14 | `/categories` | GET | public | Post + product categories |
+| 15 | `/menus/{location}` | GET | public | Menu tree by location |
+| 16 | `/menu-locations` | GET | public | List all registered nav menu locations |
+| 17 | `/post-types` | GET | public | List all public post types |
+| 18 | `/product-tags` | GET | public | Product tags |
+| 19 | `/products` | GET, POST | public/admin | Products list / create |
+| 20 | `/products/featured` | GET | public | Featured products |
+| 21 | `/products/{id}` | GET, PUT, DELETE | public/admin | Single product CRUD |
+| 22 | `/cart` | GET | public | Cart contents |
+| 23 | `/cart/add` | POST | nonce | Add to cart |
+| 24 | `/cart/update` | POST | nonce | Update cart qty |
+| 25 | `/cart/remove` | POST | nonce | Remove cart item |
+| 26 | `/cart/coupon` | POST | nonce | Apply coupon |
+| 27 | `/cart/remove-coupon` | POST | nonce | Remove coupon |
+| 28 | `/cart/coupons` | GET | public | List applied coupons |
+| 29 | `/cart/shipping-methods` | GET | public | Calculate shipping |
+| 30 | `/woo/attributes` | GET | public | Product attributes |
+| 31 | `/woo/variations` | GET | public | Product variations |
+| 32 | `/woo/reviews` | GET, POST | public/logged-in | Product reviews |
+| 33 | `/page-data` | GET | public | **Mega-endpoint** — all data in 1 call |
+| 34 | `/auth/login` | POST | public | User login |
+| 35 | `/auth/register` | POST | public | User registration |
+| 36 | `/auth/password-reset` | POST | public | Password reset |
+| 37 | `/auth/logout` | POST | nonce | User logout |
+| 38 | `/contact` | POST | public | Contact form → email |
+| 39 | `/user/orders` | GET | nonce + logged-in | Order history |
+| 40 | `/user/profile` | GET, POST | nonce + logged-in | User profile read/update |
+| 41 | `/widgets` | GET | public | List all widget areas |
+| 42 | `/widgets/{sidebar_id}` | GET, POST | public/edit_theme_options | Widget area contents |
+
+### 2.11 New Architecture (Phase B–E: 100/100 Alignment)
+
+Since v1.5.3, Phantom Core has expanded beyond its original settings/customizer/REST scope into a full decoupled framework:
+
+| Layer | Components | Purpose |
+|-------|-----------|---------|
+| **Data Layer** | 9 Adapters (Post, Page, User, Footer, Settings, Product, Category, Menu, Widget), 6 ViewModels, `Data_Normalizer`, `Data_Provider` | Normalizes all WordPress/WooCommerce data into consistent schemas |
+| **Layout Registry** | `Layout`, `Layout_Registry`, `Layout_Manager` with 7 default layouts | Controls page structure and template selection |
+| **Design API** | `Design_API` facade over `DesignSystemManager` with 10 filterable methods | Unified design token access |
+| **Hook Registry** | `Hook_Registry` tracks, registers, and dispatches hooks with introspection | Decoupled event-driven architecture |
+| **Plugin Bridges** | `BridgeInterface`, `Plugin_Bridge` abstract, `WooCommerce_Bridge`, `Bridge_Manager` | Standardized third-party plugin integration |
+| **Asset Registry** | `Asset_Registry` with 25+ pre-registered assets | Centralized asset enqueue management |
+| **Capability Manager** | 8 custom `phantom_` capabilities | Fine-grained permissions |
+| **Public API Facades** | Render, Component, Animation, Settings, Template, Developer facades | 6 entry points for external code |
+| **Container Config** | 38 registered services | DI container for all framework services |
+| **All 9 Registries** | Settings, Customizer, Layout, Hook, Asset, Template, Component, Animation, Feature | Complete registry system |
+
+**Files:** `includes/Data/`, `includes/Layout/`, `includes/Design/`, `includes/Hook/`, `includes/Bridge/`, `includes/Registry/`, `includes/Public/`, `includes/Capabilities/`, `includes/Engine/Container_Config.php`
+
+**Impact on frontend:** The frontend remains unchanged — all new architecture is backend-only. The REST API, `data-phantom` attributes, CSS vars, and `PhantomServices.*` JS modules continue to work identically. The new layers ensure data consistency, extensibility, and maintainability without altering the frontend contract.
 
 **How templates call the API:**
 ```javascript

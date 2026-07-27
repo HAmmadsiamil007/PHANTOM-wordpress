@@ -6,12 +6,12 @@
 |--------|----------|---------------|
 | WordPress Core | 100+ | WP native (Users, Posts, Pages, Media, etc.) |
 | WooCommerce | 250+ | WC native admin |
-| Phantom Theme Settings | **564 settings** | Customizer + Admin Page + REST API |
-| Customizer Panels | 15 panels, 44 sections | `/wp-admin/customize.php` |
+| Phantom Theme Settings | **612 settings** | Customizer + Admin Page + REST API |
+| Customizer Panels | 16 panels, 46 sections | `/wp-admin/customize.php` |
 | Admin Page Tabs | 15 tabs | `/wp-admin/themes.php?page=phantom-core-settings` |
-| CSS Custom Properties | 96 design tokens | Injected as `<style id="phantom-customizer-css">` |
-| REST Endpoints | 43 routes | `/wp-json/phantom/v1` |
-| **Total Controls** | **~900+** | Three independent access paths |
+| CSS Custom Properties | 136 design tokens | Injected as `<style id="phantom-customizer-css">` |
+| REST Endpoints | 49 routes (42 unique) | `/wp-json/phantom/v1` |
+| **Total Controls** | **~1,000+** | Three independent access paths |
 
 ---
 
@@ -20,7 +20,7 @@
 ### Method 1: WordPress Customizer (Visual)
 **URL:** `/wp-admin/customize.php`
 
-15 Panels with 44 sections. Best for visual editing with live preview.
+16 Panels with 46 sections. Best for visual editing with live preview.
 
 **Live preview works for:**
 - ✅ All `color` type settings → instant update via `postMessage`
@@ -95,6 +95,22 @@ POST /wp-json/phantom/v1/import
 
 # Flush cache
 POST /wp-json/phantom/v1/cache/flush
+
+# List all public post types
+GET /wp-json/phantom/v1/post-types
+
+# List all registered nav menu locations
+GET /wp-json/phantom/v1/menu-locations
+
+# Paginated pages list
+GET /wp-json/phantom/v1/pages
+GET /wp-json/phantom/v1/pages?per_page=10&page=2
+
+# Cart endpoints
+GET /wp-json/phantom/v1/cart
+GET /wp-json/phantom/v1/cart/coupons
+GET /wp-json/phantom/v1/cart/shipping-methods
+DELETE /wp-json/phantom/v1/cart/{item_key}
 ```
 
 ---
@@ -154,25 +170,29 @@ container_width    → --container--width
 button_radius      → --button--radius
 ```
 
-### Complete 96 CSS Variable Map
+### Complete 136 CSS Variable Map
 
 | Group | Count | Vars |
 |-------|-------|------|
-| Container | 3 | `--container--width`, `--content--width`, `--sidebar--width` |
-| General | 9 | `--layout--columns`, `--boxed--width`, `--gap`, `--column--gap`, `--row--gap`, `--section--pad--y`, `--section--pad--x`, `--container--gutter`, `--field--outline` |
-| Typography | 17 | `--font--body`, `--font--body--weight`, `--font--heading`, `--font--heading--weight`, `--base--font--size`, `--body--line--height`, `--letter--spacing`, `--text--case`, `--typography--h1--size`...`--typography--h6--size`, `--typography--h1--height`...`--typography--h6--height` |
-| Colors | 12 | `--primary--color`, `--secondary--color`, `--accent--color`, `--text--color`, `--heading--color`, `--bg--color`, `--link--color`, `--link--hover--color`, `--border--color`, `--sale--color`, `--info--color`, `--featured--badge--color` |
+| Container/Layout | 6 | `--container--width`, `--content--width`, `--sidebar--width`, `--boxed--width`, `--layout--columns`, `--container--gutter` |
+| General Spacing | 8 | `--gap`, `--column--gap`, `--row--gap`, `--section--pad--y`, `--section--pad--x`, `--widget--spacing`, `--widget--margin`, `--element--margin--bottom` |
+| Typography | 24 | `--font--body`, `--font--body--weight`, `--font--heading`, `--font--heading--weight`, `--base--font--size`, `--body--line--height`, `--letter--spacing`, `--text--case`, `--typography--h1--size`...`--typography--h6--size`, `--typography--h1--height`...`--typography--h6--height`, `--typography--base--size`, `--typography--body--spacing`, `--typography--heading--spacing` |
+| Colors | 18 | `--primary--color`, `--secondary--color`, `--accent--color`, `--text--color`, `--heading--color`, `--bg--color`, `--link--color`, `--link--hover--color`, `--border--color`, `--sale--color`, `--rating--color`, `--info--color`, `--featured--badge--color`, `--header--bg`, `--header--text`, `--footer--bg`, `--footer--text`, `--footer--heading` |
 | Gradients | 2 | `--gradient--start--color`, `--gradient--end--color` |
-| Header | 10 | `--header--bg`, `--header--text`, `--header--padding`, `--header--padding--x`, `--header--padding--y`, `--header--fullwidth`, `--sticky--header`, `--header--height`, `--header--mobile--height`, `--header--border--width` |
-| Navigation | 4 | `--menu--font--size`, `--menu--font--weight`, `--nav--menu--height`, `--nav--submenu--width` |
-| Hero | 11 | `--hero--height`, `--hero--overlay--color`, `--hero--overlay--opacity`, `--hero--bg`, `--hero--text`, `--hero-image`, `--hero-object-fit`, `--hero-object-position`, `--hero-bg-position`, `--hero-overlay-opacity`, `--hero-image-url` |
+| Header | 8 | `--header--padding`, `--header--padding--x`, `--header--padding--y`, `--header--fullwidth`, `--sticky--header`, `--header--height`, `--header--mobile--height`, `--header--border--width` |
+| Navigation | 3 | `--menu--font--size`, `--nav--menu--height`, `--nav--submenu--width` |
+| Hero | 11 | `--hero--height`, `--hero--overlay--color`, `--hero--overlay--opacity`, `--hero--bg`, `--hero--text`, `--hero-image`, `--hero-image-tablet`, `--hero-image-mobile`, `--hero-object-fit`, `--hero-object-position`, `--hero-bg-position`, `--hero-overlay-opacity`, `--hero-image-url`, `--hero-tablet-breakpoint`, `--hero-mobile-breakpoint`, `--hero-loading` |
 | Footer | 5 | `--footer--bg`, `--footer--text`, `--footer--padding`, `--footer--fullwidth`, `--footer--heading` |
 | Buttons | 8 | `--btn--bg`, `--btn--text`, `--btn--hover--bg`, `--btn--hover--text`, `--border--radius`, `--btn--pad--y`, `--btn--pad--x`, `--btn--font--size` |
 | Forms | 2 | `--input--radius`, `--input--height` |
 | Announcement | 3 | `--announcement--bg`, `--announcement--text--color`, `--announcement--enable` |
-| Product | 5 | `--product--card--bg`, `--product--sale--badge--bg`, `--product--featured--badge--bg`, `--product--image--radius`, `--product--card--gap` |
+| Topbar | 2 | `--topbar--bg`, `--topbar--text` |
+| Product | 7 | `--product--card--bg`, `--product--sale--badge--bg`, `--product--sale--badge--text`, `--product--featured--badge--bg`, `--product--featured--badge--text`, `--product--image--radius`, `--product--card--gap` |
 | Preloader | 3 | `--preloader--bg`, `--preloader--color`, `--preloader--enable` |
-| Misc | 3 | `--custom--css`, `--woo--button--bg`, `--woo--button--text` |
+| Responsive | 4 | `--breakpoint--xl`, `--breakpoint--lg`, `--breakpoint--md`, `--breakpoint--sm` |
+| Misc/Semantic | 30+ | `--custom--css`, `--woo--button--bg`, `--woo--button--text`, `--home--section--spacing`, `--banner--height`, `--field--outline`, `--font--body--size`, `--font--heading--size`, `--font--weight--body`, `--font--weight--heading`, plus semantic color variants, shadow vars, and additional spacing/sizing tokens |
+
+**Total: 136 CSS custom properties.**
 
 ### 43 Numeric PX Keys
 These get `px` appended automatically:
@@ -198,9 +218,9 @@ The CSS var maps and px key lists are centralized in one file:
 
 | File | Method | What's Defined |
 |------|--------|----------------|
-| `includes/class-settings-registry.php` | `get_css_var_map()` (~line 208) | 96 var-to-setting mappings |
+| `includes/class-settings-registry.php` | `get_css_var_map()` (~line 208) | 136 var-to-setting mappings |
 | `includes/class-settings-registry.php` | `get_px_keys()` (~line 309) | 43 px keys |
-| `includes/class-customizer.php` | `get_css_var_map()` | 96 var mappings (duplicate from registry) |
+| `includes/class-customizer.php` | `get_css_var_map()` | 136 var mappings (duplicate from registry) |
 | `includes/class-custom-css.php` | CSS generation | Consumes the registry's var maps |
 
 **If adding a CSS var, add to `class-settings-registry.php` first**, then sync `class-customizer.php`. The custom-css engine automatically picks up registry changes.

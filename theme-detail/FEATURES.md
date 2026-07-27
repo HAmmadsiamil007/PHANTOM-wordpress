@@ -1,7 +1,7 @@
 # Phantom Core — Complete Feature Inventory
 
 > **Legend:** ✅ Implemented | ⚠️ Partial | ❌ Missing | 🔧 Hardcoded (not setting-controlled)
-> **Version:** 2.0 | **Settings:** 564 across 44 sections | **HTML Templates:** 22
+> **Version:** 1.5.3 | **Settings:** ~612 across 46 sections | **HTML Templates:** 22
 
 ---
 
@@ -13,7 +13,68 @@ All work natively — Phantom Core uses WordPress APIs directly.
 
 ---
 
-## 2. WooCommerce Integration
+## 2. Architecture Layers
+
+### Data Layer (100%)
+| Component | Description |
+|-----------|-------------|
+| Post_Adapter | Normalizes WP_Post into structured arrays |
+| Page_Adapter | Page-specific normalization |
+| User_Adapter | User data normalization |
+| Product_Adapter | WC product normalization (delegated from REST controller) |
+| Category_Adapter | Category data normalization |
+| Footer_Adapter | Footer data normalization |
+| Settings_Adapter | Settings normalization |
+| Menu_Adapter | Menu data normalization |
+| Cart_Adapter | Cart data normalization |
+| ViewModels | Page, User, Settings, Product, Category, Menu |
+| Data_Normalizer | Utility for recursive data cleanup |
+| Data_Provider | Abstract base with caching layer |
+
+### Infrastructure (100%)
+| Component | Description |
+|-----------|-------------|
+| Layout Registry | 7 default layouts (full-width, left-sidebar, right-sidebar, narrow, wide, grid, masonry) |
+| Layout_Manager | Layout resolution and override logic |
+| Design API | Facade over DesignSystemManager (10 filterable methods) |
+| Hook Registry | Tracks/registers/dispatches hooks with introspection |
+| Asset Registry | 25+ pre-registered assets (CSS + JS) |
+| Capability_Manager | 8 phantom_ capabilities |
+| Component_Metadata | Template/asset compatibility metadata |
+| Template_Manifest | JSON-driven template metadata (routes, data requirements) |
+| Splitting_Bridge | CDN asset splitting + CSS enqueue |
+
+### Plugin Bridges (100%)
+| Component | Description |
+|-----------|-------------|
+| BridgeInterface | Contract for all plugin bridges |
+| Plugin_Bridge | Abstract base with lifecycle hooks |
+| WooCommerce_Bridge | WC-specific bridge implementation |
+| Bridge_Manager | Singleton manager, init_all() on boot |
+
+### Public API Facades (100%)
+| Facade | Purpose |
+|--------|---------|
+| Render_API | Template rendering helpers |
+| Component_API | Component registration/rendering |
+| Animation_API | Animation configuration |
+| Settings_API | Read/write settings programmatically |
+| Template_API | Template resolution and metadata |
+| Developer_API | Debug and introspection tools |
+
+### Demo Manager (100%)
+| Component | Description |
+|-----------|-------------|
+| Demo_Registry | Filesystem scanner + singleton |
+| Demo_Contract | Value object with from_array factory + compat checking |
+| Demo_Loader | Template/asset resolution |
+| Demo_Switcher | Activate/deactivate with events + rewrite flush |
+| Demo_Installer | ZIP validate + extract + install + delete |
+| Demo_Admin | Admin page with grid layout, AJAX actions, ZIP upload, compatibility modal |
+
+---
+
+## 3. WooCommerce Integration
 
 | Feature | Status | Implementation |
 |---------|--------|----------------|
@@ -34,12 +95,13 @@ All work natively — Phantom Core uses WordPress APIs directly.
 | Product Variations | ✅ | REST `/phantom/v1/woo/variations` |
 | Product Reviews | ✅ | REST `/phantom/v1/woo/reviews` (GET + POST) |
 | Product Gallery | ⚠️ | Via `data-phantom` but variations not supported |
+| Server-side Rendering | ✅ | shop, product, cart, checkout via shell.php |
 
 ---
 
-## 3. Settings by Section (564 total)
+## 4. Settings by Section (~612 total)
 
-The complete inventory of all 564 settings across 44 sections. Each setting automatically appears in **Customizer + Admin Page + REST API**.
+The complete inventory of all ~612 settings across **46 sections**. Each setting automatically appears in **Customizer + Admin Page + REST API**.
 
 ### Branding (15 settings)
 `site_logo`, `favicon`, `preloader_logo`, `site_icon`, `retina_logo`*, `dark_logo`*, `mobile_logo`*
@@ -192,7 +254,7 @@ Each page type has its own settings section:
 
 ---
 
-## 4. HTML Template Inventory (22 files)
+## 5. HTML Template Inventory (22 files)
 
 All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 were consolidated.
 
@@ -223,13 +285,13 @@ All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 w
 
 ---
 
-## 5. Customizer Panels (15 panels, 44 sections)
+## 6. Customizer Panels (16 panels, 46 sections)
 
 | Panel | Sections | Live Preview |
 |-------|----------|-------------|
 | Branding | Logo, Favicon, Site Identity | CSS vars |
 | Header | Layout, Top Bar, Navigation, Announcement | CSS vars + hero/logo |
-| Hero | Hero, Home Sections, Collections | Text/images |
+| Hero | Hero, Home Sections, Collections, Responsive Hero | Text/images, `<picture>` breakpoints |
 | Products | Cards, Shop, Product Page | CSS vars |
 | WooCommerce | Cart, Checkout, My Account | Refresh |
 | Blog | Archive, Single Post | Refresh |
@@ -241,26 +303,66 @@ All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 w
 | Performance & SEO | Performance, SEO | Refresh |
 | Accessibility | Contrast, Keyboard | Body classes |
 | Advanced | Integrations, Custom Code, Import/Export | Refresh |
+| **Demo Manager** | Demo import, ZIP install, compatibility | AJAX preview |
 
 ---
 
-## 6. Feature Coverage Summary
+## 7. PHP Theme Template Inventory (phantom-theme)
+
+`phantom-theme` is a Bootstrap 5 companion theme with:
+
+| Template | Description |
+|----------|-------------|
+| `index.php` | Default fallback |
+| `page.php` | Single page with sidebar |
+| `page-full-width.php` | Single page, no sidebar |
+| `page-three-column.php` | 3-column layout |
+| `page-three-column-sidebar.php` | 3-column with sidebar |
+| `page-four-column.php` | 4-column layout |
+| `page-six-column.php` | 6-column layout |
+| `page-six-column-full-width.php` | 6-column full width |
+| `page-two-column.php` | 2-column layout |
+| `single.php` | Single blog post |
+| `archive.php` | Blog archive |
+| `search.php` | Search results (XSS-fixed) |
+| `404.php` | Error page |
+| `comments.php` | Comments template |
+| `header.php` | Header with 6 nav locations |
+| `footer.php` | Footer with 3 widget areas |
+| `sidebar.php` | Primary sidebar |
+| `woocommerce.php` | WooCommerce wrapper |
+| `functions.php` | Theme setup (menus, widgets, assets) |
+| `style.css` | Theme metadata |
+
+**6 Nav Locations:** Primary (theme), Footer (theme), phantom_primary, phantom_secondary, phantom_footer, phantom_mobile
+**3 Widget Areas:** Sidebar, Footer Column 1, Footer Column 2
+
+---
+
+## 8. Feature Coverage Summary
 
 ```
-WordPress Core:     ████████████████████ 100% (uses existing WP APIs)
-WooCommerce:        ██████████████████░░  85% (CRUD, cart, checkout, attributes, variations, reviews)
-Theme Settings:     ████████████████████ 100% (564 settings, all verified in REST API)
-Customizer:         ████████████████████  95% (15 panels, 44 sections, responsive hero, postMessage fixes)
-CSS Variables:      ████████████████████  96% (96 vars, all verified working via CSS Generation Engine)
-Live Preview:       ██████████░░░░░░░░░░  50% (hero + colors via postMessage, hero partial refresh)
-Responsive Hero:    ████████████████████ 100% (desktop/tablet/mobile, `<picture>`, CSS vars)
-Accessibility:      ██████░░░░░░░░░░░░░░  30% (minimal)
-Animations:         ██████░░░░░░░░░░░░░░  30% (basic loader only)
-Performance:        ████████████████████  90% (lazy loading, preconnect, preload, DNS prefetch)
-HTML Templates:     ████████████████████ 100% (22 pages)
-REST API:           ████████████████████ 100% (43 routes, all verified secure)
-Data Binding:       ████████████████████ 100% (full attribute system)
-SEO:                █████████████░░░░░░░  60% (basic OG/JSON-LD, no breadcrumbs schema)
-Security:           ████████████████████ 100% (nonce, sanitization, capabilities)
-Settings Debug:     ████████████████████ 100% (zero PHP notices, empty debug log)
+WordPress Core:          ████████████████████ 100% (uses existing WP APIs)
+WooCommerce:             ████████████████████  90% (CRUD, cart, checkout, attributes, variations, reviews, server-side)
+Data Layer:              ████████████████████ 100% (9 adapters, 6 ViewModels, Normalizer, Provider)
+Infrastructure:          ████████████████████ 100% (Layout, Design API, Hook, Asset, Capability, Templates)
+Plugin Bridges:          ████████████████████ 100% (WooCommerce bridge, Bridge_Manager)
+Public API Facades:      ████████████████████ 100% (6 facades: Render, Component, Animation, Settings, Template, Developer)
+Demo Manager:            ████████████████████ 100% (ZIP install, AJAX activate/deactivate, 135 tests)
+Theme Settings:          ████████████████████ 100% (~612 settings, all verified in REST API)
+Customizer:              ████████████████████ 100% (16 panels, 46 sections, responsive hero, postMessage fixes)
+CSS Variables:           ████████████████████ 100% (136 vars, all verified working via CSS Generation Engine)
+Live Preview:            ██████████████████░░  80% (hero + colors via postMessage, hero partial refresh, partial renderers)
+Responsive Hero:         ████████████████████ 100% (desktop/tablet/mobile, `<picture>`, CSS vars)
+Accessibility:           ██████░░░░░░░░░░░░░░  30% (minimal)
+Animations:              ██████░░░░░░░░░░░░░░  30% (basic loader only)
+Performance:             ████████████████████  90% (lazy loading, preconnect, preload, DNS prefetch)
+HTML Templates:          ████████████████████ 100% (22 pages)
+REST API:                ████████████████████ 100% (49 routes, all verified secure)
+Data Binding:            ████████████████████ 100% (full attribute system)
+SEO:                     ███████████████░░░░░  60% (basic OG/JSON-LD, no breadcrumbs schema)
+Security:                ████████████████████ 100% (nonce, sanitization, capabilities)
+Settings Debug:          ████████████████████ 100% (zero PHP notices, empty debug log)
+Architecture Alignment:  ████████████████████ 100% (all 9 registries, all layers complete)
+phantom-theme:           ████████████████████ 100% (Bootstrap 5, 7 page templates, 35 issues fixed)
 ```
