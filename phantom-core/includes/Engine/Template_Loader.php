@@ -9,7 +9,7 @@ defined('ABSPATH') || exit;
 
 class Template_Loader {
 
-  private string $pack = 'kids';
+  private string $pack = 'default';
 
   public function set_pack(string $pack): self {
     $this->pack = $pack;
@@ -20,13 +20,38 @@ class Template_Loader {
     return $this->pack;
   }
 
-  /**
-   * Resolve a slug to a template filename.
-   * Delegates to Template_Registry for route definitions,
-   * with fallback for regex-based dynamic routes.
-   */
+  public function pack_exists(string $pack): bool {
+    $dir = PHANTOM_CORE_PATH . 'frontend/packs/' . $pack;
+    return is_dir($dir) && file_exists($dir . '/manifest.json');
+  }
+
+  public function get_pack_manifest(string $pack = ''): ?array {
+    if ($pack === '') $pack = $this->pack;
+    if ($pack === 'default') return null;
+    $file = PHANTOM_CORE_PATH . 'frontend/packs/' . $pack . '/manifest.json';
+    if (!file_exists($file)) return null;
+    $json = json_decode((string) file_get_contents($file), true);
+    return is_array($json) ? $json : null;
+  }
+
+  public function get_pack_asset_urls(string $pack = ''): array {
+    $manifest = $this->get_pack_manifest($pack ?: $this->pack);
+    if (!$manifest || !isset($manifest['assets'])) return ['css' => [], 'js' => []];
+    $base = function_exists('content_url')
+      ? content_url() . '/plugins/phantom-core/'
+      : PHANTOM_CORE_URL . 'frontend/packs/';
+    $css = [];
+    $js = [];
+    foreach ($manifest['assets']['css'] ?? [] as $rel) {
+      $css[] = $base . $rel;
+    }
+    foreach ($manifest['assets']['js'] ?? [] as $rel) {
+      $js[] = $base . $rel;
+    }
+    return ['css' => $css, 'js' => $js];
+  }
+
   public function resolve(string $slug): string {
-    // Dynamic route patterns handled first
     if (preg_match('/^product\/(.+)$/', $slug)) {
       return 'product-detail.html';
     }
@@ -46,21 +71,18 @@ class Template_Loader {
       return '404.html';
     }
 
-    // Delegate static routes to Template_Registry
     $registry = Template_Registry::get_instance();
     if ($registry->has($slug)) {
       $template = $registry->get($slug);
       if ($template) return $template->file;
     }
 
-    // Strip .html extension and retry
     $without_ext = preg_replace('/\.html$/', '', $slug);
     if ($without_ext !== $slug && $registry->has($without_ext)) {
       $template = $registry->get($without_ext);
       if ($template) return $template->file;
     }
 
-    // Fall back to default hardcoded routes for backward compatibility
     $routes = [
       ''                => 'index.html',
       'index'           => 'index.html',
@@ -104,15 +126,13 @@ class Template_Loader {
   }
 
   public function resolve_path(string $template): string {
-    // Check template pack directory first
-    if ($this->pack !== 'kids') {
-      $pack_path = PHANTOM_CORE_PATH . 'frontend/templates/' . $this->pack . '/html/' . $template;
+    if ($this->pack !== 'default') {
+      $pack_path = PHANTOM_CORE_PATH . 'frontend/packs/' . $this->pack . '/html/' . $template;
       if (file_exists($pack_path)) {
         return $pack_path;
       }
     }
 
-    // Fall back to default templates
     $path = PHANTOM_CORE_PATH . 'frontend/html/' . $template;
     if (!file_exists($path)) {
       $path = PHANTOM_CORE_PATH . 'frontend/html/404.html';
@@ -121,11 +141,11 @@ class Template_Loader {
   }
 
   public function get_packs(): array {
-    $packs = ['kids' => 'Kids Collection (Default)'];
-    $dir = PHANTOM_CORE_PATH . 'frontend/templates/';
+    $packs = ['default' => 'Default'];
+    $dir = PHANTOM_CORE_PATH . 'frontend/packs/';
     if (is_dir($dir)) {
       foreach (scandir($dir) as $entry) {
-        if ($entry !== '.' && $entry !== '..' && is_dir($dir . $entry) && $entry !== 'kids') {
+        if ($entry !== '.' && $entry !== '..' && is_dir($dir . $entry)) {
           $packs[$entry] = ucwords(str_replace('-', ' ', $entry));
         }
       }

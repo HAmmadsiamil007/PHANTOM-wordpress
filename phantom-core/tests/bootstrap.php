@@ -7,7 +7,7 @@
  */
 
 define( 'ABSPATH', true );
-define( 'PHANTOM_CORE_VERSION', '1.5.0' );
+define( 'PHANTOM_CORE_VERSION', '2.0.0' );
 $core_path = dirname( __DIR__ ) . '/';
 // Ensure consistent directory separators on Windows
 $core_path = str_replace( '\\', '/', $core_path );

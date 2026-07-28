@@ -19,7 +19,8 @@ class Menu_Adapter implements AdapterInterface {
     if (!$items) return ['items' => []];
 
     $tree = $this->build_tree($items);
-    return ['items' => $tree];
+    $result = ['items' => $tree];
+    return apply_filters('phantom_core/nav/menu_items', $result, $location);
   }
 
   public function normalize_collection(array $locations): array {

@@ -5,6 +5,8 @@ namespace PhantomCore\ViewModels;
 
 use PhantomCore\Contracts\ViewModelInterface;
 
+defined('ABSPATH') || exit;
+
 /**
  * Page_ViewModel transforms page data into a typed view-model object.
  * Bridge between adapters and template renderers.

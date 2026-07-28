@@ -1,0 +1,65 @@
+$pack-name: "minimal";
+$primary: #1a1a2e;
+$primary-light: #303052;
+$bg-primary: #ffffff;
+$bg-secondary: #f8f9fa;
+$bg-card: #ffffff;
+$text-primary: #1a1a2e;
+$text-secondary: #6c757d;
+$border-color: #e9ecef;
+$font-heading: 'Inter', sans-serif;
+$font-body: 'Inter', sans-serif;
+$spacing-unit: 2rem;
+
+body {
+  background-color: $bg-primary;
+  color: $text-primary;
+  font-family: $font-body;
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: $text-primary;
+}
+
+a { color: $primary; text-decoration: none; &:hover { text-decoration: underline; } }
+
+.navbar, .site-header {
+  background-color: $bg-primary;
+  border-bottom: 1px solid $border-color;
+  padding: 1rem $spacing-unit;
+}
+
+.btn-primary {
+  background-color: $primary;
+  border: 1px solid $primary;
+  color: #fff;
+  border-radius: 0;
+  padding: 0.75rem 2rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  &:hover { background-color: $primary-light; }
+}
+
+.product-card, .blog-card, .category-card {
+  background-color: $bg-card;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid $border-color;
+  &:last-child { border-bottom: none; }
+}
+
+.footer {
+  background-color: $bg-secondary;
+  border-top: 1px solid $border-color;
+  padding: 4rem $spacing-unit;
+}
+
+.hero { padding: 6rem $spacing-unit; text-align: center; }
+.section { padding: 4rem $spacing-unit; }

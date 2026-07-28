@@ -1,0 +1,21 @@
+.phantom-wizard-wrap { max-width: 800px; margin: 40px auto; }
+#phantom-wizard-root .wizard-loading { text-align: center; padding: 80px 20px; font-size: 18px; color: #666; }
+.wizard-step { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 40px; }
+.wizard-step h2 { margin-top: 0; font-size: 24px; }
+.wizard-step p { font-size: 16px; color: #555; line-height: 1.6; }
+.wizard-actions { margin-top: 30px; display: flex; gap: 12px; align-items: center; }
+.wizard-actions .button { min-width: 120px; text-align: center; }
+.wizard-actions .button-primary { min-width: 160px; }
+.wizard-progress { display: flex; gap: 4px; margin-bottom: 30px; }
+.wizard-progress .step { flex: 1; padding: 12px; background: #f0f0f1; text-align: center; border-radius: 4px; font-size: 13px; color: #666; }
+.wizard-progress .step.active { background: #2271b1; color: #fff; }
+.wizard-progress .step.done { background: #46b450; color: #fff; }
+.wizard-pack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+.wizard-pack-card { border: 2px solid #ddd; border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.wizard-pack-card:hover { border-color: #2271b1; }
+.wizard-pack-card.selected { border-color: #2271b1; background: #f0f6fc; }
+.wizard-pack-card h3 { margin: 0 0 8px; font-size: 16px; }
+.wizard-pack-card p { margin: 0; font-size: 13px; color: #666; }
+.wizard-result { margin-top: 20px; }
+.wizard-result .success { color: #46b450; }
+.wizard-result .fail { color: #d63638; }

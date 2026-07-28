@@ -1,0 +1,20 @@
+{
+  "name": "Dark",
+  "version": "1.0.0",
+  "description": "Dark-themed premium template pack with purple accent palette",
+  "author": "Phantom Core",
+  "settings": {
+    "primary_color": "#6C63FF",
+    "dark_mode": true,
+    "font_heading": "Inter",
+    "font_body": "Inter"
+  },
+  "templates": {
+    "override_count": 12,
+    "base": "frontend/packs/dark/html/"
+  },
+  "assets": {
+    "css": ["frontend/packs/dark/assets/css/pack.css"],
+    "js": ["frontend/packs/dark/assets/js/pack.js"]
+  }
+}

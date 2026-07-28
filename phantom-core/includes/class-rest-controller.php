@@ -692,6 +692,33 @@ class Rest_Controller extends \WP_REST_Controller {
 				),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			'/template-packs',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_template_packs' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/template-pack/activate',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'activate_template_pack' ),
+				'permission_callback' => array( $this, 'settings_permission_check' ),
+				'args'                => array(
+					'pack' => array(
+						'required'          => true,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+			)
+		);
 	}
 
 	public function settings_permission_check( $request ) {
@@ -816,6 +843,11 @@ class Rest_Controller extends \WP_REST_Controller {
 		$items = array();
 		foreach ( $slice as $key => $entry ) {
 			$items[] = $this->format_entry( $key, $entry );
+		}
+
+		$lang_params = apply_filters( 'phantom_core/rest/language_param', array() );
+		if ( ! empty( $lang_params ) ) {
+			$items['_language'] = $lang_params;
 		}
 
 		$response = new \WP_REST_Response( $items, 200 );
@@ -1231,6 +1263,7 @@ class Rest_Controller extends \WP_REST_Controller {
 			'related_posts'  => $related,
 			'url'            => get_permalink( $post ),
 		);
+		$data = apply_filters( 'phantom_core/rest/seo_data', $data, $post_id );
 		wp_reset_postdata();
 
 		return new \WP_REST_Response( $data, 200 );
@@ -3271,6 +3304,34 @@ private function format_product( $product, bool $full = false ): array {
 			array( 'success' => true, 'orders' => $orders ),
 			200
 		);
+	}
+
+	public function get_template_packs(): \WP_REST_Response {
+		$loader = class_exists('\PhantomCore\Engine\Template_Loader') ? new \PhantomCore\Engine\Template_Loader() : null;
+		$packs = $loader ? $loader->get_packs() : array('default' => 'Default');
+		$current = get_option('phantom_template_pack', 'default');
+		$packs_data = array();
+		foreach ($packs as $slug => $name) {
+			$manifest = $loader ? $loader->get_pack_manifest($slug) : null;
+			$packs_data[] = array(
+				'slug'        => $slug,
+				'name'        => $name,
+				'active'      => $slug === $current,
+				'description' => $manifest['description'] ?? '',
+			);
+		}
+		return new \WP_REST_Response(array('success' => true, 'packs' => $packs_data, 'current' => $current), 200);
+	}
+
+	public function activate_template_pack( \WP_REST_Request $request ): \WP_REST_Response {
+		$pack = $request->get_param('pack');
+		$loader = class_exists('\PhantomCore\Engine\Template_Loader') ? new \PhantomCore\Engine\Template_Loader() : null;
+		if (!$loader || !$loader->pack_exists($pack)) {
+			return new \WP_REST_Response(array('success' => false, 'message' => sprintf('Pack "%s" does not exist.', $pack)), 400);
+		}
+		update_option('phantom_template_pack', $pack);
+		if (function_exists('flush_rewrite_rules')) flush_rewrite_rules();
+		return new \WP_REST_Response(array('success' => true, 'pack' => $pack), 200);
 	}
 
 	private function get_auth_login_args(): array {

@@ -38,6 +38,10 @@ class Upgrade_Manager {
         $this->register('1.5.3', function () {
             $this->migrate_feature_flags();
         });
+
+        $this->register('2.0.0', function () {
+            $this->migrate_v2_pack_system();
+        });
     }
 
     public function register(string $version, callable $callback): void {
@@ -135,6 +139,31 @@ class Upgrade_Manager {
             if (false === get_option($option_key)) {
                 add_option($option_key, $feature->default ? '1' : '0', '', 'yes');
             }
+        }
+    }
+
+    private function migrate_v2_pack_system(): void {
+        // Migrate old template_pack option to phantom_template_pack
+        $old_pack = get_option('template_pack', null);
+        $new_pack = get_option('phantom_template_pack', null);
+
+        if ($new_pack === false) {
+            if ($old_pack !== null) {
+                update_option('phantom_template_pack', $old_pack);
+                delete_option('template_pack');
+            } else {
+                update_option('phantom_template_pack', 'dark');
+            }
+        }
+
+        // Ensure wizard flag is reset so new users see the wizard
+        if (get_option('phantom_wizard_completed', false) === false) {
+            add_option('phantom_wizard_completed', '0', '', 'no');
+        }
+
+        // Flush rewrite rules on next request
+        if (function_exists('flush_rewrite_rules')) {
+            flush_rewrite_rules();
         }
     }
 

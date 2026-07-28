@@ -235,6 +235,7 @@ spl_autoload_register(
 		$viewmodels_prefix = 'ViewModels\\';
 		if ( strncmp( $viewmodels_prefix, $relative_class, strlen( $viewmodels_prefix ) ) === 0 ) {
 			$short = substr( $relative_class, strlen( $viewmodels_prefix ) );
+			$short = preg_replace( '/_ViewModel$/', '', $short );
 			$short = $pascal_to_kebab( $short );
 			$file  = PHANTOM_CORE_PATH . 'includes/ViewModels/' . str_replace( '_', '-', strtolower( $short ) ) . '-view-model.php';
 			if ( file_exists( $file ) ) {
@@ -303,6 +304,12 @@ spl_autoload_register(
 			$short = substr( $relative_class, strlen( $compatibility_prefix ) );
 			$short = $pascal_to_kebab( $short );
 			$file  = PHANTOM_CORE_PATH . 'includes/Compatibility/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+			// Fallback: try raw lowercase in case kebab split is wrong (e.g. RankMath)
+			$file = PHANTOM_CORE_PATH . 'includes/Compatibility/class-' . str_replace( '_', '-', strtolower( substr( $relative_class, strlen( $compatibility_prefix ) ) ) ) . '.php';
 			if ( file_exists( $file ) ) {
 				require_once $file;
 				return;

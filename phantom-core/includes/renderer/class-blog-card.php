@@ -14,22 +14,14 @@ class Blog_Card extends Component_Renderer {
   }
 
   public function render(array $data): string {
-    $category = '';
-    if (!empty($data['category'])) {
-      $category = '<span class="blog-category">' . esc_html($data['category']) . '</span>';
-    }
-
-    $date = !empty($data['date']) ? esc_html($data['date']) : '';
-    $excerpt = !empty($data['excerpt']) ? '<p class="blog-card-excerpt">' . esc_html($data['excerpt']) . '</p>' : '';
-
     return $this->inject($this->template, [
-      'url' => esc_url($data['url']),
-      'image' => esc_url($data['image']),
-      'category' => $category,
-      'date' => $date,
-      'name' => esc_html($data['title']),
-      'excerpt' => $excerpt,
-      'read_more' => esc_html($data['read_more'] ?? 'Read More'),
+      'url' => esc_url($data['url'] ?? ''),
+      'image' => esc_url($data['image'] ?? ''),
+      'category' => esc_html($data['category'] ?? ''),
+      'date' => esc_html($data['date'] ?? ''),
+      'title' => esc_html($data['title'] ?? ''),
+      'excerpt' => esc_html($data['excerpt'] ?? ''),
+      'read_more_text' => esc_html($data['read_more'] ?? 'Read More'),
     ]);
   }
 
@@ -37,13 +29,13 @@ class Blog_Card extends Component_Renderer {
     return '<a href="{{URL}}" class="blog-card" data-tilt data-reveal-item>
       <div class="blog-card-image" data-image-zoom>
         <img loading="lazy" src="{{IMAGE}}" alt="{{TITLE}}">
-        {{CATEGORY}}
+        <span class="blog-category">{{CATEGORY}}</span>
       </div>
       <div class="blog-card-content">
         <span class="blog-date">{{DATE}}</span>
         <h3 class="blog-card-title">{{TITLE}}</h3>
-        {{EXCERPT}}
-        <span class="blog-read-more">{{READ_MORE}} <i class="fas fa-arrow-right"></i></span>
+        <p class="blog-card-excerpt">{{EXCERPT}}</p>
+        <span class="blog-read-more">{{READ_MORE_TEXT}} <i class="fas fa-arrow-right"></i></span>
       </div>
     </a>';
   }

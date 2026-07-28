@@ -1,0 +1,40 @@
+<div class="order-table" data-reveal>
+    <div class="order-table-header">
+        <h3 class="order-table-title">{{TITLE}}</h3>
+        <span class="order-table-status {{STATUS_CLASS}}">{{STATUS}}</span>
+    </div>
+    <div class="order-table-meta">
+        <div class="order-table-date">
+            <span class="order-table-label">Order Date</span>
+            <span class="order-table-value">{{DATE}}</span>
+        </div>
+        <div class="order-table-total">
+            <span class="order-table-label">Total</span>
+            <span class="order-table-value">{{TOTAL}}</span>
+        </div>
+    </div>
+    <table class="order-table-items">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{TABLE_ROWS}}
+        </tbody>
+    </table>
+    <div class="order-table-totals">
+        <div class="order-table-total-row">
+            <span>Subtotal</span><span>{{SUBTOTAL}}</span>
+        </div>
+        <div class="order-table-total-row">
+            <span>Shipping</span><span>{{SHIPPING}}</span>
+        </div>
+        <div class="order-table-total-row order-table-total-row--grand">
+            <span>Total</span><span>{{TOTAL}}</span>
+        </div>
+    </div>
+</div>

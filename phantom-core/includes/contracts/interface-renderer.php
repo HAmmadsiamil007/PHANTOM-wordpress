@@ -1,5 +1,8 @@
 <?php
+
 namespace PhantomCore\Contracts;
+
+defined('ABSPATH') || exit;
 
 interface RendererInterface {
     public function render(array $data): string;

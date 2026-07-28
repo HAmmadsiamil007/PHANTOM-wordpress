@@ -4,10 +4,18 @@
   "private": true,
   "description": "Phantom Core WordPress Plugin — Frontend Assets",
   "scripts": {
-    "build": "node build.js",
-    "build:js": "node build.js"
+    "build": "npm run build:css && npm run build:js",
+    "build:js": "node build.js",
+    "build:css": "node build-css.js",
+    "build:css:watch": "node build-css.js --watch",
+    "build:css:prod": "node build-css.js --prod",
+    "watch": "node build-css.js --watch"
   },
   "devDependencies": {
-    "terser": "^5.37.0"
+    "terser": "^5.37.0",
+    "sass": "^1.77.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "cssnano": "^7.0.0"
   }
 }

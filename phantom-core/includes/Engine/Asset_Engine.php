@@ -9,6 +9,8 @@ defined('ABSPATH') || exit;
 
 class Asset_Engine {
 
+  private const FA_VERSION = '6.5.1';
+
   private Data_Engine $data;
   private Security_Headers $security;
 
@@ -21,6 +23,7 @@ class Asset_Engine {
     $html = $this->inject_css_by_route($html, $slug);
     $html = $this->inject_images($html);
     $html = $this->inject_google_fonts($html);
+    $html = $this->inject_font_awesome($html);
     $html = $this->inject_minified_js($html);
     $html = $this->inject_cdn_fallbacks($html);
 
@@ -113,6 +116,16 @@ class Asset_Engine {
     $link = '<link rel="stylesheet" id="phantom-google-fonts" href="' . esc_url($url) . '" media="all" />';
 
     return str_replace('</head>', $link . "\n" . '</head>', $html);
+  }
+
+  private function inject_font_awesome(string $html): string {
+    if (strpos($html, 'font-awesome') !== false) {
+      return $html;
+    }
+    $fa_url = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/' . self::FA_VERSION . '/css/all.min.css';
+    $link = '<link rel="stylesheet" id="phantom-font-awesome" href="' . esc_url($fa_url) . '" media="all" />';
+    $fallback = '<script>(function(){var l=document.getElementById("phantom-font-awesome");if(!l||!l.sheet){var d=document.createElement("link");d.rel="stylesheet";d.href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@' . self::FA_VERSION . '/css/all.min.css";document.head.appendChild(d)}})();</script>';
+    return str_replace('</head>', $link . "\n" . $fallback . "\n" . '</head>', $html);
   }
 
   private function inject_minified_js(string $html): string {

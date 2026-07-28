@@ -1,0 +1,20 @@
+{
+  "name": "Bold",
+  "version": "1.0.0",
+  "description": "Bold, high-contrast template pack with oversized typography and vibrant gradients",
+  "author": "Phantom Core",
+  "settings": {
+    "primary_color": "#FF3366",
+    "dark_mode": false,
+    "font_heading": "Space Grotesk",
+    "font_body": "Inter"
+  },
+  "templates": {
+    "override_count": 12,
+    "base": "frontend/packs/bold/html/"
+  },
+  "assets": {
+    "css": ["frontend/packs/bold/assets/css/pack.css"],
+    "js": ["frontend/packs/bold/assets/js/pack.js"]
+  }
+}

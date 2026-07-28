@@ -55,7 +55,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/motion.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
-    <link rel="stylesheet" href="assets/css/a11y.css"">
+    <link rel="stylesheet" href="assets/css/a11y.css">
 </head>
 <body class="product-page">
 
@@ -238,37 +238,88 @@
                 </div>
         <div class="container">
             <div class="pd-grid">
+                <!-- Gallery -->
                 <div class="pd-gallery">
                     <div class="pd-gallery-main" data-image-zoom>
-                        <div class="swiper pd-gallery-swiper">
-                            <div class="swiper-wrapper">
-                                [product_gallery]
-                            </div>
-                        </div>
-                        <button class="pd-gallery-zoom" aria-label="Zoom image"><i class="fas fa-expand"></i></button>
+                        [product_gallery]
                     </div>
                     <div class="pd-gallery-thumbs">
-                        <div class="swiper pd-gallery-thumbs-swiper">
-                            <div class="swiper-wrapper">
-                                [product_gallery_thumbs]
-                            </div>
-                        </div>
+                        [product_gallery_thumbs]
                     </div>
                 </div>
 
+                <!-- Product Info -->
                 <div class="pd-info">
                     <div class="pd-info-inner">
-                        <span class="pd-badge" data-phantom="product_badge">[product_badge]</span>
+                        <span class="pd-badge" data-phantom="product_badge">New Arrival</span>
                         <h1 class="pd-title" data-phantom="page_title">[product_title]</h1>
                         <p class="pd-price" data-phantom="product_price">[product_price]</p>
-                        <div class="pd-rating">
-                            [product_rating]
-                        </div>
+                        <div class="pd-rating">[product_rating]</div>
                         <p class="pd-description" data-phantom="product_description">[product_short_description]</p>
-                        [product_add_to_cart]
-                        <div class="pd-sku">[product_sku]</div>
-                        <div class="pd-stock">[product_stock]</div>
+
+                        <div class="pd-option-group">
+                            <div class="pd-option-header">
+                                <label class="pd-option-label">Color — <span id="pdColorName">Obsidian</span></label>
+                            </div>
+                            <div class="pd-color-options">
+                                <button class="pd-color-btn active" style="background-color: #09090B;" aria-label="Obsidian" data-color="Obsidian"></button>
+                                <button class="pd-color-btn" style="background-color: #A8B5C0;" aria-label="Chrome" data-color="Chrome"></button>
+                                <button class="pd-color-btn" style="background-color: #C8956C;" aria-label="Gold" data-color="Gold"></button>
+                                <button class="pd-color-btn" style="background-color: #2D3436;" aria-label="Phantom" data-color="Phantom"></button>
+                            </div>
+                        </div>
+
+                        <div class="pd-option-group">
+                            <div class="pd-option-header">
+                                <label class="pd-option-label">Size — <span id="pdSizeName">Select</span></label>
+                                <button class="pd-size-guide-link" id="openSizeGuide">Size Guide</button>
+                            </div>
+                            <div class="pd-size-grid">
+                                <button class="pd-size-btn">US 7</button>
+                                <button class="pd-size-btn">US 7.5</button>
+                                <button class="pd-size-btn">US 8</button>
+                                <button class="pd-size-btn">US 8.5</button>
+                                <button class="pd-size-btn">US 9</button>
+                                <button class="pd-size-btn">US 9.5</button>
+                                <button class="pd-size-btn active">US 10</button>
+                                <button class="pd-size-btn">US 10.5</button>
+                                <button class="pd-size-btn">US 11</button>
+                                <button class="pd-size-btn">US 11.5</button>
+                                <button class="pd-size-btn">US 12</button>
+                                <button class="pd-size-btn">US 13</button>
+                            </div>
+                        </div>
+
+                        <div class="pd-option-group">
+                            <label class="pd-option-label">Quantity</label>
+                            <div class="pd-qty">
+                                <button class="pd-qty-btn" id="qtyMinus" aria-label="Decrease quantity">-</button>
+                                <span class="pd-qty-value" id="qtyValue">1</span>
+                                <button class="pd-qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
+                            </div>
+                        </div>
+
+                        <div class="pd-actions">
+                            [product_add_to_cart]
+                        </div>
+
+                        [product_stock]
+                        [product_sku]
                         [product_categories]
+                        <div class="pd-trust">
+                            <div class="pd-trust-item">
+                                <i class="fas fa-truck"></i>
+                                <span>Free Shipping over $200</span>
+                            </div>
+                            <div class="pd-trust-item">
+                                <i class="fas fa-undo"></i>
+                                <span>30-Day Free Returns</span>
+                            </div>
+                            <div class="pd-trust-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>2-Year Warranty</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -310,6 +361,7 @@
         </div>
     </div>
 
+    [product_description]
     <!-- Tech Specs Accordion -->
     <section class="pd-specs">
         <div class="container">

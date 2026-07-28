@@ -5,6 +5,8 @@ namespace PhantomCore\ViewModels;
 
 use PhantomCore\Contracts\ViewModelInterface;
 
+defined('ABSPATH') || exit;
+
 /**
  * Category_ViewModel transforms category data into a typed view-model object.
  * Bridge between adapters (raw WP_Term data) and renderers (HTML output).

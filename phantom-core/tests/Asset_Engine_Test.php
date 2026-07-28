@@ -37,7 +37,7 @@ class Asset_Engine_Test extends TestCase {
     public function test_inject_all_adds_minified_js(): void {
         $html = '<!DOCTYPE html><html><head></head><body></body></html>';
         $result = $this->engine->inject_all($html, 'home', false);
-        $this->assertStringContainsString('id="phantom-core-js"', $result);
+        $this->assertStringContainsString('id="phantom-bridge-js"', $result);
     }
 
     public function test_inject_all_adds_cdn_fallbacks(): void {

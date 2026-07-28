@@ -55,7 +55,7 @@
         <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/motion.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
-    <link rel="stylesheet" href="assets/css/a11y.css"">
+    <link rel="stylesheet" href="assets/css/a11y.css">
     <style>
         .page-hero {
             padding: 160px 0 60px;
@@ -475,7 +475,78 @@
 
     <section class="cart-section">
         <div class="container">
-            [woocommerce_cart]
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="cart-table-header">
+                        <span>Product</span>
+                        <span>Price</span>
+                        <span>Quantity</span>
+                        <span>Total</span>
+                        <span></span>
+                    </div>
+
+                    [woocommerce_cart]
+                    <div class="cart-item" data-phantom="cart_item">
+                        <div class="cart-item-info">
+                            <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Void Runner Obsidian" class="cart-item-img" data-phantom-alt="cart_product_image">
+                            <div>
+                                <div class="cart-item-name" data-phantom="cart_product_name">Void Runner — Obsidian</div>
+                                <div class="cart-item-variant" data-phantom="cart_product_variant">Size 10</div>
+                            </div>
+                        </div>
+                        <div class="cart-item-price" data-phantom="cart_product_price">$449</div>
+                        <div class="cart-item-qty">
+                            <button class="qty-btn" aria-label="Decrease quantity">&minus;</button>
+                            <div class="qty-value">1</div>
+                            <button class="qty-btn" aria-label="Increase quantity">+</button>
+                        </div>
+                        <div class="cart-item-total" data-phantom="cart_product_total">$449</div>
+                        <button class="cart-item-remove remove-product" aria-label="Remove item"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="cart-item">
+
+                        <div class="cart-item-info">
+                            <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Void Runner Chrome" class="cart-item-img">
+                            <div>
+                                <div class="cart-item-name">Void Runner — Chrome</div>
+                                <div class="cart-item-variant">Size 9</div>
+                            </div>
+                        </div>
+                        <div class="cart-item-price">$449</div>
+                        <div class="cart-item-qty">
+                            <button class="qty-btn" aria-label="Decrease quantity">&minus;</button>
+                            <div class="qty-value">1</div>
+                            <button class="qty-btn" aria-label="Increase quantity">+</button>
+                        </div>
+                        <div class="cart-item-total">$449</div>
+                        <button class="cart-item-remove remove-product" aria-label="Remove item"><i class="fas fa-times"></i></button>
+                    </div>
+
+                    <div style="padding-top: 30px;">
+                        <a href="shop.html" class="continue-shopping"><i class="fas fa-arrow-left"></i>Continue Shopping</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="cart-summary shopping-cart-info">
+                        <h3>Order Summary</h3>
+                        <div class="summary-row">
+                            <span class="label">Subtotal</span>
+                            <span class="value">$898</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Shipping</span>
+                            <span class="value" style="color: #4CAF50;">Free</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span class="label">Total</span>
+                            <span class="value">$898</span>
+                        </div>
+                        <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
+                        <a href="shop.html" class="continue-shopping" style="margin-top: 15px;"><i class="fas fa-arrow-left"></i>Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 

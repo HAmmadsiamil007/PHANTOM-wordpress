@@ -5,6 +5,8 @@ namespace PhantomCore\ViewModels;
 
 use PhantomCore\Contracts\ViewModelInterface;
 
+defined('ABSPATH') || exit;
+
 /**
  * Post_ViewModel transforms post data into a typed view-model object.
  * Bridge between data sources and template renderers.

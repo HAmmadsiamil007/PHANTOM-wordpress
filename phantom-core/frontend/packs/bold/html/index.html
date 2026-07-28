@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}} — Bold Pack</title>
+    <meta name="description" content="{{META_DESCRIPTION}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    {{HEAD_CSS}}
+    {{PACK_CSS}}
+</head>
+<body class="bold-pack">
+    {{HEADER}}
+    <main>
+        <section class="hero hero--bold">
+            <div class="hero-backdrop"></div>
+            <div class="hero-content">
+                <span class="hero-kicker">{{HERO_BADGE}}</span>
+                <h1>{{HERO_TITLE}}</h1>
+                <p>{{HERO_SUBTITLE}}</p>
+                <div class="hero-actions">
+                    {{HERO_CTA}}
+                    {{HERO_SECONDARY_CTA}}
+                </div>
+            </div>
+        </section>
+        <section class="section section--dark">
+            <div class="container">
+                <h2>{{FEATURES_TITLE}}</h2>
+                <p>{{FEATURES_DESC}}</p>
+                {{FEATURES_GRID}}
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h2>{{PRODUCTS_TITLE}}</h2>
+                {{PRODUCT_GRID}}
+            </div>
+        </section>
+        {{TESTIMONIALS}}
+    </main>
+    {{FOOTER}}
+    {{PACK_JS}}
+    {{FOOTER_JS}}
+</body>
+</html>

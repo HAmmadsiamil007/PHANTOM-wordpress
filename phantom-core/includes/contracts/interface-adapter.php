@@ -1,5 +1,8 @@
 <?php
+
 namespace PhantomCore\Contracts;
+
+defined('ABSPATH') || exit;
 
 interface AdapterInterface {
     public function normalize($input = null): array;

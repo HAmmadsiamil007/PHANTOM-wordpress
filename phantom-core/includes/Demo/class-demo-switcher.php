@@ -29,6 +29,7 @@ class Demo_Switcher {
         $old_slug = $this->get_active_slug();
 
         update_option('template_pack', $slug);
+        update_option('phantom_template_pack', $slug);
         update_option('phantom_active_demo', $slug);
 
         if (!empty($demo->preset)) {
@@ -148,7 +149,8 @@ class Demo_Switcher {
         }
 
         $demo_path = PHANTOM_CORE_PATH . 'frontend/templates/' . $slug . '/html/';
-        $tpl_pass = is_dir($demo_path);
+        $pack_path = PHANTOM_CORE_PATH . 'frontend/packs/' . $slug . '/html/';
+        $tpl_pass = is_dir($demo_path) || is_dir($pack_path);
         $checks[] = [
             'name' => 'Template Directory',
             'status' => $tpl_pass ? 'pass' : 'warn',

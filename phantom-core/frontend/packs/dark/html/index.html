@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}} — Dark Pack</title>
+    <meta name="description" content="{{META_DESCRIPTION}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    {{HEAD_CSS}}
+    {{PACK_CSS}}
+</head>
+<body class="dark-pack">
+    {{HEADER}}
+    <main>
+        <section class="hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <span class="hero-badge">{{HERO_BADGE}}</span>
+                <h1>{{HERO_TITLE}}</h1>
+                <p>{{HERO_SUBTITLE}}</p>
+                <div class="hero-actions">
+                    {{HERO_CTA}}
+                    {{HERO_SECONDARY_CTA}}
+                </div>
+            </div>
+        </section>
+        <section class="features-section">
+            <div class="container">
+                <h2>{{FEATURES_TITLE}}</h2>
+                <p class="section-desc">{{FEATURES_DESC}}</p>
+                {{FEATURES_GRID}}
+            </div>
+        </section>
+        <section class="products-section">
+            <div class="container">
+                <h2>{{PRODUCTS_TITLE}}</h2>
+                {{PRODUCT_GRID}}
+            </div>
+        </section>
+        {{TESTIMONIALS}}
+    </main>
+    {{FOOTER}}
+    {{PACK_JS}}
+    {{FOOTER_JS}}
+</body>
+</html>

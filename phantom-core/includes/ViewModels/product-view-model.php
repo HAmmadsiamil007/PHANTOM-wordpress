@@ -6,6 +6,8 @@ namespace PhantomCore\ViewModels;
 use PhantomCore\Contracts\ViewModelInterface;
 use PhantomCore\Adapters\Product_Adapter;
 
+defined('ABSPATH') || exit;
+
 /**
  * Product_ViewModel transforms normalized product data into a typed
  * view-model object that template renderers consume.

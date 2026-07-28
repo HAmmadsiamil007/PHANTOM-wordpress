@@ -1,0 +1,41 @@
+<?php
+declare(strict_types=1);
+
+namespace PhantomCore\Renderer;
+
+defined('ABSPATH') || exit;
+
+class Post_Card extends Component_Renderer {
+
+  private string $template;
+
+  public function __construct() {
+    $this->template = $this->load_template('post-card') ?: $this->default_template();
+  }
+
+  public function render(array $data): string {
+    $category = !empty($data['category']) ? '<span class="post-card-category">' . esc_html($data['category']) . '</span>' : '';
+
+    return $this->inject($this->template, [
+      'url' => esc_url($data['url']),
+      'image' => esc_url($data['image']),
+      'category' => $category,
+      'date' => esc_html($data['date']),
+      'title' => esc_html($data['title']),
+      'excerpt' => esc_html($data['excerpt']),
+      'read_more' => esc_html($data['read_more'] ?? 'Read Post'),
+    ]);
+  }
+
+  private function default_template(): string {
+    return '<a href="{{URL}}" class="post-card">
+      <div class="post-card-image"><img loading="lazy" src="{{IMAGE}}" alt="{{TITLE}}">{{CATEGORY}}</div>
+      <div class="post-card-content">
+        <span class="post-card-date">{{DATE}}</span>
+        <h3 class="post-card-title">{{TITLE}}</h3>
+        <p class="post-card-excerpt">{{EXCERPT}}</p>
+        <span class="post-card-read">{{READ_MORE}} <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </a>';
+  }
+}

@@ -36,10 +36,18 @@ class SEO_Engine {
     $meta = $this->build_meta_tags($title, $site_desc, $current_url, $image_url, $slug);
     $meta .= $this->build_preload_links($slug);
     $meta .= $this->build_json_ld($slug, $site_name, $home_url, $current_url);
+    $meta .= $this->inject_seo_bridge_hooks();
     $base_tag = sprintf('<base href="%s" />', esc_url($home_url));
 
     $html = str_replace('<head>', "<head>\n" . $base_tag . "\n" . $meta, $html);
     return $html;
+  }
+
+  private function inject_seo_bridge_hooks(): string {
+    if (!function_exists('do_action')) return '';
+    ob_start();
+    do_action('phantom_core/seo/head');
+    return (string) ob_get_clean();
   }
 
   private function build_title(string $slug, string $site_name, string $site_desc): string {

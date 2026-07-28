@@ -1,0 +1,68 @@
+$pack-name: "bold";
+$primary: #FF3366;
+$primary-dark: #cc0044;
+$accent: #FFD700;
+$gradient-1: linear-gradient(135deg, #FF3366, #FF6B3D);
+$gradient-2: linear-gradient(135deg, #667eea, #764ba2);
+$bg-primary: #0d0d0d;
+$bg-secondary: #1a1a1a;
+$bg-card: #1a1a1a;
+$text-primary: #ffffff;
+$text-secondary: #b0b0b0;
+$font-heading: 'Space Grotesk', sans-serif;
+$font-body: 'Inter', sans-serif;
+
+body {
+  background-color: $bg-primary;
+  color: $text-primary;
+  font-family: $font-body;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+}
+
+h1 { font-size: clamp(3rem, 8vw, 6rem); line-height: 0.95; }
+h2 { font-size: clamp(2rem, 5vw, 3.5rem); }
+
+a { color: $primary; font-weight: 600; &:hover { color: $accent; } }
+
+.navbar, .site-header {
+  background-color: $bg-secondary;
+  border-bottom: 2px solid $primary;
+  padding: 0.5rem 2rem;
+}
+
+.btn-primary {
+  background: $gradient-1;
+  border: none;
+  color: #fff;
+  font-family: $font-heading;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1rem 2.5rem;
+  border-radius: 0;
+  &:hover { transform: scale(1.05); box-shadow: 0 10px 40px rgba($primary, 0.4); }
+}
+
+.product-card, .blog-card, .category-card {
+  background-color: $bg-card;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0;
+  &:hover { border-color: $primary; transform: translateY(-4px); }
+}
+
+.hero {
+  background: $gradient-2;
+  padding: 6rem 2rem;
+  text-align: center;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+}
+
+.footer { background-color: $bg-secondary; border-top: 2px solid $primary; }
+
+.price { font-family: $font-heading; font-weight: 700; font-size: 1.5rem; }

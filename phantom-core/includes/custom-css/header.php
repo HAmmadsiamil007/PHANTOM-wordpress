@@ -27,7 +27,7 @@ add_filter(
 			if ( ! isset( $map[ $k ] ) ) {
 				continue;
 			}
-			$val = get_option( 'phantom_' . $k, '' );
+			$val = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( $k );
 			if ( is_array( $val ) ) {
 				$val = $val['desktop'] ?? '';
 			}

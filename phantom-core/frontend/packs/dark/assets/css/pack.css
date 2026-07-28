@@ -1,0 +1,59 @@
+body {
+  background-color: #0f0f1a;
+  color: #e8e8f0;
+  font-family: "Inter", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Inter", sans-serif;
+  color: #ffffff;
+}
+
+a {
+  color: #6C63FF;
+}
+a:hover {
+  color: #8B85FF;
+}
+
+.navbar, .site-header {
+  background-color: #1a1a2e;
+  border-bottom: 1px solid #2a2a4a;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6C63FF, #5A52D5);
+  border: none;
+  color: #fff;
+}
+.btn-primary:hover {
+  -webkit-transform: translateY(-2px);
+          transform: translateY(-2px);
+  -webkit-box-shadow: 0 8px 25px rgba(108, 99, 255, 0.35);
+          box-shadow: 0 8px 25px rgba(108, 99, 255, 0.35);
+}
+
+.product-card, .blog-card, .category-card {
+  background-color: #16213e;
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+}
+.product-card:hover, .blog-card:hover, .category-card:hover {
+  border-color: #6C63FF;
+  -webkit-box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.footer {
+  background-color: #1a1a2e;
+  border-top: 1px solid #2a2a4a;
+}
+
+input, select, textarea {
+  background-color: #1a1a2e;
+  border: 1px solid #2a2a4a;
+  color: #e8e8f0;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: #6C63FF;
+}

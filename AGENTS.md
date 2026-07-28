@@ -1,15 +1,16 @@
 # Phantom Core Framework — Agent Instructions
 
 ## Project State
-- **Version**: 1.5.4
+- **Version**: 2.0.0
 - **Plugin**: `phantom-core` — decoupled WordPress framework with static HTML SPA architecture
 - **Theme**: `phantom-theme` — Bootstrap 5, 7 page templates (+ 4 multi-column variants), 3 widget areas (theme) + 7 (plugin) = 10 total, 6 nav locations (2 theme + 4 plugin)
 - **Settings**: ~612 across 46 sections
 - **Customizer**: 16 panels, 46 sections, 11 custom control types (3 used: ast-toggle=103, ast-color=56, ast-select=37), 136 CSS vars
-- **REST API**: 49 routes under `phantom/v1` (42 unique paths)
+- **REST API**: 51 routes under `phantom/v1` (44 unique paths)
 - **HTML Templates**: 22 SPA templates in `frontend/html/`
 - **JS Files**: 28 frontend (21 plugin + 7 theme) + 11 customizer control files (removed firebase-auth.js, service-worker.js, phantom-bridge.js as dead code)
-- **CSS Modules**: 9 modular CSS generation files (+ hero.php for responsive hero media)
+- **CSS Modules**: 9 modular CSS generation files (+ hero.php for responsive hero media) + 3 pack SCSS
+- **Template Packs**: 3 packs (Dark, Minimal, Bold) in `frontend/packs/` with manifests, SCSS, HTML overrides
 - **WooCommerce**: 18 WC REST endpoints, Swiper gallery, variable products, cart flow; **Server-side product rendering** in shell.php — shop, product detail, cart, checkout, homepage all render dynamic WC content via PHP (no client-side-only SPA for product pages)
 - **Docker**: WordPress on port 8080, MySQL 8.0 on port 3307
 - **Latest audit**: Full breakage analysis (2026-07-25) — 8 subsystems analyzed. All 126 issues (24 critical, 34 high, 39 medium, 29 low) fixed across all 5 phases. Aggregate health: **100/100**.
@@ -26,6 +27,7 @@
 
 - **2026-07-27 Phase E — Final 100/100 push**: Closed all remaining architecture gaps — Asset Registry (includes/Registry/class-asset-registry.php with 25+ pre-registered assets), Helpers (static utilities), Capability_Manager (8 phantom_ caps), Component_Metadata (template/asset compatibility), Template_Manifest (JSON-driven template metadata), Splitting_Bridge (CDN + CSS enqueue), 6 Public API facades (Render, Component, Animation, Settings, Template, Developer). All 9 required registries now exist. Container_Config registers 38 services. All 12 new files pass `php -l`. **Architecture alignment: 100/100**.
 - **2026-07-27 Multi-agent forensic audit**: 5 parallel specialist agents audited PHP syntax (189/189 files clean), REST API (49 routes valid), template registry (27 slugs→22 files), Container DI (37 services valid), autoloader (0 unresolved refs). Found 5 issues: (1) CRITICAL Upgrade_Manager not autoloadable — added Upgrade\ autoloader rule; (2) HIGH template admin page wrong property names (route→slug, template→file); (3) MEDIUM Bridge_Manager::init_all() called before WooCommerce_Bridge registered — register bridge before init; (4) LOW duplicate Layout\ prefix removed; (5) INFO Capability_Manager path mismatch (explicit require handles it). All fixed. 399/399 tests pass. **100/100 — zero known issues across all subsystems**.
+- **2026-07-28 v2.0.0 — Phase 5: Template Packs & E2E Validation**: Full template pack system with 3 packs (Dark/Minimal/Bold), each with manifest, SCSS, and HTML overrides (index, shop, 404, product-card, blog-card). `Template_Loader` updated with `pack_exists()`, `get_pack_manifest()`, `get_pack_asset_urls()`, and pack-based path resolution. `Component_Renderer` checks `phantom_template_pack` option for component overrides. `Demo_Content_Generator` creates pages/products/posts/menus/widgets/options. `Activation_Wizard` — 4-step admin setup flow. `Setup\` autoloader prefix. 2 new REST endpoints: `GET /template-packs`, `POST /template-pack/activate`. Settings page dropdown for pack selection. Upgrade_Manager v2.0 migration for pack system. 10 E2E smoke tests. Version bump 1.5.4→2.0.0. **399/399 tests pass. Zero PHP syntax errors across all files. Audit health: 100/100**.
 - **2026-07-26 Customizer deep-dive**: All 15 panels, 44 sections, 5 of 13 custom control types used (ast-color=46, ast-toggle=102, ast-select=33; 8 unused). Customizer loads OK (995KB). REST nonce fix deployed — `verify_nonce()` accepts `X-WP-Nonce`/`wp_rest` as primary, falls back to `X-Phantom-Nonce`/`phantom_api`. `settings_write_permission_check()` now receives `$request`. `get_inline_css()` hooked to `wp_head` via `output_inline_css()`. Partial renderers fixed — `get_theme_mod()` → `get_option()` for footer settings. CSS vars confirmed present on frontend via CSS Generation Engine (`phantom-inline-css`). REST API returns 626 settings across 13 pages. **Textdomain notice finally resolved** — lazy-loaded `define_tabs()` and `get_default_presets()`, pre-loaded domain via `load_textdomain()` with empty `.mo`. Debug log: COMPLETELY EMPTY.
 
 ## Architecture
@@ -45,6 +47,9 @@ Phantom Core Plugin
   ├── Design API (facade over DesignSystemManager)
   ├── Hook Registry (introspection + tracking)
   ├── Plugin Bridges (Bridge_Manager + WooCommerce bridge)
+  ├── Plugin Bridges (Bridge_Manager + WooCommerceBridge + 6 compat bridges)
+  ├── Template Packs (3 packs in frontend/packs/)
+  ├── Setup System (Demo_Content_Generator + Activation_Wizard)
   └── Shell SPA Router (template_redirect → HTML)
        │
   Frontend (swappable)
@@ -59,7 +64,7 @@ Phantom Core Plugin
 | `phantom-core.php` | Plugin bootstrap, autoloader, constants |
 | `includes/class-settings-registry.php` | 564 settings, 44 sections |
 | `includes/class-customizer.php` | Customizer integration |
-| `includes/class-rest-controller.php` | REST API (43 routes) |
+| `includes/class-rest-controller.php` | REST API (45 routes) |
 | `includes/class-custom-css.php` | CSS Generation Engine |
 | `includes/class-phantom-global-palette.php` | 9-color palette system |
 | `includes/class-phantom-font-families.php` | System + Google Fonts |
@@ -68,6 +73,10 @@ Phantom Core Plugin
 | `includes/partial-renderers.php` | Selective refresh partials |
 | `includes/custom-controls/` | 13 custom Customizer controls |
 | `includes/custom-css/` | 9 CSS module files (+ hero.php) |
+| `includes/Engine/Template_Loader.php` | Pack-aware template resolution |
+| `includes/Setup/class-demo-content-generator.php` | Demo content creation |
+| `includes/Setup/class-activation-wizard.php` | 4-step setup wizard |
+| `frontend/packs/` | 3 template packs (Dark, Minimal, Bold) |
 | `admin/class-settings-page.php` | Theme Options admin page (tabbed UI, 15 tabs) |
 | `admin/js/customizer-preview.js` | Live preview bindings |
 | `admin/js/admin.js` | Admin page JS |

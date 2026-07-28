@@ -8,16 +8,15 @@ add_filter(
 		$prefix  = 'phantom_';
 		$output  = '';
 
-		$desktop = get_option( $prefix . 'hero_banner_image', '' );
-		$tablet  = get_option( $prefix . 'hero_image_tablet', '' );
-		$mobile  = get_option( $prefix . 'hero_image_mobile', '' );
-		$enabled = (bool) get_option( $prefix . 'hero_enable_responsive', 1 );
-		$tablet_bp = absint( get_option( $prefix . 'hero_tablet_breakpoint', 1024 ) );
-		$mobile_bp = absint( get_option( $prefix . 'hero_mobile_breakpoint', 768 ) );
-
-		$fit      = get_option( $prefix . 'hero_fit', 'cover' );
-		$position = get_option( $prefix . 'hero_position', 'center' );
-		$opacity  = get_option( $prefix . 'hero_overlay_opacity', 50 );
+		$desktop = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_banner_image' );
+		$tablet  = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_image_tablet' );
+		$mobile  = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_image_mobile' );
+		$enabled = (bool) \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_enable_responsive', 1 );
+		$tablet_bp = absint( \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_tablet_breakpoint', 1024 ) );
+		$mobile_bp = absint( \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_mobile_breakpoint', 768 ) );
+		$fit      = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_fit', 'cover' );
+		$position = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_position', 'center' );
+		$opacity  = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'hero_overlay_opacity', 50 );
 
 		if ( '' !== $desktop ) {
 			$output .= "\t" . '--hero-image-desktop: url("' . esc_url( $desktop ) . '");' . "\n";

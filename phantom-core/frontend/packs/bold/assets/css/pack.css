@@ -1,0 +1,82 @@
+body {
+  background-color: #0d0d0d;
+  color: #ffffff;
+  font-family: "Inter", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+}
+
+h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 0.95;
+}
+
+h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+a {
+  color: #FF3366;
+  font-weight: 600;
+}
+a:hover {
+  color: #FFD700;
+}
+
+.navbar, .site-header {
+  background-color: #1a1a1a;
+  border-bottom: 2px solid #FF3366;
+  padding: 0.5rem 2rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FF3366, #FF6B3D);
+  border: none;
+  color: #fff;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1rem 2.5rem;
+  border-radius: 0;
+}
+.btn-primary:hover {
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+  -webkit-box-shadow: 0 10px 40px rgba(255, 51, 102, 0.4);
+          box-shadow: 0 10px 40px rgba(255, 51, 102, 0.4);
+}
+
+.product-card, .blog-card, .category-card {
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+}
+.product-card:hover, .blog-card:hover, .category-card:hover {
+  border-color: #FF3366;
+  -webkit-transform: translateY(-4px);
+          transform: translateY(-4px);
+}
+
+.hero {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 6rem 2rem;
+  text-align: center;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+}
+
+.footer {
+  background-color: #1a1a1a;
+  border-top: 2px solid #FF3366;
+}
+
+.price {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+}

@@ -7,9 +7,21 @@ defined('ABSPATH') || exit;
 
 class Footer extends Component_Renderer {
 
+  public function __construct() {
+    $this->template = $this->load_template('footer') ?: $this->default_template();
+  }
+
   public function render(array $data): string {
     $copyright = $data['copyright'] ?? '&copy; ' . date('Y') . ' All rights reserved.';
-    $template = '<footer class="site-footer" role="contentinfo">
+
+    return $this->inject($this->template, [
+      'widgets' => $data['widgets'] ?? '',
+      'copyright' => wp_kses_post($copyright),
+    ]);
+  }
+
+  private function default_template(): string {
+    return '<footer class="site-footer" role="contentinfo">
       <div class="container">
         <div class="footer-widgets">{{WIDGETS}}</div>
         <div class="footer-bottom">
@@ -17,10 +29,5 @@ class Footer extends Component_Renderer {
         </div>
       </div>
     </footer>';
-
-    return $this->inject($template, [
-      'widgets' => $data['widgets'] ?? '',
-      'copyright' => wp_kses_post($copyright),
-    ]);
   }
 }

@@ -16,7 +16,14 @@ class Demo_Loader {
     public function get_active_template_path(): string {
         $active = $this->registry->get_active();
         $path = PHANTOM_CORE_PATH . 'frontend/templates/' . $active->slug . '/html/';
-        return is_dir($path) ? $path : PHANTOM_CORE_PATH . 'frontend/html/';
+        if (is_dir($path)) return $path;
+        // Fallback to pack-based templates
+        $pack = get_option('phantom_template_pack', 'default');
+        if ($pack !== 'default') {
+            $pack_path = PHANTOM_CORE_PATH . 'frontend/packs/' . $pack . '/html/';
+            if (is_dir($pack_path)) return $pack_path;
+        }
+        return PHANTOM_CORE_PATH . 'frontend/html/';
     }
 
     public function get_active_asset_url(): string {

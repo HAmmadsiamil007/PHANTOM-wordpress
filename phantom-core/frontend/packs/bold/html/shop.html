@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}} — Shop</title>
+    {{HEAD_CSS}}
+    {{PACK_CSS}}
+</head>
+<body class="bold-pack shop-page">
+    {{HEADER}}
+    <main>
+        <section class="page-hero page-hero--shop">
+            <div class="container">
+                <h1>{{PAGE_TITLE}}</h1>
+                <p>{{PAGE_SUBTITLE}}</p>
+            </div>
+        </section>
+        <section class="shop-section">
+            <div class="container">
+                <aside class="shop-filters">
+                    {{SHOP_SIDEBAR}}
+                </aside>
+                <div class="shop-main">
+                    {{SHOP_CONTROLS}}
+                    <div class="product-grid product-grid--bold">
+                        {{PRODUCT_GRID}}
+                    </div>
+                    {{PAGINATION}}
+                </div>
+            </div>
+        </section>
+    </main>
+    {{FOOTER}}
+    {{PACK_JS}}
+    {{FOOTER_JS}}
+</body>
+</html>

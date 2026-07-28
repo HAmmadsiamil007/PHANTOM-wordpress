@@ -39,7 +39,7 @@ class Component_Registry_Test extends TestCase {
     public function test_get_all_returns_all_components(): void {
         $this->registry->register_defaults();
         $all = $this->registry->get_all();
-        $this->assertCount(4, $all);
+        $this->assertCount(19, $all);
     }
 
     public function test_register_adds_new_component(): void {

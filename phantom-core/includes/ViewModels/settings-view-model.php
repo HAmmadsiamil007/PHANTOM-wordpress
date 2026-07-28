@@ -5,6 +5,8 @@ namespace PhantomCore\ViewModels;
 
 use PhantomCore\Contracts\ViewModelInterface;
 
+defined('ABSPATH') || exit;
+
 /**
  * Settings_ViewModel transforms settings data into a typed view-model object.
  * Bridge between adapters and template renderers.

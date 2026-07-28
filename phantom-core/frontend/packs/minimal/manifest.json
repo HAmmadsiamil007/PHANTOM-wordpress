@@ -1,0 +1,20 @@
+{
+  "name": "Minimal",
+  "version": "1.0.0",
+  "description": "Clean, minimal template pack with generous whitespace and monochrome palette",
+  "author": "Phantom Core",
+  "settings": {
+    "primary_color": "#1a1a2e",
+    "dark_mode": false,
+    "font_heading": "Inter",
+    "font_body": "Inter"
+  },
+  "templates": {
+    "override_count": 12,
+    "base": "frontend/packs/minimal/html/"
+  },
+  "assets": {
+    "css": ["frontend/packs/minimal/assets/css/pack.css"],
+    "js": ["frontend/packs/minimal/assets/js/pack.js"]
+  }
+}

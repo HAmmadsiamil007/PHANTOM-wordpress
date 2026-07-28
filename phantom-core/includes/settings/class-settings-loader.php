@@ -5437,11 +5437,11 @@ class Settings_Loader {
   }
 
   private function section_template_pack(): array {
-    $packs = array('kids' => 'Kids Collection (Default)');
-    $dir = PHANTOM_CORE_PATH . 'frontend/templates/';
+    $packs = array('default' => 'Default', 'dark' => 'Dark', 'minimal' => 'Minimal', 'bold' => 'Bold');
+    $dir = PHANTOM_CORE_PATH . 'frontend/packs/';
     if (is_dir($dir)) {
       foreach (scandir($dir) as $entry) {
-        if ($entry !== '.' && $entry !== '..' && is_dir($dir . $entry)) {
+        if ($entry !== '.' && $entry !== '..' && is_dir($dir . $entry) && !isset($packs[$entry])) {
           $packs[$entry] = ucwords(str_replace('-', ' ', $entry));
         }
       }
@@ -5450,7 +5450,7 @@ class Settings_Loader {
       'template_pack' => array(
         'section'  => 'template_pack',
         'type'     => 'ast-select',
-        'default'  => 'kids',
+        'default'  => 'dark',
         'options'  => $packs,
         'sanitize' => 'sanitize_text_field',
         'label'    => __('Template Pack', 'phantom-core'),

@@ -155,12 +155,24 @@ class Shell {
             $this->engine = $this->engine->with_category(sanitize_title($matches[1]));
         }
 
+        // Allow bridges to translate/resolve the route URL
+        $slug = apply_filters('phantom_core/route/url', $slug, $slug);
+
         // Asset base path replacement: Replace assets/ prefix before output
         $v = '?v=' . PHANTOM_CORE_VERSION;
         $asset_base = PHANTOM_CORE_URL . 'frontend/assets';
 
-        // Render via Engine
-        $html = $this->engine->render($slug);
+        // Render via Engine with fatal error fallback
+        try {
+          $html = $this->engine->render($slug);
+        } catch (\Throwable $e) {
+          status_header(500);
+          if (defined('WP_DEBUG') && WP_DEBUG) {
+            $html = '<!DOCTYPE html><html><head><title>Render Error</title></head><body><h1>Render Error</h1><pre>' . esc_html($e->getMessage()) . '</pre></body></html>';
+          } else {
+            $html = '<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Something went wrong</h1><p>Please try again later.</p></body></html>';
+          }
+        }
 
         // Apply asset base path substitution — only relative paths, not already-absolute URLs
         $html = preg_replace(

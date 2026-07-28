@@ -1,0 +1,24 @@
+<div class="account-form" data-reveal>
+    <form class="account-form-fields" method="post" action="{{ACTION_URL}}">
+        <div class="account-form-row">
+            <label for="account-first-name">{{FIRST_NAME_LABEL}}</label>
+            <input type="text" id="account-first-name" name="first_name" value="{{FIRST_NAME}}" required>
+        </div>
+        <div class="account-form-row">
+            <label for="account-last-name">{{LAST_NAME_LABEL}}</label>
+            <input type="text" id="account-last-name" name="last_name" value="{{LAST_NAME}}" required>
+        </div>
+        <div class="account-form-row">
+            <label for="account-email">{{EMAIL_LABEL}}</label>
+            <input type="email" id="account-email" name="email" value="{{EMAIL}}" required>
+        </div>
+        <div class="account-form-row">
+            <label for="account-phone">{{PHONE_LABEL}}</label>
+            <input type="tel" id="account-phone" name="phone" value="{{PHONE}}">
+        </div>
+        <div class="account-form-actions">
+            {{SAVE_BTN}}
+            {{CANCEL_BTN}}
+        </div>
+    </form>
+</div>

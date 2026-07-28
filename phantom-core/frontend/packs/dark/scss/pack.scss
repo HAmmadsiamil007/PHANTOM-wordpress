@@ -1,0 +1,52 @@
+$pack-name: "dark";
+$primary: #6C63FF;
+$primary-dark: #5A52D5;
+$bg-primary: #0f0f1a;
+$bg-secondary: #1a1a2e;
+$bg-card: #16213e;
+$text-primary: #e8e8f0;
+$text-secondary: #a0a0b8;
+$border-color: #2a2a4a;
+$font-heading: 'Inter', sans-serif;
+$font-body: 'Inter', sans-serif;
+
+body {
+  background-color: $bg-primary;
+  color: $text-primary;
+  font-family: $font-body;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-heading;
+  color: #ffffff;
+}
+
+a { color: $primary; &:hover { color: #8B85FF; } }
+
+.navbar, .site-header {
+  background-color: $bg-secondary;
+  border-bottom: 1px solid $border-color;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  border: none;
+  color: #fff;
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba($primary, 0.35); }
+}
+
+.product-card, .blog-card, .category-card {
+  background-color: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  &:hover { border-color: $primary; box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+}
+
+.footer { background-color: $bg-secondary; border-top: 1px solid $border-color; }
+
+input, select, textarea {
+  background-color: $bg-secondary;
+  border: 1px solid $border-color;
+  color: $text-primary;
+  &:focus { border-color: $primary; }
+}

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhantomCore\Renderer;
 
+use PhantomCore\ViewModels\Product_ViewModel;
+
 defined('ABSPATH') || exit;
 
 class Product_Card extends Component_Renderer {
@@ -14,6 +16,7 @@ class Product_Card extends Component_Renderer {
   }
 
   public function render(array $data): string {
+    $data = $this->through_view_model(Product_ViewModel::class, $data);
     $badge = '';
     if (!empty($data['on_sale'])) {
       $badge = '<span class="product-badge badge-sale">Sale</span>';

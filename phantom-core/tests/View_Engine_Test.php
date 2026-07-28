@@ -15,7 +15,7 @@ class View_Engine_Test extends TestCase {
         $result = $this->engine->inject_all($html, 'home');
         $this->assertStringContainsString('Skip to main content', $result);
         $this->assertStringContainsString('class="skip-link screen-reader-text"', $result);
-        $this->assertStringContainsString('href="#phantom-main-content"', $result);
+        $this->assertStringContainsString('href="#main"', $result);
     }
 
     public function test_inject_loading_state_added(): void {
