@@ -9,6 +9,12 @@
 defined( 'ABSPATH' ) || exit;
 
 define( 'PHANTOM_THEME_VERSION', '1.5.0' );
+
+// Pre-load empty .mo to prevent _load_textdomain_just_in_time notices in WP 6.7+
+$theme_td_empty = PHANTOM_THEME_DIR . '/languages/empty.mo';
+if ( file_exists( $theme_td_empty ) ) {
+	load_textdomain( 'phantom-theme', $theme_td_empty );
+}
 define( 'PHANTOM_THEME_DIR', get_template_directory() );
 define( 'PHANTOM_THEME_URL', get_template_directory_uri() );
 

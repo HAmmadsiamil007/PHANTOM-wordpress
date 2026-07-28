@@ -3,7 +3,7 @@
  * Plugin Name:       Phantom Core Framework
  * Plugin URI:        https://phantom.test
  * Description:       Core REST API layer for Phantom — settings registry, theme options, customizer, import/export, caching. Backend only — no frontend code.
- * Version:           1.5.4
+ * Version:           2.0.0
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * WC requires at least: 9.0
@@ -30,10 +30,11 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return; // Stop loading the plugin
 }
 
-define( 'PHANTOM_CORE_VERSION', '1.5.4' );
+define( 'PHANTOM_CORE_VERSION', '2.0.0' );
 define( 'PHANTOM_CORE_FILE', __FILE__ );
 define( 'PHANTOM_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PHANTOM_CORE_URL', plugin_dir_url( __FILE__ ) );
+define( 'PHANTOM_THEME_URL', PHANTOM_CORE_URL . '../phantom-theme/' );
 
 spl_autoload_register(
 	function ( string $class ): void {
@@ -296,12 +297,48 @@ spl_autoload_register(
 			}
 		}
 
+		// Compatibility uses includes/Compatibility/ with class-{name}.php naming
+		$compatibility_prefix = 'Compatibility\\';
+		if ( strncmp( $compatibility_prefix, $relative_class, strlen( $compatibility_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $compatibility_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Compatibility/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
 		// Upgrade uses includes/Upgrade/ with class-{name}.php naming
 		$upgrade_prefix = 'Upgrade\\';
 		if ( strncmp( $upgrade_prefix, $relative_class, strlen( $upgrade_prefix ) ) === 0 ) {
 			$short = substr( $relative_class, strlen( $upgrade_prefix ) );
 			$short = $pascal_to_kebab( $short );
 			$file  = PHANTOM_CORE_PATH . 'includes/Upgrade/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Injectors uses includes/Engine/Injectors/ with class-{name}.php naming
+		$injectors_prefix = 'Engine\\Injectors\\';
+		if ( strncmp( $injectors_prefix, $relative_class, strlen( $injectors_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $injectors_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Engine/Injectors/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Setup uses includes/Setup/ with class-{name}.php naming
+		$setup_prefix = 'Setup\\';
+		if ( strncmp( $setup_prefix, $relative_class, strlen( $setup_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $setup_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Setup/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
 			if ( file_exists( $file ) ) {
 				require_once $file;
 				return;
@@ -370,11 +407,18 @@ require_once PHANTOM_CORE_PATH . 'includes/Animation/class-gsap-bridge.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-scroll-reveal.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-parallax.php';
 
-// Phase D: Plugin Bridges — register bridge before init_all()
-\PhantomCore\Bridges\Bridge_Manager::get_instance()->register(
-	new \PhantomCore\Bridges\WooCommerce_Bridge()
-);
-\PhantomCore\Bridges\Bridge_Manager::get_instance()->init_all();
+// Phase D: Plugin Bridges — register all before init_all()
+$bridge_mgr = \PhantomCore\Bridges\Bridge_Manager::get_instance();
+$bridge_mgr->register(new \PhantomCore\Bridges\WooCommerce_Bridge());
+$bridge_mgr->register(new \PhantomCore\Bridges\Wishlist_Bridge());
+$bridge_mgr->register(new \PhantomCore\Bridges\Mailchimp_Bridge());
+$bridge_mgr->register(new \PhantomCore\Compatibility\Gutenberg_Bridge());
+$bridge_mgr->register(new \PhantomCore\Compatibility\Elementor_Bridge());
+$bridge_mgr->register(new \PhantomCore\Compatibility\WPML_Bridge());
+$bridge_mgr->register(new \PhantomCore\Compatibility\RankMath_Bridge());
+$bridge_mgr->register(new \PhantomCore\Compatibility\Yoast_Bridge());
+$bridge_mgr->register(new \PhantomCore\Compatibility\CF7_Bridge());
+$bridge_mgr->init_all();
 
 // Pre-register the textdomain with an empty .mo to prevent
 // _load_textdomain_just_in_time notices in WP 6.7+ when __()
@@ -655,6 +699,15 @@ add_filter( 'woocommerce_locate_template', function ( string $template, string $
 	}
 	return $template;
 }, 10, 3 );
+
+// Initialize Activation Wizard on admin
+add_action( 'init', function (): void {
+	if ( is_admin() && ! wp_doing_ajax() && ! defined( 'DOING_AJAX' ) ) {
+		if ( class_exists( '\PhantomCore\Setup\Activation_Wizard' ) ) {
+			new \PhantomCore\Setup\Activation_Wizard();
+		}
+	}
+} );
 
 /**
  * Clean up plugin data on uninstall.

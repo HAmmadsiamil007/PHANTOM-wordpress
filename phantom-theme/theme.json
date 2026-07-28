@@ -165,12 +165,12 @@
 			"postTypes": ["page"]
 		},
 		{
-			"name": "three-colum-sidbar",
+			"name": "three-column-sidebar",
 			"title": "Three Columns with Sidebar",
 			"postTypes": ["page"]
 		},
 		{
-			"name": "six-colum-full-wide",
+			"name": "six-column-full-width",
 			"title": "Six Columns Full Width",
 			"postTypes": ["page"]
 		},
