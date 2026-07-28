@@ -126,7 +126,7 @@ All 126 issues (24 critical, 34 high, 39 medium, 29 low) have been remediated ac
 
 ### 2026-07-26 theme-detail docs overhaul
 All 8 files in `theme-detail/` updated to v1.5.3 accuracy:
-- **README.md**: Stats (564 settings, 41 routes, 22 templates, 96 CSS vars, 9 CSS modules), Docker paths (`phantom_wordpress`), responsive hero + hotfixes section
+- **README.md**: Stats (564 settings, 41 routes, 22 templates, 96 CSS vars, 9 CSS modules), Docker paths (`optix_wordpress`), responsive hero + hotfixes section
 - **FEATURES.md**: Hero section (10→19 settings), template inventory (31→22), feature coverage updated with responsive hero + performance + settings debug bars
 - **ARCHITECTURE.md**: REST routes (34→41), CSS modules (8→9), CSS vars (90→96), hero CSS module, template list updated
 - **CUSTOMIZATION.md**: CSS vars (90→96), hero CSS var table (5→11), REST endpoints (34→41), responsive hero live preview notes
@@ -136,8 +136,8 @@ All 8 files in `theme-detail/` updated to v1.5.3 accuracy:
 ## Development Workflow
 ```bash
 # Push local changes to Docker
-docker cp phantom-core phantom_wordpress:/var/www/html/wp-content/plugins/phantom-core
+docker cp phantom-core optix_wordpress:/var/www/html/wp-content/plugins/phantom-core
 
 # Pull from Docker
-docker cp phantom_wordpress:/var/www/html/wp-content/plugins/phantom-core ./phantom-core
+docker cp optix_wordpress:/var/www/html/wp-content/plugins/phantom-core ./phantom-core
 ```
