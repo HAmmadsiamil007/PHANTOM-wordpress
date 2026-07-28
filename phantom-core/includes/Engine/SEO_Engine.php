@@ -24,7 +24,16 @@ class SEO_Engine {
     $site_name = get_bloginfo('name');
     $site_desc = get_bloginfo('description');
     $home_url  = home_url('/');
-    $current_url = home_url(add_query_arg([]));
+    $current_url = home_url(remove_query_arg(['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'fbclid']));
+
+    $og_enabled        = get_option('phantom_seo_og_enabled', '1');
+    $canonical         = get_option('phantom_seo_canonical', '1');
+    $schema_enabled    = get_option('phantom_seo_schema_enabled', '1');
+    $breadcrumbs_enabled = get_option('phantom_seo_breadcrumbs_enabled', '1');
+    $sitemap_enabled   = get_option('phantom_seo_sitemap_enabled', '0');
+    $noindex_archives  = get_option('phantom_seo_noindex_archives', '0');
+    $twitter_handle    = get_option('phantom_seo_twitter_handle', '');
+    $fb_app_id         = get_option('phantom_seo_fb_app_id', '');
 
     $title = $this->build_title($slug, $site_name, $site_desc);
     $site_desc = $this->override_description($slug, $site_desc);
@@ -33,9 +42,9 @@ class SEO_Engine {
     $title_tag = sprintf('<title>%s</title>', esc_html($title));
     $html = preg_replace('/<title>[^<]*<\/title>/i', $title_tag, $html, 1);
 
-    $meta = $this->build_meta_tags($title, $site_desc, $current_url, $image_url, $slug);
+    $meta = $this->build_meta_tags($title, $site_desc, $current_url, $image_url, $slug, $og_enabled, $canonical, $twitter_handle, $fb_app_id, $noindex_archives);
     $meta .= $this->build_preload_links($slug);
-    $meta .= $this->build_json_ld($slug, $site_name, $home_url, $current_url);
+    $meta .= $this->build_json_ld($slug, $site_name, $home_url, $current_url, $title, $schema_enabled, $breadcrumbs_enabled);
     $meta .= $this->inject_seo_bridge_hooks();
     $base_tag = sprintf('<base href="%s" />', esc_url($home_url));
 
@@ -121,23 +130,43 @@ class SEO_Engine {
     return $default;
   }
 
-  private function build_meta_tags(string $title, string $desc, string $url, string $image, string $slug): string {
+  private function build_meta_tags(string $title, string $desc, string $url, string $image, string $slug, string $og_enabled = '1', string $canonical = '1', string $twitter_handle = '', string $fb_app_id = '', string $noindex_archives = '0'): string {
     $meta = '';
+
+    if ('1' === $noindex_archives && in_array($slug, ['blog', 'shop'], true)) {
+      $meta .= '<meta name="robots" content="noindex,follow" />';
+    }
+
     $meta .= sprintf('<meta name="description" content="%s" />', esc_attr($desc));
-    $meta .= sprintf('<link rel="canonical" href="%s" />', esc_url($url));
-    $meta .= sprintf('<meta property="og:title" content="%s" />', esc_attr($title));
-    $meta .= sprintf('<meta property="og:description" content="%s" />', esc_attr($desc));
-    $meta .= sprintf('<meta property="og:url" content="%s" />', esc_url($url));
-    $meta .= sprintf('<meta property="og:image" content="%s" />', esc_url($image));
-    $meta .= '<meta property="og:type" content="website" />';
-    $meta .= sprintf('<meta property="og:site_name" content="%s" />', esc_attr(get_bloginfo('name')));
+
+    if ('1' === $canonical) {
+      $meta .= sprintf('<link rel="canonical" href="%s" />', esc_url($url));
+    }
+
+    if ('1' === $og_enabled) {
+      $meta .= sprintf('<meta property="og:locale" content="%s" />', esc_attr(get_locale()));
+      $meta .= sprintf('<meta property="og:title" content="%s" />', esc_attr($title));
+      $meta .= sprintf('<meta property="og:description" content="%s" />', esc_attr($desc));
+      $meta .= sprintf('<meta property="og:url" content="%s" />', esc_url($url));
+      $meta .= sprintf('<meta property="og:image" content="%s" />', esc_url($image));
+      $meta .= '<meta property="og:type" content="website" />';
+      $meta .= sprintf('<meta property="og:site_name" content="%s" />', esc_attr(get_bloginfo('name')));
+      if ($fb_app_id) {
+        $meta .= sprintf('<meta property="fb:app_id" content="%s" />', esc_attr($fb_app_id));
+      }
+    }
+
     $meta .= '<meta name="twitter:card" content="summary_large_image" />';
     $meta .= sprintf('<meta name="twitter:title" content="%s" />', esc_attr($title));
     $meta .= sprintf('<meta name="twitter:description" content="%s" />', esc_attr($desc));
+    $meta .= sprintf('<meta name="twitter:image" content="%s" />', esc_url($image));
+    if ($twitter_handle) {
+      $meta .= sprintf('<meta name="twitter:site" content="%s" />', esc_attr($twitter_handle));
+    }
 
     if (in_array($slug, ['post', 'single-blog'], true) && $this->resolved_post_id) {
       $post = get_post($this->resolved_post_id);
-      if ($post) {
+      if ($post && '1' === $og_enabled) {
         $meta .= '<meta property="og:type" content="article" />';
         $meta .= sprintf('<meta property="article:published_time" content="%s" />', esc_attr($post->post_date));
         $meta .= sprintf('<meta property="article:modified_time" content="%s" />', esc_attr($post->post_modified));
@@ -165,14 +194,7 @@ class SEO_Engine {
       $meta .= sprintf('<link rel="next" href="%s" />', esc_url(add_query_arg('page', $page_num + 1, $url)));
     }
 
-    $meta .= '<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />';
-    $meta .= '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />';
-    $meta .= '<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />';
-    $meta .= '<link rel="preconnect" href="https://unpkg.com" crossorigin />';
-    $meta .= '<link rel="dns-prefetch" href="//fonts.googleapis.com" />';
-    $meta .= '<link rel="dns-prefetch" href="//fonts.gstatic.com" />';
-    $meta .= '<link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />';
-    $meta .= '<link rel="dns-prefetch" href="//unpkg.com" />';
+    $meta .= '<!-- Resource hints moved to Asset_Engine::inject_resource_hints -->' . "\n";
 
     if (function_exists('wp_create_nonce')) {
       $meta .= sprintf('<meta name="wc-nonce" content="%s" />', esc_attr(wp_create_nonce('woocommerce-process_checkout')));
@@ -181,13 +203,15 @@ class SEO_Engine {
     if (preg_match('/^product/', $slug) && function_exists('wc_get_product') && $this->resolved_product_id) {
       $product = wc_get_product($this->resolved_product_id);
       if ($product) {
-        $meta .= '<meta property="og:type" content="product" />';
-        $meta .= sprintf('<meta property="og:description" content="%s" />', esc_attr(wp_strip_all_tags($product->get_short_description())));
-        $img_id = $product->get_image_id();
-        $meta .= sprintf('<meta property="og:image" content="%s" />', esc_url($img_id ? wp_get_attachment_url($img_id) : ''));
-        $meta .= sprintf('<meta property="product:price:amount" content="%s" />', esc_attr((string) $product->get_price()));
-        $meta .= sprintf('<meta property="product:price:currency" content="%s" />', esc_attr(get_woocommerce_currency()));
-        $meta .= sprintf('<meta property="product:retailer_item_id" content="%s" />', esc_attr($product->get_sku() ?: (string) $this->resolved_product_id));
+        if ('1' === $og_enabled) {
+          $meta .= '<meta property="og:type" content="product" />';
+          $meta .= sprintf('<meta property="og:description" content="%s" />', esc_attr(wp_strip_all_tags($product->get_short_description())));
+          $img_id = $product->get_image_id();
+          $meta .= sprintf('<meta property="og:image" content="%s" />', esc_url($img_id ? wp_get_attachment_url($img_id) : ''));
+          $meta .= sprintf('<meta property="product:price:amount" content="%s" />', esc_attr((string) $product->get_price()));
+          $meta .= sprintf('<meta property="product:price:currency" content="%s" />', esc_attr(get_woocommerce_currency()));
+          $meta .= sprintf('<meta property="product:retailer_item_id" content="%s" />', esc_attr($product->get_sku() ?: (string) $this->resolved_product_id));
+        }
         $meta .= sprintf('<meta name="twitter:description" content="%s" />', esc_attr(wp_strip_all_tags($product->get_short_description())));
       }
     }
@@ -217,12 +241,24 @@ class SEO_Engine {
     return $links;
   }
 
-  private function build_json_ld(string $slug, string $site_name, string $home_url, string $current_url): string {
+  private function build_json_ld(string $slug, string $site_name, string $home_url, string $current_url, string $title = '', string $schema_enabled = '1', string $breadcrumbs_enabled = '1'): string {
+    if ('1' !== $schema_enabled) {
+      return '';
+    }
+
+    $logo_url = wp_get_attachment_url((int) get_theme_mod('custom_logo')) ?: PHANTOM_CORE_URL . 'frontend/assets/images/logo.png';
+
     $graph = [
       [
         '@type' => 'Organization',
         'name'  => $site_name,
         'url'   => $home_url,
+        'logo'  => $logo_url,
+        'sameAs' => [
+          'https://facebook.com/' . $site_name,
+          'https://twitter.com/' . $site_name,
+          'https://instagram.com/' . $site_name,
+        ],
       ],
       [
         '@type' => 'WebSite',
@@ -234,54 +270,63 @@ class SEO_Engine {
           'query-input' => 'required name=search_term_string',
         ],
       ],
+      [
+        '@type' => 'WebPage',
+        '@id'   => $current_url . '#webpage',
+        'url'   => $current_url,
+        'name'  => $title,
+        'isPartOf' => ['@id' => $home_url . '#website'],
+      ],
     ];
 
-    $breadcrumbs = [];
-    if (preg_match('/^product/', $slug) && function_exists('wc_get_product') && $this->resolved_product_id) {
-      $product = wc_get_product($this->resolved_product_id);
-      if ($product) {
-        $cats = $product->get_category_ids();
-        if (!empty($cats)) {
-          $term = get_term($cats[0]);
-          if ($term && !is_wp_error($term)) {
+    if ('1' === $breadcrumbs_enabled) {
+      $breadcrumbs = [];
+      if (preg_match('/^product/', $slug) && function_exists('wc_get_product') && $this->resolved_product_id) {
+        $product = wc_get_product($this->resolved_product_id);
+        if ($product) {
+          $cats = $product->get_category_ids();
+          if (!empty($cats)) {
+            $term = get_term($cats[0]);
+            if ($term && !is_wp_error($term)) {
+              $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Shop', 'item' => get_permalink(wc_get_page_id('shop'))];
+              $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 2, 'name' => $term->name, 'item' => get_term_link($term)];
+              $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 3, 'name' => $product->get_name(), 'item' => $product->get_permalink()];
+            }
+          }
+          if (empty($breadcrumbs)) {
             $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Shop', 'item' => get_permalink(wc_get_page_id('shop'))];
-            $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 2, 'name' => $term->name, 'item' => get_term_link($term)];
-            $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 3, 'name' => $product->get_name(), 'item' => $product->get_permalink()];
           }
         }
-        if (empty($breadcrumbs)) {
-          $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Shop', 'item' => get_permalink(wc_get_page_id('shop'))];
+      } elseif (in_array($slug, ['shop', 'cart', 'checkout', 'wishlist', 'my-account', 'account'], true)) {
+        $labels = ['shop' => 'Collection', 'cart' => 'Cart', 'checkout' => 'Checkout', 'wishlist' => 'Wishlist', 'my-account' => 'My Account', 'account' => 'My Account'];
+        $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $home_url];
+        $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 2, 'name' => $labels[$slug] ?? $slug, 'item' => $current_url];
+      } elseif (in_array($slug, ['blog', 'post', 'single-blog'], true) && $this->resolved_post_id) {
+        $post = get_post($this->resolved_post_id);
+        $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $home_url];
+        $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 2, 'name' => 'Blog', 'item' => home_url('/blog')];
+        if ($post) {
+          $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 3, 'name' => $post->post_title, 'item' => get_permalink($post)];
         }
+      } elseif ($slug && '404' !== $slug) {
+        $labels = [
+          'about' => 'About', 'contact' => 'Contact', 'coming-soon' => 'Coming Soon',
+          'faq' => 'FAQ', 'team' => 'Our Team', 'testimonials' => 'Testimonials',
+          'join-now' => 'Join Now', 'login' => 'Sign In', 'register' => 'Join Now',
+          'thank-you' => 'Thank You', 'privacy-policy' => 'Privacy Policy',
+          'term-of-use' => 'Terms of Use', 'cookie-policy' => 'Cookie Policy',
+        ];
+        $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $home_url];
+        $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 2, 'name' => $labels[$slug] ?? ucwords(str_replace('-', ' ', $slug)), 'item' => $current_url];
       }
-    } elseif (in_array($slug, ['shop', 'cart', 'checkout', 'wishlist', 'my-account', 'account'], true)) {
-      $labels = ['shop' => 'Collection', 'cart' => 'Cart', 'checkout' => 'Checkout', 'wishlist' => 'Wishlist', 'my-account' => 'My Account', 'account' => 'My Account'];
-      $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $home_url];
-      $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 2, 'name' => $labels[$slug] ?? $slug, 'item' => $current_url];
-    } elseif (in_array($slug, ['blog', 'post', 'single-blog'], true) && $this->resolved_post_id) {
-      $post = get_post($this->resolved_post_id);
-      $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $home_url];
-      $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 2, 'name' => 'Blog', 'item' => home_url('/blog')];
-      if ($post) {
-        $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 3, 'name' => $post->post_title, 'item' => get_permalink($post)];
-      }
-    } elseif ($slug && '404' !== $slug) {
-      $labels = [
-        'about' => 'About', 'contact' => 'Contact', 'coming-soon' => 'Coming Soon',
-        'faq' => 'FAQ', 'team' => 'Our Team', 'testimonials' => 'Testimonials',
-        'join-now' => 'Join Now', 'login' => 'Sign In', 'register' => 'Join Now',
-        'thank-you' => 'Thank You', 'privacy-policy' => 'Privacy Policy',
-        'term-of-use' => 'Terms of Use', 'cookie-policy' => 'Cookie Policy',
-      ];
-      $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $home_url];
-      $breadcrumbs[] = ['@type' => 'ListItem', 'position' => 2, 'name' => $labels[$slug] ?? ucwords(str_replace('-', ' ', $slug)), 'item' => $current_url];
-    }
 
-    if (!empty($breadcrumbs)) {
-      $graph[] = [
-        '@type' => 'BreadcrumbList',
-        '@id'   => $current_url . '#breadcrumb',
-        'itemListElement' => $breadcrumbs,
-      ];
+      if (!empty($breadcrumbs)) {
+        $graph[] = [
+          '@type' => 'BreadcrumbList',
+          '@id'   => $current_url . '#breadcrumb',
+          'itemListElement' => $breadcrumbs,
+        ];
+      }
     }
 
     if (preg_match('/^product/', $slug) && function_exists('wc_get_product') && $this->resolved_product_id) {

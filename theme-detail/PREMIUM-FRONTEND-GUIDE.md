@@ -1,6 +1,6 @@
 # Premium Frontend Template — CLI Agent Guide
 
-> **Purpose:** Complete guide for any AI coding agent to build premium, animated, 3D-enabled, scrollable frontend templates that connect to **Phantom Core** (decoupled WordPress framework with ~612 settings, 49 REST routes (42 unique paths), 136 CSS vars).
+> **Purpose:** Complete guide for any AI coding agent to build premium, animated, 3D-enabled, scrollable frontend templates that connect to **Phantom Core** (decoupled WordPress framework v2.0.0 — ~612 settings, 51 REST routes (44 unique paths), 136 CSS vars, 3 template packs).
 >
 > **Stack:** Phantom Core Data Bridge + Bootstrap 5 + GSAP + Three.js + Lenis + Swiper
 >
@@ -19,7 +19,7 @@ Settings Registry (~612 settings, 46 sections)
 
 Theme Options (Customizer → CSS vars → Frontend)
 
-Customizer (16 panels, 46 sections, 13 custom controls, 136 CSS vars)
+Customizer (16 panels, 45 sections, 12 custom control files (11 types + 1 base), 136 CSS vars)
 
 Menus (data-phantom-menu → WP Nav Menus)
 
@@ -29,7 +29,7 @@ Products (WooCommerce product grids via data-phantom-products)
 
 Categories (data-phantom-categories via REST)
 
-API (49 routes under phantom/v1, 42 unique paths)
+API (51 routes under phantom/v1, 44 unique paths)
       │
       ▼
           Render Engine
@@ -227,7 +227,7 @@ These class names are hardcoded in JS. Templates MUST use them:
 
 | Feature | How It Works In Phantom Core |
 |---------|------------------------------|
-| **Routing** | `Shell.php` hooks `template_redirect` (priority 1), maps URL slug → HTML file. 43 routes. |
+| **Routing** | `Shell.php` hooks `template_redirect` (priority 1), maps URL slug → HTML file. 51 routes (44 unique paths). |
 | **SEO** | Shell injects `<title>`, meta description, OG tags, Twitter Card, JSON-LD schema per page type |
 | **Auth** | 4 REST endpoints: login, register, password-reset, logout. Nonce-based. JS handles forms. |
 | **Users** | My account page fetches user orders via `/phantom/v1/user/orders` |
@@ -453,26 +453,27 @@ These CSS custom properties are injected into EVERY page. Templates MUST referen
 
 **Dark mode:** `[data-theme="dark"]` selector overrides color vars. Template CSS automatically responds.
 
-### 2.4 Customizer (16 Panels, 13 Custom Controls)
+### 2.4 Customizer (16 Panels, 12 Custom Controls)
 
 The Customizer is the visual settings editor. Every setting registered in `Settings_Registry` automatically appears.
 
-**13 Custom Control Types:**
-| Control | PHP Class | Purpose |
-|---------|-----------|---------|
-| Alpha Color | `class-custom-control-alpha-color.php` | RGBA color picker |
-| Dimension | `class-custom-control-dimension.php` | Width/height/spacing inputs |
-| Typography | `class-custom-control-typography.php` | Font family, weight, size, spacing |
-| Slider | `class-custom-control-slider.php` | Range slider |
-| Toggle | `class-custom-control-toggle.php` | On/off switch |
-| Radio Image | `class-custom-control-radio-image.php` | Image-based option selection |
-| Select | `class-custom-control-select.php` | Enhanced select dropdown |
-| Multi Select | `class-custom-control-multi-select.php` | Multi-value select |
-| Repeater | `class-custom-control-repeater.php` | Repeatable field groups |
-| Heading | `class-custom-control-heading.php` | Section heading/separator |
-| Sortable | `class-custom-control-sortable.php` | Drag-and-drop reorder |
-| Gradient | `class-custom-control-gradient.php` | Gradient color picker |
-| Box Shadow | `class-custom-control-box-shadow.php` | Shadow configuration |
+**12 Custom Control Files (11 types + 1 base class):**
+| Control | PHP Class | Type String | Purpose |
+|---------|-----------|-------------|---------|
+| Control_Base | `class-control-base.php` | — | Abstract base class |
+| Color | `class-color-control.php` | `ast-color` | Color picker (56 instances) |
+| Color Group | `class-color-group-control.php` | `ast-color-group` | Grouped color pickers |
+| Gradient | `class-gradient-control.php` | `ast-gradient` | Gradient picker |
+| Border | `class-border-control.php` | `ast-border` | Border width/style/color |
+| Background | `class-background-control.php` | `ast-background` | Background color/image/repeat |
+| Typography | `class-typography-control.php` | `ast-typography` | Font family/size/weight |
+| Select | `class-select-control.php` | `ast-select` | Custom dropdown (37 instances) |
+| Toggle | `class-toggle-control.php` | `ast-toggle` | On/off switch (103 instances) |
+| Radio Image | `class-radio-image-control.php` | `ast-radio-image` | Image-based option selection |
+| Responsive Slider | `class-responsive-slider-control.php` | `ast-responsive-slider` | Device-responsive slider |
+| Responsive Spacing | `class-responsive-spacing-control.php` | `ast-responsive-spacing` | Device-responsive spacing |
+
+**3 types actively used:** ast-toggle (103), ast-color (56), ast-select (37). The remaining 8 types are registered but unused in current section configs. Plus `Font_Families` static helper class.
 
 **Template connection:** None needed — Customizer changes flow through CSS vars automatically.
 
@@ -729,7 +730,7 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 | Get shipping | `GET /phantom/v1/cart/shipping-methods` | GET |
 | Checkout | `wc-ajax=checkout` | POST (WC native) |
 
-### 2.10 REST API (49 Routes Under `phantom/v1`, 42 Unique Paths)
+### 2.10 REST API (51 Routes Under `phantom/v1`, 44 Unique Paths)
 
 | # | Endpoint | Methods | Permission | Purpose |
 |---|----------|---------|------------|---------|
@@ -775,21 +776,25 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 | 40 | `/user/profile` | GET, POST | nonce + logged-in | User profile read/update |
 | 41 | `/widgets` | GET | public | List all widget areas |
 | 42 | `/widgets/{sidebar_id}` | GET, POST | public/edit_theme_options | Widget area contents |
+| 43 | `/template-packs` | GET | admin | List available template packs (v2.0.0) |
+| 44 | `/template-pack/activate` | POST | admin | Activate a template pack (v2.0.0) |
 
 ### 2.11 New Architecture (Phase B–E: 100/100 Alignment)
 
-Since v1.5.3, Phantom Core has expanded beyond its original settings/customizer/REST scope into a full decoupled framework:
+Since v2.0.0, Phantom Core has expanded beyond its original settings/customizer/REST scope into a full decoupled framework:
 
 | Layer | Components | Purpose |
 |-------|-----------|---------|
-| **Data Layer** | 9 Adapters (Post, Page, User, Footer, Settings, Product, Category, Menu, Widget), 6 ViewModels, `Data_Normalizer`, `Data_Provider` | Normalizes all WordPress/WooCommerce data into consistent schemas |
+| **Data Layer** | 15 Adapters (Post, Page, User, Footer, Settings, Product, Category, Menu, Cart, Coupon, Order, Comment, Tag, Search, Hero), 11 ViewModels, `Data_Normalizer`, `Data_Provider` | Normalizes all WordPress/WooCommerce data into consistent schemas |
 | **Layout Registry** | `Layout`, `Layout_Registry`, `Layout_Manager` with 7 default layouts | Controls page structure and template selection |
 | **Design API** | `Design_API` facade over `DesignSystemManager` with 10 filterable methods | Unified design token access |
 | **Hook Registry** | `Hook_Registry` tracks, registers, and dispatches hooks with introspection | Decoupled event-driven architecture |
 | **Plugin Bridges** | `BridgeInterface`, `Plugin_Bridge` abstract, `WooCommerce_Bridge`, `Bridge_Manager` | Standardized third-party plugin integration |
 | **Asset Registry** | `Asset_Registry` with 25+ pre-registered assets | Centralized asset enqueue management |
 | **Capability Manager** | 8 custom `phantom_` capabilities | Fine-grained permissions |
-| **Public API Facades** | Render, Component, Animation, Settings, Template, Developer facades | 6 entry points for external code |
+| **Public API Facades** | Render, Component, Animation, Settings, Template, Developer, Design facades | 7 entry points for external code |
+| **Template Packs** | 3 packs (Dark, Minimal, Bold) with manifests, SCSS, HTML overrides | Swappable frontend themes |
+| **Setup System** | Demo_Content_Generator + Activation_Wizard (4-step) | First-run setup and demo content |
 | **Container Config** | 38 registered services | DI container for all framework services |
 | **All 9 Registries** | Settings, Customizer, Layout, Hook, Asset, Template, Component, Animation, Feature | Complete registry system |
 

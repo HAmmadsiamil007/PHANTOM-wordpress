@@ -41,12 +41,7 @@ class WooCommerce_Injector {
       $hero_component = Component_Registry::get_instance()->get('hero');
       if ($hero_component) {
         $hero_html = $hero_component->instance()->render($this->hero_adapter->normalize());
-        $html = preg_replace(
-          '/<section[^>]*class=\"[^\"]*page-hero[^\"]*\"[^>]*>.*?<\/section>/s',
-          $hero_html,
-          $html,
-          1
-        );
+        $html = $this->replace_inner_by_component($html, 'hero', $hero_html);
       }
     } catch (\Throwable $e) {}
 
@@ -102,12 +97,7 @@ class WooCommerce_Injector {
       $footer_component = Component_Registry::get_instance()->get('footer');
       if ($footer_component) {
         $footer_html = $footer_component->instance()->render($this->get_footer_data());
-        $html = preg_replace(
-          '/<footer[^>]*class=\"[^\"]*footer[^\"]*\"[^>]*>.*?<\/footer>/s',
-          $footer_html,
-          $html,
-          1
-        );
+        $html = $this->replace_inner_by_component($html, 'footer', $footer_html);
       }
     } catch (\Throwable $e) {}
 

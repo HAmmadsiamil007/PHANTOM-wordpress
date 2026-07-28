@@ -48,7 +48,7 @@ class Phantom_Custom_CSS {
 
 		$css = '';
 		$css = apply_filters( 'phantom_dynamic_css', $css );
-		if ( ! is_customize_preview() ) {
+		if ( ! is_customize_preview() && get_option( 'phantom_performance_minify_css', '0' ) ) {
 			$css = self::minify_css( $css );
 		}
 
@@ -161,27 +161,27 @@ class Phantom_Custom_CSS {
 	}
 
 	private const LEGACY_TO_TOKEN_MAP = [
-		'color_primary'       => 'colors.primary',
-		'color_secondary'     => 'colors.secondary',
-		'color_accent'        => 'colors.accent',
-		'color_background'    => 'colors.background',
-		'color_text'          => 'colors.text',
-		'color_heading'       => 'colors.heading',
-		'color_link'          => 'colors.link',
-		'color_link_hover'    => 'colors.linkHover',
-		'color_border'        => 'colors.border',
-		'header_bg'           => 'header.background',
-		'header_text_color'   => 'header.textColor',
-		'footer_bg_color'     => 'footer.background',
-		'footer_text'         => 'footer.text',
-		'topbar_bg'           => 'topbar.background',
-		'topbar_text'         => 'topbar.text',
-		'button_bg'           => 'buttons.background',
-		'button_text'         => 'buttons.text',
-		'button_bg_hover'     => 'buttons.backgroundHover',
-		'button_text_hover'   => 'buttons.textHover',
-		'color_rating'        => 'colors.rating',
-		'color_sale'          => 'colors.sale',
+		'color_primary'       => 'color.primary',
+		'color_secondary'     => 'color.secondary',
+		'color_accent'        => 'color.accent',
+		'color_background'    => 'color.background',
+		'color_text'          => 'color.text.primary',
+		'color_heading'       => 'color.text.secondary',
+		'color_link'          => 'color.link',
+		'color_link_hover'    => 'color.link.hover',
+		'color_border'        => 'color.border',
+		'header_bg'           => 'color.header.bg',
+		'header_text_color'   => 'color.header.text',
+		'footer_bg_color'     => 'color.footer.bg',
+		'footer_text'         => 'color.footer.text',
+		'topbar_bg'           => 'color.topbar.bg',
+		'topbar_text'         => 'color.topbar.text',
+		'button_bg'           => 'color.button.bg',
+		'button_text'         => 'color.button.text',
+		'button_bg_hover'     => 'color.button.hover.bg',
+		'button_text_hover'   => 'color.button.hover.text',
+		'color_rating'        => 'color.rating',
+		'color_sale'          => 'color.sale',
 	];
 
 	private static array $legacy_token_resolved = [];
@@ -190,19 +190,19 @@ class Phantom_Custom_CSS {
 		return self::LEGACY_TO_TOKEN_MAP;
 	}
 
-	public static function get_legacy_option( string $legacy_key ) {
+	public static function get_legacy_option( string $legacy_key, $default = '' ) {
 		if ( isset( self::$legacy_token_resolved[ $legacy_key ] ) ) {
 			return self::$legacy_token_resolved[ $legacy_key ];
 		}
 		$token_path = self::LEGACY_TO_TOKEN_MAP[ $legacy_key ] ?? null;
 		if ( null === $token_path ) {
-			self::$legacy_token_resolved[ $legacy_key ] = '';
-			return '';
+			self::$legacy_token_resolved[ $legacy_key ] = $default;
+			return $default;
 		}
 		$dsm = \PhantomCore\Design\DesignSystemManager::get_instance();
-		$value = $dsm->get_token_value( $token_path );
-		if ( '' === $value ) {
-			$value = get_option( 'phantom_' . $legacy_key, '' );
+		$value = $dsm->token( $token_path );
+		if ( null === $value || '' === $value ) {
+			$value = get_option( 'phantom_' . $legacy_key, $default );
 		}
 		self::$legacy_token_resolved[ $legacy_key ] = $value;
 		return $value;

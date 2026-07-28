@@ -61,12 +61,7 @@ class Product_Injector extends Base_Injector {
 
     if (empty($products)) {
       $empty = '<div class="shop-grid-empty"><p>No products found in this category.</p><a href="' . esc_url(home_url('/shop')) . '" class="btn btn-outline">View All Products</a></div>';
-      return preg_replace(
-        '/<div class="shop-grid[^\"]*"[^>]*>.*?<\/div>\s*<\/section>/s',
-        '<div class="shop-grid" data-reveal-group>' . $empty . '</div></section>',
-        $html,
-        1
-      );
+      return $this->replace_inner_by_component($html, 'shop-grid', $empty);
     }
 
     $product_card = $this->get_product_card_renderer();
@@ -81,12 +76,7 @@ class Product_Injector extends Base_Injector {
       $product_cards = $this->render_fallback_products($products);
     }
 
-    $html = preg_replace(
-      '/<div class="shop-grid[^\"]*"[^>]*>.*?<\/div>\s*<\/section>/s',
-      '<div class="shop-grid" data-reveal-group>' . $product_cards . '</div></section>',
-      $html,
-      1
-    );
+    $html = $this->replace_inner_by_component($html, 'shop-grid', $product_cards);
 
     $total_ids = wc_get_products(array_merge($args, ['limit' => -1, 'return' => 'ids']));
     $total_pages = ceil(count($total_ids) / 12);
@@ -211,12 +201,7 @@ class Product_Injector extends Base_Injector {
       $cards = $this->render_fallback_products($products);
     }
 
-    return preg_replace(
-      '/<div class="products-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-      '<div class="products-grid" data-reveal-group>' . $cards . '</div></section>',
-      $html,
-      1
-    );
+    return $this->replace_inner_by_component($html, 'products-grid', $cards);
   }
 
   public function inject_homepage_categories(string $html): string {
@@ -234,12 +219,7 @@ class Product_Injector extends Base_Injector {
       $cards = $this->render_fallback_categories($categories);
     }
 
-    return preg_replace(
-      '/<div class="category-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-      '<div class="category-grid" data-reveal-group>' . $cards . '</div></section>',
-      $html,
-      1
-    );
+    return $this->replace_inner_by_component($html, 'category-grid', $cards);
   }
 
   private function render_add_to_cart($product): string {

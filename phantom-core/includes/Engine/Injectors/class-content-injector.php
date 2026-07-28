@@ -32,12 +32,8 @@ class Content_Injector extends Base_Injector {
     ]);
 
     if (!$query->have_posts()) {
-      return preg_replace(
-        '/<div class="blog-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-        '<div class="blog-grid"><div class="blog-empty"><p>No posts found.</p></div></div></section>',
-        $html,
-        1
-      );
+      $empty = '<div class="blog-empty"><p>No posts found.</p></div>';
+      return $this->replace_inner_by_component($html, 'blog-grid', $empty);
     }
 
     $post_adapter = new Post_Adapter();
@@ -72,12 +68,7 @@ class Content_Injector extends Base_Injector {
     }
     wp_reset_postdata();
 
-    $html = preg_replace(
-      '/<div class="blog-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-      '<div class="blog-grid" data-reveal-group>' . $cards . '</div></section>',
-      $html,
-      1
-    );
+    $html = $this->replace_inner_by_component($html, 'blog-grid', $cards);
 
     if ($query->max_num_pages > 1) {
       $pagination = '<div class="blog-pagination">';
@@ -106,7 +97,7 @@ class Content_Injector extends Base_Injector {
     $post_id = $this->engine->get_resolved_post_id();
 
     if (!$post_id) {
-      $slug = trim($_GET['slug'] ?? '');
+      $slug = sanitize_title(wp_unslash($_GET['slug'] ?? ''));
       if ($slug) {
         $post = get_page_by_path($slug, OBJECT, 'post');
         $post_id = $post ? $post->ID : 0;
@@ -178,18 +169,14 @@ class Content_Injector extends Base_Injector {
   }
 
   public function inject_search_content(string $html): string {
-    $search_term = trim($_GET['s'] ?? $_GET['search'] ?? '');
+    $search_term = sanitize_text_field(wp_unslash($_GET['s'] ?? $_GET['search'] ?? ''));
 
     if (empty($search_term)) {
+      $empty = '<div class="search-empty"><p>Enter a search term to find results.</p></div>';
       return str_replace(
         '[search_query]',
         '',
-        preg_replace(
-          '/<div class="search-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-          '<div class="search-grid"><div class="search-empty"><p>Enter a search term to find results.</p></div></div></section>',
-          $html,
-          1
-        )
+        $this->replace_inner_by_component($html, 'search-grid', $empty)
       );
     }
 
@@ -210,12 +197,8 @@ class Content_Injector extends Base_Injector {
     $html = str_replace('[search_query]', esc_html($search_term), $html);
 
     if (!$query->have_posts()) {
-      return preg_replace(
-        '/<div class="search-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-        '<div class="search-grid"><div class="search-empty"><p>No results found for "' . esc_html($search_term) . '".</p></div></div></section>',
-        $html,
-        1
-      );
+      $empty = '<div class="search-empty"><p>No results found for "' . esc_html($search_term) . '".</p></div>';
+      return $this->replace_inner_by_component($html, 'search-grid', $empty);
     }
 
     $search_adapter = new SearchResult_Adapter();
@@ -238,12 +221,7 @@ class Content_Injector extends Base_Injector {
     }
     wp_reset_postdata();
 
-    $html = preg_replace(
-      '/<div class="search-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-      '<div class="search-grid" data-reveal-group>' . $cards . '</div></section>',
-      $html,
-      1
-    );
+    $html = $this->replace_inner_by_component($html, 'search-grid', $cards);
 
     return $html;
   }

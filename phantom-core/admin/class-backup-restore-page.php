@@ -243,7 +243,7 @@ class BackupRestorePage {
 
         if (isset($_POST['include_presets'])) {
             $dsm = DesignSystemManager::get_instance();
-            $data['presets'] = $dsm->availablePresets();
+            $data['presets'] = array_map(fn($p) => $p->to_array(), $dsm->availablePresets());
             $data['current_preset'] = $dsm->currentPreset();
         }
 

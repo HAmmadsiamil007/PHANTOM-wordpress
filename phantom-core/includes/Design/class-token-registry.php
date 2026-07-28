@@ -44,7 +44,7 @@ class TokenRegistry {
     }
 
     public function get_css_var(string $name): string {
-        return '--' . str_replace('.', '-', $name);
+        return '--' . str_replace(['.', '_'], ['-', '-'], $name);
     }
 
     public function get_option_key(string $name): string {

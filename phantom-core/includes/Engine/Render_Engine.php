@@ -85,6 +85,9 @@ class Render_Engine {
 
     // WooCommerce injection (if active)
     if (class_exists('WooCommerce')) {
+      if (function_exists('wc_load_cart')) {
+        wc_load_cart();
+      }
       $html = (new WooCommerce_Injector($this, $this->events))->inject($html, $slug);
     }
 

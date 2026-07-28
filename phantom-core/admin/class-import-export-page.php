@@ -134,10 +134,15 @@ class ImportExportPage {
         if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['phantom_export_nonce'] ?? '', 'phantom_export')) {
             wp_die(__('Security check failed.', 'phantom-core'));
         }
-        $preset_id = sanitize_text_field($_POST['preset_id'] ?? '');
+        $preset_id = sanitize_text_field(wp_unslash($_POST['preset_id'] ?? ''));
         $dsm = DesignSystemManager::get_instance();
-        $data = $dsm->export_preset($preset_id);
-        $this->send_json_download($data, 'preset-export.json');
+        $json = $dsm->export_preset($preset_id);
+        nocache_headers();
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="preset-export.json"');
+        header('Content-Length: ' . strlen($json));
+        echo $json;
+        exit;
     }
 
     public function handle_import_preset(): void {
@@ -153,7 +158,7 @@ class ImportExportPage {
             wp_die(__('Invalid JSON file.', 'phantom-core'));
         }
         $dsm = DesignSystemManager::get_instance();
-        $dsm->import_preset($data);
+        $dsm->import_preset($json);
         wp_redirect(add_query_arg('import_result', 'preset_success', wp_get_referer()));
         exit;
     }

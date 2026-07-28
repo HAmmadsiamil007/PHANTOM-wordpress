@@ -15,7 +15,7 @@
   width: auto;
   height: auto;
   padding: 12px 24px;
-  background: #7635d5;
+  background: var(--primary--color, #7635d5);
   color: #fff;
   font-size: 16px;
   text-decoration: none;
@@ -27,7 +27,7 @@
 }
 
 :focus-visible {
-  outline: 2px solid #7635d5;
+  outline: 2px solid var(--primary--color, #7635d5);
   outline-offset: 2px;
 }
 
@@ -37,7 +37,7 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #7635d5;
+  outline: 2px solid var(--primary--color, #7635d5);
   outline-offset: 2px;
 }
 

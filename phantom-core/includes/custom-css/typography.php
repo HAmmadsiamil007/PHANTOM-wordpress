@@ -34,7 +34,7 @@ add_filter(
 				continue;
 			}
 
-			$val = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( $k );
+			$val = \Phantom_Custom_CSS::get_legacy_option( $k );
 			if ( '' !== $val ) {
 				$val_display = $val;
 				if ( in_array( $k, $px_keys, true ) && is_numeric( $val ) ) {
@@ -48,42 +48,42 @@ add_filter(
 		foreach ( $headings as $h ) {
 			$prefix = 'typography_' . $h . '_';
 
-			$font = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( $prefix . 'font' );
+			$font = \Phantom_Custom_CSS::get_legacy_option( $prefix . 'font' );
 			if ( '' === $font ) {
-				$font = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'typography_heading_font' );
+				$font = \Phantom_Custom_CSS::get_legacy_option( 'typography_heading_font' );
 			}
 			if ( '' === $font ) {
-				$font = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'typography_body_font', 'Archivo' );
+				$font = \Phantom_Custom_CSS::get_legacy_option( 'typography_body_font', 'Archivo' );
 			}
 			if ( isset( $map[ $prefix . 'font' ] ) ) {
 				$output .= "\t" . $map[ $prefix . 'font' ] . ': ' . esc_attr( $font ) . ";\n";
 			}
 
-			$weight = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( $prefix . 'weight' );
+			$weight = \Phantom_Custom_CSS::get_legacy_option( $prefix . 'weight' );
 			if ( '' === $weight ) {
-				$weight = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'typography_heading_weight', '500' );
+				$weight = \Phantom_Custom_CSS::get_legacy_option( 'typography_heading_weight', '500' );
 			}
 			if ( isset( $map[ $prefix . 'weight' ] ) ) {
 				$output .= "\t" . $map[ $prefix . 'weight' ] . ': ' . esc_attr( $weight ) . ";\n";
 			}
 
 			if ( isset( $map[ $prefix . 'style' ] ) ) {
-				$style = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( $prefix . 'style', 'normal' );
+				$style = \Phantom_Custom_CSS::get_legacy_option( $prefix . 'style', 'normal' );
 				$output .= "\t" . $map[ $prefix . 'style' ] . ': ' . esc_attr( $style ) . ";\n";
 			}
 
-			$spacing = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( $prefix . 'spacing' );
+			$spacing = \Phantom_Custom_CSS::get_legacy_option( $prefix . 'spacing' );
 			if ( '' === $spacing ) {
-				$spacing = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'typography_heading_spacing', 0 );
+				$spacing = \Phantom_Custom_CSS::get_legacy_option( 'typography_heading_spacing', 0 );
 			}
 			if ( isset( $map[ $prefix . 'spacing' ] ) ) {
 				$output .= "\t" . $map[ $prefix . 'spacing' ] . ': ' . esc_attr( floatval( $spacing ) ) . "px;\n";
 			}
 
 			if ( isset( $map[ $prefix . 'case' ] ) ) {
-				$case = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( $prefix . 'case' );
+				$case = \Phantom_Custom_CSS::get_legacy_option( $prefix . 'case' );
 				if ( '' === $case ) {
-					$case = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( 'typography_heading_case', 'none' );
+					$case = \Phantom_Custom_CSS::get_legacy_option( 'typography_heading_case', 'none' );
 				}
 				$output .= "\t" . $map[ $prefix . 'case' ] . ': ' . esc_attr( $case ) . ";\n";
 			}

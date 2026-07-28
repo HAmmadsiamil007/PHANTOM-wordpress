@@ -28,7 +28,7 @@ add_filter(
 			if ( ! isset( $map[ $k ] ) ) {
 				continue;
 			}
-			$val = \PhantomCore\Engine\Phantom_Custom_CSS::get_legacy_option( $k );
+			$val = \Phantom_Custom_CSS::get_legacy_option( $k );
 			if ( '' !== $val ) {
 				$output .= "\t" . $map[ $k ] . ': ' . esc_attr( $val ) . ';' . "\n";
 			}

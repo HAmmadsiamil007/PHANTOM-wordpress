@@ -103,12 +103,7 @@ class Account_Injector extends Base_Injector {
       $content = '<p class="text-center">Orders list unavailable.</p>';
     }
 
-    return preg_replace(
-      '/<div class="orders-grid"[^>]*>.*?<\/div>\s*<\/section>/s',
-      '<div class="orders-grid" data-reveal-group>' . $content . '</div></section>',
-      $html,
-      1
-    );
+    return $this->replace_inner_by_component($html, 'orders-grid', $content);
   }
 
   public function inject_order_detail_content(string $html): string {
@@ -166,11 +161,6 @@ class Account_Injector extends Base_Injector {
     ];
 
     $content = $order_table->render($data);
-    return preg_replace(
-      '/<div class="order-detail"[^>]*>.*?<\/div>\s*<\/section>/s',
-      '<div class="order-detail">' . $content . '</div></section>',
-      $html,
-      1
-    );
+    return $this->replace_inner_by_component($html, 'order-detail', $content);
   }
 }

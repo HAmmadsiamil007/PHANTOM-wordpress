@@ -1,4 +1,4 @@
-# Phantom Core — Architecture
+# Phantom Core — Architecture (v2.0.0)
 
 ## Core Concept
 
@@ -14,10 +14,10 @@ Phantom Core is a **decoupled WordPress framework**. There is NO standard `wp-co
                     ┌──────────────────────▼───────────────────────────┐
                     │              Phantom Core Plugin                 │
                     │                                                  │
-                    │  ┌────────────────┐ ┌────────────────────────┐  │
-                    │  │ Settings_Reg   │ │ Rest_Controller        │  │
-                    │  │ 612 settings   │ │ 49 routes phantom/v1   │  │
-                    │  │ 46 sections    │ │ (42 unique paths)      │  │
+                     │  ┌────────────────┐ ┌────────────────────────┐  │
+                     │  │ Settings_Reg   │ │ Rest_Controller        │  │
+                     │  │ 612 settings   │ │ 51 routes phantom/v1   │  │
+                     │  │ 46 sections    │ │ (44 unique paths)      │  │
                     │  │ Options API    │ │ Settings CRUD + Auth   │  │
                     │  └───────┬────────┘ │ Products/Cart/Orders   │  │
                     │          │          │ Posts/Pages/Menus      │  │
@@ -28,36 +28,38 @@ Phantom Core is a **decoupled WordPress framework**. There is NO standard `wp-co
                     │  │           Shell SPA Router              │  │
                     │  │  template_redirect (priority 1)         │  │
                     │  │  URL → slug → HTML file                 │  │
-                    │  │  43 routes · SEO meta · 136 CSS vars    │  │
+                    │  │  51 routes · SEO meta · 136 CSS vars    │  │
                     │  │  Security headers · phantomData JS      │  │
                     │  └───────────────────┬──────────────────────┘  │
                     │                      │                         │
                     │  ┌───────────────────▼──────────────────────┐  │
-                    │  │    Customizer (16 panels, 46 sections)   │  │
+                     │  │    Customizer (16 panels, 45 sections)   │  │
                     │  │    + Custom CSS Engine (9 modules)       │  │
                     │  │    + 11 Custom Controls (3 used)        │  │
                     │  │    + Global Color Palette (4 presets)    │  │
                     │  │    + Font System (Google + system + local)│  │
                     │  └──────────────────────────────────────────┘  │
                     │                                                  │
-                    │  ┌──────────────────────────────────────────┐  │
-                    │  │  Architecture Subsystems (Phase B-E)     │  │
-                    │  │  ┌──────┐ ┌──────┐ ┌─────┐ ┌─────────┐ │  │
-                    │  │  │Data  │ │Layout│ │Hook │ │Bridges   │ │  │
-                    │  │  │Layer │ │Reg   │ │Reg  │ │(WooComm) │ │  │
-                    │  │  └──────┘ └──────┘ └─────┘ └─────────┘ │  │
-                    │  │  ┌──────────┐ ┌──────┐ ┌────────────┐ │  │
-                    │  │  │Capability│ │Asset │ │Public API  │ │  │
-                    │  │  │Manager   │ │Reg   │ │(6 facades) │ │  │
-                    │  │  └──────────┘ └──────┘ └────────────┘ │  │
-                    │  │  ┌──────────────────┐ ┌──────────────┐ │  │
-                    │  │  │Template_Manifest │ │Splitting_Br │ │  │
-                    │  │  │Component_Metadata│ │(CDN+CSS)    │ │  │
-                    │  │  └──────────────────┘ └──────────────┘ │  │
-                    │  │  ┌──────────────────────────────────┐  │  │
-                    │  │  │  Container_Config: 38 services   │  │  │
-                    │  │  └──────────────────────────────────┘  │  │
-                    │  └──────────────────────────────────────────┘  │
+                     │  ┌────────────────────────────────────────────┐  │
+                     │  │  Architecture Subsystems (Phase B-E+v2)   │  │
+                     │  │  ┌────────┐ ┌────────┐ ┌───────┐ ┌────┐ │  │
+                     │  │  │Data    │ │Layout  │ │Hook   │ │Brid│ │  │
+                     │  │  │Layer   │ │Reg     │ │Reg    │ │ges │ │  │
+                     │  │  │15 Adap │ │7 Layout│ │Intro  │ │11  │ │  │
+                     │  │  │11 VM   │ │s       │ │spect  │ │    │ │  │
+                     │  │  └────────┘ └────────┘ └───────┘ └────┘ │  │
+                     │  │  ┌────────────┐ ┌──────┐ ┌────────────┐ │  │
+                     │  │  │Capability  │ │Asset │ │Public API  │ │  │
+                      │  │  │Manager     │ │Reg   │ │(7 facades) │ │  │
+                     │  │  └────────────┘ └──────┘ └────────────┘ │  │
+                     │  │  ┌──────────────────┐ ┌──────────────┐ │  │
+                     │  │  │Template_Manifest │ │Template Packs│ │  │
+                     │  │  │Component_Metadata│ │3 packs (D/M/ │ │  │
+                     │  │  └──────────────────┘ │B) + Setup   │ │  │
+                     │  │  ┌────────────────┐  └──────────────┘ │  │
+                     │  │  │Container_Config│  38 services       │  │
+                     │  │  └────────────────┘                    │  │
+                     │  └──────────────────────────────────────────┘  │
                     └──────────────────────┬──────────────────────────┘
                                            │
                     ┌──────────────────────▼──────────────────────────┐
@@ -287,7 +289,7 @@ The master settings repository. **612 settings across 46 sections.** Each entry 
 ### 2. REST API (`Rest_Controller`)
 **File:** `includes/class-rest-controller.php` — ~2,300 lines (post-refactor)
 
-Namespace `phantom/v1`. **49 registered routes (42 unique paths)** — all use `register_rest_route`:
+Namespace `phantom/v1`. **51 registered routes (44 unique paths)** — all use `register_rest_route`:
 
 | Endpoint | Method | Auth | Purpose |
 |----------|--------|------|---------|
@@ -312,9 +314,14 @@ Namespace `phantom/v1`. **49 registered routes (42 unique paths)** — all use `
 | `/products/featured` | GET | public | Featured products |
 | `/products/{id}` | GET/PUT/DELETE | public/admin | Single product CRUD |
 | `/cart` | GET | public | Cart contents (with `wc_load_cart` fix) |
-| `/cart/coupons` | GET | public | Cart coupons |
+| `/cart/add` | POST | public | Add item to cart |
+| `/cart/update` | POST | public | Update cart item quantity |
+| `/cart/remove` | POST | public | Remove item from cart |
+| `/cart/{item_key}` | DELETE | public | Remove cart item by key |
+| `/cart/coupon` | POST | public | Apply coupon code |
+| `/cart/coupons` | GET | public | List cart coupons |
+| `/cart/remove-coupon` | POST | public | Remove coupon from cart |
 | `/cart/shipping-methods` | GET | public | Calculate shipping |
-| `/cart/{item_key}` | DELETE | public | Remove cart item |
 | `/contact` | POST | public | Contact form handler (wp_mail) |
 | `/user/orders` | GET | logged-in | Current user's orders |
 | `/user/profile` | GET | logged-in | Current user's profile |
@@ -323,6 +330,13 @@ Namespace `phantom/v1`. **49 registered routes (42 unique paths)** — all use `
 | `/auth/password-reset` | POST | public | Password reset |
 | `/auth/logout` | POST | logged-in | User logout |
 | `/page-data` | GET | public | **Mega-endpoint** — all data in one call |
+| `/template-packs` | GET | admin | List available template packs |
+| `/template-pack/activate` | POST | admin | Activate a template pack |
+| `/widgets` | GET | public | List widget areas |
+| `/widgets/{sidebar_id}` | GET | public | Widgets in specific sidebar |
+| `/product-tags` | GET | public | Product tags |
+| `/options` | GET | admin | Design options |
+| `/options/persistent` | GET | admin | Persistent options |
 | `/woo/attributes` | GET | public | Product attributes |
 | `/woo/variations` | GET | public | Product variations |
 | `/woo/reviews` | GET/POST | public/logged-in | Product reviews |
@@ -349,12 +363,12 @@ The frontend rendering engine. Hooks `template_redirect` at priority 1 to interc
 ### 4. Customizer
 **File:** `includes/class-customizer.php` — 540 lines
 
-Bridges Settings Registry → WordPress Customizer. **16 panels, 46 sections.**
+Bridges Settings Registry → WordPress Customizer. **16 panels, 45 sections.** (template_pack is admin-only, not exposed in Customizer)
 
 **16 Panels:**
 1. Branding — Logo, favicon, site identity
 2. Header — Layout, topbar, navigation, announcement bar
-3. Hero — Banner, home sections, collections
+3. Hero — Banner, home sections, collections, responsive hero media
 4. Products — Cards, shop page, product page
 5. WooCommerce — Cart, checkout, my account
 6. Blog — Archive, single post
@@ -366,8 +380,8 @@ Bridges Settings Registry → WordPress Customizer. **16 panels, 46 sections.**
 12. Performance & SEO — Cache, preload, meta
 13. Accessibility — Contrast, focus, font size
 14. Advanced — Integrations, custom code, import/export
-15. Announcement Bar — Enable, text, colors
-16. **Responsive Hero Media** — Desktop/tablet/mobile images, breakpoints, loading, fit, overlay
+15. Pages — About, Contact, FAQ, Login, Register, etc.
+16. Design System — Design tokens, presets, CSS variable generation
 
 **11 Custom Control Types Available:**
 - `ast-toggle` (103 instances) — Custom toggle switch
@@ -497,7 +511,7 @@ All controls registered via `$type_class_map` in `Control_Base`. Types registere
 ### Data Layer
 **Files:** `includes/Data/`, `includes/ViewModels/`
 
-9 Adapters + 6 ViewModels implementing `AdapterInterface`:
+15 Adapters + 11 ViewModels implementing `AdapterInterface`:
 
 | Adapter | ViewModel | Purpose |
 |---------|-----------|---------|
@@ -510,10 +524,30 @@ All controls registered via `$type_class_map` in `Control_Base`. Types registere
 | `Menu_Adapter` | — | Menu tree normalization |
 | `Category_Adapter` | — | Category data normalization |
 | `Cart_Adapter` | — | Cart data normalization |
+| `Coupon_Adapter` | — | Coupon data normalization |
+| `Order_Adapter` | — | Order data normalization |
+| `Comment_Adapter` | — | Comment data normalization |
+| `Tag_Adapter` | — | Tag data normalization |
+| `Search_Result_Adapter` | — | Search result normalization |
+| `Hero_Adapter` | — | Hero section data normalization |
+| — | `Category_ViewModel` | Category presentation data |
+| — | `Coupon_ViewModel` | Coupon presentation data |
+| — | `Order_ViewModel` | Order presentation data |
+| — | `Product_ViewModel` | Product presentation data |
+| — | `Tag_ViewModel` | Tag presentation data |
+| — | `Search_Result_ViewModel` | Search result presentation data |
 
 **Data Infrastructure:**
 - `Data_Normalizer` — Utility for recursive array normalization, type coercion
 - `Data_Provider` — Abstract base class with built-in caching (transient-based)
+
+### Setup System
+**Files:** `includes/Setup/`
+
+| File | Purpose |
+|------|---------|
+| `class-demo-content-generator.php` | Programmatic creation of pages/products/posts/menus/widgets/options |
+| `class-activation-wizard.php` | 4-step admin setup flow with REST integration |
 
 ### Layout Registry
 **Files:** `includes/Layout/`
@@ -544,6 +578,17 @@ Filterable facade over `DesignSystemManager` with 10+ methods:
 | `class-hook-registry.php` | Track, register, and dispatch hooks with introspection |
 | Supports filtering by tag, priority, callback inspection |
 
+### Template Packs
+**Files:** `frontend/packs/` (3 directories)
+
+| Pack | Manifest | SCSS | Overrides |
+|------|----------|------|-----------|
+| **Dark** | `manifest.json` | `scss/pack.scss` | index, shop, 404, 8 components |
+| **Minimal** | `manifest.json` | `scss/pack.scss` | index, shop, 404, 8 components |
+| **Bold** | `manifest.json` | `scss/pack.scss` | index, shop, 404, 8 components |
+
+Each pack provides alternate HTML overrides (index, shop, 404, product-card, blog-card) that are resolved by `Template_Loader::pack_exists()`, `get_pack_manifest()`, and `get_pack_asset_urls()`. `Component_Renderer` checks `phantom_template_pack` option for component overrides.
+
 ### Plugin Bridges
 **Files:** `includes/Bridges/`
 
@@ -552,6 +597,8 @@ Filterable facade over `DesignSystemManager` with 10+ methods:
 | `interface-bridge.php` | `BridgeInterface` contract (init, is_active, get_info) |
 | `class-plugin-bridge.php` | Abstract base with capability checks + dependency guards |
 | `class-woocommerce-bridge.php` | WooCommerce integration: cart hooks, product overrides, checkout styling |
+| `class-wishlist-bridge.php` | Wishlist integration bridge |
+| `class-mailchimp-bridge.php` | Mailchimp integration bridge |
 | `class-bridge-manager.php` | Singleton manager — registers bridges, calls `init_all()` on bootstrap |
 
 ### Asset Registry
@@ -575,12 +622,7 @@ Template/asset compatibility metadata. Provides `get_compatible_templates($compo
 
 JSON-driven template metadata. Reads `template-manifest.json` for template groups, labels, preview images, required data-attributes, and asset dependencies.
 
-### Splitting Bridge
-**File:** `includes/Animation/class-splitting-bridge.php`
-
-CDN + CSS enqueue for Splitting.js (text/character animation library). Manages CDN URL configuration, local fallback, and CSS enqueue for text splitting effects.
-
-### Public API Facades (6)
+### Public API Facades (7)
 **Files:** `includes/Public/`
 
 | Facade | Purpose |
@@ -590,6 +632,7 @@ CDN + CSS enqueue for Splitting.js (text/character animation library). Manages C
 | `Animation` | Animation initialization data + scroll-trigger config |
 | `Settings` | Public settings read access (filtered by `manage_options` guard) |
 | `Template` | Template resolution (slug → path, checksum, modified time) |
+| `Design` | Design token access, CSS var resolution, typography/color helpers |
 | `Developer` | Debug helpers, hook introspection, var dump utilities |
 
 ### Container Config
@@ -605,8 +648,8 @@ Shell                           Asset_Registry (singleton)
 Customizer                      Capability_Manager (singleton)
 Custom_CSS (singleton)          Component_Metadata (singleton)
 Global_Palette (singleton)      Template_Manifest (singleton)
-Font_Families (singleton)       Splitting_Bridge (singleton)
-Font_Loader (singleton)         6 Public API facades
+Font_Families (singleton)       
+Font_Loader (singleton)         7 Public API facades
 Settings_Page                   Post_Adapter, Page_Adapter, ...
 Core_Plugin                     5+ other services
 ```
@@ -631,7 +674,7 @@ define_entries() in Settings_Registry (612 settings)
         │
         ├──→ Customizer::register() → WP Customizer panels/sections/controls
         ├──→ Settings_Page::init() → Admin tabs/fields CRUD
-        ├──→ Rest_Controller → REST API endpoints (49 routes)
+         ├──→ Rest_Controller → REST API endpoints (51 routes)
         └──→ Shell → Frontend CSS injection (136 CSS vars)
 
 User changes setting (3 ways):
@@ -672,9 +715,8 @@ init, priority 20:  Layout_Registry::register_defaults()
 init, priority 25:  Hook_Registry::register_default_hooks()
 init, priority 30:  Component_Metadata::init()
 init, priority 35:  Template_Manifest::init()
-init, priority 40:  Splitting_Bridge::init()
-init, priority 45:  Data_Normalizer::init()
-init, priority 50:  Register Public API facades (Render, Component, Animation, Settings, Template, Developer)
+init, priority 40:  Data_Normalizer::init()
+init, priority 45:  Register Public API facades (Render, Component, Animation, Settings, Template, Developer, Design)
 ```
 
 ---

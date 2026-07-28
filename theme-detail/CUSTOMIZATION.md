@@ -7,10 +7,10 @@
 | WordPress Core | 100+ | WP native (Users, Posts, Pages, Media, etc.) |
 | WooCommerce | 250+ | WC native admin |
 | Phantom Theme Settings | **612 settings** | Customizer + Admin Page + REST API |
-| Customizer Panels | 16 panels, 46 sections | `/wp-admin/customize.php` |
+| Customizer Panels | 16 panels, 45 sections | `/wp-admin/customize.php` |
 | Admin Page Tabs | 15 tabs | `/wp-admin/themes.php?page=phantom-core-settings` |
 | CSS Custom Properties | 136 design tokens | Injected as `<style id="phantom-customizer-css">` |
-| REST Endpoints | 49 routes (42 unique) | `/wp-json/phantom/v1` |
+| REST Endpoints | 51 routes (44 unique) | `/wp-json/phantom/v1` |
 | **Total Controls** | **~1,000+** | Three independent access paths |
 
 ---
@@ -20,7 +20,7 @@
 ### Method 1: WordPress Customizer (Visual)
 **URL:** `/wp-admin/customize.php`
 
-16 Panels with 46 sections. Best for visual editing with live preview.
+16 Panels with 45 sections (template_pack is admin-only, not exposed in Customizer). Best for visual editing with live preview.
 
 **Live preview works for:**
 - ✅ All `color` type settings → instant update via `postMessage`
@@ -181,20 +181,20 @@ button_radius      → --button--radius
 | Gradients | 2 | `--gradient--start--color`, `--gradient--end--color` |
 | Header | 8 | `--header--padding`, `--header--padding--x`, `--header--padding--y`, `--header--fullwidth`, `--sticky--header`, `--header--height`, `--header--mobile--height`, `--header--border--width` |
 | Navigation | 3 | `--menu--font--size`, `--nav--menu--height`, `--nav--submenu--width` |
-| Hero | 11 | `--hero--height`, `--hero--overlay--color`, `--hero--overlay--opacity`, `--hero--bg`, `--hero--text`, `--hero-image`, `--hero-image-tablet`, `--hero-image-mobile`, `--hero-object-fit`, `--hero-object-position`, `--hero-bg-position`, `--hero-overlay-opacity`, `--hero-image-url`, `--hero-tablet-breakpoint`, `--hero-mobile-breakpoint`, `--hero-loading` |
+| Hero | 9 | `--hero-image-desktop`, `--hero-image`, `--hero-image-tablet`, `--hero-image-mobile`, `--hero-object-fit`, `--hero-object-position`, `--hero-bg-position`, `--hero-overlay-opacity`, `--hero-tablet-bp` (includes `--hero-mobile-bp` in px keys) |
 | Footer | 5 | `--footer--bg`, `--footer--text`, `--footer--padding`, `--footer--fullwidth`, `--footer--heading` |
 | Buttons | 8 | `--btn--bg`, `--btn--text`, `--btn--hover--bg`, `--btn--hover--text`, `--border--radius`, `--btn--pad--y`, `--btn--pad--x`, `--btn--font--size` |
 | Forms | 2 | `--input--radius`, `--input--height` |
 | Announcement | 3 | `--announcement--bg`, `--announcement--text--color`, `--announcement--enable` |
 | Topbar | 2 | `--topbar--bg`, `--topbar--text` |
-| Product | 7 | `--product--card--bg`, `--product--sale--badge--bg`, `--product--sale--badge--text`, `--product--featured--badge--bg`, `--product--featured--badge--text`, `--product--image--radius`, `--product--card--gap` |
+| Product | 11 | `--product-card-bg`, `--product-card-text`, `--product-card-border`, `--product-button-bg`, `--product-button-text`, `--product-button-hover-bg`, `--product-badge-sale-bg`, `--product-badge-sale-text`, `--product-badge-new-bg`, `--product-badge-new-text`, `--woo--rating` |
 | Preloader | 3 | `--preloader--bg`, `--preloader--color`, `--preloader--enable` |
 | Responsive | 4 | `--breakpoint--xl`, `--breakpoint--lg`, `--breakpoint--md`, `--breakpoint--sm` |
-| Misc/Semantic | 30+ | `--custom--css`, `--woo--button--bg`, `--woo--button--text`, `--home--section--spacing`, `--banner--height`, `--field--outline`, `--font--body--size`, `--font--heading--size`, `--font--weight--body`, `--font--weight--heading`, plus semantic color variants, shadow vars, and additional spacing/sizing tokens |
+| Misc/Semantic | ~15 | `--color-header-bg`, `--color-footer-bg`, `--light--bg--color`, `--grey--color`, `--success--color`, `--error--color`, `--warning--color`, `--info--color`, `--featured-badge--color`, `--boxed-width`, `--color-header-bg`, `--color-footer-bg`, plus runtime-generated semantic color variants and utility tokens |
 
 **Total: 136 CSS custom properties.**
 
-### 43 Numeric PX Keys
+### 49 Numeric PX Keys
 These get `px` appended automatically:
 ```
 button-padding-x, button-padding-y, button-radius,
@@ -205,6 +205,8 @@ section-padding-x, section-padding-y, menu-font-size, button-font-size,
 widget-spacing, container-gutter, content-gap, element-margin-bottom,
 home-section-spacing, typography-base-size, typography-body-spacing,
 typography-heading-spacing, typography-h1-size, typography-h1-height,
+typography-h1-spacing, typography-h2-spacing, typography-h3-spacing,
+typography-h4-spacing, typography-h5-spacing, typography-h6-spacing,
 typography-h2-size, typography-h2-height, typography-h3-size,
 typography-h3-height, typography-h4-size, typography-h4-height,
 typography-h5-size, typography-h5-height, typography-h6-size,
@@ -219,7 +221,7 @@ The CSS var maps and px key lists are centralized in one file:
 | File | Method | What's Defined |
 |------|--------|----------------|
 | `includes/class-settings-registry.php` | `get_css_var_map()` (~line 208) | 136 var-to-setting mappings |
-| `includes/class-settings-registry.php` | `get_px_keys()` (~line 309) | 43 px keys |
+| `includes/class-settings-registry.php` | `get_px_keys()` (~line 347) | 49 px keys |
 | `includes/class-customizer.php` | `get_css_var_map()` | 136 var mappings (duplicate from registry) |
 | `includes/class-custom-css.php` | CSS generation | Consumes the registry's var maps |
 

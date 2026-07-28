@@ -19,6 +19,23 @@ class PhantomAdmin {
     public function init(): void {
         add_action('admin_menu', [$this, 'register_menu'], 5);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
+        add_action('wp_ajax_phantom_apply_preset', [$this, 'ajax_apply_preset']);
+    }
+
+    public function ajax_apply_preset(): void {
+        if (!current_user_can('manage_options') || !wp_verify_nonce(wp_unslash($_POST['_wpnonce'] ?? ''), 'phantom_design_nonce')) {
+            wp_send_json_error('Security check failed.');
+        }
+        $presetId = sanitize_text_field(wp_unslash($_POST['preset_id'] ?? ''));
+        if (empty($presetId)) {
+            wp_send_json_error('No preset ID provided.');
+        }
+        $result = \PhantomCore\Design\DesignSystemManager::get_instance()->applyPreset($presetId);
+        if ($result) {
+            wp_send_json_success(['preset' => $presetId]);
+        } else {
+            wp_send_json_error('Failed to apply preset: ' . $presetId);
+        }
     }
 
     public function register_menu(): void {

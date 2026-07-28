@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 
 return [
     // ============================================================
-    // COLORS (39 tokens)
+    // COLORS (41 tokens)
     // ============================================================
     'color.primary' => [
         'name' => 'color.primary', 'category' => 'color', 'type' => 'color',
@@ -216,7 +216,7 @@ return [
     ],
 
     // ============================================================
-    // TYPOGRAPHY (30 tokens)
+    // TYPOGRAPHY (27 tokens)
     // ============================================================
     'typography.heading.font' => [
         'name' => 'typography.heading.font', 'category' => 'typography', 'type' => 'font_family',
@@ -287,7 +287,7 @@ return [
     'typography.scale.4xl' => ['name' => 'typography.scale.4xl', 'category' => 'typography', 'type' => 'font_size', 'default' => '64px', 'option_key' => 'phantom_font_scale_4xl', 'description' => '4X large font size'],
 
     // ============================================================
-    // SPACING (17 tokens)
+    // SPACING (18 tokens)
     // ============================================================
     'space.xs' => ['name' => 'space.xs', 'category' => 'space', 'type' => 'size', 'default' => '4px', 'option_key' => 'phantom_space_xs', 'description' => 'Extra small spacing'],
     'space.sm' => ['name' => 'space.sm', 'category' => 'space', 'type' => 'size', 'default' => '8px', 'option_key' => 'phantom_space_sm', 'description' => 'Small spacing'],
@@ -338,7 +338,7 @@ return [
     'shadow.nav' => ['name' => 'shadow.nav', 'category' => 'shadow', 'type' => 'shadow', 'default' => '0 2px 4px rgba(0,0,0,0.05)', 'option_key' => 'phantom_shadow_nav', 'description' => 'Navigation shadow'],
 
     // ============================================================
-    // MOTION (10 tokens)
+    // MOTION (9 tokens)
     // ============================================================
     'motion.duration.fast' => ['name' => 'motion.duration.fast', 'category' => 'motion', 'type' => 'duration', 'default' => '150ms', 'option_key' => 'phantom_motion_duration_fast', 'description' => 'Fast animation duration'],
     'motion.duration.normal' => ['name' => 'motion.duration.normal', 'category' => 'motion', 'type' => 'duration', 'default' => '300ms', 'option_key' => 'phantom_motion_duration_normal', 'description' => 'Normal animation duration'],

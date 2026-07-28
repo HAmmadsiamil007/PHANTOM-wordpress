@@ -1436,7 +1436,7 @@ ul {
     background: transparent;
     border: none;
     color: var(--white);
-    outline: none;
+    outline: none; /* focus-visible handled by a11y.css */
     min-width: 0;
 }
 
@@ -1584,7 +1584,7 @@ ul {
     flex: 1;
     background: transparent;
     border: none;
-    outline: none;
+    outline: none; /* focus-visible handled by a11y.css */
     color: var(--white);
     font-family: var(--font-heading);
     font-size: 1.5rem;
@@ -1736,7 +1736,7 @@ ul {
 }
 
 .footer-newsletter-form input:focus {
-    outline: none;
+    outline: none; /* focus-visible handled by a11y.css */
 }
 
 .footer-newsletter-form input::placeholder {
@@ -3564,7 +3564,7 @@ url('../images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg') center/cov
 
 .form-group input:focus,
 .form-group select:focus {
-    outline: none;
+    outline: none; /* focus-visible handled by a11y.css */
     border-color: var(--gold);
 }
 
@@ -3652,7 +3652,7 @@ url('../images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg') center/cov
 }
 
 .contact-form textarea:focus {
-    outline: none;
+    outline: none; /* focus-visible handled by a11y.css */
     border-color: var(--gold);
 }
 
@@ -3899,7 +3899,7 @@ url('../images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg') center/cov
 }
 
 .coming-soon-form input:focus {
-    outline: none;
+    outline: none; /* focus-visible handled by a11y.css */
     border-color: var(--gold);
 }
 

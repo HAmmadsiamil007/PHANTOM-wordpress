@@ -35,7 +35,8 @@ class Customizer_Design_Panel_Test extends TestCase {
         $output = ob_get_clean();
         $this->assertStringContainsString('Theme DNA Profile', $output);
         $this->assertStringContainsString('Style', $output);
-        $this->assertStringContainsString('Complexity', $output);
+        $this->assertStringContainsString('Design Style', $output);
+        $this->assertStringContainsString('Motion Style', $output);
     }
 
     public function testRenderContainsLinkToDesignStudio(): void {

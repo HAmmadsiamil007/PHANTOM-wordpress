@@ -719,6 +719,81 @@ class Rest_Controller extends \WP_REST_Controller {
 				),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design/tokens',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_design_tokens' ),
+					'permission_callback' => '__return_true',
+					'args'                => $this->get_design_tokens_args(),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design/tokens/(?P<name>[\w.]+)',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_design_token' ),
+					'permission_callback' => '__return_true',
+					'args'                => $this->get_design_token_args(),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design/presets',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_design_presets' ),
+					'permission_callback' => '__return_true',
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design/presets/(?P<id>[\w-]+)',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_design_preset' ),
+					'permission_callback' => '__return_true',
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design/presets/apply',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'apply_design_preset' ),
+					'permission_callback' => array( $this, 'settings_permission_check' ),
+					'args'                => $this->get_apply_design_preset_args(),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design/css',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_design_css' ),
+					'permission_callback' => '__return_true',
+				),
+			)
+		);
 	}
 
 	public function settings_permission_check( $request ) {
@@ -3332,6 +3407,119 @@ private function format_product( $product, bool $full = false ): array {
 		update_option('phantom_template_pack', $pack);
 		if (function_exists('flush_rewrite_rules')) flush_rewrite_rules();
 		return new \WP_REST_Response(array('success' => true, 'pack' => $pack), 200);
+	}
+
+	public function get_design_tokens( \WP_REST_Request $request ): \WP_REST_Response {
+		$api = \PhantomCore\Public\Design_API::get_instance();
+		$category = $request->get_param( 'category' );
+		$tokens = null !== $category ? $api->get_tokens( $category ) : $api->get_tokens();
+		return new \WP_REST_Response(
+			array(
+				'success'  => true,
+				'category' => $category,
+				'tokens'   => is_array( $tokens ) ? $tokens : array(),
+			),
+			200
+		);
+	}
+
+	public function get_design_token( \WP_REST_Request $request ): \WP_REST_Response {
+		$name = $request->get_param( 'name' );
+		$api = \PhantomCore\Public\Design_API::get_instance();
+		$value = $api->get_token( $name );
+		if ( null === $value ) {
+			return new \WP_REST_Response(
+				array( 'success' => false, 'message' => sprintf( 'Token "%s" not found.', $name ) ),
+				404
+			);
+		}
+		return new \WP_REST_Response(
+			array( 'success' => true, 'name' => $name, 'value' => $value ),
+			200
+		);
+	}
+
+	public function get_design_presets(): \WP_REST_Response {
+		$api = \PhantomCore\Public\Design_API::get_instance();
+		$presets = $api->get_available_presets();
+		return new \WP_REST_Response(
+			array( 'success' => true, 'presets' => is_array( $presets ) ? $presets : array() ),
+			200
+		);
+	}
+
+	public function get_design_preset( \WP_REST_Request $request ): \WP_REST_Response {
+		$id = $request->get_param( 'id' );
+		$registry = \PhantomCore\Design\PresetRegistry::get_instance();
+		$preset = $registry->get( $id );
+		if ( ! $preset ) {
+			return new \WP_REST_Response(
+				array( 'success' => false, 'message' => sprintf( 'Preset "%s" not found.', $id ) ),
+				404
+			);
+		}
+		return new \WP_REST_Response(
+			array( 'success' => true, 'preset' => $preset->to_array() ),
+			200
+		);
+	}
+
+	public function apply_design_preset( \WP_REST_Request $request ): \WP_REST_Response {
+		$api = \PhantomCore\Public\Design_API::get_instance();
+		$id = $request->get_param( 'id' );
+		$result = $api->apply_preset( $id );
+		if ( ! $result ) {
+			return new \WP_REST_Response(
+				array( 'success' => false, 'message' => sprintf( 'Failed to apply preset "%s".', $id ) ),
+				400
+			);
+		}
+		return new \WP_REST_Response(
+			array( 'success' => true, 'preset' => $id, 'message' => 'Preset applied successfully.' ),
+			200
+		);
+	}
+
+	public function get_design_css(): \WP_REST_Response {
+		$manager = \PhantomCore\Design\DesignSystemManager::get_instance();
+		$css = $manager->generateCSS();
+		return new \WP_REST_Response(
+			array( 'success' => true, 'css' => $css ),
+			200
+		);
+	}
+
+	private function get_design_tokens_args(): array {
+		return array(
+			'category' => array(
+				'description'       => __( 'Filter tokens by category (e.g. color, typography, spacing).', 'phantom-core' ),
+				'type'              => 'string',
+				'required'          => false,
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+		);
+	}
+
+	private function get_design_token_args(): array {
+		return array(
+			'name' => array(
+				'description'       => __( 'Token name in dot notation (e.g. color.primary).', 'phantom-core' ),
+				'type'              => 'string',
+				'required'          => true,
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+		);
+	}
+
+	private function get_apply_design_preset_args(): array {
+		return array(
+			'id' => array(
+				'description'       => __( 'Preset ID to apply.', 'phantom-core' ),
+				'type'              => 'string',
+				'required'          => true,
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+		);
 	}
 
 	private function get_auth_login_args(): array {

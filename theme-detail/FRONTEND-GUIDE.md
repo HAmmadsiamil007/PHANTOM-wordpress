@@ -9,11 +9,11 @@ frontend/
 ├── html/*.html          # 22 static HTML page templates
 ├── assets/
 │   ├── css/            # 10 CSS files (Bootstrap, theme, a11y, vendor)
-│   ├── js/             # 22 JS files (phantom-data.js + vendor libs)
+│   ├── js/             # 27 JS files (phantom-data.js + vendor libs)
 │   └── images/         # Static images (logos, products, icons)
 ```
 
-**No PHP templates. No server-side rendering.** All dynamic data injected client-side via REST API (49 routes, 42 unique paths).
+**No PHP templates. No server-side rendering.** All dynamic data injected client-side via REST API (51 routes, 44 unique paths).
 
 ---
 

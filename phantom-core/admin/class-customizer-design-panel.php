@@ -61,8 +61,8 @@ class Customizer_Design_Panel {
             <table class="wp-list-table widefat fixed striped">
                 <thead><tr><th><?php echo esc_html__('Dimension', 'phantom-core'); ?></th><th><?php echo esc_html__('Value', 'phantom-core'); ?></th></tr></thead>
                 <tbody>
-                <?php foreach (['style', 'complexity', 'spacing', 'formality', 'color_saturation', 'motion'] as $dim): ?>
-                    <tr><td><?php echo esc_html(ucfirst(str_replace('_', ' ', $dim))); ?></td><td><?php echo esc_html($dna[$dim] ?? 'moderate'); ?></td></tr>
+                    <?php foreach ($dna as $dim => $value): ?>
+                    <tr><td><?php echo esc_html(ucwords(str_replace('_', ' ', $dim))); ?></td><td><?php echo esc_html($value); ?></td></tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>

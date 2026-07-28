@@ -21,6 +21,7 @@ class Blog_Card extends Component_Renderer {
       'date' => esc_html($data['date'] ?? ''),
       'title' => esc_html($data['title'] ?? ''),
       'excerpt' => esc_html($data['excerpt'] ?? ''),
+      'author' => esc_html($data['author'] ?? ''),
       'read_more_text' => esc_html($data['read_more'] ?? 'Read More'),
     ]);
   }

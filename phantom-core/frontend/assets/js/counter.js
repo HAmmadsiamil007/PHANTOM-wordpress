@@ -12,11 +12,6 @@ jQuery(function ($) {
     });
 });
 
-// wow js
-jQuery(function ($) {
-    new WOW().init();
-});
-
 // comingsoon page countdown
 (function () {
     if (document.getElementById("days") !== null) {

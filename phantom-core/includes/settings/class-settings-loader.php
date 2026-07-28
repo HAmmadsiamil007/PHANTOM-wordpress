@@ -5470,6 +5470,12 @@ class Settings_Loader {
       return $settings;
     }
     $tokenDefs = require $tokenFile;
+
+    $dsm = null;
+    if (class_exists('\PhantomCore\Design\DesignSystemManager')) {
+      $dsm = \PhantomCore\Design\DesignSystemManager::get_instance();
+    }
+
     foreach ($tokenDefs as $name => $def) {
       $key = str_replace(['.', '-'], '_', $name);
       if (!str_starts_with($def['option_key'], 'phantom_')) {
@@ -5480,7 +5486,8 @@ class Settings_Loader {
         continue;
       }
       $type = $def['type'] ?? 'text';
-      $settings[$settingKey] = [
+
+      $entry = [
         'default' => $def['default'] ?? '',
         'type' => $type,
         'section' => 'design_tokens',
@@ -5491,6 +5498,13 @@ class Settings_Loader {
           default => 'sanitize_text_field',
         },
       ];
+
+      if ($dsm) {
+        $entry['css_var'] = $dsm->cssVar($name);
+        $entry['transport'] = 'postMessage';
+      }
+
+      $settings[$settingKey] = $entry;
     }
     return $settings;
 

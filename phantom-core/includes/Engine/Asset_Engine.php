@@ -22,23 +22,26 @@ class Asset_Engine {
   public function inject_all(string $html, string $slug, bool $is_customizer_preview): string {
     $html = $this->inject_css_by_route($html, $slug);
     $html = $this->inject_images($html);
+    $html = $this->inject_resource_hints($html, $slug);
     $html = $this->inject_google_fonts($html);
     $html = $this->inject_font_awesome($html);
     $html = $this->inject_minified_js($html);
     $html = $this->inject_cdn_fallbacks($html);
 
-    // Feature-gated: lazy loading (uses actual feature ID 'lazy_load_images')
-    if (Feature_Registry::get_instance()->enabled('lazy_load_images')) {
+    // Performance-gated: lazy loading
+    if (Feature_Registry::get_instance()->enabled('lazy_load_images') && get_option('phantom_performance_lazy_load', '1')) {
       $html = $this->inject_lazy_loading($html);
     }
 
     $html = $this->inject_woo_scripts($html);
     $html = $this->inject_a11y($html);
 
-    // Feature-gated: scroll animations (uses actual feature ID 'animate_on_scroll')
+    // Feature-gated: scroll animations
     if (Feature_Registry::get_instance()->enabled('animate_on_scroll')) {
       $html = $this->inject_scroll_reveal($html);
     }
+
+    $html = $this->inject_performance_options($html);
 
     if (!$is_customizer_preview) {
       $html = $this->inject_bridge($html, $slug);
@@ -98,7 +101,83 @@ class Asset_Engine {
     return $html;
   }
 
-  private function inject_google_fonts(string $html): string {
+  private function inject_resource_hints(string $html, string $slug): string {
+    $hints = '';
+    $default_domains = [
+      'https://fonts.googleapis.com',
+      'https://fonts.gstatic.com',
+      'https://cdnjs.cloudflare.com',
+      'https://unpkg.com',
+    ];
+
+    // User-defined preconnect domains
+    $user_preconnect = get_option('phantom_performance_preconnect_domains', []);
+    if (!empty($user_preconnect) && is_array($user_preconnect)) {
+      foreach ($user_preconnect as $domain) {
+        $domain = trim($domain);
+        if ($domain) {
+          $hints .= '<link rel="preconnect" href="' . esc_url($domain) . '" crossorigin />' . "\n";
+        }
+      }
+    } else {
+      foreach ($default_domains as $domain) {
+        $hints .= '<link rel="preconnect" href="' . esc_url($domain) . '" crossorigin />' . "\n";
+      }
+    }
+
+    // DNS prefetch
+    if (get_option('phantom_performance_dns_prefetch', '0')) {
+      $dns_domains = get_option('phantom_performance_dns_prefetch_domains', []);
+      if (is_array($dns_domains)) {
+        foreach ($dns_domains as $domain) {
+          $domain = trim($domain);
+          if ($domain) {
+            $hints .= '<link rel="dns-prefetch" href="' . esc_url($domain) . '" />' . "\n";
+          }
+        }
+      }
+    }
+
+    // Preload hero image
+    if (get_option('phantom_performance_preload_hero', '1')) {
+      if (in_array($slug, ['', 'index'], true)) {
+        $hero_img = get_option('phantom_home_banner_img1', '');
+        if ($hero_img) {
+          $hints .= '<link rel="preload" href="' . esc_url($hero_img) . '" as="image" fetchpriority="high" />' . "\n";
+        }
+      } elseif (preg_match('/^product/', $slug) && function_exists('wc_get_product')) {
+        $product_id = apply_filters('phantom_core/current_product_id', 0);
+        if ($product_id) {
+          $product = wc_get_product($product_id);
+          if ($product) {
+            $img_id = $product->get_image_id();
+            if ($img_id) {
+              $img_url = wp_get_attachment_url($img_id);
+              if ($img_url) {
+                $hints .= '<link rel="preload" href="' . esc_url($img_url) . '" as="image" fetchpriority="high" />' . "\n";
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Preload Google Fonts stylesheet
+    if (get_option('phantom_performance_preload_fonts', '1')) {
+      $fonts_url = $this->get_google_fonts_url();
+      if ($fonts_url) {
+        $hints .= '<link rel="preload" as="style" href="' . esc_url($fonts_url) . '" />' . "\n";
+      }
+    }
+
+    if ($hints) {
+      return str_replace('</head>', $hints . '</head>', $html);
+    }
+
+    return $html;
+  }
+
+  private function get_google_fonts_url(): string {
     $fonts = [];
     $fonts[] = get_option('phantom_typography_body_font', 'Archivo');
     $heading_font = get_option('phantom_typography_heading_font', '');
@@ -110,11 +189,21 @@ class Asset_Engine {
     }
 
     $fonts = array_unique(array_filter($fonts));
-    if (empty($fonts)) return $html;
+    if (empty($fonts)) return '';
 
-    $url = \PhantomCore\Fonts::instance()->get_enqueue_url($fonts);
+    return \PhantomCore\Fonts::instance()->get_enqueue_url($fonts);
+  }
+
+  private function inject_google_fonts(string $html): string {
+    $url = $this->get_google_fonts_url();
+    if (!$url) return $html;
+
+    $font_display = get_option('phantom_performance_font_display', 'swap');
+    if ($font_display && $font_display !== 'swap') {
+      $url = add_query_arg('display', $font_display, $url);
+    }
+
     $link = '<link rel="stylesheet" id="phantom-google-fonts" href="' . esc_url($url) . '" media="all" />';
-
     return str_replace('</head>', $link . "\n" . '</head>', $html);
   }
 
@@ -224,6 +313,19 @@ class Asset_Engine {
       . 'document.addEventListener("DOMContentLoaded",observe);'
       . '})();</script>';
     return str_replace('</body>', $js . '</body>', $html);
+  }
+
+  private function inject_performance_options(string $html): string {
+    // Defer non-critical JS
+    if (get_option('phantom_performance_defer_js', '0')) {
+      $html = preg_replace(
+        '/<script\s+src=(["\'])([^"\']+)\1([^>]*)>/i',
+        '<script defer src=$1$2$1$3>',
+        $html
+      );
+    }
+
+    return $html;
   }
 
   private function inject_bridge(string $html, string $slug): string {

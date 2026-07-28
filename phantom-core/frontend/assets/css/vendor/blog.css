@@ -1,5 +1,5 @@
 a {
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 	text-decoration: none;
 }
 
@@ -580,7 +580,7 @@ a.item-link {
 	transition: all 0.3s ease-in-out;
 	border: none;
 	overflow: visible;
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 	border-radius: 30px;
 	/* border: 1px solid transparent; */
 }
@@ -1036,7 +1036,7 @@ a.item-link {
 	height: 120px;
 	margin-bottom: 15px;
 	resize: none;
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 	overflow-y: auto;
 	border: none;
 	border-bottom: 1px solid var(--primary--color);
@@ -1051,7 +1051,7 @@ a.item-link {
 	margin-bottom: 16px;
 	width: 100%;
 	overflow: visible;
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 	border: none;
 	border-bottom: 1px solid var(--primary--color);
 }
@@ -1071,7 +1071,7 @@ a.item-link {
 	transition: all 0.3s ease-in-out;
 	display: block;
 	text-align: center;
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 	border-style: none;
 	cursor: pointer;
 }
@@ -1116,12 +1116,12 @@ a.item-link {
 	width: 100%;
 	height: 58px;
 	overflow: visible;
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 }
 
 .singleblog-section .box1 input:focus {
 	box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%), 0 0 8px rgb(118 53 213 / 100%);
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 	border-color: var(--primary--color);
 }
 
@@ -1136,7 +1136,7 @@ a.item-link {
 	border: 1px solid transparent;
 	background: var(--primary--color);
 	border-radius: 10px;
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 	box-shadow: none;
 	transition: all 0.3s ease-in-out;
 }
@@ -1273,7 +1273,7 @@ a.item-link {
 }
 
 .singleblog-section .box4 .tag .button:focus {
-	outline: none;
+	outline: none; /* focus-visible handled by a11y.css */
 }
 
 .singleblog-section .box4 .tag .button:hover {

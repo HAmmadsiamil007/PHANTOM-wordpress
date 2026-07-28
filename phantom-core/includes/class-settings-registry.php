@@ -197,7 +197,7 @@ class Settings_Registry {
 	 * @return array<string, string> Setting key => CSS variable name (with -- prefix).
 	 */
 	public static function get_css_var_map(): array {
-		return array(
+		$map = array(
 			'container_width'              => '--container-width',
 			'content_width'                => '--content-width',
 			'sidebar_width'                => '--sidebar-width',
@@ -335,6 +335,20 @@ class Settings_Registry {
 			'color_badge_new_bg'           => '--product-badge-new-bg',
 			'color_badge_new_text'         => '--product-badge-new-text',
 		);
+		$instance = self::$instance;
+		if ( $instance ) {
+			$map = $instance->include_token_css_var_map( $map );
+		}
+		return $map;
+	}
+
+	public function include_token_css_var_map( array $map ): array {
+		foreach ( $this->entries as $key => $entry ) {
+			if ( ! empty( $entry['css_var'] ) && ! isset( $map[ $key ] ) ) {
+				$map[ $key ] = $entry['css_var'];
+			}
+		}
+		return $map;
 	}
 
 	/**

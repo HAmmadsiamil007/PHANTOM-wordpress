@@ -81,7 +81,7 @@ if ( ! function_exists( 'apply_filters' ) ) {
     function apply_filters( $tag, $value ) { return $value; }
 }
 if ( ! function_exists( 'sanitize_text_field' ) ) {
-    function sanitize_text_field( $str ) { return trim( preg_replace( '/\s+/', ' ', strip_tags( $str ) ) ); }
+    function sanitize_text_field( $str ) { return trim( preg_replace( '/\s+/', ' ', strip_tags( $str ?? '' ) ) ); }
 }
 if ( ! function_exists( 'wp_strip_all_tags' ) ) {
     function wp_strip_all_tags( $string, $remove_breaks = false ) {
@@ -217,6 +217,21 @@ if ( ! function_exists( 'wp_json_encode' ) ) {
 }
 if ( ! function_exists( 'add_query_arg' ) ) {
     function add_query_arg( ...$args ) { return 'http://example.com/?' . http_build_query( is_array( $args[0] ) ? $args[0] : [ $args[0] => $args[1] ] ); }
+}
+if ( ! function_exists( 'remove_query_arg' ) ) {
+    function remove_query_arg( $keys, $url = '' ) { return $url ?: 'http://example.com/'; }
+}
+if ( ! function_exists( 'get_theme_mod' ) ) {
+    $GLOBALS['_phantom_theme_mods'] = [];
+    function get_theme_mod( $name, $default = false ) {
+        return array_key_exists( $name, $GLOBALS['_phantom_theme_mods'] ) ? $GLOBALS['_phantom_theme_mods'][ $name ] : $default;
+    }
+}
+if ( ! function_exists( 'set_theme_mod' ) ) {
+    function set_theme_mod( $name, $value ) {
+        $GLOBALS['_phantom_theme_mods'][ $name ] = $value;
+        return true;
+    }
 }
 if ( ! function_exists( 'get_permalink' ) ) {
     function get_permalink( $post = 0 ) { return 'http://example.com/?p=' . ( is_object( $post ) ? $post->ID : $post ); }
