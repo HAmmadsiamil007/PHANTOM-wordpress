@@ -140,53 +140,60 @@ class Container_Config {
 			return \PhantomCore\Animation\GSAP_Bridge::get_instance();
 		});
 
-		// 21. Scroll_Reveal — singleton (Phase 5A)
+		// 21. Three_Bridge — singleton (Phase 5A)
+		$container->singleton(\PhantomCore\Animation\Three_Bridge::class, function () {
+			return \PhantomCore\Animation\Three_Bridge::get_instance();
+		});
+
+		// 22. Scroll_Reveal — singleton (Phase 5A)
 		$container->singleton(\PhantomCore\Animation\Scroll_Reveal::class, function () {
 			return \PhantomCore\Animation\Scroll_Reveal::get_instance();
 		});
 
-		// 22. Parallax — singleton (Phase 5A)
+		// 23. Parallax — singleton (Phase 5A)
 		$container->singleton(\PhantomCore\Animation\Parallax::class, function () {
 			return \PhantomCore\Animation\Parallax::get_instance();
 		});
 
-		// 23. Data_Normalizer — singleton utility (Phase B)
+		// 24. Data_Normalizer — singleton utility (Phase B)
 		$container->singleton(\PhantomCore\Data\Data_Normalizer::class, function () {
 			return new \PhantomCore\Data\Data_Normalizer();
 		});
 
-		// 24. Data_Provider — abstract, concrete instances per provider
+		// 25. Data_Provider — abstract, concrete instances per provider
 		// Concrete providers should self-register: $container->set(Foo_Provider::class, ...)
 
-		// 25. Layout_Registry — singleton (Phase C)
+		// 26. Layout_Registry — singleton (Phase C)
 		$container->singleton(\PhantomCore\Layout\Layout_Registry::class, function () {
 			return \PhantomCore\Layout\Layout_Registry::get_instance();
 		});
 
-		// 26. Layout_Manager — static init called during bootstrap
+		// 27. Layout_Manager — static init called during bootstrap
 		$container->singleton(\PhantomCore\Layout\Layout_Manager::class, function () {
 			\PhantomCore\Layout\Layout_Manager::init();
 			return null; // init-only, no instance needed
 		});
 
-		// 27. Design_API — singleton facade (Phase C)
+		// 28. Design_API — singleton facade (Phase C)
 		$container->singleton(\PhantomCore\Public\Design_API::class, function () {
 			return \PhantomCore\Public\Design_API::get_instance();
 		});
 
-		// 28. Hook_Registry — singleton (Phase C)
+		// 29. Hook_Registry — singleton (Phase C)
 		$container->singleton(\PhantomCore\Hook\Hook_Registry::class, function () {
 			return \PhantomCore\Hook\Hook_Registry::get_instance();
 		});
 
-		// 29. Bridge_Manager — singleton (Phase D + Phase 4)
+		// 30. Bridge_Manager — singleton (Phase D + Phase 4)
 		$container->singleton(\PhantomCore\Bridges\Bridge_Manager::class, function () {
 			return \PhantomCore\Bridges\Bridge_Manager::get_instance();
 		});
 
-		// 30. Asset_Registry — singleton (Phase E)
+		// 30. Asset_Registry — singleton (Phase E), register defaults on init
 		$container->singleton(\PhantomCore\Registry\Asset_Registry::class, function () {
-			return \PhantomCore\Registry\Asset_Registry::get_instance();
+			$registry = \PhantomCore\Registry\Asset_Registry::get_instance();
+			$registry->register_defaults();
+			return $registry;
 		});
 
 		// 31. Capability_Manager — singleton (Phase E)
@@ -261,6 +268,11 @@ class Container_Config {
 		// Component_Metadata — template/asset compatibility
 		$container->singleton(\PhantomCore\Component_Metadata::class, function () {
 			return \PhantomCore\Component_Metadata::get_instance();
+		});
+
+		// 38. Swiper_Bridge — singleton
+		$container->singleton(\PhantomCore\Bridges\Swiper_Bridge::class, function () {
+			return \PhantomCore\Bridges\Swiper_Bridge::get_instance();
 		});
     }
 }

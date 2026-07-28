@@ -41,6 +41,11 @@ class Asset_Engine {
       $html = $this->inject_scroll_reveal($html);
     }
 
+    // Feature-gated: swiper gallery
+    if (Feature_Registry::get_instance()->enabled('swiper_gallery')) {
+      $html = $this->inject_swiper($html, $slug);
+    }
+
     $html = $this->inject_performance_options($html);
 
     if (!$is_customizer_preview) {
@@ -259,6 +264,40 @@ class Asset_Engine {
       '<meta name="woocommerce-store-api-nonce" content="' . esc_attr($nonce) . '" />' . "\n" . '</head>',
       $html
     );
+  }
+
+  private function inject_swiper(string $html, string $slug): string {
+    if (!class_exists('\PhantomCore\Bridges\Swiper_Bridge')) return $html;
+    $bridge = \PhantomCore\Bridges\Swiper_Bridge::get_instance();
+    if (!$bridge->is_active()) return $html;
+
+    $is_product = is_product() || preg_match('/^product\//', $slug);
+    $has_hero = (bool) get_option('phantom_home_banner_img1', '');
+    if (!$is_product && !$has_hero) return $html;
+
+    $effects = get_option('phantom_animations_swiper_effects', 'fade');
+    $autoplay = get_option('phantom_animations_swiper_autoplay', '1');
+    $autoplay_speed = get_option('phantom_animations_swiper_autoplay_speed', '3000');
+    $loop = get_option('phantom_animations_swiper_loop', '1');
+    $pagination = get_option('phantom_animations_swiper_pagination', '1');
+    $navigation = get_option('phantom_animations_swiper_navigation', '1');
+
+    $config = [
+      'effects' => $effects,
+      'autoplay' => '1' === $autoplay,
+      'autoplaySpeed' => absint($autoplay_speed),
+      'loop' => '1' === $loop,
+      'pagination' => '1' === $pagination,
+      'navigation' => '1' === $navigation,
+    ];
+
+    $html = str_replace(
+      '</head>',
+      '<script id="phantom-swiper-init">window.PhantomSwiperConfig=' . wp_json_encode($config) . ';</script>' . "\n" . '</head>',
+      $html
+    );
+
+    return $html;
   }
 
   private function inject_a11y(string $html): string {

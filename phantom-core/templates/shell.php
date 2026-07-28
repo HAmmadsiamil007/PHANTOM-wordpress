@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace PhantomCore;
 
+use PhantomCore\Registry\Asset_Registry;
 use PhantomCore\Engine\Container;
 use PhantomCore\Engine\Container_Config;
 use PhantomCore\Engine\Render_Engine;
@@ -44,9 +45,17 @@ class Shell {
             add_filter('woocommerce_enable_ajax_add_to_cart', '__return_false');
         }
 
-        // Animations gated by feature flag (register only if enabled)
-        if (Feature_Registry::get_instance()->enabled('animations')) {
+        // Core assets — single enqueue_group() path
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_core_assets'], 19);
+
+        // Animation/3d assets gated by feature flags via enqueue_group()
+        if (Feature_Registry::get_instance()->enabled('animations') || Feature_Registry::get_instance()->enabled('three_js_effects')) {
             add_action('wp_enqueue_scripts', [$this, 'enqueue_animation_libs'], 20);
+        }
+
+        // Swiper assets gated by feature flag and product/hero presence
+        if (Feature_Registry::get_instance()->enabled('swiper_gallery')) {
+            add_action('wp_enqueue_scripts', [$this, 'enqueue_swiper'], 21);
         }
 
         add_action('template_redirect', [$this, 'init_wc_session'], 5);
@@ -56,27 +65,28 @@ class Shell {
         add_action('template_redirect', [$this, 'handle_request'], 10);
     }
 
+    public function enqueue_core_assets(): void {
+        Asset_Registry::get_instance()->enqueue_group('core');
+    }
+
     public function enqueue_animation_libs(): void {
         if (Feature_Registry::get_instance()->enabled('animations')) {
-            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_gsap();
-        }
-        if (Feature_Registry::get_instance()->enabled('parallax_effects')) {
-            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_gsap();
-        }
-        if (Feature_Registry::get_instance()->enabled('smooth_scroll')) {
-            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_lenis();
+            Asset_Registry::get_instance()->enqueue_group('animation');
         }
         if (Feature_Registry::get_instance()->enabled('three_js_effects')) {
-            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_three();
+            Asset_Registry::get_instance()->enqueue_group('3d');
         }
-        if (Feature_Registry::get_instance()->enabled('lottie_animations')) {
-            \PhantomCore\Animation\GSAP_Bridge::get_instance()->enqueue_lottie();
-        }
+    }
 
-        if (Feature_Registry::get_instance()->enabled('animations')) {
-            wp_enqueue_script('phantom-animations', PHANTOM_CORE_URL . 'frontend/assets/js/animations.js', ['gsap'], '2.0.0', true);
-            wp_enqueue_script('phantom-preloader', PHANTOM_CORE_URL . 'frontend/assets/js/preloader.js', [], '2.0.0', true);
+    public function enqueue_swiper(): void {
+        if (!class_exists('\PhantomCore\Bridges\Swiper_Bridge')) {
+            return;
         }
+        $bridge = \PhantomCore\Bridges\Swiper_Bridge::get_instance();
+        if (!$bridge->is_active()) {
+            return;
+        }
+        $bridge->enqueue();
     }
 
     public function init_wc_session(): void {

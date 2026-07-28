@@ -23,25 +23,26 @@ class GSAP_Bridge {
 
         $version = '3.12.5';
 
-        wp_enqueue_script('gsap', 'https://cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/gsap.min.js', [], $version, true);
-        wp_enqueue_script('gsap-scroll-trigger', 'https://cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/ScrollTrigger.min.js', ['gsap'], $version, true);
-        wp_enqueue_script('gsap-draggable', 'https://cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/Draggable.min.js', ['gsap'], $version, true);
-        wp_enqueue_script('gsap-motion-path', 'https://cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/MotionPathPlugin.min.js', ['gsap'], $version, true);
-        wp_enqueue_script('gsap-text', 'https://cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/TextPlugin.min.js', ['gsap'], $version, true);
+        wp_enqueue_script('gsap', '//cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/gsap.min.js', [], $version, true);
+        wp_enqueue_script('gsap-scroll-trigger', '//cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/ScrollTrigger.min.js', ['gsap'], $version, true);
+        wp_enqueue_script('gsap-draggable', '//cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/Draggable.min.js', ['gsap'], $version, true);
+        wp_enqueue_script('gsap-motion-path', '//cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/MotionPathPlugin.min.js', ['gsap'], $version, true);
+        wp_enqueue_script('gsap-text', '//cdnjs.cloudflare.com/ajax/libs/gsap/' . $version . '/TextPlugin.min.js', ['gsap'], $version, true);
 
         $this->register_core_tweens();
     }
 
     public function enqueue_three(): void {
-        wp_enqueue_script('three-core', 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js', [], 'r128', true);
+        _deprecated_function(__METHOD__, '2.0.0', 'PhantomCore\Animation\Three_Bridge::enqueue()');
+        wp_enqueue_script('three-core', '//cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js', [], 'r128', true);
     }
 
     public function enqueue_lenis(): void {
-        wp_enqueue_script('lenis', 'https://unpkg.com/lenis@1.1.13/dist/lenis.min.js', [], '1.1.13', true);
+        wp_enqueue_script('lenis', '//unpkg.com/lenis@1.1.13/dist/lenis.min.js', [], '1.1.13', true);
     }
 
     public function enqueue_lottie(): void {
-        wp_enqueue_script('lottie', 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js', [], '5.12.2', true);
+        wp_enqueue_script('lottie', '//cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js', [], '5.12.2', true);
     }
 
     private function register_core_tweens(): void {
@@ -75,6 +76,16 @@ class GSAP_Bridge {
             'from' => ['opacity' => 0, 'rotationX' => 90, 'y' => 40],
             'to' => ['opacity' => 1, 'rotationX' => 0, 'y' => 0],
             'scrollTrigger' => ['trigger' => '.pr-reveal', 'start' => 'top 80%'],
+        ]);
+        $this->register_tween('flip-down', [
+            'from' => ['opacity' => 0, 'rotationX' => -90, 'y' => -40],
+            'to' => ['opacity' => 1, 'rotationX' => 0, 'y' => 0],
+            'scrollTrigger' => ['trigger' => '.pr-reveal', 'start' => 'top 80%'],
+        ]);
+        $this->register_tween('slide-down', [
+            'from' => ['opacity' => 0, 'y' => -60],
+            'to' => ['opacity' => 1, 'y' => 0],
+            'scrollTrigger' => ['trigger' => '.pr-reveal', 'start' => 'top 85%'],
         ]);
     }
 

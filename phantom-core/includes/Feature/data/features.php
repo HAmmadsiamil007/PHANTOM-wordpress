@@ -71,6 +71,14 @@ return [
         'description' => 'Enable GSAP-powered animations for premium motion effects.',
         'default' => true,
     ],
+    'swiper_gallery' => [
+        'id' => 'swiper_gallery',
+        'category' => 'motion',
+        'type' => 'ast-toggle',
+        'label' => 'Swiper Gallery',
+        'description' => 'Enable Swiper.js for WooCommerce product galleries and hero slider.',
+        'default' => true,
+    ],
 
     // ===== 3D & INTERACTIVE =====
     'tilt_3d_cards' => [
@@ -95,6 +103,14 @@ return [
         'type' => 'ast-toggle',
         'label' => 'Three.js Effects',
         'description' => 'Enable Three.js 3D background effects. Can impact performance.',
+        'default' => false,
+    ],
+    'three_js' => [
+        'id' => 'three_js',
+        'category' => 'effects_3d',
+        'type' => 'ast-toggle',
+        'label' => 'Three.js Scenes',
+        'description' => 'Enable Three.js 3D scene rendering (fog particles, floating geometry, star field).',
         'default' => false,
     ],
 

@@ -411,12 +411,16 @@ require_once PHANTOM_CORE_PATH . 'includes/Manifest/class-theme-manifest.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-animation.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-animation-registry.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-gsap-bridge.php';
+require_once PHANTOM_CORE_PATH . 'includes/Animation/class-three-bridge.php';
+require_once PHANTOM_CORE_PATH . 'includes/Bridges/class-swiper-bridge.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-scroll-reveal.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-parallax.php';
 
 // Phase D: Plugin Bridges — register all before init_all()
 $bridge_mgr = \PhantomCore\Bridges\Bridge_Manager::get_instance();
 $bridge_mgr->register(new \PhantomCore\Bridges\WooCommerce_Bridge());
+$bridge_mgr->register(new \PhantomCore\Bridges\Swiper_Bridge());
+$bridge_mgr->register(new \PhantomCore\Animation\Three_Bridge());
 $bridge_mgr->register(new \PhantomCore\Bridges\Wishlist_Bridge());
 $bridge_mgr->register(new \PhantomCore\Bridges\Mailchimp_Bridge());
 $bridge_mgr->register(new \PhantomCore\Compatibility\Gutenberg_Bridge());

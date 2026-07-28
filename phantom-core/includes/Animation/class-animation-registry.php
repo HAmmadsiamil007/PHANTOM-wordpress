@@ -68,8 +68,20 @@ class Animation_Registry {
             'duration' => 0.7,
             'ease' => 'power3.out',
         ]));
+        $this->register(new Animation('flip-down', __('Flip Down', 'phantom-core'), 'scroll', 'entrance', '.pr-reveal', [
+            'opacity' => 0,
+            'rotationX' => -90,
+            'y' => -40,
+            'duration' => 0.7,
+            'ease' => 'power3.out',
+        ]));
         $this->register(new Animation('slide-up', __('Slide Up', 'phantom-core'), 'scroll', 'entrance', '.pr-reveal', [
             'y' => 60,
+            'duration' => 0.5,
+            'ease' => 'power2.out',
+        ]));
+        $this->register(new Animation('slide-down', __('Slide Down', 'phantom-core'), 'scroll', 'entrance', '.pr-reveal', [
+            'y' => -60,
             'duration' => 0.5,
             'ease' => 'power2.out',
         ]));

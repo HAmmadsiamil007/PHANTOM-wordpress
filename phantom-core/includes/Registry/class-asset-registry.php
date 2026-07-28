@@ -217,23 +217,25 @@ class Asset_Registry {
     }
 
     // Theme JS
-    $theme_js = [
-      'phantom-main-js'           => 'frontend/assets/js/main.js',
-      'phantom-animations'        => 'frontend/assets/js/animations.js',
-      'phantom-effects'           => 'frontend/assets/js/effects.js',
-      'phantom-phantom-data'      => 'frontend/assets/js/phantom-data.js',
-      'phantom-contact-form'      => 'frontend/assets/js/contact-form.js',
-      'phantom-carousel'          => 'frontend/assets/js/carousel.js',
-      'phantom-counter'           => 'frontend/assets/js/counter.js',
-      'phantom-search'            => 'frontend/assets/js/search.js',
-      'phantom-lenis-scroll'      => 'frontend/assets/js/lenis-scroll.js',
-      'phantom-three-scenes'      => 'frontend/assets/js/three-scenes.js',
-      'phantom-video-popup'       => 'frontend/assets/js/video-popup.js',
-      'phantom-video-section'     => 'frontend/assets/js/video-section.js',
-      'phantom-filter-button'     => 'frontend/assets/js/filter-button.js',
-      'phantom-loadmore'          => 'frontend/assets/js/loadmore.js',
-      'phantom-back-to-top'       => 'frontend/assets/js/back-to-top-button.js',
-    ];
+		$theme_js = [
+	       'phantom-main-js'           => 'frontend/assets/js/main.js',
+	       'phantom-animations'        => 'frontend/assets/js/animations.js',
+	       'phantom-effects'           => 'frontend/assets/js/effects.js',
+	       'phantom-phantom-data'      => 'frontend/assets/js/phantom-data.js',
+	       'phantom-contact-form'      => 'frontend/assets/js/contact-form.js',
+	       'phantom-carousel'          => 'frontend/assets/js/carousel.js',
+	       'phantom-counter'           => 'frontend/assets/js/counter.js',
+	       'phantom-search'            => 'frontend/assets/js/search.js',
+	       'phantom-lenis-scroll'      => 'frontend/assets/js/lenis-scroll.js',
+	       'phantom-three-scenes'      => 'frontend/assets/js/three-scenes.js',
+	       'phantom-video-popup'       => 'frontend/assets/js/video-popup.js',
+	       'phantom-video-section'     => 'frontend/assets/js/video-section.js',
+	       'phantom-filter-button'     => 'frontend/assets/js/filter-button.js',
+	       'phantom-loadmore'          => 'frontend/assets/js/loadmore.js',
+	       'phantom-back-to-top'       => 'frontend/assets/js/back-to-top-button.js',
+	       'phantom-preloader'         => 'frontend/assets/js/preloader.js',
+	       'phantom-dark-mode'         => 'frontend/assets/js/phantom-dark-mode.js',
+	    ];
     foreach ($theme_js as $handle => $path) {
       $this->register($handle, [
         'src'  => $url . $path,
@@ -247,10 +249,13 @@ class Asset_Registry {
     $this->add_to_group('phantom-theme-style', 'core');
     $this->add_to_group('phantom-main-js', 'core');
 
-    $this->add_to_group('gsap', 'animation');
-    $this->add_to_group('lenis', 'animation');
-    $this->add_to_group('phantom-animations', 'animation');
-    $this->add_to_group('phantom-effects', 'animation');
+	    $this->add_to_group('gsap', 'animation');
+	    $this->add_to_group('lenis', 'animation');
+	    $this->add_to_group('phantom-animations', 'animation');
+	    $this->add_to_group('phantom-effects', 'animation');
+	    $this->add_to_group('phantom-preloader', 'animation');
+	    $this->add_to_group('phantom-dark-mode', 'animation');
+	    $this->add_to_group('lottie', 'animation');
 
     $this->add_to_group('swiper-css', 'gallery');
     $this->add_to_group('swiper-js', 'gallery');
