@@ -499,7 +499,7 @@
         flex: 1;
         background: none;
         border: none;
-        outline: none; /* focus-visible handled by a11y.css */
+        outline: none;
         color: var(--white);
         font-family: var(--font-body);
         font-size: 0.9rem;
