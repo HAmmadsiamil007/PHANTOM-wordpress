@@ -42,8 +42,8 @@ class Product_Card extends Component_Renderer {
 
     $price = wp_kses_post($data['price']);
     if (!empty($data['on_sale'])) {
-      $price = '<span class="price-sale">' . esc_html($data['sale_price']) . '</span>' .
-               '<span class="price-original">' . esc_html($data['regular_price']) . '</span>';
+      $price = '<span class="price-sale">' . wp_kses_post($data['sale_price']) . '</span>' .
+               '<span class="price-original">' . wp_kses_post($data['regular_price']) . '</span>';
     }
 
     $atc = '<a href="' . esc_url($data['url']) . '" class="btn btn-sm btn-primary" data-magnetic="0.12">View Details</a>';
