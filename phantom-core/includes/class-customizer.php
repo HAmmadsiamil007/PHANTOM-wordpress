@@ -386,6 +386,13 @@ class Customizer {
 				'cssVarPxKeys'   => $px_keys,
 				'responsiveKeys' => $responsive_keys,
 				'restUrl'        => rest_url(),
+				'defaultImages'  => array(
+					'heroDesktop' => PHANTOM_CORE_URL . 'frontend/assets/images/banner-img1.png',
+					'heroTablet'  => PHANTOM_CORE_URL . 'frontend/assets/images/banner-img2.png',
+					'heroMobile'  => PHANTOM_CORE_URL . 'frontend/assets/images/banner-bg-img.png',
+					'logo'        => PHANTOM_CORE_URL . 'frontend/assets/images/logo.png',
+					'favicon'     => PHANTOM_CORE_URL . 'frontend/assets/images/favicon/favicon.ico',
+				),
 			)
 		);
 

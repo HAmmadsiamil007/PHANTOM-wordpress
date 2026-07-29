@@ -104,22 +104,29 @@ function phantom_render_hero_media_partial(): void {
 	$desktop = get_option( $prefix . 'hero_banner_image', '' );
 	$tablet  = get_option( $prefix . 'hero_image_tablet', '' );
 	$mobile  = get_option( $prefix . 'hero_image_mobile', '' );
+
+	// Fallback to default images if no custom image uploaded.
+	$default_desktop = PHANTOM_CORE_URL . 'frontend/assets/images/banner-img1.png';
+	$default_tablet  = PHANTOM_CORE_URL . 'frontend/assets/images/banner-img2.png';
+	$default_mobile  = PHANTOM_CORE_URL . 'frontend/assets/images/banner-bg-img.png';
+	if ( '' === $desktop || ! filter_var( $desktop, FILTER_VALIDATE_URL ) ) {
+		$desktop = $default_desktop;
+	}
+	if ( '' === $tablet || ! filter_var( $tablet, FILTER_VALIDATE_URL ) ) {
+		$tablet = $default_tablet;
+	}
+	if ( '' === $mobile || ! filter_var( $mobile, FILTER_VALIDATE_URL ) ) {
+		$mobile = $default_mobile;
+	}
 	$enabled = (bool) get_option( $prefix . 'hero_enable_responsive', 1 );
 	$tablet_bp = absint( get_option( $prefix . 'hero_tablet_breakpoint', 1024 ) );
 	$mobile_bp = absint( get_option( $prefix . 'hero_mobile_breakpoint', 768 ) );
-	$style = '';
-	if ( '' !== $desktop ) {
-		$style .= '--hero-image:url("' . esc_url( $desktop ) . '");--hero-image-desktop:url("' . esc_url( $desktop ) . '");';
-	}
-	if ( $enabled && '' !== $tablet ) {
+	$style = '--hero-image:url("' . esc_url( $desktop ) . '");--hero-image-desktop:url("' . esc_url( $desktop ) . '");';
+	if ( $enabled ) {
 		$style .= '@media(max-width:' . $tablet_bp . 'px){:root{--hero-image-tablet:url("' . esc_url( $tablet ) . '");--hero-image:url("' . esc_url( $tablet ) . '");}}';
-	}
-	if ( $enabled && '' !== $mobile ) {
 		$style .= '@media(max-width:' . $mobile_bp . 'px){:root{--hero-image-mobile:url("' . esc_url( $mobile ) . '");--hero-image:url("' . esc_url( $mobile ) . '");}}';
 	}
-	if ( '' !== $style ) {
-		echo '<style id="phantom-hero-partial">[data-hero-area]{' . $style . '}</style>';
-	}
+	echo '<style id="phantom-hero-partial">[data-hero-area]{' . $style . '}</style>';
 }
 
 function phantom_render_nav_partial(): void {
@@ -144,12 +151,8 @@ function phantom_render_header_partial_v2(): void {
 			<div class="row align-items-center">
 				<div class="col-auto">
 					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="brand-logo" rel="home">
-						<?php $logo = get_option( 'phantom_general_site_logo', '' ); ?>
-						<?php if ( '' !== $logo ) : ?>
-							<img src="<?php echo esc_url( $logo ); ?>" alt="<?php bloginfo( 'name' ); ?>" height="40">
-						<?php else : ?>
-							<?php bloginfo( 'name' ); ?>
-						<?php endif; ?>
+						<?php $logo = phantom_get_image_with_default( 'phantom_general_site_logo', 'frontend/assets/images/logo.png' ); ?>
+						<img src="<?php echo esc_url( $logo ); ?>" alt="<?php bloginfo( 'name' ); ?>" height="40">
 					</a>
 				</div>
 				<div class="col">

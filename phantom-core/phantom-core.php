@@ -721,6 +721,24 @@ add_action( 'init', function (): void {
 } );
 
 /**
+ * Get image URL with fallback to default plugin image.
+ *
+ * Returns the uploaded Customizer image if set, otherwise falls back
+ * to the default image bundled with the plugin.
+ *
+ * @param string $option_key   The option key storing the uploaded URL.
+ * @param string $default_path Relative path inside plugin (e.g. 'frontend/assets/images/logo.png').
+ * @return string The image URL (uploaded or default).
+ */
+function phantom_get_image_with_default( string $option_key, string $default_path ): string {
+	$uploaded = get_option( $option_key, '' );
+	if ( '' !== $uploaded && filter_var( $uploaded, FILTER_VALIDATE_URL ) ) {
+		return $uploaded;
+	}
+	return PHANTOM_CORE_URL . $default_path;
+}
+
+/**
  * Clean up plugin data on uninstall.
  */
 function phantom_uninstall(): void {

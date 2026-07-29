@@ -36,6 +36,7 @@ class Asset_Engine {
   public function inject_all(string $html, string $slug, bool $is_customizer_preview): string {
     $html = $this->inject_css_by_route($html, $slug);
     $html = $this->inject_images($html);
+    $html = $this->inject_logo_fallback($html);
     $html = $this->inject_resource_hints($html, $slug);
     $html = $this->inject_google_fonts($html);
     $html = $this->inject_font_awesome($html);
@@ -117,6 +118,25 @@ class Asset_Engine {
       );
     }
 
+    return $html;
+  }
+
+  /**
+   * Replace brand-logo text with default logo image when no custom logo uploaded.
+   */
+  private function inject_logo_fallback(string $html): string {
+    $logo = get_option('phantom_general_site_logo', '');
+    if ('' === $logo && class_exists('\PhantomCore')) {
+      $default = \PhantomCore\phantom_get_image_with_default(
+        'phantom_general_site_logo',
+        'frontend/assets/images/logo.png'
+      );
+      $html = preg_replace(
+        '/<a[^>]*class="brand-logo"[^>]*>([^<]*)<\/a>/i',
+        '<a class="brand-logo" href="/"><img src="' . esc_url($default) . '" alt="' . esc_attr(get_bloginfo('name')) . '" height="40"></a>',
+        $html
+      );
+    }
     return $html;
   }
 

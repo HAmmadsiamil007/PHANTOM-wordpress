@@ -146,21 +146,19 @@
     });
   });
 
-  // Logos
+  // Logos — revert to default logo image when custom logo is removed
+  var defaultLogo = PhantomCustomizer.defaultImages ? PhantomCustomizer.defaultImages.logo : '';
   wp.customize('phantom_general_site_logo', function (value) {
     value.bind(function (newval) {
+      var effectiveVal = newval || defaultLogo;
       var el = document.querySelector('.brand-logo img, img[data-phantom="site_logo"]');
       if (el) {
-        el.src = newval;
+        el.src = effectiveVal;
       } else {
         var brand = document.querySelector('.brand-logo');
-        if (brand && brand.tagName === 'A' && !brand.querySelector('img')) {
-          brand.style.backgroundImage = 'url(' + newval + ')';
-          brand.style.backgroundSize = 'contain';
-          brand.style.backgroundRepeat = 'no-repeat';
-          brand.style.backgroundPosition = 'center';
-          brand.textContent = '';
-          brand.style.display = 'inline-block';
+        if (brand && brand.tagName === 'A') {
+          // Replace text-only brand logo with image
+          brand.innerHTML = '<img src="' + effectiveVal + '" alt="' + (document.title || 'Logo') + '" height="40">';
         }
       }
     });
@@ -184,11 +182,13 @@
     });
   });
 
-  // Favicon
+  // Favicon — revert to default when custom favicon is removed
+  var defaultFavicon = PhantomCustomizer.defaultImages ? PhantomCustomizer.defaultImages.favicon : '';
   wp.customize('phantom_branding_favicon', function (value) {
     value.bind(function (newval) {
+      var effectiveVal = newval || defaultFavicon;
       var link = document.querySelector('link[rel="icon"]');
-      if (link) link.href = newval;
+      if (link) link.href = effectiveVal;
     });
   });
 
@@ -240,36 +240,42 @@
 
   // ─── HERO RESPONSIVE MEDIA ───────────────────────────────
 
-  // Desktop Hero Image — update img src + bg image
+  // Desktop Hero Image — update img src + bg image (revert to default when empty)
+  var defaultHeroDesktop = PhantomCustomizer.defaultImages ? PhantomCustomizer.defaultImages.heroDesktop : '';
   wp.customize('phantom_hero_banner_image', function (value) {
     value.bind(function (newval) {
       var img = document.querySelector('[data-hero-area] img.hero-image, [data-phantom-hero-img]');
-      if (img) img.src = newval;
+      var effectiveVal = newval || defaultHeroDesktop;
+      if (img) img.src = effectiveVal;
       var bgEls = document.querySelectorAll('[data-phantom-bg="hero"]');
       bgEls.forEach(function (el) {
-        el.style.backgroundImage = newval ? 'url("' + newval.replace(/[^a-zA-Z0-9\-._~:\/?#@!$&'(*+,;=%]/g, '') + '")' : '';
+        el.style.backgroundImage = effectiveVal ? 'url("' + effectiveVal.replace(/[^a-zA-Z0-9\-._~:\/?#@!$&'(*+,;=%]/g, '') + '")' : '';
       });
     });
   });
 
-  // Tablet Hero Image — update <source media="(max-width:1024px)">
+  // Tablet Hero Image — revert to default when empty
+  var defaultHeroTablet = PhantomCustomizer.defaultImages ? PhantomCustomizer.defaultImages.heroTablet : '';
   wp.customize('phantom_hero_image_tablet', function (value) {
     value.bind(function (newval) {
+      var effectiveVal = newval || defaultHeroTablet;
       var source = document.querySelector('[data-hero-area] picture source[data-device="tablet"]');
       if (source) {
-        if (newval) { source.srcset = newval; source.removeAttribute('disabled'); }
-        else { source.disabled = true; }
+        source.srcset = effectiveVal;
+        source.removeAttribute('disabled');
       }
     });
   });
 
-  // Mobile Hero Image — update <source media="(max-width:768px)">
+  // Mobile Hero Image — revert to default when empty
+  var defaultHeroMobile = PhantomCustomizer.defaultImages ? PhantomCustomizer.defaultImages.heroMobile : '';
   wp.customize('phantom_hero_image_mobile', function (value) {
     value.bind(function (newval) {
+      var effectiveVal = newval || defaultHeroMobile;
       var source = document.querySelector('[data-hero-area] picture source[data-device="mobile"]');
       if (source) {
-        if (newval) { source.srcset = newval; source.removeAttribute('disabled'); }
-        else { source.disabled = true; }
+        source.srcset = effectiveVal;
+        source.removeAttribute('disabled');
       }
     });
   });
