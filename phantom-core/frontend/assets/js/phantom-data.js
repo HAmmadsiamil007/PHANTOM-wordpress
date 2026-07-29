@@ -620,6 +620,12 @@
 (function(w) {
   'use strict';
 
+  // Homepage detection — skip dynamic injection to preserve static AETHER design
+  function isHomepage() {
+    var path = w.location.pathname.replace(/\/+$/, '');
+    return path === '' || path === '/' || path === '/index.html' || path === '/index.php';
+  }
+
   w.PhantomCore = {
     adapters: null,
     renderer: null,
@@ -637,6 +643,9 @@
     },
 
     onReady: function() {
+      // Skip dynamic injection on homepage — static AETHER design is already complete
+      if (isHomepage()) return;
+
       var services = this.services;
       var adapters = this.adapters;
       var renderer = this.renderer;
@@ -654,9 +663,10 @@
 
   w.PhantomCore.init();
 
-  // Initialize PhantomInjector with data from PhantomData
+  // Initialize PhantomInjector with data from PhantomData (skip on homepage)
   (function () {
     if (!window.PhantomInjector) return;
+    if (isHomepage()) return;
 
     if (window.PhantomData) {
       if (window.PhantomData.settings) {

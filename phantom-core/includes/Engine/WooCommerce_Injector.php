@@ -37,13 +37,18 @@ class WooCommerce_Injector {
   }
 
   public function inject(string $html, string $slug): string {
-    try {
-      $hero_component = Component_Registry::get_instance()->get('hero');
-      if ($hero_component) {
-        $hero_html = $hero_component->instance()->render($this->hero_adapter->normalize());
-        $html = $this->replace_inner_by_component($html, 'hero', $hero_html);
-      }
-    } catch (\Throwable $e) {}
+    // Skip hero/footer injection for homepage — static AETHER design is already complete
+    $is_homepage = ('' === $slug || 'index' === $slug);
+
+    if (!$is_homepage) {
+      try {
+        $hero_component = Component_Registry::get_instance()->get('hero');
+        if ($hero_component) {
+          $hero_html = $hero_component->instance()->render($this->hero_adapter->normalize());
+          $html = $this->replace_inner_by_component($html, 'hero', $hero_html);
+        }
+      } catch (\Throwable $e) {}
+    }
 
     switch (true) {
       case 'shop' === $slug:
@@ -63,8 +68,8 @@ class WooCommerce_Injector {
         break;
       case '' === $slug:
       case 'index' === $slug:
-        $html = $this->product_injector->inject_homepage_products($html);
-        $html = $this->product_injector->inject_homepage_categories($html);
+        // Homepage has designed static content — skip dynamic injection
+        // to preserve the AETHER design (product cards, category grid, etc.)
         break;
       case 'wishlist' === $slug:
         $html = $this->wishlist_injector->inject_wishlist_content($html);
@@ -93,13 +98,16 @@ class WooCommerce_Injector {
         break;
     }
 
-    try {
-      $footer_component = Component_Registry::get_instance()->get('footer');
-      if ($footer_component) {
-        $footer_html = $footer_component->instance()->render($this->get_footer_data());
-        $html = $this->replace_inner_by_component($html, 'footer', $footer_html);
-      }
-    } catch (\Throwable $e) {}
+    // Skip footer replacement for homepage — static AETHER footer is already designed
+    if (!$is_homepage) {
+      try {
+        $footer_component = Component_Registry::get_instance()->get('footer');
+        if ($footer_component) {
+          $footer_html = $footer_component->instance()->render($this->get_footer_data());
+          $html = $this->replace_inner_by_component($html, 'footer', $footer_html);
+        }
+      } catch (\Throwable $e) {}
+    }
 
     return $html;
   }

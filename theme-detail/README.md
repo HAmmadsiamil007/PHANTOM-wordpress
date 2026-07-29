@@ -153,7 +153,14 @@ docker cp optix_wordpress:/var/www/html/wp-content/plugins/phantom-core ./phanto
 | Architecture Alignment | 100/100 | Data Layer, Layout Registry, Bridges, Public API, all 9 registries |
 | **Aggregate** | **100/100** | Production-ready for any frontend |
 
-**2026-07-28 v2.0.0 Release — Latest Updates:**
+**2026-07-29 AETHER Frontend Polish — Latest Updates:**
+- **Homepage injection guards**: WooCommerce_Injector.php, phantom-injector.js, phantom-data.js all skip injection on homepage to preserve static AETHER design
+- **Product card fixes**: CSS flex layout for equal heights, price row pinned to bottom with `margin-top: auto`, badges on all 4 cards, `·` encoding fix (`&middot;`), button text wrapping fix (`min-width`, `flex-shrink: 0`, `white-space: nowrap`)
+- **Shop page fog effect**: Transparent card backgrounds (`rgba(9,9,11,0.6)` + `backdrop-filter: blur(8px)`), section background transparent, fog visible through cards
+- **Shop page encoding**: `—` replaced with `&mdash;` in 6 product names
+- **Responsive CSS**: Fixed 3 breakpoints to use flex layout instead of grid for product cards
+
+**2026-07-28 v2.0.0 Release — Previous Updates:**
 - **Template Packs**: 3 packs (Dark/Minimal/Bold) with manifests, SCSS, HTML overrides for index/shop/404/product-card/blog-card
 - **Activation Wizard**: 4-step admin setup flow (`Setup\` namespace)
 - **Demo Content Generator**: Creates pages/products/posts/menus/widgets/options programmatically

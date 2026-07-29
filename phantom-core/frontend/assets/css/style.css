@@ -1008,8 +1008,12 @@ ul {
 .product-card {
     border: 1px solid #1A1A1A;
     transition: all var(--transition-normal);
-    background: var(--void);
+    background: rgba(9,9,11,0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-card:hover {
@@ -1097,6 +1101,9 @@ ul {
 
 .product-info {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .product-rating {
@@ -1132,6 +1139,7 @@ ul {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-top: auto;
 }
 
 .product-price {
@@ -1797,6 +1805,10 @@ ul {
 .btn-sm {
     padding: 10px 20px;
     font-size: 0.75rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 120px;
+    text-align: center;
 }
 
 /* Content Pages (Privacy, Terms, Cookies) — short hero with flex centering */
@@ -2071,7 +2083,7 @@ url('../images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg') center/cov
 /* Shop Grid */
 .shop-grid-section {
     padding: var(--section-padding);
-    background-color: var(--void);
+    background-color: transparent;
 }
 
 .shop-grid {
@@ -2128,6 +2140,10 @@ url('../images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg') center/cov
 .btn-sm {
     padding: 10px 24px;
     font-size: 0.8rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 120px;
+    text-align: center;
 }
 
 .btn-full {

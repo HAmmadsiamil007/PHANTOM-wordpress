@@ -1,6 +1,12 @@
 (function (w) {
     'use strict';
 
+    // Homepage detection — skip dynamic injection to preserve static AETHER design
+    function isHomepage() {
+        var path = w.location.pathname.replace(/\/+$/, '');
+        return path === '' || path === '/' || path === '/index.html' || path === '/index.php';
+    }
+
     var PhantomInjector = {
         injectContent: function (element, data) {
             if (!element || !data) return;
@@ -58,6 +64,8 @@
 
         injectMenus: function (menus) {
             if (!menus) return;
+            // Skip menu injection on homepage — static AETHER nav/footer is already designed
+            if (isHomepage()) return;
             for (var location in menus) {
                 if (menus.hasOwnProperty(location)) {
                     var container = document.querySelector('[data-phantom-menu="' + location + '"]');
@@ -78,6 +86,8 @@
 
         injectProducts: function (products) {
             if (!products) return;
+            // Skip product injection on homepage — static AETHER product cards are already designed
+            if (isHomepage()) return;
             var containers = document.querySelectorAll('[data-phantom-products]');
             for (var c = 0; c < containers.length; c++) {
                 var container = containers[c];

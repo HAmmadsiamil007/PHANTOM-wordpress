@@ -1,13 +1,13 @@
 # Phantom Core — Forensic Audit Report v2.0.0
 
-> **Date:** 2026-07-28 | **Phases:** 5 remediation (original 126 issues) + 9 hotfixes (2026-07-26) + 5 architecture phases (Phase A–E, 2026-07-27) + Theme Forensic Audit (35 issues) + v2.0.0 Release (Template Packs, Setup System, 399 tests)
+> **Date:** 2026-07-29 | **Phases:** 5 remediation (original 126 issues) + 9 hotfixes (2026-07-26) + 5 architecture phases (Phase A–E, 2026-07-27) + Theme Forensic Audit (35 issues) + v2.0.0 Release (Template Packs, Setup System, 399 tests) + AETHER Frontend Polish (2026-07-29)
 > **Forensic Code Health:** 100/100 | **Architecture Alignment:** 100/100 | **All PHP files:** 0 syntax errors
 
 ---
 
 ## Executive Summary
 
-Phantom Core has undergone a comprehensive **forensic audit + architecture rebuild cycle** culminating on 2026-07-28 with the v2.0.0 release:
+Phantom Core has undergone a comprehensive **forensic audit + architecture rebuild cycle** culminating on 2026-07-29:
 
 1. **Original 126-issue remediation** (5 phases) — all critical/high/medium/low issues closed
 2. **2026-07-26 hotfixes** — 9 fixes including cart endpoints, menus, widgets, font load, textdomain, nonce, partial renderers
@@ -18,6 +18,7 @@ Phantom Core has undergone a comprehensive **forensic audit + architecture rebui
 7. **2026-07-27 Phase E** — Final architecture push (12 new files, 38 Container services, 7 Public API facades)
 8. **2026-07-27 Theme Forensic Audit** — 35 theme issues found and fixed
 9. **2026-07-28 v2.0.0 Release** — Template Packs (3 packs), Activation Wizard, Demo Content Generator, 2 new REST endpoints, Upgrade_Manager v2.0 migration, version bump 1.5.4→2.0.0. **399/399 tests pass.**
+10. **2026-07-29 AETHER Frontend Polish** — Homepage injection guards (3 files), product card flex layout fixes, shop page fog/transparent cards, encoding fixes (7 files changed)
 
 **Aggregate health:** Forensic code health **100/100** + Architecture alignment **100/100** = **100/100 Client-ready.**
 
@@ -55,7 +56,25 @@ All 126 issues (24 critical, 34 high, 39 medium, 29 low) closed. See `docs/phant
 
 ---
 
-## 3. 2026-07-26 Responsive Hero Media System
+## 3. 2026-07-29 AETHER Frontend Polish (7 Files Changed)
+
+| # | Fix | Severity | File | Detail |
+|---|-----|----------|------|--------|
+| F1 | Homepage injection guard (server) | **Critical** | `WooCommerce_Injector.php` | `$is_homepage` flag skips hero, product/category injection, footer replacement on homepage |
+| F2 | Homepage injection guard (client) | **High** | `phantom-injector.js` | `isHomepage()` helper; `injectProducts()` and `injectMenus()` return early on homepage |
+| F3 | Homepage injection guard (data) | **High** | `phantom-data.js` | `isHomepage()` guard in `PhantomCore.onReady()` and bootstrap IIFE |
+| F4 | Product card flex layout | **Medium** | `style.css` | `.product-card` flex column, `.product-info` flex column + flex:1, `.product-price-row` margin-top:auto |
+| F5 | Button text wrapping | **Medium** | `style.css` | `.btn-sm` — white-space:nowrap, flex-shrink:0, min-width:120px, text-align:center |
+| F6 | Shop page fog effect | **Medium** | `style.css` + `shop.html` | `.shop-grid-section` transparent bg, `.product-card` rgba(9,9,11,0.6) + backdrop-filter:blur(8px), `&mdash;` encoding fix |
+| F7 | Responsive CSS fixes | **Low** | `responsive.css` | 3 breakpoints: `display:grid` → `display:flex` for `.product-card` |
+| F8 | Product card badges | **Low** | `index.html` | Added "New" badge to Card 4 (AETHER Aero Sprint) |
+| F9 | Encoding fixes | **Low** | `index.html` + `shop.html` | `·` → `&middot;` (4 taglines), `—` → `&mdash;` (6 product names) |
+
+**Result:** Homepage AETHER design preserved (no injection overwrites), product cards equal height with aligned price rows, shop page has transparent frosted glass cards with fog visible, all encoding issues resolved.
+
+---
+
+## 4. 2026-07-26 Responsive Hero Media System
 
 | Component | Detail |
 |-----------|--------|
