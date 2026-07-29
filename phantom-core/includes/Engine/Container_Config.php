@@ -20,10 +20,15 @@ class Container_Config {
             return new EventDispatcher();
         });
 
-        // 2. Template_Loader — singleton
-        $container->singleton(Template_Loader::class, function () {
-            return new Template_Loader();
-        });
+		// 2. Template_Loader — singleton
+    $container->singleton(Template_Loader::class, function () {
+      return new Template_Loader();
+    });
+
+    // 2a. Placeholder_Replacer — singleton (resolves {{PLACEHOLDER}} tags in pack templates)
+    $container->singleton(Placeholder_Replacer::class, function ($c) {
+      return new Placeholder_Replacer($c->get(Template_Loader::class));
+    });
 
         // 3. SEO_Engine — singleton
         $container->singleton(SEO_Engine::class, function () {

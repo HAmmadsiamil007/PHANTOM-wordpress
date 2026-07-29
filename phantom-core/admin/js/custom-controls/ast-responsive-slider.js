@@ -4,6 +4,18 @@
     wp.customize.controlConstructor['ast-responsive-slider'] = wp.customize.Control.extend({
         ready: function() {
             var control = this;
+
+            control.initSlider();
+
+            control.setting.bind(function(value) {
+                control.params.value = value;
+                control.renderContent();
+                control.initSlider();
+            });
+        },
+
+        initSlider: function() {
+            var control = this;
             var container = control.container;
             var hidden = container.find('.ast-responsive-slider-value');
 

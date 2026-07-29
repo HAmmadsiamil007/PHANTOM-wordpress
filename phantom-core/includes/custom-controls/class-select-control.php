@@ -47,4 +47,28 @@ class Select_Control extends Control_Base {
         </label>
         <?php
     }
+
+    public function content_template(): void {
+        ?>
+        <label>
+            <span class="customize-control-title">{{ data.label }}</span>
+            <# if ( data.description ) { #>
+                <span class="description customize-control-description">{{ data.description }}</span>
+            <# } #>
+            <select data-customize-setting-link="{{ data.settings.default }}">
+                <# _.each( data.choices, function( label, value ) { #>
+                    <# if ( _.isObject( label ) ) { #>
+                        <optgroup label="{{ value }}">
+                            <# _.each( label, function( opt_label, opt_val ) { #>
+                                <option value="{{ opt_val }}" <# if ( opt_val === data.value ) { #>selected="selected"<# } #>>{{ opt_label }}</option>
+                            <# } ) #>
+                        </optgroup>
+                    <# } else { #>
+                        <option value="{{ value }}" <# if ( value === data.value ) { #>selected="selected"<# } #>>{{ label }}</option>
+                    <# } #>
+                <# } ) #>
+            </select>
+        </label>
+        <?php
+    }
 }

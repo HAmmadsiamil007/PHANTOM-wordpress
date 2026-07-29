@@ -185,7 +185,18 @@ class Product_Injector extends Base_Injector {
       $this->render_product_categories($data['categories']),
     ];
 
-    return str_replace($search, $replace, $html);
+    $html = str_replace($search, $replace, $html);
+
+    $product_name = esc_html($data['name']);
+    $site_name = esc_html(get_bloginfo('name'));
+    $html = preg_replace(
+      '/<title>[^<]*<\/title>/i',
+      '<title>' . $product_name . ' — ' . $site_name . '</title>',
+      $html,
+      1
+    );
+
+    return $html;
   }
 
   public function inject_homepage_products(string $html): string {
@@ -223,20 +234,37 @@ class Product_Injector extends Base_Injector {
   }
 
   private function render_add_to_cart($product): string {
-    if (!$product->is_in_stock()) {
+    if ($product->is_type('variable')) {
+      if (!$product->has_child()) {
+        return '<p class="pd-stock-out">Out of Stock</p>';
+      }
+      $any_in_stock = false;
+      foreach ($product->get_available_variations() as $variation) {
+        if (!empty($variation['is_in_stock'])) {
+          $any_in_stock = true;
+          break;
+        }
+      }
+      if (!$any_in_stock) {
+        return '<p class="pd-stock-out">Out of Stock</p>';
+      }
+    } elseif (!$product->is_in_stock()) {
       return '<p class="pd-stock-out">Out of Stock</p>';
     }
 
     if ($product->is_type('variable')) {
       $atc = '<form class="pd-variations-form" data-product_id="' . $product->get_id() . '">';
-      foreach ($product->get_variation_attributes() as $name => $options) {
-        $tax = str_replace('attribute_', '', $name);
-        $label = wc_attribute_label($tax, $product);
+		foreach ($product->get_variation_attributes() as $name => $options) {
+			$attr_name = 'attribute_' . $name;
+			if (empty($options)) {
+				continue;
+			}
+        $label = wc_attribute_label($name, $product);
         $atc .= '<div class="pd-option-group">';
         $atc .= '<div class="pd-option-header">';
         $atc .= '<label class="pd-option-label">' . esc_html($label) . '</label>';
         $atc .= '</div>';
-        $atc .= '<select name="' . esc_attr($name) . '" class="pd-variation-select">';
+        $atc .= '<select name="' . esc_attr($attr_name) . '" class="pd-variation-select">';
         $atc .= '<option value="">Choose ' . esc_html($label) . '</option>';
         foreach ($options as $opt) {
           $atc .= '<option value="' . esc_attr($opt) . '">' . esc_html(ucfirst(str_replace('-', ' ', $opt))) . '</option>';
@@ -244,7 +272,7 @@ class Product_Injector extends Base_Injector {
         $atc .= '</select></div>';
       }
       $atc .= '<div class="pd-actions">';
-      $atc .= '<button type="submit" class="btn btn-primary pd-add-to-cart" data-magnetic="0.12" data-product_id="' . $product->get_id() . '"><i class="fas fa-shopping-bag"></i> Add to Cart</button>';
+      $atc .= '<button type="submit" class="btn btn-primary pd-add-to-cart phantom-add-to-cart" data-magnetic="0.12" data-product_id="' . $product->get_id() . '"><i class="fas fa-shopping-bag"></i> Add to Cart</button>';
       $atc .= '</div>';
       $atc .= '</form>';
       return $atc;
@@ -261,7 +289,7 @@ class Product_Injector extends Base_Injector {
           </div>
         </div>
         <div class="pd-actions">
-          <button type="submit" class="btn btn-primary pd-add-to-cart" data-magnetic="0.12" data-product_id="' . $product->get_id() . '"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+          <button type="submit" class="btn btn-primary pd-add-to-cart phantom-add-to-cart" data-magnetic="0.12" data-product_id="' . $product->get_id() . '"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
           <button type="button" class="pd-wishlist-btn" aria-label="Add to wishlist"><i class="far fa-heart"></i></button>
         </div>
       </form>';

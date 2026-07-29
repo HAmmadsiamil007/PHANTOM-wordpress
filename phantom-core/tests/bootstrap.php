@@ -605,6 +605,7 @@ require_once PHANTOM_CORE_PATH . 'includes/Engine/Asset_Engine.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/RequestRouter.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/ResponseBuilder.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/Render_Engine.php';
+require_once PHANTOM_CORE_PATH . 'includes/Engine/Placeholder_Replacer.php';
 require_once PHANTOM_CORE_PATH . 'includes/Engine/Container_Config.php';
 
 // Load Engine Container

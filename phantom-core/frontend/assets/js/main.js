@@ -511,8 +511,10 @@ const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     // ─── Filter Buttons (shop page) ─────────────────────────
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            this.closest('.filter-buttons').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
+            const href = this.dataset.href;
+            if (href) {
+                window.location.href = href;
+            }
         });
     });
 

@@ -75,6 +75,14 @@ abstract class Control_Base extends \WP_Customize_Control {
         return null;
     }
 
+    public function to_json(): void {
+        parent::to_json();
+        $this->json['value'] = $this->value();
+        if ( ! empty( $this->choices ) ) {
+            $this->json['choices'] = $this->choices;
+        }
+    }
+
     public function add_control( \WP_Customize_Manager $wp_customize, string $setting_key, array $args ): void {
         $type     = $args['type'] ?? $this->type;
         $instance = self::get_control_instance( $wp_customize, $type, $setting_key, $args );

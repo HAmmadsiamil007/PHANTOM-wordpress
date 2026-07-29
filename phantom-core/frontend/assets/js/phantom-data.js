@@ -215,15 +215,106 @@
         if (btn) {
           e.preventDefault();
           var productId = btn.getAttribute('data-product_id') || btn.getAttribute('data-product-id');
-          if (productId) this.add(productId);
+          if (!productId) return;
+
+          // Check if the button is inside a form (product detail page)
+          var form = btn.closest('form');
+          var quantity = 1;
+          var variationData = null;
+
+          if (form) {
+            // Read quantity
+            var qtyEl = form.querySelector('.pd-qty-value');
+            if (qtyEl) quantity = parseInt(qtyEl.textContent) || 1;
+
+            // Read variation selects + hidden inputs (variable products)
+            var selects = form.querySelectorAll('.pd-variation-select');
+            var hiddenAttrs = form.querySelectorAll('input[type="hidden"][name^="attribute_"]');
+            if (selects.length || hiddenAttrs.length) {
+              variationData = {};
+              selects.forEach(function(sel) {
+                if (sel.value) variationData[sel.name] = sel.value;
+              });
+              hiddenAttrs.forEach(function(inp) {
+                variationData[inp.name] = inp.value;
+              });
+              // Variable product requires variation_id. Try to find it from data attributes
+              var variationId = form.getAttribute('data-variation_id') || btn.getAttribute('data-variation_id');
+              if (variationId) variationData.variation_id = parseInt(variationId);
+            }
+          }
+
+          this.add(productId, quantity, variationData);
         }
       }.bind(this));
+
+      // Handle variation select changes — update variation_id and price
+      document.addEventListener('change', function(e) {
+        var sel = e.target.closest('.pd-variation-select');
+        if (!sel) return;
+        var form = sel.closest('.pd-variations-form');
+        if (!form) return;
+
+        var allSelected = true;
+        var selects = form.querySelectorAll('.pd-variation-select');
+        var hiddenAttrs = form.querySelectorAll('input[type="hidden"][name^="attribute_"]');
+        var data = {};
+        selects.forEach(function(s) {
+          if (!s.value) allSelected = false;
+          else data[s.name] = s.value;
+        });
+        hiddenAttrs.forEach(function(inp) {
+          data[inp.name] = inp.value;
+        });
+
+        if (allSelected) {
+          var productId = form.getAttribute('data-product_id');
+          if (productId && w.PhantomServices.Api) {
+            w.PhantomServices.Api.get('/products/' + productId).then(function(product) {
+              if (product && product.variations) {
+                // Find matching variation
+                var matched = null;
+                product.variations.forEach(function(v) {
+                  if (!v.attributes) return;
+                  var match = true;
+                  // Check each attribute matches the selected value
+                  Object.keys(data).forEach(function(key) {
+                    var attrKey = key.replace('attribute_', '');
+                    var attrVal = data[key];
+                    var vAttr = v.attributes[attrKey] || v.attributes['pa_' + attrKey] || v.attributes['attribute_' + attrKey];
+                    if (vAttr !== undefined && String(vAttr).toLowerCase() !== String(attrVal).toLowerCase()) {
+                      match = false;
+                    }
+                  });
+                  if (match) matched = v;
+                });
+
+                if (matched) {
+                  form.setAttribute('data-variation_id', matched.id);
+                  // Update price display
+                  var priceEl = form.closest('[data-component="product-detail"]') || document;
+                  var priceTarget = priceEl.querySelector('.product-price-content, .product-price, .pd-price');
+                  if (priceTarget && matched.price_html) {
+                    priceTarget.innerHTML = matched.price_html;
+                  }
+                }
+              }
+            });
+          }
+        }
+      });
     },
 
     add: function(productId, quantity, variationData) {
       quantity = quantity || 1;
       var body = { product_id: parseInt(productId), quantity: parseInt(quantity) };
-      if (variationData) body.variation = variationData;
+      if (variationData) {
+        body.variation = variationData;
+        if (variationData.variation_id) {
+          body.variation_id = variationData.variation_id;
+          delete variationData.variation_id;
+        }
+      }
 
       return w.PhantomServices.Api.post('/cart/add', body).then(function(resp) {
         if (resp && !resp.error) {

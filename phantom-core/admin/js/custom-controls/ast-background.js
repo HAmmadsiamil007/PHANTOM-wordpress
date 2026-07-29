@@ -4,8 +4,19 @@
   wp.customize.controlConstructor['ast-background'] = wp.customize.Control.extend({
     ready: function () {
       var control = this;
+
+      control.initBackground();
+
+      control.setting.bind(function(value) {
+        control.params.value = value;
+        control.renderContent();
+        control.initBackground();
+      });
+    },
+
+    initBackground: function () {
+      var control = this;
       var fields = control.container.find('.ast-background-fields');
-      var bgId = fields.data('bg-id');
 
       function collectValue() {
         return {
@@ -20,9 +31,11 @@
         };
       }
 
-      fields.find('.ast-bg-color').wpColorPicker({
-        change: function () { control.setting.set(collectValue()); }
-      });
+      if (fields.find('.ast-bg-color').length) {
+        fields.find('.ast-bg-color').wpColorPicker({
+          change: function () { control.setting.set(collectValue()); }
+        });
+      }
 
       fields.on('change', 'input, select', function () {
         control.setting.set(collectValue());

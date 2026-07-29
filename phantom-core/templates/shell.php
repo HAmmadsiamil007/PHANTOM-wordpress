@@ -110,6 +110,13 @@ class Shell {
         $path = parse_url($request_uri, PHP_URL_PATH);
         if (false === $path) $path = '/';
         $slug = trim($path, '/');
+        $slug = preg_replace('/\.html$/', '', $slug);
+
+        // Redirect /product (no slug) to /shop
+        if ('product' === $slug) {
+            wp_redirect(home_url('/shop'), 301);
+            exit;
+        }
 
         // Bypass for WP system pages
         if (
@@ -209,15 +216,15 @@ class Shell {
           }
         }
 
-        // Apply asset base path substitution — only relative paths, not already-absolute URLs
+        // Apply asset base path substitution — use lookbehind to avoid corrupting HTML attribute quotes
         $html = preg_replace(
-            '/(["\'=\(\s])(\.?\/?)assets\/(bootstrap|css|js|images)\/([a-zA-Z0-9_\-.\/]+)/i',
-            '$1' . $asset_base . '/$3/$4' . $v,
+            '/(?<=[\'"=() \t])(\.?\/?)assets\/(bootstrap|css|js|images)\/([a-zA-Z0-9_\-.\/]+)/i',
+            $asset_base . '/$2/$3' . $v,
             $html
         );
 
         // Dynamic copyright year
-        $html = preg_replace('/\b2025\b/', date('Y'), $html);
+        $html = preg_replace('/\b2025\b/', date('Y'), $html, 1);
 
         echo $html;
         exit;

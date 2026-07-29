@@ -90,4 +90,16 @@ class TokenResolver {
     public function invalidateCache(): void {
         $this->cache = [];
     }
+
+    public function save(string $name, mixed $value): bool {
+        $def = $this->registry->get($name);
+        if (null === $def) {
+            return false;
+        }
+        $result = update_option($def['option_key'], $value);
+        if ($result) {
+            unset($this->cache[$name]);
+        }
+        return $result;
+    }
 }

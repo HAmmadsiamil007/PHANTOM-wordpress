@@ -36,8 +36,11 @@ class WooCommerce_Injector {
     $this->wishlist_injector = new Wishlist_Injector($engine);
   }
 
+  /**
+   * Full injection — replaces hero, content, and footer.
+   * Used by non-self-contained (pack) templates.
+   */
   public function inject(string $html, string $slug): string {
-    // Skip hero/footer injection for homepage — static AETHER design is already complete
     $is_homepage = ('' === $slug || 'index' === $slug);
 
     if (!$is_homepage) {
@@ -50,6 +53,28 @@ class WooCommerce_Injector {
       } catch (\Throwable $e) {}
     }
 
+    $html = $this->inject_content_only($html, $slug);
+
+    if (!$is_homepage) {
+      try {
+        $footer_component = Component_Registry::get_instance()->get('footer');
+        if ($footer_component) {
+          $footer_html = $footer_component->instance()->render($this->get_footer_data());
+          $html = $this->replace_inner_by_component($html, 'footer', $footer_html);
+        }
+      } catch (\Throwable $e) {}
+    }
+
+    return $html;
+  }
+
+  /**
+   * Content-only injection — replaces shop grid, product detail,
+   * cart/checkout content, account, orders, search, wishlist.
+   * Does NOT replace hero or footer — preserves AETHER design
+   * for self-contained templates.
+   */
+  public function inject_content_only(string $html, string $slug): string {
     switch (true) {
       case 'shop' === $slug:
       case strpos($slug, 'category/') === 0:
@@ -68,8 +93,8 @@ class WooCommerce_Injector {
         break;
       case '' === $slug:
       case 'index' === $slug:
-        // Homepage has designed static content — skip dynamic injection
-        // to preserve the AETHER design (product cards, category grid, etc.)
+        $html = $this->product_injector->inject_homepage_products($html);
+        $html = $this->product_injector->inject_homepage_categories($html);
         break;
       case 'wishlist' === $slug:
         $html = $this->wishlist_injector->inject_wishlist_content($html);
@@ -96,17 +121,6 @@ class WooCommerce_Injector {
       case 'search' === $slug:
         $html = $this->content_injector->inject_search_content($html);
         break;
-    }
-
-    // Skip footer replacement for homepage — static AETHER footer is already designed
-    if (!$is_homepage) {
-      try {
-        $footer_component = Component_Registry::get_instance()->get('footer');
-        if ($footer_component) {
-          $footer_html = $footer_component->instance()->render($this->get_footer_data());
-          $html = $this->replace_inner_by_component($html, 'footer', $footer_html);
-        }
-      } catch (\Throwable $e) {}
     }
 
     return $html;

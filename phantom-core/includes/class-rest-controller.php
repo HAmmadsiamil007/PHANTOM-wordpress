@@ -743,6 +743,12 @@ class Rest_Controller extends \WP_REST_Controller {
 					'permission_callback' => '__return_true',
 					'args'                => $this->get_design_token_args(),
 				),
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_design_token' ),
+					'permission_callback' => array( $this, 'settings_write_permission_check' ),
+					'args'                => $this->get_design_token_update_args(),
+				),
 			)
 		);
 
@@ -1973,7 +1979,9 @@ class Rest_Controller extends \WP_REST_Controller {
 			$variation    = (array) $request->get_param( 'variation' );
 			$cart_item_key = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation );
 			if ( false === $cart_item_key ) {
-				return $this->wp_error( 'add_to_cart_failed', __( 'Could not add item to cart.', 'phantom-core' ), 400 );
+				$notices = wc_get_notices();
+				$err_msg = ! empty( $notices['error'] ) ? implode( '; ', wp_list_pluck( $notices['error'], 'notice' ) ) : __( 'Could not add item to cart.', 'phantom-core' );
+				return $this->wp_error( 'add_to_cart_failed', $err_msg, 400 );
 			}
 			return new \WP_REST_Response( $this->get_cart_data(), 200 );
 		} catch ( \Throwable $e ) {
@@ -1991,7 +1999,7 @@ class Rest_Controller extends \WP_REST_Controller {
 			if ( null === WC()->cart ) {
 				wc_load_cart();
 			}
-			$key      = $request->get_param( 'key' );
+			$key      = $request->get_param( 'key' ) ?: $request->get_param( 'cart_item_key' );
 			$quantity = absint( $request->get_param( 'quantity' ) );
 			$cart = WC()->cart->get_cart();
 			if ( ! isset( $cart[ $key ] ) ) {
@@ -2014,7 +2022,7 @@ class Rest_Controller extends \WP_REST_Controller {
 			if ( null === WC()->cart ) {
 				wc_load_cart();
 			}
-			$key = $request->get_param( 'key' );
+			$key = $request->get_param( 'key' ) ?: $request->get_param( 'cart_item_key' );
 			$cart = WC()->cart->get_cart();
 			if ( ! isset( $cart[ $key ] ) ) {
 				return $this->wp_error( 'invalid_key', __( 'Cart item not found.', 'phantom-core' ), 400 );
@@ -3489,6 +3497,25 @@ private function format_product( $product, bool $full = false ): array {
 		);
 	}
 
+	public function update_design_token( \WP_REST_Request $request ): \WP_REST_Response {
+		$name  = $request->get_param( 'name' );
+		$value = $request->get_param( 'value' );
+		$resolver = new \PhantomCore\Design\TokenResolver();
+		$saved = $resolver->save( $name, $value );
+		if ( ! $saved ) {
+			return new \WP_REST_Response(
+				array( 'success' => false, 'message' => sprintf( 'Failed to save token "%s".', $name ) ),
+				400
+			);
+		}
+		$manager = \PhantomCore\Design\DesignSystemManager::get_instance();
+		$css = $manager->generateCSS();
+		return new \WP_REST_Response(
+			array( 'success' => true, 'name' => $name, 'value' => $value, 'css' => $css ),
+			200
+		);
+	}
+
 	private function get_design_tokens_args(): array {
 		return array(
 			'category' => array(
@@ -3504,6 +3531,23 @@ private function format_product( $product, bool $full = false ): array {
 		return array(
 			'name' => array(
 				'description'       => __( 'Token name in dot notation (e.g. color.primary).', 'phantom-core' ),
+				'type'              => 'string',
+				'required'          => true,
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+		);
+	}
+
+	private function get_design_token_update_args(): array {
+		return array(
+			'name' => array(
+				'description'       => __( 'Token name in dot notation (e.g. color.primary).', 'phantom-core' ),
+				'type'              => 'string',
+				'required'          => true,
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'value' => array(
+				'description'       => __( 'New token value.', 'phantom-core' ),
 				'type'              => 'string',
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_text_field',

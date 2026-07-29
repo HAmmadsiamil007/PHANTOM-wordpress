@@ -19,6 +19,19 @@ class Asset_Engine {
     $this->security = $security;
   }
 
+  /**
+   * Minimal injection for self-contained AETHER templates.
+   * Only injects bridge data, auth nonces, and SPA routing JS.
+   * No CSS, fonts, SEO meta, or loading state — templates have their own.
+   */
+  public function inject_essential_only(string $html, string $slug): string {
+    $html = $this->inject_bridge($html, $slug);
+    $html = $this->inject_auth_nonces($html);
+    $html = $this->inject_minified_js($html);
+    $this->security->send(false);
+    return $html;
+  }
+
   public function inject_all(string $html, string $slug, bool $is_customizer_preview): string {
     $html = $this->inject_css_by_route($html, $slug);
     $html = $this->inject_images($html);
@@ -233,13 +246,22 @@ class Asset_Engine {
   }
 
   private function inject_cdn_fallbacks(string $html): string {
-    return str_replace(
-      '</body>',
-      '<script>window.jQuery||document.write(\'<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"><\/script>\')</script>' . "\n" .
-      '<script>window.bootstrap||document.write(\'<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"><\/link>\')</script>' . "\n" .
-      '</body>',
-      $html
-    );
+    $fallback = '<script>
+(function(){
+  if(!window.jQuery){
+    var s=document.createElement("script");
+    s.src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js";
+    document.head.appendChild(s);
+  }
+  if(!window.bootstrap){
+    var l=document.createElement("link");
+    l.rel="stylesheet";
+    l.href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css";
+    document.head.appendChild(l);
+  }
+})();
+</script>';
+    return str_replace('</body>', $fallback . "\n" . '</body>', $html);
   }
 
   private function inject_lazy_loading(string $html): string {
@@ -320,7 +342,7 @@ class Asset_Engine {
       . 'var path=window.location.pathname;'
       . 'document.querySelectorAll(".nav-link,.mobile-nav-link,.footer-menu a,.primary-menu a").forEach(function(l){'
       . 'var h=l.getAttribute("href");'
-      . 'if(h&&(h===path||h===path.replace(/\/$/,"")||(h.indexOf("#")!==-1&&path===h.split("#")[0])){l.setAttribute("aria-current","page")}'
+      . 'if(h&&(h===path||h===path.replace(/\/$/,"")||(h.indexOf("#")!==-1&&path===h.split("#")[0]))){l.setAttribute("aria-current","page")}'
       . 'else if(l.getAttribute("aria-current")==="page"){l.removeAttribute("aria-current")}'
       . '})}'
       . 'document.addEventListener("DOMContentLoaded",function(){'

@@ -9,6 +9,17 @@ nul
 
 # Debug files
 *.log
+
+# Screenshots
+*.png
+
+# Debug artifacts
+phantom-core/debug*.php
+phantom-core/debug-*.php
+phantom-core/debug-shop-html.txt
+phantom-core/.ANCHORED_SUMMARY.md
+phantom-core/.ANCHORED_SUMMARY_SAVED.md
+live-sites/
 *.zip
 .DS_Store
 Thumbs.db

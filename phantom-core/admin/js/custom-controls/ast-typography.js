@@ -4,6 +4,18 @@
     wp.customize.controlConstructor['ast-typography'] = wp.customize.Control.extend({
         ready: function() {
             var control = this;
+
+            control.initTypography();
+
+            control.setting.bind(function(value) {
+                control.params.value = value;
+                control.renderContent();
+                control.initTypography();
+            });
+        },
+
+        initTypography: function() {
+            var control = this;
             var container = control.container;
             var hidden = container.find('.ast-typography-value');
             var googleFonts = typeof PhantomFonts !== 'undefined' ? PhantomFonts.google : {};

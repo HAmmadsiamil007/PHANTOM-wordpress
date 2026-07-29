@@ -59,10 +59,11 @@ class Render_Engine {
    *
    * 1. Route analysis (RequestRouter)
    * 2. Template resolution + loading
-   * 3. View injection (View_Engine)
-   * 4. WooCommerce injection
-   * 5. Asset injection (Asset_Engine)
-   * 6. Response assembly (ResponseBuilder)
+   * 3. Placeholder replacement ({{PLACEHOLDER}} tags)
+   * 4. View injection (View_Engine)
+   * 5. WooCommerce injection
+   * 6. Asset injection (Asset_Engine)
+   * 7. Response assembly (ResponseBuilder)
    */
   public function render(string $slug): string {
     $is_customizer = $this->router->is_customizer_preview();
@@ -76,23 +77,47 @@ class Render_Engine {
       return '';
     }
 
-    // View injection
-    $html = $this->view->inject_all(
-      $html, $slug,
-      $this->data->get_resolved_product_id(),
-      $this->data->get_resolved_post_id()
-    );
+    // Self-contained AETHER templates have their own <!DOCTYPE html>, <title>,
+    // fonts, CSS, preloader, meta tags — and NO {{PLACEHOLDER}} tags.
+    // Pack templates have {{PLACEHOLDER}} tags and need wp_head()/wp_footer().
+    $is_self_contained = (bool) preg_match('/<!DOCTYPE\s+html>/i', $html)
+      && !preg_match('/\{\{[A-Z_]+\}\}/', $html);
 
-    // WooCommerce injection (if active)
-    if (class_exists('WooCommerce')) {
-      if (function_exists('wc_load_cart')) {
-        wc_load_cart();
-      }
-      $html = (new WooCommerce_Injector($this, $this->events))->inject($html, $slug);
+    // Placeholder replacement — resolve {{PLACEHOLDER}} tags to dynamic content
+    // For self-contained templates, skip wp_head()/wp_footer() calls that inject SEO/CSS
+    $html = (new Placeholder_Replacer($this->data->get_template_loader()))->replace($html, $slug, $is_self_contained);
+
+    if (!$is_self_contained) {
+      // View injection (skip for self-contained templates)
+      $html = $this->view->inject_all(
+        $html, $slug,
+        $this->data->get_resolved_product_id(),
+        $this->data->get_resolved_post_id()
+      );
     }
 
-    // Asset injection (CSS, JS, fonts, nonces, etc.)
-    $html = $this->assets->inject_all($html, $slug, $is_customizer);
+    // WooCommerce injection (if active)
+    // Self-contained AETHER templates get content-only injection (shop grid,
+    // product detail, cart/checkout) to preserve their designed hero/footer.
+    if (class_exists('WooCommerce')) {
+      $wc_slugs = ['shop', 'product', 'product-detail', 'cart', 'checkout', 'wishlist', 'account', 'my-account', 'orders', 'order-detail', 'search'];
+      $is_wc_page = in_array($slug, $wc_slugs, true) || preg_match('/^(product|category|order|search)\//', $slug);
+      if ($is_wc_page && function_exists('wc_load_cart')) {
+        wc_load_cart();
+      }
+      if ($is_self_contained) {
+        $html = (new WooCommerce_Injector($this, $this->events))->inject_content_only($html, $slug);
+      } else {
+        $html = (new WooCommerce_Injector($this, $this->events))->inject($html, $slug);
+      }
+    }
+
+    // Asset injection — for self-contained templates only inject bridge, nonces, SPA JS
+    if ($is_self_contained) {
+      $html = $this->assets->inject_essential_only($html, $slug);
+    } else {
+      $html = $this->assets->inject_all($html, $slug, $is_customizer);
+    }
 
     // Response assembly
     $html = $this->builder->build($html, $template, $slug, $is_customizer, $this->router);

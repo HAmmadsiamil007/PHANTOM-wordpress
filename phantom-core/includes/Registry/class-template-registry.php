@@ -32,7 +32,7 @@ class Template_Registry {
         string $file = '',
         string $label = '',
         string $category = 'pages',
-        string $pack = 'kids'
+        string $pack = 'default'
     ): void {
         $this->routes[$slug] = new Template($slug, $file, $label, $category, $pack);
     }
@@ -147,6 +147,9 @@ class Template_Registry {
             'login'           => ['file' => 'login.html', 'label' => 'Login', 'category' => 'auth'],
             'register'        => ['file' => 'join-now.html', 'label' => 'Register', 'category' => 'auth'],
             'thank-you'       => ['file' => 'thank-you.html', 'label' => 'Thank You', 'category' => 'special'],
+            'search'          => ['file' => 'search.html', 'label' => 'Search', 'category' => 'shop'],
+            'orders'          => ['file' => 'orders.html', 'label' => 'Orders', 'category' => 'shop'],
+            'order-detail'    => ['file' => 'order-detail.html', 'label' => 'Order Detail', 'category' => 'shop'],
             'wishlist'        => ['file' => 'wishlist.html', 'label' => 'Wishlist', 'category' => 'shop'],
             'privacy-policy'  => ['file' => 'privacy-policy.html', 'label' => 'Privacy Policy', 'category' => 'legal'],
             'term-of-use'     => ['file' => 'term-of-use.html', 'label' => 'Terms of Use', 'category' => 'legal'],
@@ -160,7 +163,7 @@ class Template_Registry {
                 $cfg['file'],
                 $cfg['label'] ?? '',
                 $cfg['category'] ?? 'pages',
-                $cfg['pack'] ?? 'kids'
+                $cfg['pack'] ?? 'default'
             );
         }
 
@@ -169,6 +172,8 @@ class Template_Registry {
         $this->register_pattern('/^blog\/(.+)$/', 'single-blog.html');
         $this->register_pattern('/^category\/(.+)$/', 'shop.html');
         $this->register_pattern('/^tag\/(.+)$/', '404.html');
+        $this->register_pattern('/^order\/(.+)$/', 'order-detail.html');
+        $this->register_pattern('/^search\/(.+)$/', 'search.html');
 
         $this->defaults_registered = true;
     }

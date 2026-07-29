@@ -9,6 +9,13 @@ class Color_Control extends Control_Base {
 
     public $type = 'ast-color';
 
+    private array $palette = array( '#000000', '#ffffff', '#2271b1', '#135e96', '#72aee6', '#f0f0f1', '#3c434a', '#2c3338', '#dcdcde' );
+
+    public function to_json(): void {
+        parent::to_json();
+        $this->json['palette'] = $this->palette;
+    }
+
     public static function get_type(): string {
         return 'ast-color';
     }
@@ -31,7 +38,7 @@ class Color_Control extends Control_Base {
     }
 
     public function render_content(): void {
-        $palette = array( '#000000', '#ffffff', '#2271b1', '#135e96', '#72aee6', '#f0f0f1', '#3c434a', '#2c3338', '#dcdcde' );
+        $palette = $this->palette;
         ?>
         <label>
             <span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
@@ -50,14 +57,27 @@ class Color_Control extends Control_Base {
                 <?php endforeach; ?>
             </div>
         </div>
-        <style>
-        .ast-color-container { padding:6px 0; }
-        .ast-color-picker { width:100% !important; }
-        .ast-color-palette { display:flex; gap:4px; margin-top:8px; flex-wrap:wrap; }
-        .ast-color-swatch { width:24px; height:24px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:border-color 0.15s; }
-        .ast-color-swatch:hover { border-color:#2271b1; }
-        .ast-color-swatch.active { border-color:#135e96; }
-        </style>
+        <?php
+    }
+
+    public function content_template(): void {
+        ?>
+        <label>
+            <span class="customize-control-title">{{ data.label }}</span>
+            <# if ( data.description ) { #>
+                <span class="description customize-control-description">{{ data.description }}</span>
+            <# } #>
+        </label>
+        <div class="ast-color-container">
+            <input type="text" class="ast-color-picker" value="{{ data.value }}"
+                   data-alpha="true" />
+            <input type="hidden" class="ast-color-value" data-customize-setting-link="{{ data.settings.default }}" />
+            <div class="ast-color-palette">
+                <# _.each( data.palette, function( color ) { #>
+                    <span class="ast-color-swatch" data-color="{{ color }}" style="background:{{ color }}"></span>
+                <# } ) #>
+            </div>
+        </div>
         <?php
     }
 }

@@ -4,6 +4,18 @@
     wp.customize.controlConstructor['ast-gradient'] = wp.customize.Control.extend({
         ready: function() {
             var control = this;
+
+            control.initGradient();
+
+            control.setting.bind(function(value) {
+                control.params.value = value;
+                control.renderContent();
+                control.initGradient();
+            });
+        },
+
+        initGradient: function() {
+            var control = this;
             var container = control.container;
             var color1 = container.find('.ast-gradient-color-1');
             var color2 = container.find('.ast-gradient-color-2');
@@ -18,14 +30,14 @@
                 var a  = angle.val();
                 var gradient = 'linear-gradient(' + a + 'deg, ' + c1 + ', ' + c2 + ')';
                 preview.css('background', gradient);
-                angleLabel.text(a + '°');
+                angleLabel.text(a + '\u00B0');
                 hidden.val(JSON.stringify({ color1: c1, color2: c2, angle: a })).trigger('change');
                 control.setting.set({ color1: c1, color2: c2, angle: a });
             }
 
-            color1.wpColorPicker({ change: update, clear: update });
-            color2.wpColorPicker({ change: update, clear: update });
-            angle.on('input', update);
+            if (color1.length) color1.wpColorPicker({ change: update, clear: update });
+            if (color2.length) color2.wpColorPicker({ change: update, clear: update });
+            if (angle.length) angle.on('input', update);
         }
     });
 })(jQuery);

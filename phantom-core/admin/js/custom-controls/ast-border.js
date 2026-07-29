@@ -4,6 +4,18 @@
   wp.customize.controlConstructor['ast-border'] = wp.customize.Control.extend({
     ready: function () {
       var control = this;
+
+      control.initBorder();
+
+      control.setting.bind(function(value) {
+        control.params.value = value;
+        control.renderContent();
+        control.initBorder();
+      });
+    },
+
+    initBorder: function () {
+      var control = this;
       var fields = control.container.find('.ast-border-fields');
 
       function collectValue() {
@@ -18,9 +30,11 @@
         };
       }
 
-      fields.find('.ast-border-color').wpColorPicker({
-        change: function () { control.setting.set(collectValue()); }
-      });
+      if (fields.find('.ast-border-color').length) {
+        fields.find('.ast-border-color').wpColorPicker({
+          change: function () { control.setting.set(collectValue()); }
+        });
+      }
     }
   });
 

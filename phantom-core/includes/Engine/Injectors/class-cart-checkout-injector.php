@@ -100,7 +100,7 @@ class Cart_Checkout_Injector extends Base_Injector {
     ];
 
     $form_html = $form_renderer ? $form_renderer->render($data) : '';
-    $full_html = '<form name="checkout" method="post" class="checkout woocommerce-checkout" action="' . esc_url(wc_get_checkout_url()) . '" enctype="multipart/form-data">';
+    $full_html = '<form name="checkout" method="post" class="checkout woocommerce-checkout" action="' . esc_url(home_url('/checkout')) . '" enctype="multipart/form-data">';
     $full_html .= $form_html;
     $full_html .= '</form>';
 
@@ -130,7 +130,7 @@ class Cart_Checkout_Injector extends Base_Injector {
     $html .= '<div class="cart-total-row cart-total-row--grand"><span class="cart-total-label">Total</span><span class="cart-total-value">' . $normalized['total_formatted'] . '</span></div>';
     $html .= '</div>';
     $html .= '<div class="cart-actions">';
-    $html .= '<a href="' . esc_url(wc_get_checkout_url()) . '" class="btn btn-primary checkout-button">Proceed to Checkout</a>';
+    $html .= '<a href="' . esc_url(home_url('/checkout')) . '" class="btn btn-primary checkout-button">Proceed to Checkout</a>';
     $html .= '</div></div></div>';
 
     return $html;

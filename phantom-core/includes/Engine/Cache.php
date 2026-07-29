@@ -126,7 +126,7 @@ final class Cache {
 		add_filter( 'the_content', [ $this, 'process_content_images' ], 9 );
 	}
 
-	public function optimize_srcset( ?array $sources, int $size_id, string $size, string $image_meta, int $attachment_id ): ?array {
+	public function optimize_srcset( ?array $sources, $size_array, string $image_src, $image_meta, int $attachment_id ): ?array {
 		if ( ! $sources ) {
 			return null;
 		}

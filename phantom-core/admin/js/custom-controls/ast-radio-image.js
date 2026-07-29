@@ -11,6 +11,10 @@
                 $(this).addClass('active');
                 control.setting.set(input.val());
             });
+            control.setting.bind(function(value) {
+                control.params.value = value;
+                control.renderContent();
+            });
         }
     });
 })(jQuery);

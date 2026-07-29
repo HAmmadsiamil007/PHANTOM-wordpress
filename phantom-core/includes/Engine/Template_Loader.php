@@ -65,22 +65,21 @@ class Template_Loader {
       return '404.html';
     }
     if (preg_match('/^search\/(.+)$/', $slug)) {
-      return '404.html';
+      return 'search.html';
+    }
+    if (preg_match('/^order\/(.+)$/', $slug)) {
+      return 'order-detail.html';
     }
     if (preg_match('/^author\/(.+)$/', $slug)) {
       return '404.html';
     }
 
+    // Use Template_Registry which handles direct routes + patterns
     $registry = Template_Registry::get_instance();
-    if ($registry->has($slug)) {
-      $template = $registry->get($slug);
-      if ($template) return $template->file;
-    }
-
-    $without_ext = preg_replace('/\.html$/', '', $slug);
-    if ($without_ext !== $slug && $registry->has($without_ext)) {
-      $template = $registry->get($without_ext);
-      if ($template) return $template->file;
+    $registry->register_defaults();
+    $registry_file = $registry->resolve($slug);
+    if ($registry_file !== '404.html') {
+      return $registry_file;
     }
 
     $routes = [
@@ -99,6 +98,9 @@ class Template_Loader {
       'checkout'        => 'checkout.html',
       'my-account'      => 'account.html',
       'account'         => 'account.html',
+      'orders'          => 'orders.html',
+      'order-detail'    => 'order-detail.html',
+      'search'          => 'search.html',
       'coming-soon'     => 'coming-soon.html',
       'faq'             => 'faq.html',
       'team'            => 'team.html',
@@ -126,6 +128,14 @@ class Template_Loader {
   }
 
   public function resolve_path(string $template): string {
+    // Always use default AETHER template for homepage — pack overrides break the AETHER design
+    if ($template === 'index.html' && $this->pack !== 'default') {
+      $default_path = PHANTOM_CORE_PATH . 'frontend/html/' . $template;
+      if (file_exists($default_path)) {
+        return $default_path;
+      }
+    }
+
     if ($this->pack !== 'default') {
       $pack_path = PHANTOM_CORE_PATH . 'frontend/packs/' . $this->pack . '/html/' . $template;
       if (file_exists($pack_path)) {
@@ -160,6 +170,7 @@ class Template_Loader {
       $files = array_values(array_unique([
         'index.html','shop.html','product-detail.html','about.html','blog.html',
         'single-blog.html','contact.html','cart.html','checkout.html','account.html',
+        'orders.html','order-detail.html','search.html',
         'coming-soon.html','faq.html','team.html','testimonials.html','join-now.html',
         'login.html','thank-you.html','wishlist.html','privacy-policy.html',
         'term-of-use.html','cookie-policy.html','404.html',

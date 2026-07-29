@@ -4,6 +4,18 @@
     wp.customize.controlConstructor['ast-responsive-spacing'] = wp.customize.Control.extend({
         ready: function() {
             var control = this;
+
+            control.initSpacing();
+
+            control.setting.bind(function(value) {
+                control.params.value = value;
+                control.renderContent();
+                control.initSpacing();
+            });
+        },
+
+        initSpacing: function() {
+            var control = this;
             var container = control.container;
             var hidden = container.find('.ast-responsive-spacing-value');
             var linked = false;
