@@ -477,18 +477,24 @@ const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 
     // ─── Product Detail: Magnifying Glass Zoom ──────────────
     document.querySelectorAll('.pd-gallery-main').forEach(gallery => {
-        const img = gallery.querySelector('img');
-        if (!img) return;
         gallery.style.cursor = 'none';
         let lens = null;
+        let moveHandler = null;
+
+        function getActiveImg() {
+            const activeSlide = gallery.querySelector('.swiper-slide-active img');
+            return activeSlide || gallery.querySelector('img');
+        }
 
         gallery.addEventListener('mouseenter', () => {
+            const img = getActiveImg();
+            if (!img) return;
             lens = document.createElement('div');
             lens.className = 'magnify-lens';
             gallery.appendChild(lens);
             const zoom = 2.5;
             const lensW = 120, lensH = 120;
-            gallery.addEventListener('mousemove', function moveHandler(e) {
+            moveHandler = function(e) {
                 const rect = gallery.getBoundingClientRect();
                 let x = e.clientX - rect.left;
                 let y = e.clientY - rect.top;
@@ -499,11 +505,15 @@ const mobileMenuBtn = document.getElementById('mobileMenuBtn');
                 lens.style.backgroundImage = 'url(' + img.src + ')';
                 lens.style.backgroundSize = (rect.width * zoom) + 'px ' + (rect.height * zoom) + 'px';
                 lens.style.backgroundPosition = bgX + '% ' + bgY + '%';
-            });
-            gallery._moveHandler = gallery.listeners && gallery.listeners.move;
+            };
+            gallery.addEventListener('mousemove', moveHandler);
         });
 
         gallery.addEventListener('mouseleave', () => {
+            if (moveHandler) {
+                gallery.removeEventListener('mousemove', moveHandler);
+                moveHandler = null;
+            }
             if (lens) { lens.remove(); lens = null; }
         });
     });

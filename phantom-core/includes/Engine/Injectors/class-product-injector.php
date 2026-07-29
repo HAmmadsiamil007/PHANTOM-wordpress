@@ -201,7 +201,7 @@ class Product_Injector extends Base_Injector {
 
   public function inject_homepage_products(string $html): string {
     $products = wc_get_products([
-      'limit' => 8, 'status' => 'publish', 'orderby' => 'date', 'order' => 'DESC',
+        'limit' => 6, 'status' => 'publish', 'orderby' => 'date', 'order' => 'DESC',
     ]);
     if (empty($products)) return $html;
 

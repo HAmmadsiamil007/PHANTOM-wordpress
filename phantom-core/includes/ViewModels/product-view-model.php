@@ -112,12 +112,11 @@ final class Product_ViewModel implements ViewModelInterface {
 	 * Get gallery HTML.
 	 */
 	public function gallery_html(): string {
-		if (empty($this->gallery)) {
-			return '<img src="' . esc_url($this->image) . '" alt="' . esc_attr($this->title) . '" class="product-main-image">';
-		}
-		$html = '<div class="product-gallery swiper" id="productGallery"><div class="swiper-wrapper">';
-		foreach ($this->gallery as $img) {
-			$html .= '<div class="swiper-slide"><img src="' . esc_url($img) . '" alt="' . esc_attr($this->title) . '" loading="lazy"></div>';
+		$images = array_merge([$this->image], $this->gallery);
+		$html = '<div class="pd-gallery-swiper" id="productGallery"><div class="swiper-wrapper">';
+		foreach ($images as $i => $img) {
+			if (empty($img)) continue;
+			$html .= '<div class="swiper-slide"><img src="' . esc_url($img) . '" alt="' . esc_attr($this->title) . '" loading="' . ($i === 0 ? 'eager' : 'lazy') . '"></div>';
 		}
 		$html .= '</div><div class="swiper-pagination"></div></div>';
 		return $html;
@@ -127,16 +126,23 @@ final class Product_ViewModel implements ViewModelInterface {
 	 * Get gallery thumbnail HTML (for thumbnails Swiper).
 	 */
 	public function gallery_thumbnails_html(): string {
-		if (empty($this->gallery)) {
+		$images = array_merge([$this->image], $this->gallery);
+		$has_images = false;
+		foreach ($images as $img) {
+			if (!empty($img)) { $has_images = true; break; }
+		}
+		if (!$has_images) {
 			return '';
 		}
-		$html = '';
-		foreach ($this->gallery as $i => $img) {
+		$html = '<div class="pd-gallery-thumbs-swiper"><div class="swiper-wrapper">';
+		foreach ($images as $i => $img) {
+			if (empty($img)) continue;
 			$active = $i === 0 ? ' pd-thumb-active' : '';
 			$html .= '<div class="swiper-slide' . $active . '">';
 			$html .= '<img loading="lazy" src="' . esc_url($img) . '" alt="' . esc_attr($this->title . ' Thumbnail ' . ($i + 1)) . '">';
 			$html .= '</div>';
 		}
+		$html .= '</div></div>';
 		return $html;
 	}
 
