@@ -93,8 +93,25 @@ class Data_Engine {
   }
 
   public function get_customizer_css(): string {
-    if (!class_exists('\Phantom_Custom_CSS')) return '';
-    return \Phantom_Custom_CSS::instance()->render_style();
+    $css = '';
+    // Path A: Customizer inline CSS (typography, colors, all CSS vars from settings)
+    if (class_exists('\Phantom_Customizer')) {
+      $customizer = \Phantom_Customizer::get_instance();
+      $css .= $customizer->get_inline_css();
+    }
+    // Path B: Dynamic CSS modules (colors.php, typography.php, etc.)
+    if (class_exists('\Phantom_Custom_CSS')) {
+      $css .= \Phantom_Custom_CSS::instance()->render_style();
+    }
+    // AETHER variable mappings — map Customizer CSS vars to AETHER CSS vars
+    // This ensures Customizer color/typography changes affect the AETHER frontend
+    $aether_map = '--gold:var(--primary--color,#C8956C);'
+      . '--chrome:var(--text--color,#A8B5C0);'
+      . '--white:var(--heading--color,#FFFFFF);'
+      . '--void:var(--bg,#09090B);'
+      . '--surface:var(--color-header-bg,#141416);';
+    $css .= '<style id="phantom-aether-map">:root{' . $aether_map . '}</style>';
+    return $css;
   }
 
 }

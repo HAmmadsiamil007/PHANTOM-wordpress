@@ -28,6 +28,7 @@ class Asset_Engine {
     $html = $this->inject_bridge($html, $slug);
     $html = $this->inject_auth_nonces($html);
     $html = $this->inject_minified_js($html);
+    $html = $this->inject_customizer_css($html);
     $this->security->send(false);
     return $html;
   }

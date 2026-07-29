@@ -102,22 +102,22 @@ class Phantom_Custom_CSS {
 			$mobile  = $value['mobile'] ?? '';
 
 			if ( '' !== $desktop ) {
-				$output .= "\t" . $selector . ' { ' . $property . ': ' . esc_attr( $desktop ) . $unit . '; }' . "\n";
+				$output .= "\t" . $selector . ' { ' . $property . ': ' . wp_strip_all_tags( $desktop ) . $unit . '; }' . "\n";
 			}
 			if ( '' !== $tablet ) {
 				$output .= '@media (max-width: ' . $breakpoints['tablet'] . 'px) {' . "\n";
-				$output .= "\t" . $selector . ' { ' . $property . ': ' . esc_attr( $tablet ) . $unit . '; }' . "\n";
+				$output .= "\t" . $selector . ' { ' . $property . ': ' . wp_strip_all_tags( $tablet ) . $unit . '; }' . "\n";
 				$output .= '}' . "\n";
 			}
 			if ( '' !== $mobile ) {
 				$output .= '@media (max-width: ' . $breakpoints['mobile'] . 'px) {' . "\n";
-				$output .= "\t" . $selector . ' { ' . $property . ': ' . esc_attr( $mobile ) . $unit . '; }' . "\n";
+				$output .= "\t" . $selector . ' { ' . $property . ': ' . wp_strip_all_tags( $mobile ) . $unit . '; }' . "\n";
 				$output .= '}' . "\n";
 			}
 		} else {
 			$scalar = $value;
 			if ( '' !== $scalar ) {
-				$output .= "\t" . $selector . ' { ' . $property . ': ' . esc_attr( $scalar ) . $unit . '; }' . "\n";
+				$output .= "\t" . $selector . ' { ' . $property . ': ' . wp_strip_all_tags( $scalar ) . $unit . '; }' . "\n";
 			}
 		}
 
@@ -143,7 +143,7 @@ class Phantom_Custom_CSS {
 			foreach ( $properties as $property => $value ) {
 				if ( '' !== $value ) {
 					$css_val = is_array( $value ) ? implode( ' ', $value ) : $value;
-					$rules  .= "\t" . $property . ': ' . esc_attr( $css_val ) . ";\n";
+					$rules  .= "\t" . $property . ': ' . wp_strip_all_tags( $css_val ) . ";\n";
 				}
 			}
 			if ( '' !== $rules ) {
@@ -182,6 +182,60 @@ class Phantom_Custom_CSS {
 		'button_text_hover'   => 'color.button.hover.text',
 		'color_rating'        => 'color.rating',
 		'color_sale'          => 'color.sale',
+		// Typography entries
+		'typography_body_font'      => 'typography.body.font',
+		'typography_body_weight'    => 'typography.body.weight',
+		'typography_body_style'     => 'typography.body.style',
+		'typography_base_size'      => 'typography.body.size',
+		'typography_line_height'    => 'typography.body.line_height',
+		'typography_body_spacing'   => 'typography.body.spacing',
+		'typography_heading_font'   => 'typography.heading.font',
+		'typography_heading_weight' => 'typography.heading.weight',
+		'typography_heading_case'   => 'typography.heading.case',
+		'typography_heading_spacing'=> 'typography.heading.spacing',
+		'typography_h1_size'        => 'typography.h1.size',
+		'typography_h1_height'      => 'typography.h1.line_height',
+		'typography_h1_font'        => 'typography.h1.font',
+		'typography_h1_weight'      => 'typography.h1.weight',
+		'typography_h1_style'       => 'typography.h1.style',
+		'typography_h1_spacing'     => 'typography.h1.spacing',
+		'typography_h1_case'        => 'typography.h1.case',
+		'typography_h2_size'        => 'typography.h2.size',
+		'typography_h2_height'      => 'typography.h2.line_height',
+		'typography_h2_font'        => 'typography.h2.font',
+		'typography_h2_weight'      => 'typography.h2.weight',
+		'typography_h2_style'       => 'typography.h2.style',
+		'typography_h2_spacing'     => 'typography.h2.spacing',
+		'typography_h2_case'        => 'typography.h2.case',
+		'typography_h3_size'        => 'typography.h3.size',
+		'typography_h3_height'      => 'typography.h3.line_height',
+		'typography_h3_font'        => 'typography.h3.font',
+		'typography_h3_weight'      => 'typography.h3.weight',
+		'typography_h3_style'       => 'typography.h3.style',
+		'typography_h3_spacing'     => 'typography.h3.spacing',
+		'typography_h3_case'        => 'typography.h3.case',
+		'typography_h4_size'        => 'typography.h4.size',
+		'typography_h4_height'      => 'typography.h4.line_height',
+		'typography_h4_font'        => 'typography.h4.font',
+		'typography_h4_weight'      => 'typography.h4.weight',
+		'typography_h4_style'       => 'typography.h4.style',
+		'typography_h4_spacing'     => 'typography.h4.spacing',
+		'typography_h4_case'        => 'typography.h4.case',
+		'typography_h5_size'        => 'typography.h5.size',
+		'typography_h5_height'      => 'typography.h5.line_height',
+		'typography_h5_font'        => 'typography.h5.font',
+		'typography_h5_weight'      => 'typography.h5.weight',
+		'typography_h5_style'       => 'typography.h5.style',
+		'typography_h5_spacing'     => 'typography.h5.spacing',
+		'typography_h5_case'        => 'typography.h5.case',
+		'typography_h6_size'        => 'typography.h6.size',
+		'typography_h6_height'      => 'typography.h6.line_height',
+		'typography_h6_font'        => 'typography.h6.font',
+		'typography_h6_weight'      => 'typography.h6.weight',
+		'typography_h6_style'       => 'typography.h6.style',
+		'typography_h6_spacing'     => 'typography.h6.spacing',
+		'typography_h6_case'        => 'typography.h6.case',
+		'menu_font_size'            => 'typography.menu.size',
 	];
 
 	private static array $legacy_token_resolved = [];

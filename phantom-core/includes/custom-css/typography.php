@@ -40,7 +40,7 @@ add_filter(
 				if ( in_array( $k, $px_keys, true ) && is_numeric( $val ) ) {
 					$val_display .= 'px';
 				}
-				$output .= "\t" . $map[ $k ] . ': ' . esc_attr( $val_display ) . ';' . "\n";
+				$output .= "\t" . $map[ $k ] . ': ' . wp_strip_all_tags( $val_display ) . ';' . "\n";
 			}
 		}
 
@@ -56,7 +56,7 @@ add_filter(
 				$font = \Phantom_Custom_CSS::get_legacy_option( 'typography_body_font', 'Archivo' );
 			}
 			if ( isset( $map[ $prefix . 'font' ] ) ) {
-				$output .= "\t" . $map[ $prefix . 'font' ] . ': ' . esc_attr( $font ) . ";\n";
+				$output .= "\t" . $map[ $prefix . 'font' ] . ': ' . wp_strip_all_tags( $font ) . ";\n";
 			}
 
 			$weight = \Phantom_Custom_CSS::get_legacy_option( $prefix . 'weight' );

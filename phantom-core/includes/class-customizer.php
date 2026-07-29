@@ -562,19 +562,19 @@ class Customizer {
 					$desktop_val   = $val['desktop'] ?? '';
 					if ( '' !== $desktop_val ) {
 						$bp_val = in_array( $key, Settings_Registry::get_px_keys(), true ) && is_numeric( $desktop_val ) ? $desktop_val . 'px' : $desktop_val;
-						$css   .= $var . ':' . esc_attr( $bp_val ) . ';';
+						$css   .= $var . ':' . wp_strip_all_tags( $bp_val ) . ';';
 					}
 					foreach ( array( 'tablet', 'mobile' ) as $bp ) {
 						if ( isset( $val[ $bp ] ) && '' !== $val[ $bp ] ) {
 							$bp_val = in_array( $key, Settings_Registry::get_px_keys(), true ) && is_numeric( $val[ $bp ] ) ? $val[ $bp ] . 'px' : $val[ $bp ];
-							$css   .= '@media (max-width: ' . $responsive_bps[ $bp ] . 'px) {:root{' . $var . ':' . esc_attr( $bp_val ) . ';}}';
+							$css   .= '@media (max-width: ' . $responsive_bps[ $bp ] . 'px) {:root{' . $var . ':' . wp_strip_all_tags( $bp_val ) . ';}}';
 						}
 					}
 				} else {
 					if ( in_array( $key, Settings_Registry::get_px_keys(), true ) ) {
 						$val = is_numeric( $val ) ? $val . 'px' : $val;
 					}
-					$css .= $var . ':' . esc_attr( $val ) . ';';
+					$css .= $var . ':' . wp_strip_all_tags( $val ) . ';';
 				}
 			}
 		}
