@@ -3185,7 +3185,7 @@ class Settings_Loader {
       'color_primary'    => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#7635d5',
+        'default'      => '#C8956C',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Primary Color', 'phantom-core' ),
         'css_property' => '--primary--color',
@@ -3194,7 +3194,7 @@ class Settings_Loader {
       'color_secondary'  => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#ffffff',
+        'default'      => '#FFFFFF',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Secondary Color', 'phantom-core' ),
         'css_property' => '--secondary--color',
@@ -3203,7 +3203,7 @@ class Settings_Loader {
       'color_accent'     => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#fcd668',
+        'default'      => '#D4A574',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Accent Color', 'phantom-core' ),
         'css_property' => '--accent--color',
@@ -3212,7 +3212,7 @@ class Settings_Loader {
       'color_text'       => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#4e4e4e',
+        'default'      => '#A8B5C0',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Text Color', 'phantom-core' ),
         'css_property' => '--text--color',
@@ -3221,7 +3221,7 @@ class Settings_Loader {
       'color_heading'    => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#3f3f3f',
+        'default'      => '#FFFFFF',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Heading Color', 'phantom-core' ),
         'css_property' => '--heading--color',
@@ -3230,7 +3230,7 @@ class Settings_Loader {
       'color_background' => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#ffffff',
+        'default'      => '#09090B',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Background Color', 'phantom-core' ),
         'css_property' => '--bg',
@@ -3239,7 +3239,7 @@ class Settings_Loader {
       'color_header_bg'  => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#ffffff',
+        'default'      => '#09090B',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Header Background', 'phantom-core' ),
         'css_property' => '--color-header-bg',
@@ -3248,7 +3248,7 @@ class Settings_Loader {
       'color_footer_bg'  => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#222222',
+        'default'      => '#09090B',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Footer Background', 'phantom-core' ),
         'css_property' => '--color-footer-bg',
@@ -3257,7 +3257,7 @@ class Settings_Loader {
       'color_link'       => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#705b53',
+        'default'      => '#C8956C',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Link Color', 'phantom-core' ),
         'css_property' => '--link',
@@ -3266,7 +3266,7 @@ class Settings_Loader {
       'color_link_hover' => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#c19a6b',
+        'default'      => '#D4A574',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Link Hover', 'phantom-core' ),
         'css_property' => '--link--hover',
@@ -3275,7 +3275,7 @@ class Settings_Loader {
       'color_border'     => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#e5e5e5',
+        'default'      => '#1A1A1A',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Border Color', 'phantom-core' ),
         'css_property' => '--border--color',
@@ -3293,7 +3293,7 @@ class Settings_Loader {
       'color_light_bg'     => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#f8f5fd',
+        'default'      => '#141416',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Light Background', 'phantom-core' ),
         'css_property' => '--light--bg--color',
@@ -3302,7 +3302,7 @@ class Settings_Loader {
       'color_grey'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#d8d8d8',
+        'default'      => '#6B7280',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Grey Color', 'phantom-core' ),
         'css_property' => '--grey--color',
@@ -3311,7 +3311,7 @@ class Settings_Loader {
       'color_success'      => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#76a22c',
+        'default'      => '#4CAF50',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Success Color', 'phantom-core' ),
         'css_property' => '--success--color',
@@ -3320,7 +3320,7 @@ class Settings_Loader {
       'color_error'        => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#dc3545',
+        'default'      => '#EF4444',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Error Color', 'phantom-core' ),
         'css_property' => '--error--color',
@@ -3329,7 +3329,7 @@ class Settings_Loader {
       'color_warning'      => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#ffc107',
+        'default'      => '#F59E0B',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Warning Color', 'phantom-core' ),
         'css_property' => '--warning--color',
@@ -3338,7 +3338,7 @@ class Settings_Loader {
       'color_info'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#17a2b8',
+        'default'      => '#3B82F6',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Info Color', 'phantom-core' ),
         'css_property' => '--info--color',
@@ -3347,7 +3347,7 @@ class Settings_Loader {
       'color_gradient_start' => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#f4cafe',
+        'default'      => '#C8956C',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Gradient Start', 'phantom-core' ),
         'css_property' => '--gradient-start--color',
@@ -3356,7 +3356,7 @@ class Settings_Loader {
       'color_gradient_end'   => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#f4ca5f',
+        'default'      => '#D4A574',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Gradient End', 'phantom-core' ),
         'css_property' => '--gradient-end--color',
@@ -3365,7 +3365,7 @@ class Settings_Loader {
       'color_featured_badge' => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#ff6b35',
+        'default'      => '#8B5CF6',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Featured Badge', 'phantom-core' ),
         'css_property' => '--featured-badge--color',
@@ -3374,7 +3374,7 @@ class Settings_Loader {
       'color_rating'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#f4ca5f',
+        'default'      => '#C8956C',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Star Rating', 'phantom-core' ),
         'css_property' => '--woo--rating',
@@ -3383,7 +3383,7 @@ class Settings_Loader {
       'color_card_bg'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#ffffff',
+        'default'      => '#141416',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Product Card Background', 'phantom-core' ),
         'css_property' => '--product-card-bg',
@@ -3392,7 +3392,7 @@ class Settings_Loader {
       'color_card_text'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#4e4e4e',
+        'default'      => '#A8B5C0',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Product Card Text', 'phantom-core' ),
         'css_property' => '--product-card-text',
@@ -3401,7 +3401,7 @@ class Settings_Loader {
       'color_card_border'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#e5e5e5',
+        'default'      => '#1A1A1A',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Product Card Border', 'phantom-core' ),
         'css_property' => '--product-card-border',
@@ -3410,7 +3410,7 @@ class Settings_Loader {
       'color_button_bg'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#7635d5',
+        'default'      => '#C8956C',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Product Button Background', 'phantom-core' ),
         'css_property' => '--product-button-bg',
@@ -3419,7 +3419,7 @@ class Settings_Loader {
       'color_button_text'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#ffffff',
+        'default'      => '#09090B',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Product Button Text', 'phantom-core' ),
         'css_property' => '--product-button-text',
@@ -3428,7 +3428,7 @@ class Settings_Loader {
       'color_button_hover_bg'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#5a29a8',
+        'default'      => '#D4A574',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Product Button Hover BG', 'phantom-core' ),
         'css_property' => '--product-button-hover-bg',
@@ -3437,7 +3437,7 @@ class Settings_Loader {
       'color_badge_sale_bg'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#e74c3c',
+        'default'      => '#EF4444',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Sale Badge Background', 'phantom-core' ),
         'css_property' => '--product-badge-sale-bg',
@@ -3455,7 +3455,7 @@ class Settings_Loader {
       'color_badge_new_bg'         => array(
         'section'      => 'colors',
         'type'     => 'ast-color',
-        'default'      => '#2ecc71',
+        'default'      => '#4CAF50',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'New Badge Background', 'phantom-core' ),
         'css_property' => '--product-badge-new-bg',
@@ -3478,7 +3478,7 @@ class Settings_Loader {
       'button_bg'         => array(
         'section'      => 'buttons',
         'type'     => 'ast-color',
-        'default'      => '#7635d5',
+        'default'      => '#C8956C',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Button Background', 'phantom-core' ),
         'css_property' => '--button-bg',
@@ -3487,7 +3487,7 @@ class Settings_Loader {
       'button_text'       => array(
         'section'      => 'buttons',
         'type'     => 'ast-color',
-        'default'      => '#ffffff',
+        'default'      => '#09090B',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Button Text', 'phantom-core' ),
         'css_property' => '--button-text',
@@ -3496,7 +3496,7 @@ class Settings_Loader {
       'button_bg_hover'   => array(
         'section'      => 'buttons',
         'type'     => 'ast-color',
-        'default'      => '#5a29a6',
+        'default'      => '#D4A574',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Button Hover BG', 'phantom-core' ),
         'css_property' => '--button-bg-hover',
@@ -3505,7 +3505,7 @@ class Settings_Loader {
       'button_text_hover' => array(
         'section'      => 'buttons',
         'type'     => 'ast-color',
-        'default'      => '#ffffff',
+        'default'      => '#09090B',
         'sanitize'     => 'sanitize_hex_color',
         'label'        => __( 'Button Hover Text', 'phantom-core' ),
         'css_property' => '--button-text-hover',

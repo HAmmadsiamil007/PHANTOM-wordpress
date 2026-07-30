@@ -10,17 +10,17 @@ class Demo_Switcher {
         private Demo_Registry $registry
     ) {}
 
-    public function activate(string $slug): Result {
+    public function activate(string $slug): Demo_Result {
         $demo = $this->registry->get($slug);
         if ($demo === null) {
-            return Result::fail(
+            return Demo_Result::fail(
                 sprintf('Demo "%s" is not installed.', $slug),
                 ['demo_not_found' => "No demo found with slug: $slug"]
             );
         }
 
         if (!$demo->is_compatible) {
-            return Result::fail(
+            return Demo_Result::fail(
                 sprintf('Demo "%s" is not compatible with the current environment.', $slug),
                 $demo->errors
             );
@@ -50,13 +50,13 @@ class Demo_Switcher {
 
         $this->registry->refresh();
 
-        return Result::ok(
+        return Demo_Result::ok(
             sprintf('Demo "%s" activated successfully.', $demo->name),
             ['slug' => $slug, 'name' => $demo->name, 'previous' => $old_slug]
         );
     }
 
-    public function deactivate(): Result {
+    public function deactivate(): Demo_Result {
         $old_slug = $this->get_active_slug();
         $old_name = 'Unknown';
 
@@ -65,8 +65,9 @@ class Demo_Switcher {
             $old_name = $demo->name;
         }
 
-        update_option('template_pack', 'kids');
-        update_option('phantom_active_demo', 'kids');
+        update_option('template_pack', 'default');
+        update_option('phantom_template_pack', 'default');
+        update_option('phantom_active_demo', '');
 
         if (function_exists('flush_rewrite_rules')) {
             flush_rewrite_rules();
@@ -78,14 +79,14 @@ class Demo_Switcher {
 
         $this->registry->refresh();
 
-        return Result::ok(
+        return Demo_Result::ok(
             'Demo deactivated. Default template pack restored.',
             ['previous' => $old_slug, 'previous_name' => $old_name]
         );
     }
 
     public function get_active_slug(): string {
-        return get_option('phantom_active_demo', 'kids');
+        return get_option('phantom_active_demo', '');
     }
 
     public function can_activate(string $slug): array {

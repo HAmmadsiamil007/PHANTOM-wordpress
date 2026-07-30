@@ -309,7 +309,7 @@ All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 w
 
 ---
 
-## 6. Customizer Panels (16 panels, 45 sections)
+## 6. Customizer Panels (16 panels, 46 sections)
 
 | Panel | Sections | Live Preview |
 |-------|----------|-------------|
@@ -371,7 +371,7 @@ All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 w
 ```
 WordPress Core:          ████████████████████ 100% (uses existing WP APIs)
 WooCommerce:             ████████████████████ 100% (CRUD, cart, checkout, attributes, variations, reviews, server-side, gallery)
-Data Layer:              ████████████████████ 100% (15 adapters, 11 ViewModels, Normalizer, Provider)
+Data Layer:              ████████████████████ 100% (16 adapters, 11 ViewModels, Normalizer, Provider)
 Infrastructure:          ████████████████████ 100% (Layout, Design API, Hook, Asset, Capability, Templates)
 Plugin Bridges:          ████████████████████ 100% (WooCommerce, Wishlist, Mailchimp + 6 compat)
 Public API Facades:      ████████████████████ 100% (7 facades: Render, Component, Animation, Settings, Template, Developer, Design)
@@ -379,7 +379,7 @@ Template Packs:          ██████████████████�
 Setup System:            ████████████████████ 100% (Demo_Content_Generator + Activation_Wizard)
 Demo Manager:            ████████████████████ 100% (ZIP install, AJAX activate/deactivate, 135 tests)
 Theme Settings:          ████████████████████ 100% (~612 settings, all verified in REST API)
-Customizer:              ████████████████████ 100% (16 panels, 45 sections, responsive hero, postMessage fixes)
+Customizer:              ████████████████████ 100% (16 panels, 46 sections, responsive hero, postMessage fixes)
 CSS Variables:           ████████████████████ 100% (136 vars, all verified working via CSS Generation Engine)
 Live Preview:            ████████████████████ 100% (postMessage, partial refresh, partial renderers, CSS var bindings)
 Responsive Hero:         ████████████████████ 100% (desktop/tablet/mobile, `<picture>`, CSS vars)
@@ -387,7 +387,7 @@ Accessibility:           ██████████████████�
 Animations:              ████████████████████ 100% (GSAP, ScrollTrigger, Lenis, preloader JS, scroll-reveal, parallax, animations.js enqueued)
 Performance:             ████████████████████ 100% (lazy loading, preconnect, preload, dns-prefetch, defer JS, minify, cache, font-display, emoji/block removal)
 HTML Templates:          ████████████████████ 100% (22 pages)
-REST API:                ████████████████████ 100% (51 routes, all verified secure)
+REST API:                ████████████████████ 100% (60 routes, all verified secure)
 Data Binding:            ████████████████████ 100% (full attribute system)
 SEO:                     ████████████████████ 100% (OG/JSON-LD, meta, Twitter Cards, canonical, hreflang, sitemap, robots, WebPage schema, org logo/sameAs)
 Security:                ████████████████████ 100% (nonce, sanitization, capabilities, CSP, XSS protection)

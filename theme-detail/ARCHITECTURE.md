@@ -764,8 +764,8 @@ interface BridgeInterface {
 | `phantom-core.php` | Plugin bootstrap, constants, autoloader | ~200 |
 | `phantom-theme/functions.php` | Theme setup, menus, widgets, assets | ~400 |
 | `includes/class-settings-registry.php` | 612 settings, 46 sections | 5,555+ |
-| `includes/class-rest-controller.php` | 51 REST routes, phantom/v1 | ~2,300 |
-| `includes/class-customizer.php` | 16 panels, 45 sections | 540 |
+| `includes/class-rest-controller.php` | 60 REST routes, phantom/v1 | ~2,300 |
+| `includes/class-customizer.php` | 16 panels, 46 sections | 540 |
 | `includes/class-custom-css.php` | CSS Generation Engine | ~300 |
 | `includes/Engine/class-template-loader.php` | Pack-aware template resolution | ~250 |
 | `includes/Engine/Asset_Engine.php` | Essential vs full injection | ~400 |
@@ -790,8 +790,8 @@ interface BridgeInterface {
               │                        │                        │
     ┌─────────▼──────────┐  ┌─────────▼──────────┐  ┌─────────▼──────────┐
     │   Settings Registry │  │    REST Controller  │  │    Customizer      │
-    │   612 settings      │  │    51 routes        │  │    16 panels       │
-    │   46 sections       │  │    phantom/v1       │  │    45 sections     │
+    │   612 settings      │  │    60 routes        │  │    16 panels       │
+    │   46 sections       │  │    phantom/v1       │  │    46 sections     │
     └─────────┬──────────┘  └─────────┬──────────┘  └─────────┬──────────┘
               │                        │                        │
               └────────────────────────┼────────────────────────┘

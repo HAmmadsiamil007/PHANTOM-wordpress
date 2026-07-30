@@ -610,7 +610,7 @@ class Rest_Controller extends \WP_REST_Controller {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'handle_contact' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this, 'verify_nonce' ),
 				'args'                => array(
 					'fname' => array(
 						'required'          => true,
@@ -1050,9 +1050,6 @@ class Rest_Controller extends \WP_REST_Controller {
 	}
 
 	public function cart_write_permission_check( $request ) {
-		if ( ! is_user_logged_in() ) {
-			return true;
-		}
 		return $this->verify_nonce( $request );
 	}
 
@@ -1790,7 +1787,7 @@ class Rest_Controller extends \WP_REST_Controller {
 		$html = ob_get_clean();
 		return new \WP_REST_Response( array(
 			'sidebar_id' => $sidebar_id,
-			'html'       => $html ?: '',
+			'html'       => $html ? wp_kses_post( $html ) : '',
 		), 200 );
 	}
 
@@ -2577,7 +2574,7 @@ private function format_product( $product, bool $full = false ): array {
 			'name'           => $base['name'],
 			'slug'           => $base['slug'],
 			'price'          => $product->get_price(),
-			'price_html'     => $product->get_price_html(),
+			'price_html'     => wp_kses_post( $product->get_price_html() ),
 			'regular_price'  => $product->get_regular_price(),
 			'sale_price'     => $product->get_sale_price(),
 			'on_sale'        => $base['on_sale'],
@@ -2600,8 +2597,8 @@ private function format_product( $product, bool $full = false ): array {
 			$data['cross_sell_ids'] = $product->get_cross_sell_ids();
 			$data['up_sell_ids']    = $product->get_upsell_ids();
 			$data['tags']           = $base['tags'];
-			$data['description']    = $base['description'];
-			$data['short_description'] = $base['short_description'];
+			$data['description']    = wp_kses_post( $base['description'] );
+			$data['short_description'] = wp_kses_post( $base['short_description'] );
 			$data['attributes']     = $product->get_attributes();
 			$data['weight']         = $product->get_weight();
 			$data['dimensions']     = wc_format_dimensions( $product->get_dimensions( false ) );
@@ -2618,7 +2615,7 @@ private function format_product( $product, bool $full = false ): array {
 					'id'            => $v['variation_id'],
 					'attributes'    => $v['attributes'],
 					'price'         => $v['display_price'],
-					'price_html'    => $v['price_html'],
+					'price_html'    => wp_kses_post( $v['price_html'] ),
 					'regular_price' => $v['display_regular_price'],
 					'sale_price'    => $v['display_price'] !== $v['display_regular_price'] ? $v['display_price'] : '',
 					'sku'           => $v['sku'],
@@ -2626,7 +2623,7 @@ private function format_product( $product, bool $full = false ): array {
 					'image'         => $v['image']['url'] ?? '',
 					'weight'        => $v['weight'],
 					'dimensions'    => $v['dimensions'],
-					'description'   => $v['variation_description'] ?? '',
+					'description'   => wp_kses_post( $v['variation_description'] ?? '' ),
 				);
 			}
 			$data['variations'] = $var_data;
@@ -3443,18 +3440,6 @@ private function format_product( $product, bool $full = false ): array {
 	}
 
 	public function handle_contact( \WP_REST_Request $request ) {
-		$nonce = $request->get_header( 'X-Phantom-Nonce' ) ?? '';
-		if ( '' === $nonce ) {
-			$nonce = isset( $_SERVER['HTTP_X_PHANTOM_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_PHANTOM_NONCE'] ) ) : '';
-		}
-		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'contact_form_public' ) ) {
-			return new \WP_Error(
-				'rest_forbidden',
-				__( 'Invalid or missing nonce.', 'phantom-core' ),
-				array( 'status' => 401 )
-			);
-		}
-
 		$rate_error = $this->check_rate_limit( 'contact', 3, 60 );
 		if ( $rate_error ) {
 			return $this->wp_error( 'rate_limit_exceeded', __( 'Too many submissions. Please try again later.', 'phantom-core' ), 429 );

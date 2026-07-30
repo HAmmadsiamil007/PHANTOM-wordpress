@@ -5,7 +5,7 @@ namespace PhantomCore\Admin;
 
 use PhantomCore\Design\DesignSystemManager;
 use PhantomCore\Components\Component_Registry;
-use PhantomCore\Template_Loader;
+use PhantomCore\Engine\Template_Loader;
 use PhantomCore\Demo\Demo_Registry;
 
 defined('ABSPATH') || exit;

@@ -6,7 +6,17 @@ namespace PhantomCore\Layout;
 defined('ABSPATH') || exit;
 
 final class Layout_Manager {
-  public static function init(): void {
+  private static ?self $instance = null;
+
+  public static function get_instance(): self {
+    if (null === self::$instance) {
+      self::$instance = new self();
+      self::$instance->init();
+    }
+    return self::$instance;
+  }
+
+  private function init(): void {
     $registry = Layout_Registry::get_instance();
 
     $registry->register(new Layout(

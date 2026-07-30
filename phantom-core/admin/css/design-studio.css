@@ -1,3 +1,5 @@
+/* ─── Shared Admin Styles (used by Dashboard + other pages) ─── */
+
 .phantom-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -268,4 +270,836 @@
 .phantom-diff .phantom-value-new {
     font-weight: 600;
     color: #2e7d32;
+}
+
+/* ─── Full-Screen Design Studio Layout ─── */
+
+html.phantom-design-studio-active {
+    scrollbar-gutter: auto;
+}
+
+body.phantom-design-studio-active {
+    overflow: hidden;
+    background: #1a1a2e;
+}
+
+body.phantom-design-studio-active #wpcontent {
+    padding: 0;
+    margin-left: 0;
+}
+
+body.phantom-design-studio-active #wpbody-content {
+    padding: 0;
+}
+
+body.phantom-design-studio-active #adminmenumain {
+    display: none;
+}
+
+body.phantom-design-studio-active .wp-header-end {
+    display: none;
+}
+
+body.phantom-design-studio-active .notice,
+body.phantom-design-studio-active .updated,
+body.phantom-design-studio-active .update-nag {
+    display: none !important;
+}
+
+body.phantom-design-studio-active #wpfooter {
+    display: none;
+}
+
+/* ─── Main Wrapper ─── */
+
+#phantom-ds-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99990;
+}
+
+/* ─── Toolbar ─── */
+
+.phantom-ds-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    min-height: 48px;
+    padding: 0 12px;
+    background: #16213e;
+    border-bottom: 1px solid #0f3460;
+    z-index: 10;
+    gap: 8px;
+}
+
+.phantom-ds-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.phantom-ds-brand {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e94560;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.phantom-ds-toolbar-center {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.phantom-ds-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.phantom-ds-device-switcher {
+    display: flex;
+    background: #0f3460;
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.phantom-ds-device-btn {
+    background: none;
+    border: none;
+    color: #8899aa;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.15s;
+}
+
+.phantom-ds-device-btn:hover {
+    color: #e0e0e0;
+}
+
+.phantom-ds-device-btn.active {
+    background: #e94560;
+    color: #fff;
+}
+
+.phantom-ds-separator {
+    width: 1px;
+    height: 24px;
+    background: #0f3460;
+    margin: 0 6px;
+}
+
+.phantom-ds-action-btn {
+    background: none;
+    border: none;
+    color: #8899aa;
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.15s;
+}
+
+.phantom-ds-action-btn:hover {
+    color: #e0e0e0;
+    background: #0f3460;
+}
+
+.phantom-ds-action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.phantom-ds-action-btn.active {
+    color: #e94560;
+}
+
+.phantom-ds-select {
+    background: #0f3460;
+    color: #e0e0e0;
+    border: 1px solid #1a3a6e;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    max-width: 140px;
+}
+
+.phantom-ds-btn-save {
+    background: #0f3460 !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #1a3a6e !important;
+    font-size: 12px !important;
+    line-height: 2 !important;
+    min-height: 30px !important;
+}
+
+.phantom-ds-btn-save:hover {
+    background: #1a3a6e !important;
+}
+
+.phantom-ds-btn-publish {
+    font-size: 12px !important;
+    line-height: 2 !important;
+    min-height: 30px !important;
+}
+
+/* ─── Main Content ─── */
+
+#phantom-ds-main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ─── Navigator ─── */
+
+.phantom-ds-navigator {
+    width: 280px;
+    min-width: 280px;
+    background: #16213e;
+    border-right: 1px solid #0f3460;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.phantom-ds-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8899aa;
+    border-bottom: 1px solid #0f3460;
+    flex-shrink: 0;
+    background: #16213e;
+}
+
+.phantom-ds-panel-header .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.phantom-ds-search-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #0f3460;
+    flex-shrink: 0;
+}
+
+.phantom-ds-search-box .dashicons {
+    color: #8899aa;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.phantom-ds-search-box input {
+    background: #0f3460;
+    border: 1px solid #1a3a6e;
+    border-radius: 4px;
+    color: #e0e0e0;
+    padding: 4px 8px;
+    font-size: 12px;
+    width: 100%;
+    outline: none;
+}
+
+.phantom-ds-search-box input:focus {
+    border-color: #e94560;
+}
+
+.phantom-ds-component-tree {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+}
+
+.phantom-ds-tree-loading,
+.phantom-ds-tree-empty {
+    padding: 20px;
+    text-align: center;
+    color: #8899aa;
+    font-size: 12px;
+}
+
+.phantom-ds-tree-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-left: 3px solid transparent;
+    font-size: 12px;
+}
+
+.phantom-ds-tree-item:hover {
+    background: #0f3460;
+}
+
+.phantom-ds-tree-item.selected {
+    background: #1a3a6e;
+    border-left-color: #e94560;
+    color: #fff;
+}
+
+.phantom-ds-tree-item .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: #8899aa;
+    flex-shrink: 0;
+}
+
+.phantom-ds-tree-item.selected .dashicons {
+    color: #e94560;
+}
+
+.phantom-ds-tree-toggle {
+    font-size: 12px !important;
+    width: 12px !important;
+    height: 12px !important;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.phantom-ds-tree-toggle-spacer {
+    width: 12px;
+    flex-shrink: 0;
+}
+
+.phantom-ds-tree-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ─── Canvas ─── */
+
+.phantom-ds-canvas {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #0d1117;
+    position: relative;
+    overflow: hidden;
+    transition: max-width 0.3s ease, margin 0.3s ease;
+}
+
+.phantom-ds-canvas iframe {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+}
+
+.phantom-ds-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #16213e;
+    border-top: 1px solid #0f3460;
+    font-size: 11px;
+    color: #8899aa;
+    flex-shrink: 0;
+    min-height: 28px;
+}
+
+.phantom-ds-bc-item {
+    color: #8899aa;
+}
+
+.phantom-ds-bc-item.active {
+    color: #e94560;
+}
+
+.phantom-ds-bc-sep {
+    color: #0f3460;
+}
+
+.phantom-ds-bc-hover {
+    color: #60a5fa;
+    font-style: italic;
+}
+
+/* ─── Inspector ─── */
+
+.phantom-ds-inspector {
+    width: 340px;
+    min-width: 340px;
+    background: #16213e;
+    border-left: 1px solid #0f3460;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.phantom-ds-inspector-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.phantom-ds-no-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: #8899aa;
+    height: 100%;
+}
+
+.phantom-ds-no-selection .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+}
+
+.phantom-ds-no-selection p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.phantom-ds-inspector-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+/* ─── Inspector Tabs ─── */
+
+.phantom-ds-inspector-tabs {
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 1px solid #0f3460;
+    flex-shrink: 0;
+    background: #16213e;
+}
+
+.phantom-ds-tab-btn {
+    background: none;
+    border: none;
+    color: #8899aa;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.phantom-ds-tab-btn:hover {
+    color: #e0e0e0;
+    background: #0f3460;
+}
+
+.phantom-ds-tab-btn.active {
+    color: #e94560;
+    border-bottom-color: #e94560;
+}
+
+.phantom-ds-tab-panel {
+    display: none;
+    padding: 12px;
+}
+
+.phantom-ds-tab-panel.active {
+    display: block;
+}
+
+/* ─── Inspector Fields ─── */
+
+.phantom-ds-field {
+    margin-bottom: 14px;
+}
+
+.phantom-ds-field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8899aa;
+    margin-bottom: 6px;
+}
+
+.phantom-ds-field-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.phantom-ds-field-input {
+    flex: 1;
+    background: #0f3460;
+    border: 1px solid #1a3a6e;
+    border-radius: 4px;
+    color: #e0e0e0;
+    padding: 5px 8px;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.phantom-ds-field-input:focus {
+    border-color: #e94560;
+}
+
+.phantom-ds-field-color {
+    width: 40px;
+    height: 30px;
+    padding: 2px;
+    cursor: pointer;
+    flex: 0 0 40px;
+}
+
+.phantom-ds-field-select {
+    cursor: pointer;
+}
+
+.phantom-ds-field-textarea,
+.phantom-ds-field-code {
+    resize: vertical;
+    font-family: 'Menlo', 'Consolas', monospace;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.phantom-ds-field-code {
+    font-size: 11px;
+}
+
+.phantom-ds-field-reset {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px;
+    flex-shrink: 0;
+    transition: color 0.15s;
+}
+
+.phantom-ds-field-reset:hover {
+    color: #e94560;
+}
+
+/* ─── Toggle Field ─── */
+
+.phantom-ds-field-toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.phantom-ds-field-toggle input {
+    display: none;
+}
+
+.phantom-ds-toggle-track {
+    width: 36px;
+    height: 20px;
+    background: #0f3460;
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.2s;
+    border: 1px solid #1a3a6e;
+}
+
+.phantom-ds-toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: #8899aa;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.phantom-ds-field-toggle input:checked + .phantom-ds-toggle-track {
+    background: #e94560;
+    border-color: #e94560;
+}
+
+.phantom-ds-field-toggle input:checked + .phantom-ds-toggle-track::after {
+    left: 18px;
+    background: #fff;
+}
+
+/* ─── Slider Field ─── */
+
+.phantom-ds-slider-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.phantom-ds-field-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: #0f3460;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.phantom-ds-field-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #e94560;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.phantom-ds-slider-value {
+    width: 50px;
+    background: #0f3460;
+    border: 1px solid #1a3a6e;
+    border-radius: 4px;
+    color: #e0e0e0;
+    padding: 3px 6px;
+    font-size: 11px;
+    text-align: center;
+    outline: none;
+}
+
+.phantom-ds-slider-unit {
+    font-size: 11px;
+    color: #8899aa;
+    min-width: 16px;
+}
+
+/* ─── Image Field ─── */
+
+.phantom-ds-image-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.phantom-ds-image-preview {
+    max-width: 100%;
+    max-height: 120px;
+    border-radius: 4px;
+    border: 1px solid #1a3a6e;
+    object-fit: cover;
+}
+
+.phantom-ds-image-actions {
+    display: flex;
+    gap: 6px;
+}
+
+/* ─── Status Bar ─── */
+
+.phantom-ds-statusbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 28px;
+    min-height: 28px;
+    padding: 0 12px;
+    background: #0f3460;
+    border-top: 1px solid #1a3a6e;
+    font-size: 11px;
+    color: #8899aa;
+    z-index: 10;
+}
+
+.phantom-ds-status-left,
+.phantom-ds-status-center,
+.phantom-ds-status-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.phantom-ds-status-label {
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+.phantom-ds-status-sep {
+    color: #1a3a6e;
+}
+
+/* ─── Overlay ─── */
+
+.phantom-ds-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.phantom-ds-overlay-content {
+    background: #16213e;
+    padding: 30px 40px;
+    border-radius: 8px;
+    text-align: center;
+    color: #e0e0e0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.phantom-ds-overlay-content .spinner {
+    float: none;
+    margin: 0 auto 12px;
+}
+
+.phantom-ds-overlay-content p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ─── Scrollbar ─── */
+
+.phantom-ds-component-tree::-webkit-scrollbar,
+.phantom-ds-inspector-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.phantom-ds-component-tree::-webkit-scrollbar-track,
+.phantom-ds-inspector-body::-webkit-scrollbar-track {
+    background: #16213e;
+}
+
+.phantom-ds-component-tree::-webkit-scrollbar-thumb,
+.phantom-ds-inspector-body::-webkit-scrollbar-thumb {
+    background: #0f3460;
+    border-radius: 3px;
+}
+
+.phantom-ds-component-tree::-webkit-scrollbar-thumb:hover,
+.phantom-ds-inspector-body::-webkit-scrollbar-thumb:hover {
+    background: #1a3a6e;
+}
+
+/* ─── Toast ─── */
+
+.phantom-ds-toast {
+    pointer-events: auto;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    max-width: 360px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: phantom-toast-in 0.25s ease forwards;
+}
+
+.phantom-ds-toast.phantom-toast-success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.phantom-ds-toast.phantom-toast-error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.phantom-ds-toast.phantom-toast-info {
+    background: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+}
+
+.phantom-ds-toast.phantom-toast-warning {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+.phantom-ds-toast.phantom-toast-out {
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+}
+
+@keyframes phantom-toast-in {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ─── Accessibility: Reduced Motion ─── */
+
+@media (prefers-reduced-motion: reduce) {
+    .phantom-ds-device-btn,
+    .phantom-ds-action-btn,
+    .phantom-ds-tree-item,
+    .phantom-ds-canvas iframe,
+    .phantom-ds-tab-btn,
+    .phantom-ds-field-input,
+    .phantom-ds-field-reset,
+    .phantom-ds-toggle-track,
+    .phantom-ds-toggle-track::after,
+    .phantom-ds-preset-card,
+    .phantom-ds-toast,
+    #phantom-se-overlay,
+    #phantom-se-click-overlay {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .phantom-ds-toast {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* ─── Utility ─── */
+
+.phantom-ds-hidden {
+    display: none !important;
 }

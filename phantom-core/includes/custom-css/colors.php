@@ -19,6 +19,11 @@ add_filter(
 			'topbar_bg', 'topbar_text',
 			'button_bg', 'button_text', 'button_bg_hover', 'button_text_hover',
 			'color_rating', 'color_sale',
+			'color_light_bg', 'color_grey',
+			'color_success', 'color_error', 'color_warning', 'color_info',
+			'color_gradient_start', 'color_gradient_end',
+			'color_featured_badge',
+			'color_header_bg', 'color_footer_bg',
 		);
 
 		$map = \PhantomCore\Settings_Registry::get_css_var_map();

@@ -71,6 +71,15 @@ class Asset_Registry {
     $this->groups[$group] = array_unique($this->groups[$group]);
   }
 
+  /**
+   * Get all group memberships.
+   *
+   * @return array<string, string[]> Group name → array of handles.
+   */
+  public function get_groups(): array {
+    return $this->groups;
+  }
+
   public function enqueue(string $handle): void {
     $asset = $this->assets[$handle] ?? null;
     if (null === $asset) {

@@ -65,7 +65,7 @@ final class Cache {
 	public function get_group( string $group ) {
 		$cached = $this->get( $group );
 		if ( false !== $cached ) {
-			return unserialize( $cached );
+			return maybe_unserialize( $cached );
 		}
 		if ( isset( $this->groups[ $group ] ) ) {
 			return $this->groups[ $group ]['items'];

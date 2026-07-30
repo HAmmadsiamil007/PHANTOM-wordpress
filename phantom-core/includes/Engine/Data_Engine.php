@@ -69,6 +69,15 @@ class Data_Engine {
         'name' => wp_get_theme()->get('Name') ?: 'Phantom Theme',
         'version' => wp_get_theme()->get('Version') ?: '1.0',
       ],
+      'metadata' => [
+        'version' => '1.0',
+        'component_attr' => 'data-component',
+        'instance_attr' => 'data-instance',
+        'editable_attr' => 'data-editable',
+        'token_group_attr' => 'data-token-group',
+        'settings_group_attr' => 'data-settings-group',
+        'version_attr' => 'data-version',
+      ],
     ];
 
     if ($this->resolved_product_id) {
@@ -105,11 +114,13 @@ class Data_Engine {
     }
     // AETHER variable mappings — map Customizer CSS vars to AETHER CSS vars
     // This ensures Customizer color/typography changes affect the AETHER frontend
-    $aether_map = '--gold:var(--primary--color,#C8956C);'
+    $aether_map = '--color-primary:var(--primary--color,#C8956C);'
+      . '--color-text:var(--text--color,#A8B5C0);'
+      . '--gold:var(--primary--color,#C8956C);'
       . '--chrome:var(--text--color,#A8B5C0);'
       . '--white:var(--heading--color,#FFFFFF);'
       . '--void:var(--bg,#09090B);'
-      . '--surface:var(--color-header-bg,#141416);';
+      . '--surface:var(--light--bg--color,#141416);';
     $css .= '<style id="phantom-aether-map">:root{' . $aether_map . '}</style>';
     return $css;
   }

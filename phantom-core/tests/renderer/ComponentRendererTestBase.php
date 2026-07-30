@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-abstract class Component_Renderer_Test_Base extends \WP_UnitTestCase {
+abstract class Component_Renderer_Test_Base extends \PHPUnit\Framework\TestCase {
 
   protected function assert_placeholder_replaced(string $output, string $placeholder): void {
     $this->assertStringNotContainsString('{{' . $placeholder . '}}', $output,

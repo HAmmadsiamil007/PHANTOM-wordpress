@@ -15,7 +15,7 @@ class Design_System_Manager_Test extends TestCase {
     }
 
     public function test_token_returns_value(): void {
-        $this->assertSame('#C1121F', $this->dsm->token('color.primary'));
+        $this->assertSame('#C8956C', $this->dsm->token('color.primary'));
     }
 
     public function test_tokens_returns_all(): void {

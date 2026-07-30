@@ -22,7 +22,7 @@
       var list = this.handlers[event];
       if (list) {
         for (var i = 0; i < list.length; i++) {
-          try { list[i](data); } catch (e) { console.warn('[PhantomEvents] handler error', e); }
+          try { list[i](data); } catch (e) { if (typeof console !== 'undefined' && console.warn) { console.warn('[PhantomEvents] handler error', e); } }
         }
       }
     },
@@ -43,7 +43,7 @@
     emitSettingChange: function(key, value) {
       var list = this.settingHandlers[key] || [];
       for (var i = 0; i < list.length; i++) {
-        try { list[i](value, key); } catch (e) { console.warn('[PhantomEvents] setting handler error', e); }
+        try { list[i](value, key); } catch (e) { if (typeof console !== 'undefined' && console.warn) { console.warn('[PhantomEvents] setting handler error', e); } }
       }
     },
 

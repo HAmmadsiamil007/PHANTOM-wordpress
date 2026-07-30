@@ -226,7 +226,27 @@ class Shell {
         // Dynamic copyright year
         $html = preg_replace('/\b2025\b/', date('Y'), $html, 1);
 
-        echo $html;
+        // Design Studio mode: inject meta tag + selection engine into the iframe
+        // Use preg_replace with a case-insensitive pattern for robustness.
+        if (isset($_GET['design-studio']) && '1' === $_GET['design-studio']) {
+            $meta = '<meta name="phantom-design-studio" content="1">';
+            $html = preg_replace(
+                '/<\/head>/i',
+                $meta . "\n" . '</head>',
+                $html,
+                1 // limit to one replacement
+            );
+
+            $script = '<script id="phantom-selection-engine" src="' . esc_url(PHANTOM_CORE_URL . 'admin/js/phantom-selection-engine.js?v=' . PHANTOM_CORE_VERSION) . '"></script>';
+            $html = preg_replace(
+                '/<\/body>/i',
+                $script . "\n" . '</body>',
+                $html,
+                1 // limit to one replacement
+            );
+        }
+
+        echo wp_kses_post( $html );
         exit;
     }
 

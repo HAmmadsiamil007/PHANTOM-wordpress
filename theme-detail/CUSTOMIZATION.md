@@ -7,10 +7,10 @@
 | WordPress Core | 100+ | WP native (Users, Posts, Pages, Media, etc.) |
 | WooCommerce | 250+ | WC native admin |
 | Phantom Theme Settings | **612 settings** | Customizer + Admin Page + REST API |
-| Customizer Panels | 16 panels, 45 sections | `/wp-admin/customize.php` |
+| Customizer Panels | 16 panels, 46 sections | `/wp-admin/customize.php` |
 | Admin Page Tabs | 15 tabs | `/wp-admin/themes.php?page=phantom-core-settings` |
 | CSS Custom Properties | 136 design tokens | Injected as `<style id="phantom-customizer-css">` |
-| REST Endpoints | 51 routes (44 unique) | `/wp-json/phantom/v1` |
+| REST Endpoints | 60 routes (44 unique) | `/wp-json/phantom/v1` |
 | **Total Controls** | **~1,000+** | Three independent access paths |
 
 ---
@@ -20,7 +20,7 @@
 ### Method 1: WordPress Customizer (Visual)
 **URL:** `/wp-admin/customize.php`
 
-16 Panels with 45 sections (template_pack is admin-only, not exposed in Customizer). Best for visual editing with live preview.
+16 Panels with 46 sections (template_pack is admin-only, not exposed in Customizer). Best for visual editing with live preview.
 
 **Live preview works for:**
 - ✅ All `color` type settings → instant update via `postMessage`

@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace PhantomCore\Admin;
 
-use PhantomCore\Design\DesignSystemManager;
-use PhantomCore\Design\TokenRegistry;
-
 defined('ABSPATH') || exit;
 
 class DesignStudioPage {
@@ -18,161 +15,198 @@ class DesignStudioPage {
         return self::$instance;
     }
 
+    public function init(): void {
+        add_filter('admin_body_class', [$this, 'body_class'], 10, 1);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
+    }
+
+    public function body_class(array $classes): array {
+        $screen = get_current_screen();
+        if ($screen && str_contains($screen->id, 'phantom-design-studio')) {
+            $classes[] = 'phantom-design-studio-active';
+        }
+        return $classes;
+    }
+
+    public function enqueue_assets(string $hook): void {
+        if (!str_contains($hook, '_page_phantom-design-studio')) {
+            return;
+        }
+        wp_enqueue_style(
+            'phantom-design-studio',
+            PHANTOM_CORE_URL . 'admin/css/design-studio.css',
+            [],
+            PHANTOM_CORE_VERSION
+        );
+        wp_enqueue_script(
+            'phantom-design-studio',
+            PHANTOM_CORE_URL . 'admin/js/design-studio.js',
+            ['jquery'],
+            PHANTOM_CORE_VERSION,
+            true
+        );
+        wp_localize_script('phantom-design-studio', 'phantomDS', [
+            'restUrl' => esc_url_raw(rest_url('phantom/v1')),
+            'nonce'   => wp_create_nonce('wp_rest'),
+            'siteUrl' => esc_url_raw(home_url('/')),
+            'strings' => [
+                'navigator'      => __('Navigator', 'phantom-core'),
+                'inspector'      => __('Inspector', 'phantom-core'),
+                'toolbar'        => __('Toolbar', 'phantom-core'),
+                'desktop'        => __('Desktop', 'phantom-core'),
+                'tablet'         => __('Tablet', 'phantom-core'),
+                'mobile'         => __('Mobile', 'phantom-core'),
+                'darkMode'       => __('Dark Mode', 'phantom-core'),
+                'lightMode'      => __('Light Mode', 'phantom-core'),
+                'undo'           => __('Undo', 'phantom-core'),
+                'redo'           => __('Redo', 'phantom-core'),
+                'presets'        => __('Presets', 'phantom-core'),
+                'history'        => __('History', 'phantom-core'),
+                'saveDraft'      => __('Save Draft', 'phantom-core'),
+                'publish'        => __('Publish', 'phantom-core'),
+                'search'         => __('Search components...', 'phantom-core'),
+                'unsaved'        => __('Unsaved changes', 'phantom-core'),
+                'saved'          => __('All changes saved', 'phantom-core'),
+                'noSelection'    => __('Select a component on the canvas to edit its settings.', 'phantom-core'),
+                'selectComponent' => __('Select Component', 'phantom-core'),
+                'content'        => __('Content', 'phantom-core'),
+                'background'     => __('Background', 'phantom-core'),
+                'typography'     => __('Typography', 'phantom-core'),
+                'spacing'        => __('Spacing', 'phantom-core'),
+                'border'         => __('Border', 'phantom-core'),
+                'shadow'         => __('Shadow', 'phantom-core'),
+                'animation'      => __('Animation', 'phantom-core'),
+                'responsive'     => __('Responsive', 'phantom-core'),
+                'advanced'       => __('Advanced', 'phantom-core'),
+                'reset'          => __('Reset to default', 'phantom-core'),
+                'pages'          => __('Pages', 'phantom-core'),
+                'homepage'       => __('Homepage', 'phantom-core'),
+                'noComponents'   => __('No components found', 'phantom-core'),
+                'export'         => __('Export', 'phantom-core'),
+                'import'         => __('Import', 'phantom-core'),
+                'publishing'     => __('Publishing...', 'phantom-core'),
+                'published'      => __('Published successfully', 'phantom-core'),
+                'publishFailed'  => __('Publish failed', 'phantom-core'),
+            ],
+        ]);
+    }
+
     public function render(): void {
-        $dsm = DesignSystemManager::get_instance();
-        $registry = TokenRegistry::get_instance();
-        $activeTab = sanitize_key($_GET['tab'] ?? 'presets');
-        $tabs = [
-            'presets' => __('Presets', 'phantom-core'),
-            'dna' => __('Theme DNA', 'phantom-core'),
-            'colors' => __('Colors', 'phantom-core'),
-            'typography' => __('Typography', 'phantom-core'),
-            'spacing' => __('Spacing', 'phantom-core'),
-            'motion' => __('Motion', 'phantom-core'),
-            'effects' => __('3D & Effects', 'phantom-core'),
-            'tokens' => __('All Tokens', 'phantom-core'),
-            'css' => __('CSS Preview', 'phantom-core'),
-        ];
+        $home_url = home_url('/?design-studio=1');
         ?>
-        <div class="wrap phantom-design-studio">
-            <h1><?php esc_html_e('Design Studio', 'phantom-core'); ?></h1>
-            <div id="phantom-design-studio-root" data-rest-url="<?php echo esc_url(rest_url('phantom/v1')); ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('wp_rest')); ?>">
-                <nav class="nav-tab-wrapper">
-                    <?php foreach ($tabs as $key => $label): ?>
-                        <a href="<?php echo esc_url(add_query_arg('tab', $key)); ?>" class="nav-tab <?php echo $activeTab === $key ? 'nav-tab-active' : ''; ?>"><?php echo esc_html($label); ?></a>
-                    <?php endforeach; ?>
-                </nav>
-                <div class="phantom-tab-content">
-                    <?php $this->renderTab($activeTab, $dsm, $registry); ?>
+        <div id="phantom-ds-wrapper">
+            <div id="phantom-ds-toolbar" class="phantom-ds-toolbar">
+                <div class="phantom-ds-toolbar-left">
+                    <span class="phantom-ds-brand">PHANTOM Design Studio</span>
+                </div>
+                <div class="phantom-ds-toolbar-center">
+                    <div class="phantom-ds-device-switcher" role="group" aria-label="<?php esc_attr_e('Device preview', 'phantom-core'); ?>">
+                        <button type="button" class="phantom-ds-device-btn active" data-device="desktop" title="<?php esc_attr_e('Desktop', 'phantom-core'); ?>">
+                            <span class="dashicons dashicons-desktop"></span>
+                        </button>
+                        <button type="button" class="phantom-ds-device-btn" data-device="tablet" title="<?php esc_attr_e('Tablet', 'phantom-core'); ?>">
+                            <span class="dashicons dashicons-tablet"></span>
+                        </button>
+                        <button type="button" class="phantom-ds-device-btn" data-device="mobile" title="<?php esc_attr_e('Mobile', 'phantom-core'); ?>">
+                            <span class="dashicons dashicons-smartphone"></span>
+                        </button>
+                    </div>
+                    <div class="phantom-ds-separator"></div>
+                    <button type="button" class="phantom-ds-action-btn" id="phantom-ds-undo" title="<?php esc_attr_e('Undo', 'phantom-core'); ?>" disabled>
+                        <span class="dashicons dashicons-undo"></span>
+                    </button>
+                    <button type="button" class="phantom-ds-action-btn" id="phantom-ds-redo" title="<?php esc_attr_e('Redo', 'phantom-core'); ?>" disabled>
+                        <span class="dashicons dashicons-redo"></span>
+                    </button>
+                    <div class="phantom-ds-separator"></div>
+                    <button type="button" class="phantom-ds-action-btn" id="phantom-ds-dark-mode" title="<?php esc_attr_e('Toggle Dark Mode', 'phantom-core'); ?>">
+                        <span class="dashicons dashicons-visibility"></span>
+                    </button>
+                    <div class="phantom-ds-separator"></div>
+                    <select id="phantom-ds-preset-select" class="phantom-ds-select" title="<?php esc_attr_e('Select preset', 'phantom-core'); ?>">
+                        <option value=""><?php esc_html_e('Presets', 'phantom-core'); ?></option>
+                    </select>
+                </div>
+                <div class="phantom-ds-toolbar-right">
+                    <button type="button" class="phantom-ds-action-btn" id="phantom-ds-history" title="<?php esc_attr_e('History', 'phantom-core'); ?>">
+                        <span class="dashicons dashicons-backup"></span>
+                    </button>
+                    <button type="button" class="phantom-ds-action-btn" id="phantom-ds-export" title="<?php esc_attr_e('Export', 'phantom-core'); ?>">
+                        <span class="dashicons dashicons-download"></span>
+                    </button>
+                    <button type="button" class="button phantom-ds-btn-save" id="phantom-ds-save-draft">
+                        <?php esc_html_e('Save Draft', 'phantom-core'); ?>
+                    </button>
+                    <button type="button" class="button button-primary phantom-ds-btn-publish" id="phantom-ds-publish">
+                        <?php esc_html_e('Publish', 'phantom-core'); ?>
+                    </button>
+                </div>
+            </div>
+
+            <div id="phantom-ds-main">
+                <div id="phantom-ds-navigator" class="phantom-ds-navigator">
+                    <div class="phantom-ds-panel-header">
+                        <span class="dashicons dashicons-menu-alt2"></span>
+                        <span><?php esc_html_e('Navigator', 'phantom-core'); ?></span>
+                    </div>
+                    <div class="phantom-ds-search-box">
+                        <span class="dashicons dashicons-search"></span>
+                        <input type="text" id="phantom-ds-search" placeholder="<?php esc_attr_e('Search components...', 'phantom-core'); ?>" />
+                    </div>
+                    <div id="phantom-ds-component-tree" class="phantom-ds-component-tree">
+                        <div class="phantom-ds-tree-loading"><?php esc_html_e('Loading...', 'phantom-core'); ?></div>
+                    </div>
+                </div>
+
+                <div id="phantom-ds-canvas" class="phantom-ds-canvas">
+                    <iframe
+                        id="phantom-ds-iframe"
+                        src="<?php echo esc_url($home_url); ?>"
+                        title="<?php esc_attr_e('Design Studio Preview', 'phantom-core'); ?>"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                    ></iframe>
+                    <div id="phantom-ds-breadcrumb" class="phantom-ds-breadcrumb"></div>
+                </div>
+
+                <div id="phantom-ds-inspector" class="phantom-ds-inspector">
+                    <div class="phantom-ds-panel-header">
+                        <span class="dashicons dashicons-admin-customizer"></span>
+                        <span><?php esc_html_e('Inspector', 'phantom-core'); ?></span>
+                    </div>
+                    <div id="phantom-ds-inspector-body" class="phantom-ds-inspector-body">
+                        <div class="phantom-ds-no-selection">
+                            <span class="dashicons dashicons-arrow-left-alt"></span>
+                            <p><?php esc_html_e('Select a component on the canvas to edit its settings.', 'phantom-core'); ?></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="phantom-ds-statusbar" class="phantom-ds-statusbar">
+                <div class="phantom-ds-status-left">
+                    <span class="phantom-ds-status-label" id="phantom-ds-status-page">Homepage</span>
+                </div>
+                <div class="phantom-ds-status-center">
+                    <span class="phantom-ds-status-item" id="phantom-ds-status-device">Desktop &mdash; 1280px</span>
+                    <span class="phantom-ds-status-sep">|</span>
+                    <span class="phantom-ds-status-item" id="phantom-ds-status-dark"><?php esc_html_e('Light Mode', 'phantom-core'); ?></span>
+                    <span class="phantom-ds-status-sep">|</span>
+                    <span class="phantom-ds-status-item" id="phantom-ds-status-preset"><?php esc_html_e('Default', 'phantom-core'); ?></span>
+                </div>
+                <div class="phantom-ds-status-right">
+                    <span class="phantom-ds-status-item" id="phantom-ds-status-save"><?php esc_html_e('All changes saved', 'phantom-core'); ?></span>
+                    <span class="phantom-ds-status-sep">|</span>
+                    <span class="phantom-ds-status-item" id="phantom-ds-status-history">Step 0/0</span>
+                </div>
+            </div>
+
+            <div id="phantom-ds-overlay" class="phantom-ds-overlay" style="display:none;">
+                <div class="phantom-ds-overlay-content">
+                    <span class="spinner" style="display:inline-block;float:none;visibility:visible;"></span>
+                    <p id="phantom-ds-overlay-message"><?php esc_html_e('Publishing...', 'phantom-core'); ?></p>
                 </div>
             </div>
         </div>
-        <?php
-    }
-
-    private function renderTab(string $tab, DesignSystemManager $dsm, TokenRegistry $registry): void {
-        switch ($tab) {
-            case 'presets':
-                $this->renderPresetsTab($dsm);
-                break;
-            case 'dna':
-                $this->renderDnaTab($dsm);
-                break;
-            case 'colors':
-                $this->renderCategoryTab($dsm, $registry, 'color');
-                break;
-            case 'typography':
-                $this->renderCategoryTab($dsm, $registry, 'typography');
-                break;
-            case 'spacing':
-                $this->renderCategoryTab($dsm, $registry, 'space', 'spacing');
-                break;
-            case 'motion':
-                $this->renderCategoryTab($dsm, $registry, 'motion');
-                break;
-            case 'effects':
-                $this->renderCategoryTab($dsm, $registry, 'effect', 'effect');
-                break;
-            case 'tokens':
-                $this->renderTokensTab($dsm, $registry);
-                break;
-            case 'css':
-                $this->renderCssTab($dsm);
-                break;
-        }
-    }
-
-    private function renderPresetsTab(DesignSystemManager $dsm): void {
-        $presets = $dsm->availablePresets();
-        $currentId = $dsm->currentPreset()['id'] ?? null;
-        ?>
-        <h2><?php esc_html_e('Design Presets', 'phantom-core'); ?></h2>
-        <p><?php esc_html_e('Select a preset to apply a complete design theme.', 'phantom-core'); ?></p>
-        <div class="phantom-preset-grid">
-            <?php foreach ($presets as $preset): ?>
-                <div class="phantom-preset-card <?php echo $preset->id === $currentId ? 'active' : ''; ?>" data-preset-id="<?php echo esc_attr($preset->id); ?>">
-                    <h3><?php echo esc_html($preset->name); ?></h3>
-                    <p class="preset-source"><?php echo esc_html(ucfirst($preset->source)); ?></p>
-                    <?php if (!empty($preset->metadata['description'])): ?>
-                        <p class="preset-description"><?php echo esc_html($preset->metadata['description']); ?></p>
-                    <?php endif; ?>
-                    <div class="phantom-preset-actions">
-                        <button class="button preview-preset" data-id="<?php echo esc_attr($preset->id); ?>"><?php esc_html_e('Preview', 'phantom-core'); ?></button>
-                        <button class="button button-primary apply-preset" data-id="<?php echo esc_attr($preset->id); ?>"><?php esc_html_e('Apply', 'phantom-core'); ?></button>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        <?php
-    }
-
-    private function renderDnaTab(DesignSystemManager $dsm): void {
-        $dna = $dsm->currentThemeDNA();
-        ?>
-        <h2><?php esc_html_e('Theme DNA', 'phantom-core'); ?></h2>
-        <p><?php esc_html_e('Fine-tune the design personality dimensions.', 'phantom-core'); ?></p>
-        <table class="form-table">
-            <?php foreach ($dna as $dimension => $value): ?>
-                <tr>
-                    <th scope="row"><?php echo esc_html(ucwords(str_replace('_', ' ', $dimension))); ?></th>
-                    <td><code><?php echo esc_html($value); ?></code></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-        <?php
-    }
-
-    private function renderCategoryTab(DesignSystemManager $dsm, TokenRegistry $registry, string ...$cats): void {
-        $tokens = $dsm->tokens($cats);
-        ?>
-        <h2><?php esc_html_e(ucfirst($cats[0]) . ' Tokens', 'phantom-core'); ?></h2>
-        <table class="widefat striped phantom-token-table">
-            <thead><tr><th><?php esc_html_e('Token', 'phantom-core'); ?></th><th><?php esc_html_e('Value', 'phantom-core'); ?></th><th><?php esc_html_e('CSS Variable', 'phantom-core'); ?></th></tr></thead>
-            <tbody>
-                <?php foreach ($tokens as $category => $catTokens): ?>
-                    <?php foreach ($catTokens as $name => $value): ?>
-                        <?php $type = $registry->get_type($name) ?? 'string'; ?>
-                        <tr>
-                            <td><code><?php echo esc_html($name); ?></code></td>
-                            <td class="phantom-token-value" data-token="<?php echo esc_attr($name); ?>" data-type="<?php echo esc_attr($type); ?>"><?php echo esc_html(is_string($value) ? $value : wp_json_encode($value)); ?></td>
-                            <td><code><?php echo esc_html($dsm->cssVar($name)); ?></code></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <?php
-    }
-
-    private function renderTokensTab(DesignSystemManager $dsm, TokenRegistry $registry): void {
-        $all = $dsm->tokens();
-        ?>
-        <h2><?php esc_html_e('All Design Tokens', 'phantom-core'); ?></h2>
-        <table class="widefat striped phantom-token-table">
-            <thead><tr><th><?php esc_html_e('Token', 'phantom-core'); ?></th><th><?php esc_html_e('Value', 'phantom-core'); ?></th><th><?php esc_html_e('CSS Variable', 'phantom-core'); ?></th></tr></thead>
-            <tbody>
-                <?php foreach ($all as $name => $value): ?>
-                    <?php $type = $registry->get_type($name) ?? 'string'; ?>
-                    <tr>
-                        <td><code><?php echo esc_html($name); ?></code></td>
-                        <td class="phantom-token-value" data-token="<?php echo esc_attr($name); ?>" data-type="<?php echo esc_attr($type); ?>"><?php echo esc_html(is_string($value) ? $value : wp_json_encode($value)); ?></td>
-                        <td><code><?php echo esc_html($dsm->cssVar($name)); ?></code></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <?php
-    }
-
-    private function renderCssTab(DesignSystemManager $dsm): void {
-        $css = $dsm->generateCSS();
-        ?>
-        <h2><?php esc_html_e('Generated CSS Preview', 'phantom-core'); ?></h2>
-        <div class="phantom-css-toolbar">
-            <span class="phantom-css-status"><?php esc_html_e('Live — updates on token edit', 'phantom-core'); ?></span>
-            <button class="button phantom-refresh-css"><?php esc_html_e('Refresh', 'phantom-core'); ?></button>
-        </div>
-        <textarea class="phantom-css-preview" readonly rows="30" style="width:100%;font-family:monospace;font-size:12px;"><?php echo esc_textarea($css); ?></textarea>
         <?php
     }
 }

@@ -129,7 +129,10 @@ class Data_Engine_Test extends TestCase {
         $this->assertArrayHasKey('woocommerce_cart', $nonces);
     }
 
-    public function test_get_customizer_css_returns_empty_string(): void {
-        $this->assertSame('', $this->engine->get_customizer_css());
+    public function test_get_customizer_css_returns_aether_map(): void {
+        $css = $this->engine->get_customizer_css();
+        $this->assertStringContainsString('phantom-aether-map', $css);
+        $this->assertStringContainsString('--color-primary', $css);
+        $this->assertStringContainsString('--color-text', $css);
     }
 }

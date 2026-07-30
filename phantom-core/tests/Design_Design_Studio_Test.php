@@ -15,33 +15,28 @@ class Design_Design_Studio_Test extends TestCase {
         $this->assertSame($this->page, DesignStudioPage::get_instance());
     }
 
-    public function test_render_presets_tab(): void {
-        $_GET['tab'] = 'presets';
-        $this->expectOutputRegex('/(Design Studio|Design Presets)/');
+    public function test_render_outputs_design_studio_shell(): void {
+        $this->expectOutputRegex('/(PHANTOM Design Studio|Design Studio)/');
         $this->page->render();
     }
 
-    public function test_render_dna_tab(): void {
-        $_GET['tab'] = 'dna';
-        $this->expectOutputRegex('/Theme DNA/');
+    public function test_render_includes_toolbar(): void {
+        $this->expectOutputRegex('/phantom-ds-toolbar/');
         $this->page->render();
     }
 
-    public function test_render_colors_tab(): void {
-        $_GET['tab'] = 'colors';
-        $this->expectOutputRegex('/Colors/');
+    public function test_render_includes_navigator(): void {
+        $this->expectOutputRegex('/phantom-ds-navigator/');
         $this->page->render();
     }
 
-    public function test_render_tokens_tab(): void {
-        $_GET['tab'] = 'tokens';
-        $this->expectOutputRegex('/All Design Tokens/');
+    public function test_render_includes_inspector(): void {
+        $this->expectOutputRegex('/phantom-ds-inspector/');
         $this->page->render();
     }
 
-    public function test_render_css_tab(): void {
-        $_GET['tab'] = 'css';
-        $this->expectOutputRegex('/CSS Preview/');
+    public function test_render_includes_canvas_iframe(): void {
+        $this->expectOutputRegex('/phantom-ds-iframe/');
         $this->page->render();
     }
 }

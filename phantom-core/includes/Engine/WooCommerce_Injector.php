@@ -48,7 +48,11 @@ class WooCommerce_Injector {
         $hero_component = Component_Registry::get_instance()->get('hero');
         if ($hero_component) {
           $hero_html = $hero_component->instance()->render($this->hero_adapter->normalize());
+          $before = $html;
           $html = $this->replace_inner_by_component($html, 'hero', $hero_html);
+          if ($html === $before) {
+            $html = $this->replace_inner_by_component($html, 'page-hero', $hero_html);
+          }
         }
       } catch (\Throwable $e) {}
     }

@@ -164,12 +164,11 @@ class Rest_Controller_Test extends TestCase {
         unset($_SERVER['HTTP_X_PHANTOM_NONCE']);
     }
 
-    public function test_cart_write_permission_check_returns_true_for_guest(): void {
-        // current_user_can stub returns true, but is_user_logged_in returns false
+    public function test_cart_write_permission_check_requires_nonce_for_guest(): void {
+        // Guests must also pass nonce (M2b fix)
         $request = new WP_REST_Request('POST', '/cart/add');
         $result = $this->controller->cart_write_permission_check($request);
-        // When not logged in, returns true without nonce check
-        $this->assertTrue($result);
+        $this->assertInstanceOf(WP_Error::class, $result);
     }
 
     // ──────────────────────────────────────────────

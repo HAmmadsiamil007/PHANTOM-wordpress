@@ -13,7 +13,7 @@ frontend/
 │   └── images/         # Static images (logos, products, icons)
 ```
 
-**No PHP templates. No server-side rendering.** All dynamic data injected client-side via REST API (51 routes, 44 unique paths).
+**No PHP templates. No server-side rendering.** All dynamic data injected client-side via REST API (60 routes, 44 unique paths).
 
 ---
 

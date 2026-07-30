@@ -386,7 +386,7 @@
             }
           })
           .catch(function (err) {
-            console.warn('[Phantom Partial]', err.message);
+            if (typeof console !== 'undefined' && console.warn) { console.warn('[Phantom Partial]', err.message); }
           });
         });
       });

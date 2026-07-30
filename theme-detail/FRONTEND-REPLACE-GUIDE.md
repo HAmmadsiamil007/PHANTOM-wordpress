@@ -19,7 +19,7 @@ PHP Backend (NEVER change this)
   │     └─ Outputs HTML + exit
   │
   ├─ rest-controller.php: phantom/v1 API
-  │     └─ 51 routes (44 unique paths): settings, menus, products, posts, cart, auth, template-packs
+  │     └─ 60 routes (44 unique paths): settings, menus, products, posts, cart, auth, template-packs
   │
   └─ class-customizer.php: CSS var generation
         └─ 136 CSS vars injected into every page
@@ -289,7 +289,7 @@ console.log(window.phantomData.rest_url);
 ### Phase 1: Audit (do this first)
 - [ ] Show current templates in `frontend/`
 - [ ] List all `data-phantom` attributes and their types
-- [ ] Map all 51 REST API routes (44 unique paths)
+- [ ] Map all 60 REST API routes (44 unique paths)
 - [ ] Note all 136 CSS var usages in CSS files
 - [ ] Identify hardcoded vs dynamic content
 

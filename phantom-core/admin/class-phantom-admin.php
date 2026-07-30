@@ -65,6 +65,7 @@ class PhantomAdmin {
             'phantom-backup-restore'   => ['title' => __('Backup & Restore', 'phantom-core'), 'render' => [$this, 'render_backup_restore']],
             'phantom-developer'        => ['title' => __('Developer', 'phantom-core'), 'render' => [$this, 'render_developer']],
             'phantom-system'           => ['title' => __('System', 'phantom-core'), 'render' => [$this, 'render_system']],
+            'phantom-design-system'  => ['title' => __('Design System', 'phantom-core'), 'render' => [$this, 'render_design_system']],
         ];
 
         foreach ($this->pages as $slug => $page) {
@@ -85,12 +86,13 @@ class PhantomAdmin {
             return;
         }
         wp_enqueue_style('phantom-admin', PHANTOM_CORE_URL . 'admin/css/admin.css', [], PHANTOM_CORE_VERSION);
+
+        // Design Studio assets are enqueued by DesignStudioPage::enqueue_assets.
+        // Only enqueue design-studio CSS here as shared dependency for other phantom pages.
+        if (str_contains($hook, '_page_phantom-design-studio')) {
+            return; // DesignStudioPage handles its own assets
+        }
         wp_enqueue_style('phantom-design-studio', PHANTOM_CORE_URL . 'admin/css/design-studio.css', ['phantom-admin'], PHANTOM_CORE_VERSION);
-        wp_enqueue_script('phantom-design-studio', PHANTOM_CORE_URL . 'admin/js/design-studio.js', ['jquery'], PHANTOM_CORE_VERSION, true);
-        wp_localize_script('phantom-design-studio', 'phantomDesign', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('phantom_design_nonce'),
-        ]);
     }
 
     public function render_dashboard(): void {
@@ -151,5 +153,9 @@ class PhantomAdmin {
 
     public function render_system(): void {
         SystemPage::get_instance()->render();
+    }
+
+    public function render_design_system(): void {
+        Customizer_Design_Panel::get_instance()->render();
     }
 }

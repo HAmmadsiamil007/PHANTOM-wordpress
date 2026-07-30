@@ -70,7 +70,7 @@
     <link rel="stylesheet" href="assets/css/responsive.css">
     <link rel="stylesheet" href="assets/css/a11y.css">
 </head>
-<body class="home-page">
+<body class="home-page" data-component="page" data-editable="true" data-version="1.0">
 
 <!-- Preloader -->
 <div id="preloader" aria-hidden="true">
@@ -167,7 +167,7 @@
     <!-- ═══════════════════════════════════════════════════════
          1. ANNOUNCEMENT BAR
          ═══════════════════════════════════════════════════════ -->
-    <div class="announcement-bar" id="announcementBar" role="status">
+    <div class="announcement-bar" id="announcementBar" role="status" data-component="announcement-bar" data-instance="announcement-global" data-token-group="announcement-bar" data-settings-group="announcement-bar" data-editable="true" data-version="1.0">
         <div class="announcement-content">
             <span><i class="fas fa-truck"></i> Free Shipping On Orders Over $200</span>
             <span class="separator">|</span>
@@ -180,7 +180,7 @@
     <!-- ═══════════════════════════════════════════════════════
          2. HEADER
          ═══════════════════════════════════════════════════════ -->
-    <header class="header" id="header" role="banner">
+    <header class="header" id="header" role="banner" data-component="header" data-instance="header-default" data-token-group="header" data-settings-group="header" data-editable="true" data-version="1.0">
         <div class="header-container">
             <a href="/" class="brand-logo">AETHER</a>
             
@@ -231,7 +231,7 @@
     <!-- ═══════════════════════════════════════════════════════
          3. HERO SLIDER
          ═══════════════════════════════════════════════════════ -->
-    <section class="hero-slider" id="heroSlider" data-phantom-bg="hero" data-mouse-parallax data-parallax-section>
+    <section class="hero-slider" id="heroSlider" data-component="hero" data-instance="hero-home" data-token-group="hero" data-settings-group="hero" data-editable="true" data-version="1.0" data-phantom-bg="hero" data-mouse-parallax data-parallax-section>
                 <div class="hero-fog" aria-hidden="true">
                     <div id="hl_01" class="hf-fog">
                         <div class="hf-img"></div>
@@ -325,14 +325,14 @@
     <!-- ═══════════════════════════════════════════════════════
          4. CATEGORY SELECTOR
          ═══════════════════════════════════════════════════════ -->
-    <section class="categories" id="categories">
+    <section class="categories" id="categories" data-component="categories" data-instance="categories-home" data-token-group="categories" data-settings-group="categories" data-editable="true" data-version="1.0">
         <div class="container">
             <div class="section-header">
                 <span class="section-label" data-phantom="section_label" data-motion-text="words">Shop by Category</span>
                 <h2 class="section-title" data-phantom="section_title" data-motion-text="words">Find Your Fit</h2>
             </div>
             
-            <div class="category-grid" data-component="category-grid" data-reveal-group>
+            <div class="category-grid" data-component="category-grid" data-instance="category-grid-home" data-token-group="collections" data-settings-group="collections" data-editable="true" data-version="1.0" data-reveal-group>
                 <a href="/shop" class="category-card category-card--large" data-tilt data-reveal-item>
                     <div class="category-card-bg">
                         <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Men's Collection" data-phantom-alt="category_men">
@@ -387,7 +387,7 @@
     <!-- ═══════════════════════════════════════════════════════
          5. BESTSELLERS
          ═══════════════════════════════════════════════════════ -->
-    <section class="bestsellers" id="bestsellers">
+    <section class="bestsellers" id="bestsellers" data-component="bestsellers" data-instance="bestsellers-home" data-token-group="bestsellers" data-settings-group="bestsellers" data-editable="true" data-version="1.0">
         <div class="container">
             <div class="section-header">
                 <span class="section-label" data-phantom="section_label" data-motion-text="words">Bestsellers</span>
@@ -395,9 +395,9 @@
                 <p class="section-subtitle" data-phantom="section_subtitle" data-motion-text="lines">The shoes everyone's talking about. Tried, tested, and obsessed over.</p>
             </div>
             
-            <div class="products-grid" data-component="products-grid" data-phantom-products="featured" data-reveal-group>
+            <div class="products-grid" data-component="products-grid" data-instance="products-grid-home" data-token-group="products" data-settings-group="products" data-editable="true" data-version="1.0" data-phantom-products="featured" data-reveal-group>
                 <!-- Product 1 -->
-                <div class="product-card" data-tilt data-reveal-item>
+                <div class="product-card" data-component="product-card" data-instance="void-runner" data-token-group="product-card" data-settings-group="product-card" data-editable="true" data-version="1.0" data-tilt data-reveal-item>
                     <div class="product-image" data-image-zoom>
                         <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-alt="product_1">
                         <span class="product-badge">Bestseller</span>
@@ -425,7 +425,7 @@
                 </div>
                 
                 <!-- Product 2 -->
-                <div class="product-card" data-tilt data-reveal-item>
+                <div class="product-card" data-component="product-card" data-instance="cloud-stride" data-token-group="product-card" data-settings-group="product-card" data-editable="true" data-version="1.0" data-tilt data-reveal-item>
                     <div class="product-image" data-image-zoom>
                         <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-alt="product_2">
                         <span class="product-badge badge-new">New</span>
@@ -453,7 +453,7 @@
                 </div>
                 
                 <!-- Product 3 -->
-                <div class="product-card" data-tilt data-reveal-item>
+                <div class="product-card" data-component="product-card" data-instance="midnight" data-token-group="product-card" data-settings-group="product-card" data-editable="true" data-version="1.0" data-tilt data-reveal-item>
                     <div class="product-image" data-image-zoom>
                         <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-alt="product_3">
                         <span class="product-badge badge-limited">Limited</span>
@@ -481,7 +481,7 @@
                 </div>
                 
                 <!-- Product 4 -->
-                <div class="product-card" data-tilt data-reveal-item>
+                <div class="product-card" data-component="product-card" data-instance="aero-sprint" data-token-group="product-card" data-settings-group="product-card" data-editable="true" data-version="1.0" data-tilt data-reveal-item>
                     <div class="product-image" data-image-zoom>
                         <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Aero Sprint" data-phantom-alt="product_4">
                         <span class="product-badge badge-new">New</span>
@@ -518,7 +518,7 @@
     <!-- ═══════════════════════════════════════════════════════
          6. REVIEWS
          ═══════════════════════════════════════════════════════ -->
-    <section class="reviews" id="reviews">
+    <section class="reviews" id="reviews" data-component="reviews" data-instance="reviews-home" data-token-group="reviews" data-settings-group="reviews" data-editable="true" data-version="1.0">
         <div class="container">
             <div class="section-header">
                 <span class="section-label" data-phantom="section_label" data-motion-text="words">Reviews</span>
@@ -641,7 +641,7 @@
     <!-- ═══════════════════════════════════════════════════════
          7. FAQ
          ═══════════════════════════════════════════════════════ -->
-    <section class="faq-section" id="faq">
+    <section class="faq-section" id="faq" data-component="faq" data-instance="faq-home" data-token-group="faq" data-settings-group="faq" data-editable="true" data-version="1.0">
         <div class="container">
             <div class="section-header">
                 <span class="section-label" data-phantom="section_label" data-motion-text="words">FAQ</span>
@@ -726,7 +726,7 @@
          NEWSLETTER
          ═══════════════════════════════════════════════════════ -->
 
-    <section class="newsletter-section" id="newsletter">
+    <section class="newsletter-section" id="newsletter" data-component="newsletter" data-instance="newsletter-home" data-token-group="newsletter" data-settings-group="newsletter" data-editable="true" data-version="1.0">
         <div class="newsletter-glow" aria-hidden="true"></div>
         <div class="container">
             <div class="newsletter-inner">
@@ -755,7 +755,7 @@
          8. FOOTER
          ═══════════════════════════════════════════════════════ -->
     </main>
-    <footer class="footer" id="footer" role="contentinfo" aria-label="Site footer" data-phantom-menu="footer">
+    <footer class="footer" id="footer" role="contentinfo" aria-label="Site footer" data-component="footer" data-instance="footer-default" data-token-group="footer" data-settings-group="footer" data-editable="true" data-version="1.0" data-phantom-menu="footer">
         <div class="container">
             <div class="footer-top">
                 <div class="footer-brand">

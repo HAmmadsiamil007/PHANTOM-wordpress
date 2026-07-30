@@ -1,6 +1,6 @@
 # Premium Frontend Template — CLI Agent Guide
 
-> **Purpose:** Complete guide for any AI coding agent to build premium, animated, 3D-enabled, scrollable frontend templates that connect to **Phantom Core** (decoupled WordPress framework v2.0.0 — ~612 settings, 51 REST routes (44 unique paths), 136 CSS vars, 3 template packs).
+> **Purpose:** Complete guide for any AI coding agent to build premium, animated, 3D-enabled, scrollable frontend templates that connect to **Phantom Core** (decoupled WordPress framework v2.0.0 — ~612 settings, 60 REST routes (44 unique paths), 136 CSS vars, 3 template packs).
 >
 > **Stack:** Phantom Core Data Bridge + Bootstrap 5 + GSAP + Three.js + Lenis + Swiper
 >
@@ -19,7 +19,7 @@ Settings Registry (~612 settings, 46 sections)
 
 Theme Options (Customizer → CSS vars → Frontend)
 
-Customizer (16 panels, 45 sections, 12 custom control files (11 types + 1 base), 136 CSS vars)
+Customizer (16 panels, 46 sections, 12 custom control files (11 types + 1 base), 136 CSS vars)
 
 Menus (data-phantom-menu → WP Nav Menus)
 
@@ -29,7 +29,7 @@ Products (WooCommerce product grids via data-phantom-products)
 
 Categories (data-phantom-categories via REST)
 
-API (51 routes under phantom/v1, 44 unique paths)
+API (60 routes under phantom/v1, 44 unique paths)
       │
       ▼
           Render Engine
@@ -227,7 +227,7 @@ These class names are hardcoded in JS. Templates MUST use them:
 
 | Feature | How It Works In Phantom Core |
 |---------|------------------------------|
-| **Routing** | `Shell.php` hooks `template_redirect` (priority 1), maps URL slug → HTML file. 51 routes (44 unique paths). |
+| **Routing** | `Shell.php` hooks `template_redirect` (priority 1), maps URL slug → HTML file. 60 routes (44 unique paths). |
 | **SEO** | Shell injects `<title>`, meta description, OG tags, Twitter Card, JSON-LD schema per page type |
 | **Auth** | 4 REST endpoints: login, register, password-reset, logout. Nonce-based. JS handles forms. |
 | **Users** | My account page fetches user orders via `/phantom/v1/user/orders` |
@@ -730,7 +730,7 @@ $html = str_replace('<!--sidebar-->', $sidebar_html, $html);
 | Get shipping | `GET /phantom/v1/cart/shipping-methods` | GET |
 | Checkout | `wc-ajax=checkout` | POST (WC native) |
 
-### 2.10 REST API (51 Routes Under `phantom/v1`, 44 Unique Paths)
+### 2.10 REST API (60 Routes Under `phantom/v1`, 44 Unique Paths)
 
 | # | Endpoint | Methods | Permission | Purpose |
 |---|----------|---------|------------|---------|
@@ -785,7 +785,7 @@ Since v2.0.0, Phantom Core has expanded beyond its original settings/customizer/
 
 | Layer | Components | Purpose |
 |-------|-----------|---------|
-| **Data Layer** | 15 Adapters (Post, Page, User, Footer, Settings, Product, Category, Menu, Cart, Coupon, Order, Comment, Tag, Search, Hero), 11 ViewModels, `Data_Normalizer`, `Data_Provider` | Normalizes all WordPress/WooCommerce data into consistent schemas |
+| **Data Layer** | 16 Adapters (Post, Page, User, Footer, Settings, Product, Category, Menu, Cart, Coupon, Order, Comment, Tag, Search_Result, Hero, Cart_Adapter), 11 ViewModels, `Data_Normalizer`, `Data_Provider` | Normalizes all WordPress/WooCommerce data into consistent schemas |
 | **Layout Registry** | `Layout`, `Layout_Registry`, `Layout_Manager` with 7 default layouts | Controls page structure and template selection |
 | **Design API** | `Design_API` facade over `DesignSystemManager` with 10 filterable methods | Unified design token access |
 | **Hook Registry** | `Hook_Registry` tracks, registers, and dispatches hooks with introspection | Decoupled event-driven architecture |

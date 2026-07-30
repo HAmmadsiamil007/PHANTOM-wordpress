@@ -99,7 +99,10 @@ class Settings_Registry {
 		$merged    = array();
 		foreach ( $sections as $name => $section_entries ) {
 			foreach ( $section_entries as $key => $entry ) {
-				if ( isset( $keys_seen[ $key ] ) && 'design_tokens' !== $name ) {
+				if ( 'design_tokens' === $name && isset( $keys_seen[ $key ] ) ) {
+					continue;
+				}
+				if ( isset( $keys_seen[ $key ] ) ) {
 					_doing_it_wrong(
 						__METHOD__,
 						sprintf(

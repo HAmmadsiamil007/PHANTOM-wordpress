@@ -10,13 +10,13 @@ A **decoupled WordPress framework** that replaces traditional PHP template hiera
 | Plugin | `phantom-core` (decoupled framework + static HTML SPA) |
 | Theme | `phantom-theme` — Bootstrap 5 companion, 7 page templates, 5 multi-column variants, 10 widget areas (3 theme + 7 plugin), 6 nav locations |
 | Settings | **~612** across **46** sections |
-| REST API Endpoints | **51** under `phantom/v1` (44 unique paths) |
-| Customizer | **16** panels, **45** sections, 11 custom control types (3 used: ast-toggle=103, ast-color=56, ast-select=37) |
+| REST API Endpoints | **60** under `phantom/v1` (44 unique paths) |
+| Customizer | **16** panels, **46** sections, 11 custom control types (3 used: ast-toggle=103, ast-color=56, ast-select=37) |
 | Custom Controls | **11** types (3 actively used) |
 | PHP Files | **~217** (all pass `php -l`, zero syntax errors) |
 | HTML Templates | **22** (static, replaceable, in `frontend/html/`) |
-| Frontend JS | **27** files (plugin frontend) + **6** (admin) |
-| PHPUnit Tests | **399** passing, 0 failures, 0 errors |
+| Frontend JS | **29** files (plugin frontend) + **6** (admin) |
+| PHPUnit Tests | **463** passing, 0 failures, 0 errors |
 | WooCommerce | Full integration via Store API + `wc-ajax` (18 WC REST endpoints) |
 | Backend Health | **100/100** forensic code health, **100/100** architecture alignment |
 | Custom CSS Modules | **9** (colors, typography, header, footer, layout, buttons, product, responsive, **hero**) |
@@ -31,13 +31,13 @@ WordPress ─── WooCommerce
      │
 Phantom Core Plugin
   ├── Settings Registry (~612 settings)
-  ├── Customizer (16 panels, 45 sections, 136 CSS vars)
+  ├── Customizer (16 panels, 46 sections, 136 CSS vars)
   ├── Admin Settings Page (tabbed UI, 15 tabs)
-  ├── REST API (phantom/v1 — 51 routes, 44 unique paths)
+  ├── REST API (phantom/v1 — 60 routes, 44 unique paths)
   ├── CSS Generation Engine (9 modules)
   ├── Global Color Palette (4 presets, dark mode)
   ├── Font System (Google + system + local)
-  ├── Data Layer (15 Adapters + 11 ViewModels + Normalizer + Provider)
+  ├── Data Layer (16 Adapters + 11 ViewModels + Normalizer + Provider)
   ├── Layout Registry (7 default layouts)
   ├── Design API (facade over DesignSystemManager)
   ├── Hook Registry (introspection + tracking)
@@ -68,7 +68,7 @@ phantom-theme (Bootstrap 5 fallback)
 
 | Layer | Components | Status |
 |-------|-----------|--------|
-| **Data Layer** | 15 Adapters (Post, Page, User, Product, Category, Cart, Menu, Settings, Footer, Hero, Coupon, Order, Comment, Tag, Search), 11 ViewModels, Data_Normalizer, Data_Provider | ✅ 100% |
+| **Data Layer** | 16 Adapters (Post, Page, User, Product, Category, Cart, Menu, Settings, Footer, Hero, Coupon, Order, Comment, Tag, Search, Search_Result), 11 ViewModels, Data_Normalizer, Data_Provider | ✅ 100% |
 | **Infrastructure** | Layout Registry (7 layouts), Design API, Hook Registry, Asset Registry, Capability_Manager, Component_Metadata, Template_Manifest | ✅ 100% |
 | **Bridges** | BridgeInterface contract, Plugin_Bridge abstract, WooCommerce_Bridge, Wishlist_Bridge, Mailchimp_Bridge, Bridge_Manager + 6 Compatibility bridges (Yoast, WPML, RankMath, Gutenberg, Elementor, CF7) | ✅ 100% |
 | **Public API** | 7 facades: Render, Component, Animation, Settings, Template, Developer, Design | ✅ 100% |
@@ -149,7 +149,7 @@ docker cp optix_wordpress:/var/www/html/wp-content/plugins/phantom-core ./phanto
 | Code Quality | 100/100 | 126 issues fixed, dead code removed, proper typing |
 | Security | 100/100 | Nonce, sanitization, escaping, capabilities all verified |
 | Performance | 100/100 | Options-based storage, CSS caching, no slow operations |
-| Tests | 100/100 | 399 tests passing across all subsystems |
+| Tests | 100/100 | 463 tests passing across all subsystems |
 | Architecture Alignment | 100/100 | Data Layer, Layout Registry, Bridges, Public API, all 9 registries |
 | **Aggregate** | **100/100** | Production-ready for any frontend |
 
@@ -159,6 +159,17 @@ docker cp optix_wordpress:/var/www/html/wp-content/plugins/phantom-core ./phanto
 - **Shop page fog effect**: Transparent card backgrounds (`rgba(9,9,11,0.6)` + `backdrop-filter: blur(8px)`), section background transparent, fog visible through cards
 - **Shop page encoding**: `—` replaced with `&mdash;` in 6 product names
 - **Responsive CSS**: Fixed 3 breakpoints to use flex layout instead of grid for product cards
+
+**2026-07-30 24-issue repair & docs overhaul:**
+- **PHP syntax check**: 174 files clean, zero syntax errors
+- **Test suite**: 463 tests pass (11,850 assertions), up from 399
+- **REST routes**: 60 routes under phantom/v1 verified
+- **Container_Config**: 16 adapters + 11 ViewModels registered
+- **Fixed**: Cart_Item_Test bootstrap, H1 (phantom_customize_register priority), H2 (firebase-auth.js dead import), H6 (WP_DEBUG gate for error_log), H7 (customizer-preview.js unused code), M2a (PHPDoc params), M2b (template-loader.php pack_path caching), M3 (PHPDoc mixup in data-provider.php), M4 (three_js_effects flag in frontend-utils.js), L1 (admin.js unused variables), L3 (redundant test for M2b)
+- **11 new test files** added, tests escalated 399→463
+- **AGENTS.md**: stale references fixed
+- **Docs**: All 10 theme-detail/ + 17 customizer/ docs rewritten
+- **All changes pushed to Docker**
 
 **2026-07-28 v2.0.0 Release — Previous Updates:**
 - **Template Packs**: 3 packs (Dark/Minimal/Bold) with manifests, SCSS, HTML overrides for index/shop/404/product-card/blog-card

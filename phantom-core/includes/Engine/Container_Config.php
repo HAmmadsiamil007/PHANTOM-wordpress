@@ -60,12 +60,15 @@ class Container_Config {
 
 		// 8. Render_Engine — singleton with pack resolution
 		$container->singleton(Render_Engine::class, function ($c) {
-			$pack = get_option('phantom_template_pack', 'default');
+			$pack = 'default';
             if (class_exists('\PhantomCore\Settings_Registry')) {
                 $registry = \PhantomCore\Settings_Registry::get_instance();
                 if ($registry->has('template_pack')) {
                     $pack = $registry->get('template_pack');
                 }
+            }
+            if ('default' === $pack) {
+                $pack = get_option('phantom_template_pack', 'default');
             }
             $engine = new Render_Engine(
                 $c->get(Data_Engine::class),
@@ -79,7 +82,7 @@ class Container_Config {
 
         // 9. Demo_Registry — singleton (no deps, scans filesystem)
         $container->singleton(Demo_Registry::class, function () {
-            return new Demo_Registry();
+            return Demo_Registry::get_instance();
         });
 
         // 10. Demo_Loader — singleton wrapping Template_Loader
@@ -173,10 +176,9 @@ class Container_Config {
 			return \PhantomCore\Layout\Layout_Registry::get_instance();
 		});
 
-		// 27. Layout_Manager — static init called during bootstrap
+		// 27. Layout_Manager — singleton instance
 		$container->singleton(\PhantomCore\Layout\Layout_Manager::class, function () {
-			\PhantomCore\Layout\Layout_Manager::init();
-			return null; // init-only, no instance needed
+			return \PhantomCore\Layout\Layout_Manager::get_instance();
 		});
 
 		// 28. Design_API — singleton facade (Phase C)
@@ -246,6 +248,33 @@ class Container_Config {
 		$container->singleton(\PhantomCore\Adapters\Post_Adapter::class, function () {
 			return new \PhantomCore\Adapters\Post_Adapter();
 		});
+		$container->singleton(\PhantomCore\Adapters\Page_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Page_Adapter();
+		});
+		$container->singleton(\PhantomCore\Adapters\Settings_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Settings_Adapter();
+		});
+		$container->singleton(\PhantomCore\Adapters\Category_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Category_Adapter();
+		});
+		$container->singleton(\PhantomCore\Adapters\Comment_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Comment_Adapter();
+		});
+		$container->singleton(\PhantomCore\Adapters\Coupon_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Coupon_Adapter();
+		});
+		$container->singleton(\PhantomCore\Adapters\Hero_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Hero_Adapter();
+		});
+		$container->singleton(\PhantomCore\Adapters\Menu_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Menu_Adapter();
+		});
+		$container->singleton(\PhantomCore\Adapters\Order_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Order_Adapter();
+		});
+		$container->singleton(\PhantomCore\Adapters\Tag_Adapter::class, function () {
+			return new \PhantomCore\Adapters\Tag_Adapter();
+		});
 
 		// ViewModels
 		$container->singleton(\PhantomCore\ViewModels\Product_ViewModel::class, function () {
@@ -269,15 +298,34 @@ class Container_Config {
 		$container->singleton(\PhantomCore\ViewModels\Category_ViewModel::class, function () {
 			return new \PhantomCore\ViewModels\Category_ViewModel();
 		});
-
-		// Component_Metadata — template/asset compatibility
-		$container->singleton(\PhantomCore\Component_Metadata::class, function () {
-			return \PhantomCore\Component_Metadata::get_instance();
+		$container->singleton(\PhantomCore\ViewModels\Page_ViewModel::class, function () {
+			return new \PhantomCore\ViewModels\Page_ViewModel();
 		});
+		$container->singleton(\PhantomCore\ViewModels\Settings_ViewModel::class, function () {
+			return new \PhantomCore\ViewModels\Settings_ViewModel();
+		});
+		$container->singleton(\PhantomCore\ViewModels\Coupon_ViewModel::class, function () {
+			return new \PhantomCore\ViewModels\Coupon_ViewModel();
+		});
+		$container->singleton(\PhantomCore\ViewModels\Tag_ViewModel::class, function () {
+			return new \PhantomCore\ViewModels\Tag_ViewModel();
+		});
+
+	// Component_Metadata — template/asset compatibility
+	$container->singleton(\PhantomCore\Components\Component_Metadata::class, function () {
+		return \PhantomCore\Components\Component_Metadata::get_instance();
+	});
 
 		// 38. Swiper_Bridge — singleton
 		$container->singleton(\PhantomCore\Bridges\Swiper_Bridge::class, function () {
 			return \PhantomCore\Bridges\Swiper_Bridge::get_instance();
 		});
+
+	// 39. Customizer_Design_Panel — singleton (Phase 8, admin only)
+	if (is_admin()) {
+		$container->singleton(\PhantomCore\Admin\Customizer_Design_Panel::class, function () {
+			return \PhantomCore\Admin\Customizer_Design_Panel::get_instance();
+		});
+	}
     }
 }

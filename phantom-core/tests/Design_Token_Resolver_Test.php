@@ -13,11 +13,11 @@ class Design_Token_Resolver_Test extends TestCase {
 
     public function test_resolve_returns_default_when_option_not_set(): void {
         $value = $this->resolver->resolve('color.primary');
-        $this->assertSame('#C1121F', $value);
+        $this->assertSame('#C8956C', $value);
     }
 
     public function test_resolve_returns_option_value_when_set(): void {
-        update_option('phantom_primary_color', '#FF0000');
+        update_option('phantom_color_primary', '#FF0000');
         $this->resolver->invalidateCache();
         $this->assertSame('#FF0000', $this->resolver->resolve('color.primary'));
     }
@@ -49,7 +49,7 @@ class Design_Token_Resolver_Test extends TestCase {
     }
 
     public function test_invalidateCache_clears(): void {
-        update_option('phantom_primary_color', '#00FF00');
+        update_option('phantom_color_primary', '#00FF00');
         $this->resolver->invalidateCache();
         $this->assertSame('#00FF00', $this->resolver->resolve('color.primary'));
     }

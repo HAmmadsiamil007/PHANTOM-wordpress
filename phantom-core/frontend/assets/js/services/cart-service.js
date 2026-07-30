@@ -30,7 +30,7 @@
         }
         return resp;
       }).catch(function(err) {
-        console.error('[Phantom Cart] Add error:', err);
+        if (typeof console !== 'undefined' && console.error) { console.error('[Phantom Cart] Add error:', err); }
       });
     },
 

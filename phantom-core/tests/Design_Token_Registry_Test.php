@@ -24,8 +24,8 @@ class Design_Token_Registry_Test extends TestCase {
         $token = $this->registry->get('color.primary');
         $this->assertIsArray($token);
         $this->assertSame('color', $token['category']);
-        $this->assertSame('#C1121F', $token['default']);
-        $this->assertSame('phantom_primary_color', $token['option_key']);
+        $this->assertSame('#C8956C', $token['default']);
+        $this->assertSame('phantom_color_primary', $token['option_key']);
     }
 
     public function test_get_returns_null_for_nonexistent(): void {
@@ -55,11 +55,11 @@ class Design_Token_Registry_Test extends TestCase {
     }
 
     public function test_get_option_key_returns_configured_key(): void {
-        $this->assertSame('phantom_primary_color', $this->registry->get_option_key('color.primary'));
+        $this->assertSame('phantom_color_primary', $this->registry->get_option_key('color.primary'));
     }
 
     public function test_get_default_returns_configured_default(): void {
-        $this->assertSame('#C1121F', $this->registry->get_default('color.primary'));
+        $this->assertSame('#C8956C', $this->registry->get_default('color.primary'));
     }
 
     public function test_get_type_returns_correct_type(): void {
