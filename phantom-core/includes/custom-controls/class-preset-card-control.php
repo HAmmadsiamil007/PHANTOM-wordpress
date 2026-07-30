@@ -17,6 +17,10 @@ class Preset_Card_Control extends Control_Base {
         return 'sanitize_text_field';
     }
 
+    public function enqueue(): void {
+        wp_enqueue_script('phantom-ast-preset-card', PHANTOM_CORE_URL . 'admin/js/custom-controls/ast-preset-card.js', array('customize-controls'), PHANTOM_CORE_VERSION, true);
+    }
+
     public function render_content(): void {
         $presets = $this->choices ?? [];
         $current = $this->value();
