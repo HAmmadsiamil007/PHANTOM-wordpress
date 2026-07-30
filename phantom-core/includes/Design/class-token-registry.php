@@ -66,4 +66,34 @@ class TokenRegistry {
         $this->load();
         return count($this->tokens);
     }
+
+    public function get_usage(string $token_name): array {
+        $this->load();
+        return $this->tokens[$token_name]['usage'] ?? [];
+    }
+
+    public function get_tokens_used_by_component(string $component_id): array {
+        $this->load();
+        $result = [];
+        foreach ($this->tokens as $name => $def) {
+            $usage = $def['usage'] ?? [];
+            if (in_array($component_id, $usage, true)) {
+                $result[] = $name;
+            }
+        }
+        return $result;
+    }
+
+    public function count_by_category(): array {
+        $this->load();
+        $cats = [];
+        foreach ($this->tokens as $t) {
+            $cat = $t['category'] ?? 'other';
+            if (!isset($cats[$cat])) {
+                $cats[$cat] = 0;
+            }
+            $cats[$cat]++;
+        }
+        return $cats;
+    }
 }
