@@ -18,6 +18,11 @@ return [
             'shape_style' => 'sharp', 'typography_style' => 'sans',
             'elevation_style' => 'soft', 'color_style' => 'neutral',
         ],
+        'metadata' => [
+            'description' => 'Clean classic light theme',
+            'colors' => ['#C1121F', '#FFFFFF', '#333333', '#F5F5F5'],
+            'preview_image' => '',
+        ],
         'tokens' => [
             'color.primary' => '#C1121F', 'color.background' => '#FFFFFF',
             'color.text.primary' => '#333333',
@@ -39,6 +44,11 @@ return [
             'shape_style' => 'rounded', 'typography_style' => 'sans',
             'elevation_style' => 'floating', 'color_style' => 'vibrant',
         ],
+        'metadata' => [
+            'description' => 'Modern dark theme',
+            'colors' => ['#E53935', '#121212', '#1E1E1E', '#FFFFFF'],
+            'preview_image' => '',
+        ],
         'tokens' => [
             'color.primary' => '#E53935', 'color.background' => '#121212',
             'color.surface' => '#1E1E1E', 'color.text.primary' => '#FFFFFF',
@@ -56,6 +66,11 @@ return [
             'design_style' => 'minimal', 'motion_style' => 'subtle',
             'shape_style' => 'sharp', 'typography_style' => 'sans',
             'elevation_style' => 'flat', 'color_style' => 'monochrome',
+        ],
+        'metadata' => [
+            'description' => 'Minimal high-contrast monochrome',
+            'colors' => ['#000000', '#FFFFFF', '#F8F8F8', '#111111'],
+            'preview_image' => '',
         ],
         'tokens' => [
             'color.primary' => '#000000', 'color.background' => '#FFFFFF',
@@ -78,6 +93,11 @@ return [
             'shape_style' => 'sharp', 'typography_style' => 'sans',
             'elevation_style' => 'floating', 'color_style' => 'vibrant',
         ],
+        'metadata' => [
+            'description' => 'Vibrant modern with brand feel',
+            'colors' => ['#6C63FF', '#FF6584', '#FFFFFF', '#1A1A2E'],
+            'preview_image' => '',
+        ],
         'tokens' => [
             'color.primary' => '#6C63FF', 'color.secondary' => '#FF6584',
             'typography.heading.font' => "'Inter', sans-serif",
@@ -96,6 +116,11 @@ return [
             'design_style' => 'luxury', 'motion_style' => 'elegant',
             'shape_style' => 'rounded', 'typography_style' => 'serif',
             'elevation_style' => 'soft', 'color_style' => 'vibrant',
+        ],
+        'metadata' => [
+            'description' => 'Elegant black gold premium theme',
+            'colors' => ['#000000', '#D4AF37', '#8B7355', '#1A1A1A'],
+            'preview_image' => '',
         ],
         'tokens' => [
             'color.primary' => '#000000', 'color.secondary' => '#D4AF37',
@@ -120,6 +145,11 @@ return [
             'shape_style' => 'sharp', 'typography_style' => 'serif',
             'elevation_style' => 'soft', 'color_style' => 'neutral',
         ],
+        'metadata' => [
+            'description' => 'Traditional serif-heavy classic',
+            'colors' => ['#1A365D', '#2D3748', '#F7FAFC', '#FFFFFF'],
+            'preview_image' => '',
+        ],
         'tokens' => [
             'color.primary' => '#1A365D', 'color.secondary' => '#2D3748',
             'typography.heading.font' => "'Playfair Display', serif",
@@ -138,6 +168,11 @@ return [
             'design_style' => 'modern', 'motion_style' => 'smooth',
             'shape_style' => 'rounded', 'typography_style' => 'sans',
             'elevation_style' => 'glass', 'color_style' => 'vibrant',
+        ],
+        'metadata' => [
+            'description' => 'Frosted glass with purple gradient',
+            'colors' => ['#7C3AED', '#EC4899', 'rgba(255,255,255,0.1)', 'rgba(255,255,255,0.2)'],
+            'preview_image' => '',
         ],
         'tokens' => [
             'color.primary' => '#7C3AED', 'color.secondary' => '#EC4899',
