@@ -29,6 +29,7 @@ class Customizer {
 		add_action( 'customize_preview_init', array( $this, 'preview_js' ) );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'controls_js' ) );
 		add_action( 'customize_save_after', array( $this, 'sync_options' ) );
+		add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_welcome_panel' ) );
 		add_action( 'wp_head', array( $this, 'output_inline_css' ), 100 );
 	}
 
@@ -701,5 +702,36 @@ class Customizer {
 			return '';
 		}
 		return '<style id="phantom-customizer-css">:root{' . $css . '}</style>';
+	}
+
+	public function render_welcome_panel(): void {
+		?>
+		<div id="phantom-welcome-overlay" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;">
+			<div style="background:#fff;border-radius:12px;padding:32px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+				<h2 style="margin:0 0 8px;font-size:22px;font-weight:700;"><?php esc_html_e('Welcome to Phantom Core', 'phantom-core'); ?></h2>
+				<p style="margin:0 0 16px;font-size:14px;color:#555;line-height:1.5;"><?php esc_html_e('Your design system hub for presets, tokens, components, and live preview. Start by selecting a preset or customizing individual tokens below.', 'phantom-core'); ?></p>
+				<ul style="text-align:left;margin:0 0 20px;padding:0;list-style:none;font-size:13px;line-height:1.8;">
+					<li>🎨 <strong><?php esc_html_e('Presets', 'phantom-core'); ?></strong> — <?php esc_html_e('Pre-built style configurations', 'phantom-core'); ?></li>
+					<li>🎯 <strong><?php esc_html_e('Tokens', 'phantom-core'); ?></strong> — <?php esc_html_e('Fine-tune colors, fonts, spacing', 'phantom-core'); ?></li>
+					<li>🧩 <strong><?php esc_html_e('Components', 'phantom-core'); ?></strong> — <?php esc_html_e('Manage reusable design elements', 'phantom-core'); ?></li>
+					<li>📊 <strong><?php esc_html_e('Live Preview', 'phantom-core'); ?></strong> — <?php esc_html_e('See changes in real time', 'phantom-core'); ?></li>
+				</ul>
+				<button type="button" id="phantom-welcome-dismiss" class="button button-primary" style="padding:8px 24px;font-size:14px;"><?php esc_html_e('Get Started', 'phantom-core'); ?></button>
+			</div>
+		</div>
+		<script>
+		(function() {
+			var dismissed = localStorage.getItem('phantom_customizer_welcome');
+			if (!dismissed) {
+				var overlay = document.getElementById('phantom-welcome-overlay');
+				overlay.style.display = 'flex';
+				document.getElementById('phantom-welcome-dismiss').addEventListener('click', function() {
+					overlay.style.display = 'none';
+					localStorage.setItem('phantom_customizer_welcome', '1');
+				});
+			}
+		})();
+		</script>
+		<?php
 	}
 }
