@@ -190,30 +190,69 @@ class Customizer {
 			}
 			if ($section_slug === 'design_system') {
 				$token_count = 0;
+				$token_cats = [];
+				$comp_count = 0;
+				$comp_cats = [];
 				$preset_count = 0;
 				$current_preset = 'None';
+				$css_var_count = 0;
 				if (class_exists('\PhantomCore\Design\DesignSystemManager')) {
 					$dsm = \PhantomCore\Design\DesignSystemManager::get_instance();
 					$compileResult = $dsm->compile();
 					$token_count = count($compileResult->tokens);
+					$css_var_count = count($compileResult->cssVars ?? []);
 					$presets = $dsm->availablePresets();
 					$preset_count = count($presets);
 					$current = $dsm->currentPreset();
 					$current_preset = esc_html($current['name'] ?? 'None');
+					if (class_exists('\PhantomCore\Design\TokenRegistry')) {
+						$token_cats = \PhantomCore\Design\TokenRegistry::get_instance()->count_by_category();
+					}
+					if (class_exists('\PhantomCore\Design\Component_Definition_Registry')) {
+						$comp_count = \PhantomCore\Design\Component_Definition_Registry::get_instance()->count();
+						$comp_cats = \PhantomCore\Design\Component_Definition_Registry::get_instance()->count_by_category();
+					}
 				}
+				$health_items = [
+					['label' => __('CSS Generation', 'phantom-core'), 'status' => class_exists('\PhantomCore\Design\DesignSystemManager') ? '✅' : '❌', 'detail' => __('Active', 'phantom-core')],
+					['label' => __('Token Registry', 'phantom-core'), 'status' => $token_count > 0 ? '✅' : '❌', 'detail' => sprintf(__('%d tokens loaded', 'phantom-core'), $token_count)],
+					['label' => __('Component Registry', 'phantom-core'), 'status' => $comp_count > 0 ? '✅' : '❌', 'detail' => sprintf(__('%d components', 'phantom-core'), $comp_count)],
+					['label' => __('Preset Manager', 'phantom-core'), 'status' => $preset_count > 0 ? '✅' : '❌', 'detail' => sprintf(__('%d presets', 'phantom-core'), $preset_count)],
+				];
+				$desc = '<div style="padding:8px 0;">';
+				$desc .= '<h4 style="margin:0 0 8px;">' . __('Design System Overview', 'phantom-core') . '</h4>';
+				$desc .= '<table style="width:100%;font-size:12px;border-collapse:collapse;">';
+				$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Tokens', 'phantom-core') . '</td><td>' . (string)$token_count . '</td></tr>';
+				if (!empty($token_cats)) {
+					$cat_parts = [];
+					foreach ($token_cats as $cat => $count) {
+						$cat_parts[] = ucfirst($cat) . ': ' . $count;
+					}
+					$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Tokens by Category', 'phantom-core') . '</td><td style="font-size:11px;">' . implode(' &middot; ', $cat_parts) . '</td></tr>';
+				}
+				if (!empty($comp_cats)) {
+					$comp_parts = [];
+					foreach ($comp_cats as $cat => $count) {
+						$comp_parts[] = ucfirst($cat) . ': ' . $count;
+					}
+					$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Components', 'phantom-core') . '</td><td>' . (string)$comp_count . ' (' . implode(' &middot; ', $comp_parts) . ')</td></tr>';
+				}
+				$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('CSS Variables', 'phantom-core') . '</td><td>' . (string)$css_var_count . '</td></tr>';
+				$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Presets', 'phantom-core') . '</td><td>' . (string)$preset_count . ' &middot; ' . __('Active', 'phantom-core') . ': ' . $current_preset . '</td></tr>';
+				$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Framework', 'phantom-core') . '</td><td>v' . PHANTOM_CORE_VERSION . '</td></tr>';
+				$desc .= '</table>';
+				$desc .= '<h4 style="margin:12px 0 8px;">' . __('System Health', 'phantom-core') . '</h4>';
+				$desc .= '<table style="width:100%;font-size:12px;border-collapse:collapse;">';
+				foreach ($health_items as $item) {
+					$desc .= '<tr><td style="padding:2px 8px 2px 0;">' . $item['status'] . ' ' . $item['label'] . '</td><td style="color:#666;">' . $item['detail'] . '</td></tr>';
+				}
+				$desc .= '</table>';
 				$design_system_url = admin_url('admin.php?page=phantom-design-system');
 				$design_studio_url = admin_url('admin.php?page=phantom-design-studio');
-				$description = sprintf(
-					'<div style="padding:8px 0;">' .
-					'<p><strong>%s</strong> %s &middot; <strong>%s</strong> %s &middot; <strong>%s</strong> %s</p>' .
-					'<p><a href="%s" class="button button-secondary" target="_blank">%s</a> <a href="%s" class="button button-primary" target="_blank">%s</a></p>' .
-					'</div>',
-					__('Tokens:', 'phantom-core'), (string)$token_count,
-					__('Active Preset:', 'phantom-core'), $current_preset,
-					__('Available Presets:', 'phantom-core'), (string)$preset_count,
-					esc_url($design_system_url), __('View Full Design System &rarr;', 'phantom-core'),
-					esc_url($design_studio_url), __('Open Design Studio &rarr;', 'phantom-core')
-				);
+				$desc .= '<p style="margin-top:12px;"><a href="' . esc_url($design_system_url) . '" class="button button-secondary" target="_blank">' . __('View Full Design System &rarr;', 'phantom-core') . '</a> ';
+				$desc .= '<a href="' . esc_url($design_studio_url) . '" class="button button-primary" target="_blank">' . __('Open Design Studio &rarr;', 'phantom-core') . '</a></p>';
+				$desc .= '</div>';
+				$description = $desc;
 			}
 			$wp_customize->add_section( $section_id, array(
 				'title'       => $section_label,
