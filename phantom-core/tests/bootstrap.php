@@ -684,6 +684,7 @@ require_once PHANTOM_CORE_PATH . 'includes/Upgrade/class-upgrade-manager.php';
 
 // Load Customizer (needed by Rest_Controller)
 require_once PHANTOM_CORE_PATH . 'includes/class-customizer.php';
+require_once PHANTOM_CORE_PATH . 'includes/class-preset-compatibility-bridge.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-custom-css.php';
 
 // Load REST Controller

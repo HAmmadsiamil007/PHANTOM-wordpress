@@ -35,6 +35,9 @@ define( 'PHANTOM_CORE_FILE', __FILE__ );
 define( 'PHANTOM_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PHANTOM_CORE_URL', plugin_dir_url( __FILE__ ) );
 define( 'PHANTOM_THEME_URL', PHANTOM_CORE_URL . '../phantom-theme/' );
+if ( ! defined( 'PHANTOM_DEV_MODE' ) ) {
+	define( 'PHANTOM_DEV_MODE', false ); /** Set to true in wp-config.php to show legacy Customizer panels */
+}
 
 spl_autoload_register(
 	function ( string $class ): void {
@@ -340,6 +343,30 @@ spl_autoload_register(
 			}
 		}
 
+		// History uses includes/History/ with class-{name}.php naming
+		$history_prefix = 'History\\';
+		if ( strncmp( $history_prefix, $relative_class, strlen( $history_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $history_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/History/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Assets uses includes/Assets/ with class-{name}.php naming
+		$assets_prefix = 'Assets\\';
+		if ( strncmp( $assets_prefix, $relative_class, strlen( $assets_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $assets_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Assets/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
 		// Setup uses includes/Setup/ with class-{name}.php naming
 		$setup_prefix = 'Setup\\';
 		if ( strncmp( $setup_prefix, $relative_class, strlen( $setup_prefix ) ) === 0 ) {
@@ -363,6 +390,7 @@ require_once PHANTOM_CORE_PATH . 'includes/class-settings-registry.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-core-plugin.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-rest-controller.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-customizer.php';
+require_once PHANTOM_CORE_PATH . 'includes/class-preset-compatibility-bridge.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-custom-css.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-phantom-global-palette.php';
 require_once PHANTOM_CORE_PATH . 'includes/class-phantom-version-compatibility.php';
@@ -415,6 +443,16 @@ require_once PHANTOM_CORE_PATH . 'includes/Animation/class-three-bridge.php';
 require_once PHANTOM_CORE_PATH . 'includes/Bridges/class-swiper-bridge.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-scroll-reveal.php';
 require_once PHANTOM_CORE_PATH . 'includes/Animation/class-parallax.php';
+
+// Phase 6: History & Versioning System
+if ( class_exists( '\PhantomCore\History\History_Manager' ) ) {
+	\PhantomCore\History\History_Manager::get_instance()->init();
+	if ( is_admin() ) {
+		add_action( 'rest_api_init', function () {
+			\PhantomCore\History\History_Rest::get_instance()->register_routes();
+		}, 15 );
+	}
+}
 
 // Phase D: Plugin Bridges — register all before init_all()
 $bridge_mgr = \PhantomCore\Bridges\Bridge_Manager::get_instance();
@@ -502,6 +540,7 @@ if ( is_admin() ) {
 		}
 	}
 	\PhantomCore\Admin\PhantomAdmin::get_instance()->init();
+	\PhantomCore\Admin\DesignStudioPage::get_instance()->init();
 }
 
 $cache_path = PHANTOM_CORE_PATH . 'includes/Engine/Cache.php';
