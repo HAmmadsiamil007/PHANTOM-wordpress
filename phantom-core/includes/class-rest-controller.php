@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhantomCore\Api;
 
+use PhantomCore\Design\ThemeStateEngine;
+use PhantomCore\Design\Component_Definition_Registry;
 use PhantomCore\Settings_Registry;
 
 defined( 'ABSPATH' ) || exit;
@@ -754,6 +756,18 @@ class Rest_Controller extends \WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
+			'/design/tokens/used-by/(?P<component_id>[\w-]+)',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_tokens_used_by_component' ),
+					'permission_callback' => '__return_true',
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
 			'/design/presets',
 			array(
 				array(
@@ -799,6 +813,177 @@ class Rest_Controller extends \WP_REST_Controller {
 					'permission_callback' => '__return_true',
 				),
 			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design-studio/navigator',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'design_studio_navigator' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design-studio/component-definitions',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'design_studio_component_definitions' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+					'args'                => array(
+						'category' => array(
+							'required'          => false,
+							'type'              => 'string',
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design-studio/component/(?P<component>[\w-]+)',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'design_studio_component' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+					'args'                => array(
+						'component' => array(
+							'required'          => true,
+							'type'              => 'string',
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design-studio/preview',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'design_studio_preview' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design-studio/publish',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'design_studio_publish' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+					'args'                => array(
+						'snapshot' => array(
+							'required'          => false,
+							'type'              => 'boolean',
+							'default'           => true,
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design-studio/undo',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'design_studio_undo' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design-studio/redo',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'design_studio_redo' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/design-studio/export',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'design_studio_export' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/assets/info',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_assets_info' ),
+					'permission_callback' => array( $this, 'admin_permission_check' ),
+					'args'                => array(
+						'type' => array(
+							'required'          => false,
+							'type'              => 'string',
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+					),
+				),
+			)
+		);
+
+		// Asset Management CRUD — upload, replace, reset, remove, list
+		if (class_exists('\PhantomCore\Assets\Asset_REST')) {
+			$asset_rest = new \PhantomCore\Assets\Asset_REST();
+			$asset_rest->register_routes();
+		}
+	}
+
+	/**
+	 * GET /assets/info — comprehensive asset intelligence.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return \WP_REST_Response
+	 */
+	public function get_assets_info( \WP_REST_Request $request ): \WP_REST_Response {
+		$type     = $request->get_param( 'type' );
+		$type     = $type ? sanitize_text_field( $type ) : null;
+		$manager  = \PhantomCore\Assets\Asset_Manager::get_instance();
+		$manager->init();
+		$info     = $manager->get_all_asset_info( $type );
+
+		$resolver  = \PhantomCore\Assets\Asset_Resolver::get_instance();
+		$optimizer = \PhantomCore\Assets\Asset_Optimizer::get_instance();
+		$perf      = $optimizer->get_performance_summary();
+
+		return new \WP_REST_Response(
+			array(
+				'success'        => true,
+				'assets'         => $info['assets'],
+				'summary'        => $info['summary'],
+				'performance'    => $perf,
+				'cdn'            => $resolver->get_cdn_status(),
+			),
+			200
 		);
 	}
 
@@ -3441,8 +3626,18 @@ private function format_product( $product, bool $full = false ): array {
 				404
 			);
 		}
+		$usage = \PhantomCore\Design\TokenRegistry::get_instance()->get_usage( $name );
 		return new \WP_REST_Response(
-			array( 'success' => true, 'name' => $name, 'value' => $value ),
+			array( 'success' => true, 'name' => $name, 'value' => $value, 'usage' => $usage ),
+			200
+		);
+	}
+
+	public function get_tokens_used_by_component( \WP_REST_Request $request ): \WP_REST_Response {
+		$component_id = $request->get_param( 'component_id' );
+		$tokens = \PhantomCore\Design\TokenRegistry::get_instance()->get_tokens_used_by_component( $component_id );
+		return new \WP_REST_Response(
+			array( 'success' => true, 'component_id' => $component_id, 'tokens' => $tokens ),
 			200
 		);
 	}
@@ -3486,6 +3681,339 @@ private function format_product( $product, bool $full = false ): array {
 			array( 'success' => true, 'preset' => $id, 'message' => 'Preset applied successfully.' ),
 			200
 		);
+	}
+
+	public function design_studio_navigator(): \WP_REST_Response {
+		$tree = $this->get_navigator_tree();
+		return new \WP_REST_Response(
+			array( 'success' => true, 'tree' => $tree ),
+			200
+		);
+	}
+
+	public function design_studio_component( \WP_REST_Request $request ): \WP_REST_Response {
+		$component  = $request->get_param( 'component' );
+		$registry = Component_Definition_Registry::get_instance();
+		$definition = $registry->get( $component );
+		if ( ! $definition ) {
+			return new \WP_REST_Response(
+				array( 'success' => false, 'message' => sprintf( 'Unknown component: %s', $component ) ),
+				404
+			);
+		}
+		return new \WP_REST_Response(
+			array( 'success' => true, 'definition' => $definition->to_array() ),
+			200
+		);
+	}
+
+	/**
+	 * GET /design-studio/component-definitions — list all component definitions.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return \WP_REST_Response
+	 */
+	public function design_studio_component_definitions( \WP_REST_Request $request ): \WP_REST_Response {
+		$registry  = Component_Definition_Registry::get_instance();
+		$category  = $request->get_param( 'category' );
+		$category  = $category ? sanitize_text_field( $category ) : null;
+		$definitions = $registry->get_all( $category );
+		$data = array();
+		foreach ( $definitions as $def ) {
+			$data[] = $def->to_array();
+		}
+		return new \WP_REST_Response(
+			array(
+				'success'     => true,
+				'definitions' => $data,
+				'categories'  => $registry->get_categories(),
+				'total'       => count( $data ),
+			),
+			200
+		);
+	}
+
+	public function design_studio_preview( \WP_REST_Request $request ): \WP_REST_Response {
+		$body = $request->get_json_params();
+		if ( ! is_array( $body ) ) {
+			$body = $request->get_params();
+		}
+
+		// Use Theme State Engine for preview storage
+		$tse = ThemeStateEngine::get_instance();
+
+		// Filter out non-setting keys and store
+		$previewValues = array();
+		foreach ( $body as $key => $value ) {
+			if ( in_array( $key, array( 'action', '_wpnonce', 'snapshot', 'component', 'instance' ), true ) ) {
+				continue;
+			}
+			$previewValues[ sanitize_key( $key ) ] = $this->sanitize_preview_value( $value );
+		}
+
+		if ( ! empty( $previewValues ) ) {
+			$tse->set_preview_bulk( $previewValues );
+		}
+
+		// Resolve CSS variables for preview
+		$changedKeys = array_keys( $previewValues );
+		$cssVars = $tse->resolve_css_vars( $changedKeys );
+
+		return new \WP_REST_Response(
+			array(
+				'success' => true,
+				'preview' => $previewValues,
+				'cssVars' => $cssVars,
+			),
+			200
+		);
+	}
+
+	public function design_studio_publish( \WP_REST_Request $request ): \WP_REST_Response {
+		$tse = ThemeStateEngine::get_instance();
+
+		// Step 1: Create a History version snapshot before committing
+		$snapshotId = null;
+		if ( class_exists( '\\PhantomCore\\History\\History_Manager' ) ) {
+			$autosave  = \PhantomCore\History\History_Autosave::get_instance();
+			$settings  = $autosave->capture_current_settings();
+			$manager   = \PhantomCore\History\History_Manager::get_instance();
+
+			// Merge with current preview values
+			$preview = $tse->get_preview_values();
+			if ( ! empty( $preview ) ) {
+				$settings = array_merge( $settings, $preview );
+			}
+
+			$snapshot = $manager->create_snapshot(
+				$settings,
+				'version',
+				/* translators: %s: current date/time */
+				sprintf( __( 'Published on %s', 'phantom-core' ), wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) ),
+				array_keys( $preview )
+			);
+			$snapshotId = $snapshot->id;
+		}
+
+		// Step 2: Commit preview values to Settings Registry
+		$count = $tse->commit_preview();
+
+		// Step 3: Regenerate CSS cache
+		\Phantom_Custom_CSS::flush_cache();
+		delete_transient( self::PAGE_DATA_CACHE_KEY );
+
+		// Step 4: Sync Customizer options
+		if ( class_exists( '\PhantomCore\Customizer' ) ) {
+			\PhantomCore\Customizer::get_instance()->sync_options();
+		}
+
+		// Step 5: Invalidate page data cache
+		$this->invalidate_page_cache();
+
+		return new \WP_REST_Response(
+			array(
+				'success'     => true,
+				'message'     => __( 'Settings published successfully.', 'phantom-core' ),
+				'count'       => $count,
+				'snapshot_id' => $snapshotId,
+			),
+			200
+		);
+	}
+
+	public function design_studio_undo(): \WP_REST_Response {
+		if ( ! class_exists( '\\PhantomCore\\History\\History_Manager' ) ) {
+			return new \WP_REST_Response(
+				array( 'success' => false, 'message' => 'History system not available.' ),
+				500
+			);
+		}
+		$manager = \PhantomCore\History\History_Manager::get_instance();
+		$result  = $manager->undo();
+		return new \WP_REST_Response( $result, $result['success'] ? 200 : 400 );
+	}
+
+	public function design_studio_redo(): \WP_REST_Response {
+		if ( ! class_exists( '\\PhantomCore\\History\\History_Manager' ) ) {
+			return new \WP_REST_Response(
+				array( 'success' => false, 'message' => 'History system not available.' ),
+				500
+			);
+		}
+		$manager = \PhantomCore\History\History_Manager::get_instance();
+		$result  = $manager->redo();
+		return new \WP_REST_Response( $result, $result['success'] ? 200 : 400 );
+	}
+
+	public function design_studio_export(): \WP_REST_Response {
+		$settings = array();
+		$registry = \PhantomCore\Settings_Registry::get_instance();
+		$known = array(
+			'hero_style', 'hero_height', 'header_style', 'footer_style',
+			'blog_layout', 'blog_columns', 'primary_color', 'secondary_color',
+			'body_font', 'heading_font', 'container_width', 'site_loader',
+		);
+		foreach ( $known as $key ) {
+			$settings[ $key ] = $registry->get( $key );
+		}
+		return new \WP_REST_Response(
+			array(
+				'success' => true,
+				'export'  => array(
+					'version'  => PHANTOM_CORE_VERSION,
+					'date'     => current_time( 'mysql' ),
+					'settings' => $settings,
+				),
+			),
+			200
+		);
+	}
+
+	private function get_navigator_tree(): array {
+		return array(
+			array(
+				'label'    => __( 'Homepage', 'phantom-core' ),
+				'component' => 'page',
+				'instance'  => 'home',
+				'icon'      => 'dashicons-admin-home',
+				'children'  => array(
+					array(
+						'label'     => __( 'Announcement Bar', 'phantom-core' ),
+						'component' => 'announcement',
+						'instance'  => 'announcement-global',
+						'icon'      => 'dashicons-megaphone',
+					),
+					array(
+						'label'     => __( 'Header', 'phantom-core' ),
+						'component' => 'header',
+						'instance'  => 'header-default',
+						'icon'      => 'dashicons-editor-table',
+						'children'  => array(
+							array(
+								'label'     => __( 'Logo', 'phantom-core' ),
+								'component' => 'logo',
+								'instance'  => 'logo-header',
+								'icon'      => 'dashicons-format-image',
+							),
+							array(
+								'label'     => __( 'Navigation', 'phantom-core' ),
+								'component' => 'navigation',
+								'instance'  => 'nav-primary',
+								'icon'      => 'dashicons-menu',
+							),
+							array(
+								'label'     => __( 'Cart Icon', 'phantom-core' ),
+								'component' => 'cart-icon',
+								'instance'  => 'cart-header',
+								'icon'      => 'dashicons-cart',
+							),
+						),
+					),
+					array(
+						'label'     => __( 'Hero', 'phantom-core' ),
+						'component' => 'hero',
+						'instance'  => 'hero-home',
+						'icon'      => 'dashicons-slides',
+					),
+					array(
+						'label'     => __( 'Collections Grid', 'phantom-core' ),
+						'component' => 'collections',
+						'instance'  => 'collections-home',
+						'icon'      => 'dashicons-grid-view',
+					),
+					array(
+						'label'     => __( 'Featured Products', 'phantom-core' ),
+						'component' => 'products',
+						'instance'  => 'products-featured',
+						'icon'      => 'dashicons-cart',
+					),
+					array(
+						'label'     => __( 'Testimonials', 'phantom-core' ),
+						'component' => 'testimonials',
+						'instance'  => 'testimonials-home',
+						'icon'      => 'dashicons-testimonial',
+					),
+					array(
+						'label'     => __( 'Blog Preview', 'phantom-core' ),
+						'component' => 'blog-preview',
+						'instance'  => 'blog-home',
+						'icon'      => 'dashicons-admin-post',
+					),
+					array(
+						'label'     => __( 'Footer', 'phantom-core' ),
+						'component' => 'footer',
+						'instance'  => 'footer-default',
+						'icon'      => 'dashicons-editor-table',
+						'children'  => array(
+							array(
+								'label'     => __( 'Footer Columns', 'phantom-core' ),
+								'component' => 'footer-columns',
+								'instance'  => 'footer-cols',
+								'icon'      => 'dashicons-columns',
+							),
+							array(
+								'label'     => __( 'Copyright Bar', 'phantom-core' ),
+								'component' => 'copyright',
+								'instance'  => 'copyright-footer',
+								'icon'      => 'dashicons-editor-textcolor',
+							),
+						),
+					),
+				),
+			),
+			array(
+				'label'    => __( 'Shop', 'phantom-core' ),
+				'component' => 'page',
+				'instance'  => 'shop',
+				'icon'      => 'dashicons-admin-page',
+				'children'  => array(
+					array(
+						'label'     => __( 'Products Grid', 'phantom-core' ),
+						'component' => 'hero',
+						'instance'  => 'hero-shop',
+						'icon'      => 'dashicons-slides',
+					),
+				),
+			),
+			array(
+				'label'    => __( 'Blog', 'phantom-core' ),
+				'component' => 'page',
+				'instance'  => 'blog',
+				'icon'      => 'dashicons-admin-page',
+			),
+			array(
+				'label'    => __( 'Cart', 'phantom-core' ),
+				'component' => 'page',
+				'instance'  => 'cart',
+				'icon'      => 'dashicons-cart',
+			),
+			array(
+				'label'    => __( 'Checkout', 'phantom-core' ),
+				'component' => 'page',
+				'instance'  => 'checkout',
+				'icon'      => 'dashicons-cart',
+			),
+		);
+	}
+
+	private function get_component_definition( string $component ): ?Component_Definition {
+		return Component_Definition_Registry::get_instance()->get( $component );
+	}
+
+	private function sanitize_preview_value( $value ) {
+		if ( is_string( $value ) ) {
+			return sanitize_text_field( $value );
+		}
+		if ( is_numeric( $value ) ) {
+			return $value + 0;
+		}
+		if ( is_bool( $value ) ) {
+			return $value;
+		}
+		if ( is_array( $value ) ) {
+			return array_map( array( $this, 'sanitize_preview_value' ), $value );
+		}
+		return sanitize_text_field( (string) $value );
 	}
 
 	public function get_design_css(): \WP_REST_Response {
