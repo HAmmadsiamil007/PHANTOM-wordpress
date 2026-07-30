@@ -27,6 +27,7 @@ abstract class Control_Base extends \WP_Customize_Control {
             'class-color-group-control.php',
             'class-background-control.php',
             'class-border-control.php',
+            'class-preset-card-control.php',
         );
         foreach ( $controls as $file ) {
             $path = $base . $file;
@@ -53,6 +54,7 @@ abstract class Control_Base extends \WP_Customize_Control {
         'ast-color-group'       => Color_Group_Control::class,
         'ast-background'        => Background_Control::class,
         'ast-border'            => Border_Control::class,
+        'ast-preset-card'       => Preset_Card_Control::class,
     );
 
     public static function get_class_for_type( string $type ): ?string {

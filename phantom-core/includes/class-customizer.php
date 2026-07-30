@@ -37,92 +37,127 @@ class Customizer {
 	}
 
 	public function define_panels(): array {
-		return array(
+		// 7 global-only panels — component-level settings live in Design Studio.
+		$design_studio_note = __( 'Component-level settings (header, footer, hero, products, etc.) are managed in the Design Studio.', 'phantom-core' );
+		$panels = array(
 			'phantom_branding'      => array(
-				'title'    => 'Branding',
-				'sections' => array( 'branding' ),
-				'priority' => 10,
+				'title'       => 'Branding',
+				'description' => $design_studio_note,
+				'sections'    => array( 'branding' ),
+				'priority'    => 10,
 			),
-			'phantom_header'        => array(
-				'title'    => 'Header & Navigation',
-				'sections' => array( 'header', 'topbar', 'navigation', 'announcement_bar' ),
-				'priority' => 20,
+			'phantom_global_colors' => array(
+				'title'       => 'Global Colors',
+				'description' => $design_studio_note,
+				'sections'    => array( 'colors' ),
+				'priority'    => 20,
 			),
-			'phantom_hero'          => array(
-				'title'    => 'Hero & Home',
-				'sections' => array( 'hero', 'home_sections', 'collections' ),
-				'priority' => 30,
+			'phantom_global_typography' => array(
+				'title'       => 'Global Typography',
+				'description' => $design_studio_note,
+				'sections'    => array( 'typography' ),
+				'priority'    => 30,
 			),
-			'phantom_products'      => array(
-				'title'    => 'Products & Shop',
-				'sections' => array( 'product_cards', 'shop_page', 'product_page' ),
-				'priority' => 40,
+			'phantom_presets'       => array(
+				'title'       => 'Presets & Design System',
+				'description' => $design_studio_note,
+				'sections'    => array( 'design_tokens', 'design_system' ),
+				'priority'    => 40,
 			),
-			'phantom_woocommerce'   => array(
-				'title'    => 'WooCommerce',
-				'sections' => array( 'woocommerce' ),
-				'priority' => 50,
-			),
-			'phantom_blog'          => array(
-				'title'    => 'Blog',
-				'sections' => array( 'blog' ),
-				'priority' => 60,
-			),
-			'phantom_footer'        => array(
-				'title'    => 'Footer',
-				'sections' => array( 'footer' ),
-				'priority' => 70,
-			),
-			'phantom_typography'    => array(
-				'title'    => 'Typography & Fonts',
-				'sections' => array( 'typography' ),
-				'priority' => 80,
-			),
-			'phantom_colors'        => array(
-				'title'    => 'Colors & Buttons',
-				'sections' => array( 'colors', 'buttons', 'forms', 'spacing' ),
-				'priority' => 90,
-			),
-			'phantom_layout'        => array(
-				'title'    => 'Layout & Effects',
-				'sections' => array( 'layout', 'responsive', 'animations', 'effects_3d' ),
-				'priority' => 100,
-			),
-			'phantom_search'        => array(
-				'title'    => 'Search',
-				'sections' => array( 'search' ),
-				'priority' => 110,
+			'phantom_responsive'    => array(
+				'title'       => 'Responsive',
+				'description' => $design_studio_note,
+				'sections'    => array( 'responsive' ),
+				'priority'    => 50,
 			),
 			'phantom_performance'   => array(
-				'title'    => 'Performance & SEO',
-				'sections' => array( 'performance', 'seo' ),
-				'priority' => 120,
+				'title'       => 'Performance & SEO',
+				'description' => $design_studio_note,
+				'sections'    => array( 'performance', 'seo', 'template_pack' ),
+				'priority'    => 60,
 			),
-			'phantom_accessibility' => array(
-				'title'    => 'Accessibility',
-				'sections' => array( 'accessibility' ),
-				'priority' => 130,
+			'phantom_integrations'  => array(
+				'title'       => 'Integrations',
+				'description' => $design_studio_note,
+				'sections'    => array( 'integrations', 'custom_code' ),
+				'priority'    => 70,
 			),
-			'phantom_advanced'      => array(
-				'title'    => 'Advanced',
-				'sections' => array( 'integrations', 'custom_code', 'import_export' ),
-				'priority' => 140,
-			),
-		'phantom_pages'         => array(
-			'title'    => 'Pages',
-			'sections' => array(
-				'about_page', 'contact_page', 'faq_page', 'coming_soon',
-				'error_404', 'login_page', 'register_page', 'portfolio',
-				'thank_you', 'load_more', 'privacy', 'terms', 'team', 'testimonials',
-			),
-			'priority' => 150,
-		),
-		'phantom_design'        => array(
-			'title'    => 'Design System',
-			'sections' => array( 'design_tokens' ),
-			'priority' => 5,
-		),
 		);
+
+		// Legacy panels hidden behind PHANTOM_DEV_MODE — component-level settings
+		// moved to Design Studio. Enable via wp-config.php:
+		//   define('PHANTOM_DEV_MODE', true);
+		if ( defined( 'PHANTOM_DEV_MODE' ) && PHANTOM_DEV_MODE ) {
+			$legacy_panels = array(
+				'phantom_header'        => array(
+					'title'    => '[Dev] Header & Navigation',
+					'sections' => array( 'header', 'topbar', 'navigation', 'announcement_bar' ),
+					'priority' => 80,
+				),
+				'phantom_hero'          => array(
+					'title'    => '[Dev] Hero & Home',
+					'sections' => array( 'hero', 'home_sections', 'collections' ),
+					'priority' => 90,
+				),
+				'phantom_products'      => array(
+					'title'    => '[Dev] Products & Shop',
+					'sections' => array( 'product_cards', 'shop_page', 'product_page' ),
+					'priority' => 100,
+				),
+				'phantom_woocommerce'   => array(
+					'title'    => '[Dev] WooCommerce',
+					'sections' => array( 'woocommerce' ),
+					'priority' => 110,
+				),
+				'phantom_blog'          => array(
+					'title'    => '[Dev] Blog',
+					'sections' => array( 'blog' ),
+					'priority' => 120,
+				),
+				'phantom_footer'        => array(
+					'title'    => '[Dev] Footer',
+					'sections' => array( 'footer' ),
+					'priority' => 130,
+				),
+				'phantom_colors'        => array(
+					'title'    => '[Dev] Colors & Buttons',
+					'sections' => array( 'buttons', 'forms', 'spacing' ),
+					'priority' => 140,
+				),
+				'phantom_layout'        => array(
+					'title'    => '[Dev] Layout & Effects',
+					'sections' => array( 'layout', 'animations', 'effects_3d' ),
+					'priority' => 150,
+				),
+				'phantom_search'        => array(
+					'title'    => '[Dev] Search',
+					'sections' => array( 'search' ),
+					'priority' => 160,
+				),
+				'phantom_accessibility' => array(
+					'title'    => '[Dev] Accessibility',
+					'sections' => array( 'accessibility' ),
+					'priority' => 170,
+				),
+				'phantom_advanced'      => array(
+					'title'    => '[Dev] Advanced',
+					'sections' => array( 'import_export' ),
+					'priority' => 180,
+				),
+				'phantom_pages'         => array(
+					'title'    => '[Dev] Pages',
+					'sections' => array(
+						'about_page', 'contact_page', 'faq_page', 'coming_soon',
+						'error_404', 'login_page', 'register_page', 'portfolio',
+						'thank_you', 'load_more', 'privacy', 'terms', 'team', 'testimonials',
+					),
+					'priority' => 190,
+				),
+			);
+			$panels = array_merge( $panels, $legacy_panels );
+		}
+
+		return $panels;
 	}
 
 	public function register( WP_Customize_Manager $wp_customize ): void {
@@ -130,10 +165,14 @@ class Customizer {
 		$section_priority = 0;
 
 		foreach ( $this->panels as $panel_id => $panel ) {
-			$wp_customize->add_panel( $panel_id, array(
+			$panel_args = array(
 				'title'    => __( $panel['title'], 'phantom-core' ),
 				'priority' => $panel['priority'],
-			) );
+			);
+			if ( ! empty( $panel['description'] ) ) {
+				$panel_args['description'] = $panel['description'];
+			}
+			$wp_customize->add_panel( $panel_id, $panel_args );
 
 			foreach ( $panel['sections'] as $section_slug ) {
 				$section_priority += 5;
@@ -147,6 +186,33 @@ class Customizer {
 					'<a href="%s" target="_blank">%s</a>',
 					esc_url($design_studio_url),
 					__('Open Design Studio &rarr;', 'phantom-core')
+				);
+			}
+			if ($section_slug === 'design_system') {
+				$token_count = 0;
+				$preset_count = 0;
+				$current_preset = 'None';
+				if (class_exists('\PhantomCore\Design\DesignSystemManager')) {
+					$dsm = \PhantomCore\Design\DesignSystemManager::get_instance();
+					$compileResult = $dsm->compile();
+					$token_count = count($compileResult->tokens);
+					$presets = $dsm->availablePresets();
+					$preset_count = count($presets);
+					$current = $dsm->currentPreset();
+					$current_preset = esc_html($current['name'] ?? 'None');
+				}
+				$design_system_url = admin_url('admin.php?page=phantom-design-system');
+				$design_studio_url = admin_url('admin.php?page=phantom-design-studio');
+				$description = sprintf(
+					'<div style="padding:8px 0;">' .
+					'<p><strong>%s</strong> %s &middot; <strong>%s</strong> %s &middot; <strong>%s</strong> %s</p>' .
+					'<p><a href="%s" class="button button-secondary" target="_blank">%s</a> <a href="%s" class="button button-primary" target="_blank">%s</a></p>' .
+					'</div>',
+					__('Tokens:', 'phantom-core'), (string)$token_count,
+					__('Active Preset:', 'phantom-core'), $current_preset,
+					__('Available Presets:', 'phantom-core'), (string)$preset_count,
+					esc_url($design_system_url), __('View Full Design System &rarr;', 'phantom-core'),
+					esc_url($design_studio_url), __('Open Design Studio &rarr;', 'phantom-core')
 				);
 			}
 			$wp_customize->add_section( $section_id, array(
@@ -211,7 +277,7 @@ class Customizer {
 		$type = $entry['type'] ?? 'string';
 		$label = $entry['label'] ?? $key;
 		$description = $entry['desc'] ?? '';
-		$custom_types = array( 'ast-color', 'ast-toggle', 'ast-radio-image', 'ast-responsive-slider', 'ast-responsive-spacing', 'ast-typography', 'ast-gradient', 'ast-select', 'ast-color-group', 'ast-background', 'ast-border' );
+		$custom_types = array( 'ast-color', 'ast-toggle', 'ast-radio-image', 'ast-responsive-slider', 'ast-responsive-spacing', 'ast-typography', 'ast-gradient', 'ast-select', 'ast-color-group', 'ast-background', 'ast-border', 'ast-preset-card' );
 
 		if ( in_array( $type, $custom_types, true ) ) {
 			$class = Control_Base::get_class_for_type( $type );
@@ -482,6 +548,8 @@ class Customizer {
 			'team'              => __( 'Team', 'phantom-core' ),
 			'testimonials'      => __( 'Testimonials', 'phantom-core' ),
 			'design_tokens'     => __( 'Design Tokens', 'phantom-core' ),
+			'design_system'    => __( 'Design System Overview', 'phantom-core' ),
+			'template_pack'    => __( 'Template Pack', 'phantom-core' ),
 		);
 		return $labels[ $slug ] ?? ucfirst( str_replace( '_', ' ', $slug ) );
 	}
