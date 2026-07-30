@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhantomCore\Customizer\Controls;
 
+use PhantomCore\Design\TokenRegistry;
+
 defined( 'ABSPATH' ) || exit;
 
 class Color_Control extends Control_Base {
@@ -35,6 +37,23 @@ class Color_Control extends Control_Base {
     public function enqueue(): void {
         wp_enqueue_script( 'phantom-ast-color', PHANTOM_CORE_URL . 'admin/js/custom-controls/ast-color.js', array( 'customize-controls', 'wp-color-picker' ), PHANTOM_CORE_VERSION, true );
         wp_enqueue_style( 'wp-color-picker' );
+
+        static $localized = false;
+        if (!$localized) {
+            $localized = true;
+            $registry = TokenRegistry::get_instance();
+            $usage_map = [];
+            foreach ($registry->get_all() as $name => $def) {
+                $usage = $def['usage'] ?? [];
+                if (!empty($usage)) {
+                    $option_key = $def['option_key'] ?? '';
+                    if ($option_key) {
+                        $usage_map[$option_key] = $usage;
+                    }
+                }
+            }
+            wp_localize_script('phantom-ast-color', 'PhantomTokenUsage', $usage_map);
+        }
     }
 
     public function render_content(): void {
