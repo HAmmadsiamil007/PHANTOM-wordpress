@@ -608,12 +608,17 @@ class Customizer {
 				$changed = true;
 			}
 		}
-		if ( $changed ) {
-			update_option( 'phantom_options', $options, false );
-		}
-	}
+        if ( $changed ) {
+            update_option( 'phantom_options', $options, false );
+        }
 
-	public function get_inline_css(): string {
+        $active_preset = get_option('phantom_active_preset', '');
+        if (!empty($active_preset) && class_exists('\PhantomCore\Preset_Compatibility_Bridge')) {
+            \PhantomCore\Preset_Compatibility_Bridge::sync($active_preset);
+        }
+    }
+
+    public function get_inline_css(): string {
 		$options = get_option( 'phantom_options', array() );
 		$map     = $this->get_css_var_map();
 		$css     = '';
