@@ -445,3 +445,22 @@
     opacity: 0.55;
     cursor: not-allowed;
 }
+
+.vc-selection-crumb {
+    margin: 0 0 10px;
+    padding: 6px 10px;
+    background: #f0f6fc;
+    border: 1px solid #c5d9ed;
+    border-left: 3px solid #2271b1;
+    border-radius: 3px;
+    color: #1d2327;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.vc-panel-header.vc-part-active {
+    background: #e5f0fb;
+    border-left-color: #2271b1;
+}

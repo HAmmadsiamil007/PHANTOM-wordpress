@@ -11,6 +11,7 @@
     var currentSelection = null;
     var hoveredElement = null;
     var editingEnabled = false;
+    var lastPartData = { part: '', partLabel: '' };
 
     var overlay = document.createElement('div');
     overlay.id = 'vc-selection-overlay';
@@ -69,6 +70,66 @@
         return data;
     }
 
+    var PAGE_LABELS = {
+        'home-page': 'Homepage',
+        'shop-page': 'Shop',
+        'blog-page': 'Blog',
+        'about-page': 'About',
+        'contact-page': 'Contact',
+        'search-page': 'Search',
+        'wishlist-page': 'Wishlist',
+        'cart-page': 'Cart',
+        'checkout-page': 'Checkout',
+        'product-page': 'Product',
+        'login-page': 'Login',
+        'register-page': 'Register',
+        'orders-page': 'Orders',
+        'order-detail-page': 'Order Detail',
+        'thankyou-page': 'Thank You',
+        '404-page': 'Not Found'
+    };
+
+    function humanize(value) {
+        return String(value || '')
+            .replace(/[_-]+/g, ' ')
+            .replace(/\b\w/g, function (c) { return c.toUpperCase(); })
+            .trim();
+    }
+
+    function getPageLabel() {
+        var cls = (document.body.className || '').split(/\s+/).filter(function (c) { return /-page$/.test(c); })[0];
+        if (cls && PAGE_LABELS[cls]) return PAGE_LABELS[cls];
+        if (cls) return humanize(cls);
+        return 'Page';
+    }
+
+    function findPartElement(target, root) {
+        var el = target;
+        while (el && el !== document.body) {
+            if (el.hasAttribute && el.hasAttribute('data-part')) return el;
+            if (el === root) break;
+            el = el.parentElement;
+        }
+        return null;
+    }
+
+    function getPartData(target, root) {
+        var partEl = findPartElement(target, root);
+        if (!partEl) return { part: '', partLabel: '' };
+        return {
+            part: partEl.getAttribute('data-part') || '',
+            partLabel: partEl.getAttribute('data-part-label') || humanize(partEl.getAttribute('data-part'))
+        };
+    }
+
+    function buildBreadcrumb(componentData, partData) {
+        var crumbs = [getPageLabel(), humanize(componentData.component)];
+        if (partData && partData.part) {
+            crumbs.push(partData.partLabel || humanize(partData.part));
+        }
+        return crumbs.join(' \u203A ');
+    }
+
     function findComponentRoot(el) {
         while (el && el !== document.body) {
             if (el.hasAttribute('data-component')) return el;
@@ -77,7 +138,7 @@
         return null;
     }
 
-    function updateOverlay(el) {
+    function updateOverlay(el, target) {
         if (!el) {
             overlay.style.display = 'none';
             tooltip.style.display = 'none';
@@ -92,13 +153,14 @@
         overlay.style.display = 'block';
 
         var data = getComponentData(el);
-        tooltip.textContent = data.component + (data.slot ? ' > ' + data.slot : '');
+        var partData = getPartData(target || el, el);
+        tooltip.textContent = buildBreadcrumb(data, partData);
         tooltip.style.left = rect.left + 'px';
         tooltip.style.top = (rect.top - 28) + 'px';
         tooltip.style.display = 'block';
     }
 
-    function selectElement(el) {
+    function selectElement(el, target) {
         if (!el) return;
 
         if (currentSelection) {
@@ -107,10 +169,14 @@
 
         currentSelection = el;
         el.classList.add(SELECTED_CLASS);
-        updateOverlay(el);
+        updateOverlay(el, target || el);
 
         var data = getComponentData(el);
-
+        var partData = getPartData(target || el, el);
+        lastPartData = partData;
+        data.part = partData.part;
+        data.partLabel = partData.partLabel;
+        data.breadcrumb = buildBreadcrumb(data, partData);
         window.parent.postMessage({
             type: 'vc-element-selected',
             data: data
@@ -164,6 +230,7 @@
         if (el && el !== currentSelection) {
             el.classList.add(HOVER_CLASS);
         }
+        updateOverlay(el, e.target);
     }, true);
 
     document.addEventListener('mouseout', function (e) {
@@ -193,7 +260,7 @@
             return;
         }
 
-        selectElement(el);
+        selectElement(el, e.target);
     }, true);
 
     window.addEventListener('message', function (e) {
@@ -222,7 +289,14 @@
         select: selectElement,
         clear: clearSelection,
         applyCss: applyCssVars,
-        getCurrent: function () { return currentSelection ? getComponentData(currentSelection) : null; }
+        getCurrent: function () {
+            if (!currentSelection) return null;
+            var data = getComponentData(currentSelection);
+            data.part = lastPartData.part;
+            data.partLabel = lastPartData.partLabel;
+            data.breadcrumb = buildBreadcrumb(data, lastPartData);
+            return data;
+        }
     };
 
     window.parent.postMessage({ type: 'vc-engine-ready' }, '*');

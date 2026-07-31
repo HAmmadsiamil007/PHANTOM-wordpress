@@ -77,7 +77,7 @@
         }
     }
 
-    function loadInspector(component, state, viewport, tool) {
+    function loadInspector(component, state, viewport, tool, done) {
         state = state || (component && component.state) || 'normal';
         viewport = viewport || (component && component.viewport) || 'desktop';
         tool = (tool !== undefined) ? tool : currentTool;
@@ -109,6 +109,7 @@
                 }
                 bindControls(inspector);
                 expandSection('phantom_section_inspector');
+                if (done) done();
             })
             .catch(function () {
                 inspector.innerHTML = '<div class="vc-panel vc-panel-error">Failed to load the inspector.</div>';
@@ -348,12 +349,42 @@
             .catch(function () {});
     }
 
+    function renderSelectionCrumb(data) {
+        var inspector = inspectorEl();
+        if (!inspector) return;
+
+        var crumb = inspector.querySelector('.vc-selection-crumb');
+        if (!data || !data.breadcrumb) {
+            if (crumb) crumb.remove();
+            return;
+        }
+
+        if (!crumb) {
+            crumb = document.createElement('div');
+            crumb.className = 'vc-selection-crumb';
+            crumb.title = 'Selected element path';
+            inspector.insertBefore(crumb, inspector.firstChild);
+        }
+        crumb.textContent = data.breadcrumb;
+
+        var part = data.part || '';
+        inspector.querySelectorAll('.vc-panel-header').forEach(function (h) {
+            if (part && h.getAttribute('data-panel') === part) {
+                h.classList.add('vc-part-active');
+            } else {
+                h.classList.remove('vc-part-active');
+            }
+        });
+    }
+
     window.addEventListener('message', function (e) {
         if (!e.data || !e.data.type) return;
         switch (e.data.type) {
             case 'vc-element-selected':
                 currentComponent = e.data.data || {};
-                loadInspector(currentComponent);
+                loadInspector(currentComponent, undefined, undefined, currentTool, function () {
+                    renderSelectionCrumb(currentComponent);
+                });
                 break;
             case 'vc-element-locked':
                 break;
