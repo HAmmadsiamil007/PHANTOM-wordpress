@@ -252,6 +252,66 @@ class History_Manager {
     }
 
     /**
+     * Get the timeline of history entries (newest first).
+     *
+     * Each entry is shaped for the Visual Customizer timeline UI:
+     * id, timestamp (mysql datetime), action, description, component,
+     * property, instance_id, change_count.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function get_timeline(int $limit = 50): array {
+        $entries  = array();
+        $snapshots = $this->list_snapshots($limit);
+        foreach ($snapshots['snapshots'] as $snap_array) {
+            $entries[] = $this->to_entry(new Snapshot($snap_array));
+        }
+        return $entries;
+    }
+
+    /**
+     * Map a Snapshot to a timeline entry shape.
+     *
+     * @return array<string, mixed>
+     */
+    public function to_entry(Snapshot $snapshot): array {
+        $entry = array(
+            'id'            => $snapshot->id,
+            'timestamp'     => wp_date('Y-m-d H:i:s', (int) $snapshot->time),
+            'action'        => $snapshot->action,
+            'description'   => $snapshot->description,
+            'component'     => '',
+            'property'      => '',
+            'instance_id'   => '',
+            'change_count'  => count($snapshot->changed),
+        );
+
+        $first = (string) (reset($snapshot->changed) ?: '');
+        if ('' !== $first) {
+            $parts = explode('.', $first);
+            if ('components' === ($parts[0] ?? '') && isset($parts[1])) {
+                $entry['component'] = $parts[1];
+                $entry['property']  = implode('.', array_slice($parts, 2));
+            } elseif ('instance' === ($parts[0] ?? '') && isset($parts[1])) {
+                $entry['instance_id'] = $parts[1];
+                $entry['component']   = $parts[2] ?? '';
+                $entry['property']    = implode('.', array_slice($parts, 3));
+            } else {
+                $entry['property'] = $first;
+            }
+        }
+
+        return $entry;
+    }
+
+    /**
+     * Clear all history (snapshots, undo/redo stacks).
+     */
+    public function clear(): void {
+        $this->storage->clear();
+    }
+
+    /**
      * Push a snapshot ID to the undo stack manually.
      */
     public function push_to_undo(string $snapshotId): void {

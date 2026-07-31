@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace PhantomCore\Style;
 
 use PhantomCore\Components\ComponentInstance;
-use PhantomCore\Components\ComponentDefinition;
 
 defined('ABSPATH') || exit;
 
@@ -44,7 +43,7 @@ class Style_State_Engine {
         return $this->current_viewport;
     }
 
-    public function resolve(ComponentInstance $instance, string $token, ComponentDefinition $component): mixed {
+    public function resolve(ComponentInstance $instance, string $token): mixed {
         $state = $this->current_state;
 
         if ('normal' !== $state && $instance->has_state_override($token, $state)) {
@@ -59,18 +58,9 @@ class Style_State_Engine {
             return $instance->get_value($token);
         }
 
-        if (isset($component->instance_defaults[$token])) {
-            return $component->instance_defaults[$token];
-        }
-
-        $token_index = array_search($token, $component->tokens, true);
-        if (false !== $token_index) {
-            $registry = \PhantomCore\Settings_Registry::get_instance();
-            $token_key = $component->name . '_' . $token;
-            $default = $registry->get_string($token_key);
-            if (!empty($default)) {
-                return $default;
-            }
+        $registry = \PhantomCore\Settings_Registry::get_instance();
+        if ($registry->has($token)) {
+            return $registry->get_string($token);
         }
 
         return null;
@@ -88,7 +78,7 @@ class Style_State_Engine {
         return $selectors[$state] ?? ':' . $state;
     }
 
-    public function generate_state_css(ComponentInstance $instance, ComponentDefinition $component): string {
+    public function generate_state_css(ComponentInstance $instance): string {
         $css = '';
         $group = $instance->token_group;
 
@@ -100,7 +90,7 @@ class Style_State_Engine {
             $pseudo = $this->get_state_css($state);
             $css .= ".vc-component-{$group}{$pseudo} {\n";
             foreach ($tokens as $token => $value) {
-                $prop = $this->token_to_css_property($token, $component);
+                $prop = $this->token_to_css_property($token);
                 if ($prop) {
                     $css .= "  {$prop}: {$value};\n";
                 }
@@ -121,7 +111,7 @@ class Style_State_Engine {
             $css .= "@media (max-width: {$max_width}px) {\n";
             $css .= "  .vc-component-{$group} {\n";
             foreach ($tokens as $token => $value) {
-                $prop = $this->token_to_css_property($token, $component);
+                $prop = $this->token_to_css_property($token);
                 if ($prop) {
                     $css .= "    {$prop}: {$value};\n";
                 }
@@ -161,8 +151,8 @@ class Style_State_Engine {
         return $active;
     }
 
-    public function render_state_selector(ComponentDefinition $component, ?ComponentInstance $instance, string $current_state): string {
-        $states = $component->style_states;
+    public function render_state_selector(?ComponentInstance $instance, string $current_state): string {
+        $states = array_slice(self::VALID_STATES, 0, 5);
         if (count($states) <= 1) {
             return '';
         }
@@ -212,77 +202,71 @@ class Style_State_Engine {
         return $html;
     }
 
-    private function token_to_css_property(string $token, ComponentDefinition $component): ?string {
-        static $inspector_map = null;
-        if (null === $inspector_map) {
-            $inspector_map = [
-                'colors' => [
-                    'text_color'       => 'color',
-                    'background_color' => 'background-color',
-                    'border_color'     => 'border-color',
-                    'heading_color'    => 'color',
-                ],
-                'typography' => [
-                    'font_family'    => 'font-family',
-                    'font_size'      => 'font-size',
-                    'font_weight'    => 'font-weight',
-                    'line_height'    => 'line-height',
-                    'letter_spacing' => 'letter-spacing',
-                    'text_align'     => 'text-align',
-                    'text_transform' => 'text-transform',
-                ],
-                'spacing' => [
-                    'padding'       => 'padding',
-                    'padding_top'    => 'padding-top',
-                    'padding_right'  => 'padding-right',
-                    'padding_bottom' => 'padding-bottom',
-                    'padding_left'   => 'padding-left',
-                    'margin'        => 'margin',
-                    'margin_top'     => 'margin-top',
-                    'margin_right'   => 'margin-right',
-                    'margin_bottom'  => 'margin-bottom',
-                    'margin_left'    => 'margin-left',
-                    'gap'           => 'gap',
-                ],
-                'layout' => [
-                    'width'             => 'width',
-                    'height'            => 'height',
-                    'min_width'         => 'min-width',
-                    'max_width'         => 'max-width',
-                    'min_height'        => 'min-height',
-                    'max_height'        => 'max-height',
-                    'display'           => 'display',
-                    'flex_direction'    => 'flex-direction',
-                    'flex_wrap'         => 'flex-wrap',
-                    'align_items'       => 'align-items',
-                    'justify_content'   => 'justify-content',
-                    'position'          => 'position',
-                    'top'               => 'top',
-                    'right'             => 'right',
-                    'bottom'            => 'bottom',
-                    'left'              => 'left',
-                    'overflow'          => 'overflow',
-                    'border_radius'     => 'border-radius',
-                    'opacity'           => 'opacity',
-                ],
-                'effects' => [
-                    'box_shadow'       => 'box-shadow',
-                    'text_shadow'      => 'text-shadow',
-                    'transform'        => 'transform',
-                    'transition'       => 'transition',
-                    'animation'        => 'animation',
-                    'filter'           => 'filter',
-                    'backdrop_filter'  => 'backdrop-filter',
-                    'mix_blend_mode'   => 'mix-blend-mode',
-                ],
+    private function token_to_css_property(string $token): ?string {
+        static $property_map = null;
+        if (null === $property_map) {
+            $property_map = [
+                // colors
+                'text_color'        => 'color',
+                'background_color'  => 'background-color',
+                'border_color'      => 'border-color',
+                'heading_color'     => 'color',
+                // typography
+                'font_family'       => 'font-family',
+                'font_size'         => 'font-size',
+                'font_weight'       => 'font-weight',
+                'line_height'       => 'line-height',
+                'letter_spacing'    => 'letter-spacing',
+                'text_align'        => 'text-align',
+                'text_transform'    => 'text-transform',
+                // spacing
+                'padding'           => 'padding',
+                'padding_top'       => 'padding-top',
+                'padding_right'     => 'padding-right',
+                'padding_bottom'    => 'padding-bottom',
+                'padding_left'      => 'padding-left',
+                'margin'            => 'margin',
+                'margin_top'        => 'margin-top',
+                'margin_right'      => 'margin-right',
+                'margin_bottom'     => 'margin-bottom',
+                'margin_left'       => 'margin-left',
+                'gap'               => 'gap',
+                // layout
+                'width'             => 'width',
+                'height'            => 'height',
+                'min_width'         => 'min-width',
+                'max_width'         => 'max-width',
+                'min_height'        => 'min-height',
+                'max_height'        => 'max-height',
+                'display'           => 'display',
+                'flex_direction'    => 'flex-direction',
+                'flex_wrap'         => 'flex-wrap',
+                'align_items'       => 'align-items',
+                'justify_content'   => 'justify-content',
+                'position'          => 'position',
+                'top'               => 'top',
+                'right'             => 'right',
+                'bottom'            => 'bottom',
+                'left'              => 'left',
+                'overflow'          => 'overflow',
+                'border_radius'     => 'border-radius',
+                'opacity'           => 'opacity',
+                // effects
+                'box_shadow'        => 'box-shadow',
+                'text_shadow'       => 'text-shadow',
+                'transform'         => 'transform',
+                'transition'        => 'transition',
+                'animation'         => 'animation',
+                'filter'            => 'filter',
+                'backdrop_filter'   => 'backdrop-filter',
+                'mix_blend_mode'    => 'mix-blend-mode',
             ];
         }
 
-        if (isset($inspector_map[$component->category][$token])) {
-            return $inspector_map[$component->category][$token];
+        if (isset($property_map[$token])) {
+            return $property_map[$token];
         }
 
-        $prop = str_replace('_', '-', $token);
-        return $prop;
+        return str_replace('_', '-', $token);
     }
 }

@@ -514,17 +514,30 @@
     // ===== Phase 4: Global Search =====
 
     function setupSearch() {
+        if (document.getElementById('vc-global-search')) {
+            // PHP-rendered search bar already present (Search_UI::render_search_bar);
+            // bind only the input handler + outside-click close, no duplicate injection.
+            bindSearchInput('#vc-global-search');
+            bindSearchOutsideClick();
+            return;
+        }
+
         var toolbar = $('.vc-toolbar-right');
         var searchHtml =
             '<div class="vc-search-wrapper">' +
                 '<span class="dashicons dashicons-search vc-search-icon"></span>' +
-                '<input type="text" class="vc-search-input" placeholder="Search components, instances..." />' +
+                '<input type="text" class="vc-search-input" id="vc-global-search" placeholder="Search components, instances..." />' +
                 '<div class="vc-search-results" id="vc-search-results"></div>' +
             '</div>';
         toolbar.prepend(searchHtml);
 
+        bindSearchInput('.vc-search-input');
+        bindSearchOutsideClick();
+    }
+
+    function bindSearchInput(selector) {
         var debounceTimer;
-        $('.vc-search-input').on('input', function () {
+        $(selector).on('input', function () {
             var q = $(this).val().trim();
             clearTimeout(debounceTimer);
 
@@ -537,7 +550,9 @@
                 performSearch(q);
             }, 250);
         });
+    }
 
+    function bindSearchOutsideClick() {
         $(document).on('click', function (e) {
             if (!$(e.target).closest('.vc-search-wrapper').length) {
                 $('#vc-search-results').removeClass('open').empty();
@@ -563,9 +578,26 @@
                     return;
                 }
 
-                resp.results.forEach(function (group) {
-                    resultsEl.append('<div class="vc-search-category">' + group.label + '</div>');
-                    group.items.forEach(function (item) {
+                var categoryLabels = {
+                    component: 'Components',
+                    instance: 'Instances',
+                    property: 'Properties',
+                    token: 'Design Tokens',
+                    asset: 'Assets',
+                    animation: 'Animations',
+                    setting: 'Settings'
+                };
+                var grouped = {};
+                resp.results.forEach(function (item) {
+                    var cat = item.type || 'general';
+                    if (!grouped[cat]) grouped[cat] = [];
+                    grouped[cat].push(item);
+                });
+
+                Object.keys(grouped).forEach(function (cat) {
+                    var label = categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1) + 's';
+                    resultsEl.append('<div class="vc-search-category">' + label + '</div>');
+                    grouped[cat].forEach(function (item) {
                         var itemEl = $(
                             '<div class="vc-search-item" data-type="' + item.type + '" data-id="' + item.id + '">' +
                                 '<span class="vc-search-item-label">' + item.label + '</span>' +

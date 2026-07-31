@@ -11,6 +11,11 @@ use PhantomCore\Animation\Animation_Registry;
 use PhantomCore\History\History_Manager;
 use PhantomCore\Engine\Template_Loader;
 use PhantomCore\Public\Design_API;
+use PhantomCore\Component\Component_Tree;
+use PhantomCore\Inspector\Inspector_Factory;
+use PhantomCore\Lock\Lock_Manager;
+use PhantomCore\Favorites\Favorites_Manager;
+use PhantomCore\Search\Search_Service;
 
 defined('ABSPATH') || exit;
 
@@ -39,7 +44,12 @@ class Auto_Register {
         $this->register_asset_routes();
         $this->register_animation_routes();
         $this->register_instance_routes();
+        $this->register_instance_tree_routes();
+        $this->register_lock_routes();
+        $this->register_favorites_routes();
+        $this->register_search_routes();
         $this->register_history_routes();
+        $this->register_build_routes();
         $this->register_pack_routes();
         $this->register_diagnostics_routes();
     }
@@ -136,6 +146,54 @@ class Auto_Register {
                     'type'              => 'string',
                     'required'          => true,
                     'sanitize_callback' => 'sanitize_text_field',
+                ),
+            )
+        );
+
+        $this->register_route(
+            '/components/(?P<name>[\w-]+)/inspector',
+            'GET',
+            function (\WP_REST_Request $request) {
+                $name     = $request->get_param('name');
+                $state    = $request->get_param('state') ?: 'normal';
+                $viewport = $request->get_param('viewport') ?: 'desktop';
+                $instance_id = $request->get_param('instance');
+
+                $instance = null;
+                if (!empty($instance_id)) {
+                    $instance = ComponentInstance::get($instance_id);
+                }
+
+                $html = Inspector_Factory::get_instance()->render_panels($name, $instance, $state, $viewport);
+
+                return new \WP_REST_Response(
+                    array(
+                        'success' => true,
+                        'data'    => array('panels' => $html),
+                    ),
+                    200
+                );
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            },
+            array(
+                'name' => array(
+                    'description'       => 'Component name.',
+                    'type'              => 'string',
+                    'required'          => true,
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'state' => array(
+                    'type'              => 'string',
+                    'default'           => 'normal',
+                ),
+                'viewport' => array(
+                    'type'              => 'string',
+                    'default'           => 'desktop',
+                ),
+                'instance' => array(
+                    'type'              => 'string',
                 ),
             )
         );
@@ -483,7 +541,8 @@ class Auto_Register {
                 return new \WP_REST_Response(
                     array(
                         'success'  => true,
-                        'timeline' => $history->get_timeline(),
+                        'history'  => $history->get_timeline(),
+                        'position' => $history->get_position(),
                     ),
                     200
                 );
@@ -498,11 +557,11 @@ class Auto_Register {
             'POST',
             function () {
                 $history = History_Manager::get_instance();
-                $result = $history->undo();
-                if (null === $result) {
-                    return new \WP_Error('nothing_to_undo', 'Nothing to undo.', array('status' => 400));
+                $result  = $history->undo();
+                if (!empty($result['snapshot'])) {
+                    $result['entry'] = $history->to_entry(new \PhantomCore\History\Snapshot($result['snapshot']));
                 }
-                return new \WP_REST_Response(array('success' => true, 'entry' => $result), 200);
+                return new \WP_REST_Response($result, $result['success'] ? 200 : 400);
             },
             function () {
                 return current_user_can('edit_theme_options');
@@ -514,15 +573,304 @@ class Auto_Register {
             'POST',
             function () {
                 $history = History_Manager::get_instance();
-                $result = $history->redo();
-                if (null === $result) {
-                    return new \WP_Error('nothing_to_redo', 'Nothing to redo.', array('status' => 400));
+                $result  = $history->redo();
+                if (!empty($result['snapshot'])) {
+                    $result['entry'] = $history->to_entry(new \PhantomCore\History\Snapshot($result['snapshot']));
                 }
-                return new \WP_REST_Response(array('success' => true, 'entry' => $result), 200);
+                return new \WP_REST_Response($result, $result['success'] ? 200 : 400);
             },
             function () {
                 return current_user_can('edit_theme_options');
             }
+        );
+    }
+
+    private function register_instance_tree_routes(): void {
+        $this->register_route(
+            '/instances/tree',
+            'GET',
+            function () {
+                return new \WP_REST_Response(
+                    array('tree' => Component_Tree::get_instance()->build_from_registry()),
+                    200
+                );
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            }
+        );
+    }
+
+    private function register_lock_routes(): void {
+        $this->register_route(
+            '/instances/locked',
+            'GET',
+            function () {
+                $manager   = Lock_Manager::get_instance();
+                $instances = array();
+                foreach ($manager->get_locked() as $lock) {
+                    $id    = $lock['instance_id'] ?? '';
+                    $inst  = !empty($id) ? ComponentInstance::get($id) : null;
+                    $instances[] = array(
+                        'id'        => $id,
+                        'component' => $inst ? $inst->component_name : '',
+                        'user_name' => $lock['user_name'] ?? '',
+                        'locked_at' => $lock['locked_at'] ?? '',
+                    );
+                }
+                return new \WP_REST_Response(array('instances' => $instances), 200);
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            }
+        );
+
+        $this->register_route(
+            '/instances/lock',
+            'POST',
+            function (\WP_REST_Request $request) {
+                $manager = Lock_Manager::get_instance();
+                $id      = (string) $request->get_param('id');
+                if ('' === $id) {
+                    return new \WP_Error('missing_id', 'Instance ID required.', array('status' => 400));
+                }
+                $manager->lock($id);
+                return new \WP_REST_Response(array('locked' => $manager->is_locked($id)), 200);
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            },
+            array(
+                'id' => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            )
+        );
+
+        $this->register_route(
+            '/instances/unlock',
+            'POST',
+            function (\WP_REST_Request $request) {
+                $manager = Lock_Manager::get_instance();
+                $id      = (string) $request->get_param('id');
+                if ('' === $id) {
+                    return new \WP_Error('missing_id', 'Instance ID required.', array('status' => 400));
+                }
+                $manager->unlock($id);
+                return new \WP_REST_Response(array('locked' => $manager->is_locked($id)), 200);
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            },
+            array(
+                'id' => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            )
+        );
+    }
+
+    private function register_favorites_routes(): void {
+        $this->register_route(
+            '/favorites',
+            'GET',
+            function () {
+                return new \WP_REST_Response(
+                    array('favorites' => Favorites_Manager::get_instance()->get_with_data()),
+                    200
+                );
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            }
+        );
+
+        $this->register_route(
+            '/favorites/toggle',
+            'POST',
+            function (\WP_REST_Request $request) {
+                $type = (string) $request->get_param('type');
+                $id   = (string) $request->get_param('id');
+                if ('' === $type || '' === $id) {
+                    return new \WP_Error('missing_args', 'type and id are required.', array('status' => 400));
+                }
+                $favorite = Favorites_Manager::get_instance()->toggle($type, $id);
+                return new \WP_REST_Response(
+                    array('success' => true, 'favorite' => $favorite),
+                    200
+                );
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            },
+            array(
+                'type' => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'id' => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            )
+        );
+    }
+
+    private function register_search_routes(): void {
+        $this->register_route(
+            '/search',
+            'GET',
+            function (\WP_REST_Request $request) {
+                $q       = (string) $request->get_param('q');
+                $grouped = Search_Service::get_instance()->search($q);
+                $results = array();
+                foreach ($grouped as $group) {
+                    $items = $group['items'] ?? array();
+                    if (empty($items)) {
+                        continue;
+                    }
+                    foreach ($items as $item) {
+                        $results[] = $item;
+                    }
+                }
+                return new \WP_REST_Response(array('results' => $results), 200);
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            },
+            array(
+                'q' => array(
+                    'type'              => 'string',
+                    'default'           => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            )
+        );
+    }
+
+    private function register_build_routes(): void {
+        $this->register_route(
+            '/build/status',
+            'GET',
+            function () {
+                if (!class_exists(\PhantomCore\Asset\Pipeline\Pipeline::class)) {
+                    return new \WP_REST_Response(
+                        array('current' => false, 'version' => '', 'build' => 0, 'date' => '', 'size' => 0),
+                        200
+                    );
+                }
+                $history = \PhantomCore\Asset\Pipeline\Pipeline::get_instance()->get_build_history();
+                $status  = array('current' => false, 'version' => '', 'build' => 0, 'date' => '', 'size' => 0);
+                if (!empty($history)) {
+                    $first = $history[0];
+                    $status = array(
+                        'current' => (bool) ($first['active'] ?? false),
+                        'version' => $first['version'] ?? '',
+                        'build'   => count($history),
+                        'date'    => $first['date'] ?? '',
+                        'size'    => $first['size'] ?? 0,
+                    );
+                }
+                return new \WP_REST_Response($status, 200);
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            }
+        );
+
+        $this->register_route(
+            '/build/history',
+            'GET',
+            function () {
+                if (!class_exists(\PhantomCore\Asset\Pipeline\Pipeline::class)) {
+                    return new \WP_REST_Response(array('history' => array()), 200);
+                }
+                return new \WP_REST_Response(
+                    array('history' => \PhantomCore\Asset\Pipeline\Pipeline::get_instance()->get_build_history()),
+                    200
+                );
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            }
+        );
+
+        $this->register_route(
+            '/publish',
+            'POST',
+            function (\WP_REST_Request $request) {
+                $profile = $request->get_param('profile') ?: 'production';
+
+                // Step 1: History snapshot before publish.
+                $snapshot_id = null;
+                if (class_exists(History_Manager::class)) {
+                    try {
+                        $autosave = \PhantomCore\History\History_Autosave::get_instance();
+                        $settings = $autosave->capture_current_settings();
+                        $manager  = History_Manager::get_instance();
+                        $snapshot = $manager->create_snapshot(
+                            $settings,
+                            'before_publish',
+                            __('Published via Visual Customizer', 'phantom-core')
+                        );
+                        $snapshot_id = $snapshot->id;
+                    } catch (\Throwable $e) {
+                        // Non-fatal: history is best-effort.
+                    }
+                }
+
+                // Step 2: Commit preview values to the Settings Registry.
+                if (class_exists(\PhantomCore\Design\ThemeStateEngine::class)) {
+                    try {
+                        \PhantomCore\Design\ThemeStateEngine::get_instance()->commit_preview();
+                    } catch (\Throwable $e) {
+                        // Non-fatal.
+                    }
+                }
+
+                // Step 3: Regenerate CSS caches.
+                if (class_exists('\Phantom_Custom_CSS')) {
+                    \Phantom_Custom_CSS::flush_cache();
+                }
+                delete_transient('phantom_page_data_v2');
+
+                // Step 4: Run the asset pipeline build (records build files + version).
+                $version = null;
+                if (class_exists(\PhantomCore\Asset\Pipeline\Pipeline::class)) {
+                    try {
+                        $build = \PhantomCore\Asset\Pipeline\Pipeline::get_instance()->execute('css', array('profile' => $profile));
+                        $version = $build['version'] ?? null;
+                    } catch (\Throwable $e) {
+                        // Non-fatal: settings already committed.
+                    }
+                }
+
+                return new \WP_REST_Response(
+                    array(
+                        'success'     => true,
+                        'message'     => __('Settings published successfully.', 'phantom-core'),
+                        'version'     => $version,
+                        'snapshot_id' => $snapshot_id,
+                    ),
+                    200
+                );
+            },
+            function () {
+                return current_user_can('edit_theme_options');
+            },
+            array(
+                'profile' => array(
+                    'type'              => 'string',
+                    'default'           => 'production',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            )
         );
     }
 

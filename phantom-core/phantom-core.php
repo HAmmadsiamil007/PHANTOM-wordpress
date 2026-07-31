@@ -391,6 +391,34 @@ spl_autoload_register(
 			}
 		}
 
+		// Visual Customizer namespaces use includes/{Dir}/ with class-{name}.php naming
+		$vc_dirs = array( 'Inspector', 'Lock', 'Favorites', 'Search', 'Style', 'Rest' );
+		foreach ( $vc_dirs as $vc_dir ) {
+			$vc_prefix = $vc_dir . '\\';
+			if ( strncmp( $vc_prefix, $relative_class, strlen( $vc_prefix ) ) !== 0 ) {
+				continue;
+			}
+			$short = substr( $relative_class, strlen( $vc_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/' . $vc_dir . '/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Admin pages use admin/ with class-{name}.php naming
+		$admin_prefix = 'Admin\\';
+		if ( strncmp( $admin_prefix, $relative_class, strlen( $admin_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $admin_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'admin/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
 		$file = PHANTOM_CORE_PATH . 'includes/' . str_replace( '\\', '/', $relative_class ) . '.php';
 		if ( file_exists( $file ) ) {
 			require_once $file;
@@ -459,11 +487,9 @@ require_once PHANTOM_CORE_PATH . 'includes/Animation/class-parallax.php';
 // Phase 6: History & Versioning System
 if ( class_exists( '\PhantomCore\History\History_Manager' ) ) {
 	\PhantomCore\History\History_Manager::get_instance()->init();
-	if ( is_admin() ) {
-		add_action( 'rest_api_init', function () {
-			\PhantomCore\History\History_Rest::get_instance()->register_routes();
-		}, 15 );
-	}
+	add_action( 'rest_api_init', function () {
+		\PhantomCore\History\History_Rest::get_instance()->register_routes();
+	}, 15 );
 }
 
 // Phase D: Plugin Bridges — register all before init_all()
@@ -634,9 +660,28 @@ add_action(
 	'plugins_loaded',
 	function (): void {
 		\PhantomCore\Components\Component_Manager::get_instance()->init();
-		\PhantomCore\Registry\Template_Registry::get_instance()->register_defaults();
 	},
 	25
+);
+
+// Visual Customizer 2.0 stack: auto-register REST routes, selection engine, admin page
+add_action(
+	'plugins_loaded',
+	function (): void {
+		\PhantomCore\Rest\Auto_Register::get_instance()->init();
+		\PhantomCore\Inspector\Selection_Engine::get_instance()->init();
+	},
+	26
+);
+
+add_action(
+	'plugins_loaded',
+	function (): void {
+		if ( is_admin() ) {
+			\PhantomCore\Admin\Visual_Customizer_Page::get_instance()->init();
+		}
+	},
+	26
 );
 
 register_activation_hook(

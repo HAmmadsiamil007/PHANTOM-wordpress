@@ -37,6 +37,13 @@ class Component_Definition_Registry {
     }
 
     /**
+     * Lazily register all built-in definitions before any lookup.
+     */
+    private function ensure_defaults(): void {
+        $this->register_defaults();
+    }
+
+    /**
      * Get a component definition by ID.
      */
     public function get(string $id): ?Component_Definition {

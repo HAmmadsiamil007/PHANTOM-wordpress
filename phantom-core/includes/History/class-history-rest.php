@@ -74,6 +74,13 @@ class History_Rest {
             'permission_callback' => [$this, 'admin_check'],
         ]);
 
+        // POST /history/clear — wipe all history
+        register_rest_route($namespace, '/history/clear', [
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => [$this, 'clear_history'],
+            'permission_callback' => [$this, 'admin_check'],
+        ]);
+
         // POST /history/restore/{id} — restore a specific snapshot
         register_rest_route($namespace, '/history/restore/(?P<id>[a-f0-9-]+)', [
             'methods'             => \WP_REST_Server::CREATABLE,
@@ -196,7 +203,7 @@ class History_Rest {
         $manager = History_Manager::get_instance();
         return new \WP_REST_Response([
             'success' => true,
-            'history' => $manager->list_snapshots(),
+            'history' => $manager->get_timeline(),
             'position' => $manager->get_position(),
         ], 200);
     }
@@ -221,6 +228,10 @@ class History_Rest {
         $manager = History_Manager::get_instance();
         $result  = $manager->undo();
 
+        if (!empty($result['snapshot'])) {
+            $result['entry'] = $manager->to_entry(new \PhantomCore\History\Snapshot($result['snapshot']));
+        }
+
         return new \WP_REST_Response($result, $result['success'] ? 200 : 400);
     }
 
@@ -228,7 +239,22 @@ class History_Rest {
         $manager = History_Manager::get_instance();
         $result  = $manager->redo();
 
+        if (!empty($result['snapshot'])) {
+            $result['entry'] = $manager->to_entry(new \PhantomCore\History\Snapshot($result['snapshot']));
+        }
+
         return new \WP_REST_Response($result, $result['success'] ? 200 : 400);
+    }
+
+    public function clear_history(): \WP_REST_Response {
+        $manager = History_Manager::get_instance();
+        $manager->clear();
+
+        return new \WP_REST_Response([
+            'success'  => true,
+            'message'  => __('History cleared.', 'phantom-core'),
+            'position' => $manager->get_position(),
+        ], 200);
     }
 
     public function restore_snapshot(\WP_REST_Request $request): \WP_REST_Response {
