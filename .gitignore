@@ -7,6 +7,11 @@ nul
 *.phar
 .phpunit.result.cache
 
+# Local scratch
+.opencode/
+docker-compose.yml
+docs/plan castimzer/
+
 # Debug files
 *.log
 
