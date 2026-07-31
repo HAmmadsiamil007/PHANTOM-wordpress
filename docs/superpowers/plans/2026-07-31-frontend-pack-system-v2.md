@@ -128,31 +128,31 @@ phantom-core/
 - Do not touch `class-rest-controller.php` pack endpoints (aliases); do not touch nested stale copy.
 - `Media_Asset_Registry::get_url()` calls `wp_get_attachment_image_url` â€” not stubbed; Inspector_Assets_Test uses assets with non-numeric stored values so the stub-free path (return `(string)$stored`) runs; keep fixture values numeric-free or add stub in test file.
 
-## COMPLETED — 2026-07-31
+## COMPLETED ï¿½ 2026-07-31
 
 All tasks T1-T8 delivered. Commits on master:
-- fdcc010 — T1 autoload + bootstrap (Packs\ prefix, plugins_loaded init)
-- 34d0b0f — T2 Frontend_Pack DTO (80 assertions suite incl. URL resolution)
-- dfb1e43 — T3 Frontend_Pack_Registry (scan/get/display names, lazy scan)
-- e01e160 — T4 install_zip / install_from_upload / uninstall / activate / apply_pack_settings
-- fa34c5a — T5 Pack_Rest (4 routes, priority 15, route dedupe incl. test collector)
-- e38e3be — T6 Template_Loader delegation to registry (lazy default scan added)
-- 853ab02 — T7 Inspector Assets panel restore (vc.js contract rows)
-- fab44ea — T5 polish: WP_Error status 400 + accurate applied count
-- (final) — smoke script committed to tools/smoke-packs.php + completion notes
+- fdcc010 ï¿½ T1 autoload + bootstrap (Packs\ prefix, plugins_loaded init)
+- 34d0b0f ï¿½ T2 Frontend_Pack DTO (80 assertions suite incl. URL resolution)
+- dfb1e43 ï¿½ T3 Frontend_Pack_Registry (scan/get/display names, lazy scan)
+- e01e160 ï¿½ T4 install_zip / install_from_upload / uninstall / activate / apply_pack_settings
+- fa34c5a ï¿½ T5 Pack_Rest (4 routes, priority 15, route dedupe incl. test collector)
+- e38e3be ï¿½ T6 Template_Loader delegation to registry (lazy default scan added)
+- 853ab02 ï¿½ T7 Inspector Assets panel restore (vc.js contract rows)
+- fab44ea ï¿½ T5 polish: WP_Error status 400 + accurate applied count
+- (final) ï¿½ smoke script committed to tools/smoke-packs.php + completion notes
 
 Verification: full suite 543 tests / 12,140 assertions green (463 baseline + 80 new);
 php -l 0 errors across all PHP files; Docker deploy md5-verified on 6 files;
-smoke ALL PASS (24 checks) via tools/smoke-packs.php (2026-07-31); debug.log 0 bytes.
+smoke ALL PASS (23 checks) via tools/smoke-packs.php (2026-07-31); debug.log 0 bytes.
 
 Findings during execution:
 - Registry needed lazy default scan (ensure_scanned) so Template_Loader delegation works in production without pre-scan.
-- Pack_Rest::activate double-applied settings (activate() applies internally, callback re-applied) — callback now measures applied count BEFORE activate.
+- Pack_Rest::activate double-applied settings (activate() applies internally, callback re-applied) ï¿½ callback now measures applied count BEFORE activate.
 - Registry WP_Error returns lacked status data ? REST returned 500 for client errors; Pack_Rest attaches 400.
-- Test bootstrap WP_Error stub lacked add_data() — extended.
-- update_option returns false when value unchanged — applied-count semantics verified with clean-state probe.
+- Test bootstrap WP_Error stub lacked add_data() ï¿½ extended.
+- update_option returns false when value unchanged ï¿½ applied-count semantics verified with clean-state probe.
 - Old alias /template-pack/activate requires param pack + X-WP-Nonce (verified working).
-- /wp-json/ pretty prefix is intentionally absent (plain permalinks; rest_url() uses ?rest_route=) — not a regression.
+- /wp-json/ pretty prefix is intentionally absent (plain permalinks; rest_url() uses ?rest_route=) ï¿½ not a regression.
 - Uninstall does not delete options written by apply_pack_settings (by design; settings are global design options).
 
 Environment notes: container phantom-wp (PHP 8.2.17, ZipArchive present); site URL localhost:8080.
