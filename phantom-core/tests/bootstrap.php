@@ -719,3 +719,7 @@ function phantom_ensure_fashion_fixture(): void {
     file_put_contents( $dir . 'js/demo.js', '// Fashion demo' );
     clearstatcache();
 }
+
+// Load Template Packs (PhantomCore\Packs) classes
+require_once PHANTOM_CORE_PATH . 'includes/Packs/class-frontend-pack.php';
+
