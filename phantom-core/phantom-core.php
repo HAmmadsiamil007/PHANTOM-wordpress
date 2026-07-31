@@ -407,6 +407,18 @@ spl_autoload_register(
 			}
 		}
 
+		// Template Packs use includes/Packs/ with class-{name}.php naming
+		$packs_prefix = 'Packs\\';
+		if ( strncmp( $packs_prefix, $relative_class, strlen( $packs_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $packs_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Packs/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
 		// Admin pages use admin/ with class-{name}.php naming
 		$admin_prefix = 'Admin\\';
 		if ( strncmp( $admin_prefix, $relative_class, strlen( $admin_prefix ) ) === 0 ) {
@@ -670,6 +682,7 @@ add_action(
 	function (): void {
 		\PhantomCore\Rest\Auto_Register::get_instance()->init();
 		\PhantomCore\Inspector\Selection_Engine::get_instance()->init();
+		\PhantomCore\Packs\Pack_Rest::get_instance()->init();
 	},
 	26
 );
