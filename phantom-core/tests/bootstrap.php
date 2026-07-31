@@ -725,3 +725,5 @@ require_once PHANTOM_CORE_PATH . 'includes/Packs/class-frontend-pack.php';
 
 require_once PHANTOM_CORE_PATH . 'includes/Packs/class-frontend-pack-registry.php';
 
+require_once PHANTOM_CORE_PATH . 'includes/Packs/class-pack-rest.php';
+
