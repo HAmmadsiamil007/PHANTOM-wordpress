@@ -421,14 +421,26 @@ class Customizer {
 			case 'multiselect':
 			case 'multi_select':
 			case 'json':
-				$wp_customize->add_control( $setting_id, array(
-					'type'        => 'textarea',
-					'label'       => $label,
-					'description' => $description . ' ' . __( 'Enter one value per line.', 'phantom-core' ),
-					'section'     => $section_id,
-					'input_attrs' => array( 'rows' => $entry['rows'] ?? 5 ),
-					'priority'    => $priority,
-				) );
+				$array_control = Control_Base::get_class_for_type( 'ast-array-textarea' );
+				if ( $array_control && class_exists( $array_control ) ) {
+					$wp_customize->add_control( new $array_control( $wp_customize, $setting_id, array(
+						'label'       => $label,
+						'description' => $description . ' ' . __( 'Enter one value per line.', 'phantom-core' ),
+						'section'     => $section_id,
+						'settings'    => $setting_id,
+						'input_attrs' => array( 'rows' => $entry['rows'] ?? 5 ),
+						'priority'    => $priority,
+					) ) );
+				} else {
+					$wp_customize->add_control( $setting_id, array(
+						'type'        => 'textarea',
+						'label'       => $label,
+						'description' => $description . ' ' . __( 'Enter one value per line.', 'phantom-core' ),
+						'section'     => $section_id,
+						'input_attrs' => array( 'rows' => $entry['rows'] ?? 5 ),
+						'priority'    => $priority,
+					) );
+				}
 				break;
 
 			case 'number':
@@ -595,6 +607,13 @@ class Customizer {
 	}
 
 	private function get_sanitize_callback( array $entry ): callable {
+		$type = $entry['type'] ?? 'string';
+		if ( in_array( $type, array( 'array', 'repeater', 'multiselect', 'multi_select', 'json' ), true ) ) {
+			$array_sanitize = Control_Base::get_sanitize_for_type( 'ast-array-textarea' );
+			if ( $array_sanitize ) {
+				return $array_sanitize;
+			}
+		}
 		$sanitize = $entry['sanitize'] ?? null;
 		if ( is_callable( $sanitize ) ) {
 			return $sanitize;
@@ -602,7 +621,6 @@ class Customizer {
 		if ( is_string( $sanitize ) && function_exists( $sanitize ) ) {
 			return $sanitize;
 		}
-		$type = $entry['type'] ?? 'string';
 		if ( in_array( $type, array( 'array', 'repeater', 'multiselect', 'multi_select', 'json' ), true ) ) {
 			return 'sanitize_textarea_field';
 		}

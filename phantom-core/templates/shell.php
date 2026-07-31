@@ -246,7 +246,11 @@ class Shell {
             );
         }
 
-        echo wp_kses_post( $html );
+        // Dynamic values are escaped at their injection points (esc_html/esc_attr/
+        // wp_kses_post on content fields). Do NOT wrap the full document in
+        // wp_kses_post — it strips head assets (link/style/script/meta) and the
+        // doctype, breaking both the frontend and the Customizer preview iframe.
+        echo $html;
         exit;
     }
 

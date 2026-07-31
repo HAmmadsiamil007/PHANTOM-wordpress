@@ -46,8 +46,7 @@
       var cssVar = PhantomCustomizer.cssVarMap[settingKey];
       var needsPx = Array.isArray(PhantomCustomizer.cssVarPxKeys) && PhantomCustomizer.cssVarPxKeys.indexOf(settingKey) !== -1;
       var isResponsive = PhantomCustomizer.responsiveKeys && PhantomCustomizer.responsiveKeys.indexOf(settingKey) !== -1;
-      var setting = wp.customize(settingId);
-      if (setting) {
+      wp.customize(settingId, function (setting) {
         setting.bind(function (newval) {
           if (isResponsive) {
             updateResponsiveCss(settingKey, cssVar, newval);
@@ -56,7 +55,7 @@
           if (needsPx && /^\d+(\.\d+)?$/.test(newval)) newval += 'px';
           document.documentElement.style.setProperty(cssVar, newval);
         });
-      }
+      });
     });
   }
 

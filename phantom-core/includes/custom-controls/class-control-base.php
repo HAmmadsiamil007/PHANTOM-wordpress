@@ -28,6 +28,7 @@ abstract class Control_Base extends \WP_Customize_Control {
             'class-background-control.php',
             'class-border-control.php',
             'class-preset-card-control.php',
+            'class-array-textarea-control.php',
         );
         foreach ( $controls as $file ) {
             $path = $base . $file;
@@ -55,6 +56,7 @@ abstract class Control_Base extends \WP_Customize_Control {
         'ast-background'        => Background_Control::class,
         'ast-border'            => Border_Control::class,
         'ast-preset-card'       => Preset_Card_Control::class,
+        'ast-array-textarea'    => Array_Textarea_Control::class,
     );
 
     public static function get_class_for_type( string $type ): ?string {

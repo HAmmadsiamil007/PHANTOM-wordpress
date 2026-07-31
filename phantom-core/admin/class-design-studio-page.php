@@ -20,10 +20,10 @@ class DesignStudioPage {
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
     }
 
-    public function body_class(array $classes): array {
+    public function body_class(string $classes): string {
         $screen = get_current_screen();
         if ($screen && str_contains($screen->id, 'phantom-design-studio')) {
-            $classes[] = 'phantom-design-studio-active';
+            $classes .= ' phantom-design-studio-active';
         }
         return $classes;
     }
