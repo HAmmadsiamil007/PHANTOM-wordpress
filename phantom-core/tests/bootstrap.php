@@ -772,3 +772,12 @@ require_once PHANTOM_CORE_PATH . 'includes/Inspector/class-selection-engine.php'
 
 require_once PHANTOM_CORE_PATH . 'includes/Inspector/class-inspector-factory.php';
 
+// Load Phase B Visual Tool Engine (Property Registry + Component Metadata)
+require_once PHANTOM_CORE_PATH . 'includes/Design/class-property-registry.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Design/data/component-parts.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Design/class-component-metadata.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Inspector/class-control-renderer.php';
+

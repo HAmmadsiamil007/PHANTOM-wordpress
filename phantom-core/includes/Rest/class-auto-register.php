@@ -158,6 +158,7 @@ class Auto_Register {
                 $state    = $request->get_param('state') ?: 'normal';
                 $viewport = $request->get_param('viewport') ?: 'desktop';
                 $instance_id = $request->get_param('instance');
+                $tool     = $request->get_param('tool') ?: '';
 
                 $editable = array();
                 $raw = $request->get_param('editable');
@@ -173,12 +174,16 @@ class Auto_Register {
                     $instance = ComponentInstance::get($instance_id);
                 }
 
-                $html = Inspector_Factory::get_instance()->render_panels($name, $instance, $state, $viewport, $editable);
+                $html = Inspector_Factory::get_instance()->render_panels($name, $instance, $state, $viewport, $editable, $tool);
+                $tools = \PhantomCore\Design\Component_Metadata::get_instance()->get_tools($name);
 
                 return new \WP_REST_Response(
                     array(
                         'success' => true,
-                        'data'    => array('panels' => $html),
+                        'data'    => array(
+                            'panels' => $html,
+                            'tools'  => $tools,
+                        ),
                     ),
                     200
                 );
@@ -203,6 +208,10 @@ class Auto_Register {
                 ),
                 'instance' => array(
                     'type'              => 'string',
+                ),
+                'tool' => array(
+                    'type'              => 'string',
+                    'default'           => '',
                 ),
             )
         );

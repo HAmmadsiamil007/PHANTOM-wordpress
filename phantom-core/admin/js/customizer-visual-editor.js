@@ -10,6 +10,7 @@
     var cfg = window.PhantomVisualEditor || {};
     var editingEnabled = false;
     var currentComponent = null;
+    var currentTool = '';
     var pendingChanges = {};
     var previewFrame = null;
 
@@ -76,9 +77,10 @@
         }
     }
 
-    function loadInspector(component, state, viewport) {
+    function loadInspector(component, state, viewport, tool) {
         state = state || (component && component.state) || 'normal';
         viewport = viewport || (component && component.viewport) || 'desktop';
+        tool = (tool !== undefined) ? tool : currentTool;
 
         var inspector = inspectorEl();
         if (!inspector) return;
@@ -86,6 +88,9 @@
         inspector.innerHTML = '<div class="vc-panel vc-loading"><span class="spinner is-active"></span></div>';
 
         var qs = 'state=' + encodeURIComponent(state) + '&viewport=' + encodeURIComponent(viewport);
+        if (tool) {
+            qs += '&tool=' + encodeURIComponent(tool);
+        }
         if (component && component.editable && component.editable.length) {
             qs += '&editable=' + encodeURIComponent(JSON.stringify(component.editable));
         }
@@ -99,12 +104,51 @@
                     html = '<div class="vc-panel vc-panel-error">No inspector available for this element.</div>';
                 }
                 inspector.innerHTML = html;
+                if (json && json.data && json.data.tools) {
+                    renderToolPalette(inspector, json.data.tools, currentTool);
+                }
                 bindControls(inspector);
                 expandSection('phantom_section_inspector');
             })
             .catch(function () {
                 inspector.innerHTML = '<div class="vc-panel vc-panel-error">Failed to load the inspector.</div>';
             });
+    }
+
+    function renderToolPalette(container, tools, activeTool) {
+        if (!tools || !tools.length) return;
+
+        var el = document.createElement('div');
+        el.className = 'vc-tool-palette';
+
+        var allActive = (activeTool === '') ? ' active' : '';
+        el.innerHTML = '<button type="button" class="vc-tool-btn' + allActive + '" data-tool="" title="Show all settings">' +
+            '<span class="dashicons dashicons-admin-generic"></span><span>All</span></button>';
+
+        tools.forEach(function (t) {
+            var active = (t.tool === activeTool) ? ' active' : '';
+            var soon = t.implemented ? '' : ' vc-tool-soon';
+            var title = t.implemented ? t.label : t.label + ' (coming soon)';
+            el.innerHTML += '<button type="button" class="vc-tool-btn' + active + soon + '" data-tool="' + t.tool + '"' +
+                (t.implemented ? '' : ' disabled') + ' title="' + title + '">' +
+                '<span class="dashicons dashicons-' + t.icon + '"></span>' +
+                '<span>' + t.label + '</span></button>';
+        });
+
+        container.insertBefore(el, container.firstChild);
+
+        el.addEventListener('click', function (ev) {
+            var btn = ev.target && ev.target.closest ? ev.target.closest('.vc-tool-btn') : null;
+            if (!btn || btn.disabled || btn.classList.contains('active')) return;
+            selectTool(btn.getAttribute('data-tool'));
+        });
+    }
+
+    function selectTool(tool) {
+        currentTool = tool || '';
+        if (currentComponent) {
+            loadInspector(currentComponent, undefined, undefined, currentTool);
+        }
     }
 
     function bindControls(container) {
@@ -341,6 +385,8 @@
     window.PhantomVisualEditorApi = {
         applyLive: applyLive,
         loadInspector: loadInspector,
-        getSelected: function () { return currentComponent; }
+        selectTool: selectTool,
+        getSelected: function () { return currentComponent; },
+        getTool: function () { return currentTool; }
     };
 })();
