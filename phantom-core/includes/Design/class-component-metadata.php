@@ -78,6 +78,7 @@ class Component_Metadata {
                     'property' => $property,
                     'key'      => (string) ($entry['key'] ?? $property),
                     'label'    => isset($entry['label']) ? (string) $entry['label'] : null,
+                    'target'   => isset($entry['target']) ? (string) $entry['target'] : null,
                     'def'      => $def,
                 );
             }

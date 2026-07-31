@@ -169,6 +169,8 @@ class Inspector_Factory {
                     'type'    => $def['type'] ?? 'text',
                     'label'   => $entry['label'] ?? $def['label'] ?? $entry['property'],
                     'default' => $def['default'] ?? '',
+                    'part'    => $part_id,
+                    'target'  => $entry['target'] ?? '',
                 ];
                 foreach (['min', 'max', 'step', 'unit', 'options'] as $extra) {
                     if (isset($def[$extra])) {

@@ -149,3 +149,43 @@ html.no-motion .text-reveal {
     html.has-motion [data-reveal] { will-change: auto; }
     .page-load { animation: none; opacity: 1; }
 }
+
+/* Hero entrance animation (Animation tool — CSS-var driven, none by default) */
+.hero-slide-content {
+    animation-name: var(--hero-animation, none);
+    animation-duration: var(--hero-animation-duration, 700ms);
+    animation-timing-function: ease-out;
+    animation-delay: var(--hero-animation-delay, 0ms);
+    animation-fill-mode: both;
+}
+
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slide-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-left {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes zoom {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes parallax {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-slide-content {
+        animation: none;
+    }
+}

@@ -106,6 +106,8 @@ class Control_Renderer {
         $name = esc_attr($key);
         $label = esc_html($field['label'] ?? ucwords(str_replace('_', ' ', $key)));
         $current_value = esc_attr((string) $value);
+        $target_attr = !empty($field['target']) ? ' data-target="' . esc_attr($field['target']) . '"' : '';
+        $part_attr = !empty($field['part']) ? ' data-part="' . esc_attr($field['part']) . '"' : '';
 
         $override_classes = '';
         $override_dot = '';
@@ -119,7 +121,7 @@ class Control_Renderer {
             }
         }
 
-        $html = '<div class="vc-control vc-control-' . esc_attr($type) . $override_classes . '" data-property="' . $name . '">';
+        $html = '<div class="vc-control vc-control-' . esc_attr($type) . $override_classes . '" data-property="' . $name . '"' . $target_attr . $part_attr . '>';
         $html .= '<label class="vc-control-label">' . $override_dot . $label . '</label>';
         $html .= '<div class="vc-control-input">';
 

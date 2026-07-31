@@ -79,6 +79,49 @@ class Inspector_Tools_Test extends TestCase {
         $this->assertStringNotContainsString('data-property="hero_bg_color"', $html);
     }
 
+    public function test_content_tool_renders_content_part_with_targets(): void {
+        $html = $this->factory->render_panels('hero', null, 'normal', 'desktop', [], 'content');
+
+        $this->assertStringContainsString('data-panel="content"', $html);
+        $this->assertStringContainsString('data-property="hero_subtitle_text"', $html);
+        $this->assertStringContainsString('data-property="hero_button_text"', $html);
+        $this->assertStringContainsString('data-property="hero_button2_text"', $html);
+
+        $this->assertStringContainsString('data-target="description"', $html);
+        $this->assertStringContainsString('data-target="button_primary"', $html);
+        $this->assertStringContainsString('data-target="button_secondary"', $html);
+
+        $this->assertStringContainsString('data-part="content"', $html);
+        $this->assertStringNotContainsString('data-panel="background"', $html);
+        $this->assertStringNotContainsString('data-property="hero_bg_color"', $html);
+    }
+
+    public function test_responsive_tool_renders_hide_toggles(): void {
+        $html = $this->factory->render_panels('hero', null, 'normal', 'desktop', [], 'responsive');
+
+        $this->assertStringContainsString('data-panel="responsive"', $html);
+        $this->assertStringContainsString('data-property="hero_hide_desktop"', $html);
+        $this->assertStringContainsString('data-property="hero_hide_tablet"', $html);
+        $this->assertStringContainsString('data-property="hero_hide_mobile"', $html);
+        $this->assertStringContainsString('data-target="component"', $html);
+
+        $this->assertStringNotContainsString('data-panel="background"', $html);
+        $this->assertStringNotContainsString('vc-color-picker', $html);
+    }
+
+    public function test_legacy_tabs_do_not_carry_target_attributes(): void {
+        $html = $this->factory->render_panels(
+            'mystery-section',
+            null,
+            'normal',
+            'desktop',
+            [],
+            ''
+        );
+
+        $this->assertStringNotContainsString('data-target=', $html);
+    }
+
     public function test_legacy_tabs_fallback_without_metadata(): void {
         $html = $this->factory->render_panels(
             'mystery-section',

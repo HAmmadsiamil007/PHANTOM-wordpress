@@ -163,14 +163,14 @@
     </div>
 
     <!-- Header -->
-    <header class="header" id="header" role="banner" data-component="header" data-instance="header-default" data-token-group="header" data-settings-group="header" data-editable="true" data-version="1.0">
+    <header class="header" id="header" data-part="background" data-part-label="Background" role="banner" data-component="header" data-instance="header-default" data-token-group="header" data-settings-group="header" data-editable="true" data-version="1.0">
         <div class="header-container">
-            <a href="/" class="brand-logo">AETHER</a>
+            <a href="/" class="brand-logo" data-part="logo" data-part-label="Logo">AETHER</a>
             <nav class="main-nav" id="mainNav" aria-label="Main navigation" data-phantom-menu="primary">
                 <div class="nav-mobile-logo">
-                    <a href="/" class="brand-logo">AETHER</a>
+                    <a href="/" class="brand-logo" data-part="logo" data-part-label="Logo">AETHER</a>
                 </div>
-                <ul class="nav-links">
+                <ul class="nav-links" data-part="links" data-part-label="Links">
                     <li><a href="/" class="nav-link">Home</a></li>
                     <li class="nav-dropdown">
                         <a href="/shop" class="nav-link nav-dropdown-toggle active">Collection <i class="fas fa-chevron-down"></i></a>
@@ -252,7 +252,7 @@
                 <div class="pd-info">
                     <div class="pd-info-inner">
                         <span class="pd-badge" data-phantom="product_badge">New Arrival</span>
-                        <h1 class="pd-title" data-phantom="page_title">[product_title]</h1>
+                        <h1 class="pd-title" data-part="heading" data-part-label="Heading" data-phantom="page_title">[product_title]</h1>
                         <p class="pd-price" data-phantom="product_price">[product_price]</p>
                         <div class="pd-rating">[product_rating]</div>
                         <p class="pd-description" data-phantom="product_description">[product_short_description]</p>
@@ -597,12 +597,12 @@
 
     <!-- Footer -->
     </main>
-    <footer class="footer" id="footer" role="contentinfo" aria-label="Site footer" data-component="footer" data-instance="footer-default" data-token-group="footer" data-settings-group="footer" data-editable="true" data-version="1.0" data-phantom-menu="footer">
+    <footer class="footer" id="footer" data-part="background" data-part-label="Background" role="contentinfo" aria-label="Site footer" data-component="footer" data-instance="footer-default" data-token-group="footer" data-settings-group="footer" data-editable="true" data-version="1.0" data-phantom-menu="footer">
         <div class="container">
-            <div class="footer-top" data-component="footer-top" data-instance="footer-top-{{slug}}" data-token-group="footer">
+            <div class="footer-top" data-part="columns" data-part-label="Columns" data-component="footer-top" data-instance="footer-top-{{slug}}" data-token-group="footer">
                 <div class="footer-brand" data-component="footer-brand" data-instance="footer-brand-{{slug}}" data-token-group="footer">
                     <a href="/" class="footer-logo">AETHER</a>
-                    <p class="footer-tagline">Step Into The Void</p>
+                    <p class="footer-tagline" data-part="text" data-part-label="Text">Step Into The Void</p>
                     <div class="footer-social" data-component="footer-social" data-instance="footer-social-{{slug}}" data-token-group="footer" aria-label="Social media links">
                         <a href="https://instagram.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                         <a href="https://twitter.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
@@ -649,7 +649,7 @@
                 </div>
             </div>
             <div class="footer-bottom" data-component="footer-bottom" data-instance="footer-bottom-{{slug}}" data-token-group="footer">
-                <div class="footer-legal" data-component="footer-legal" data-instance="footer-legal-{{slug}}" data-token-group="footer">
+                <div class="footer-legal" data-part="text" data-part-label="Text" data-component="footer-legal" data-instance="footer-legal-{{slug}}" data-token-group="footer">
                     <span>&copy; 2026 AETHER. All Rights Reserved.</span>
                     <a href="/privacy-policy">Privacy</a>
                     <a href="/terms">Terms</a>

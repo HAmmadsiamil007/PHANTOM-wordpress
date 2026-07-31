@@ -23,9 +23,9 @@ class Property_Registry {
         'typography'  => ['label' => 'Typography',  'icon' => 'editor-textcolor', 'implemented' => true],
         'spacing'     => ['label' => 'Spacing',     'icon' => 'editor-expand',    'implemented' => true],
         'assets'      => ['label' => 'Assets',      'icon' => 'format-image',     'implemented' => true],
-        'animation'   => ['label' => 'Animation',   'icon' => 'visibility',       'implemented' => false],
-        'responsive'  => ['label' => 'Responsive',  'icon' => 'desktop',          'implemented' => false],
-        'content'     => ['label' => 'Content',     'icon' => 'edit',             'implemented' => false],
+        'animation'   => ['label' => 'Animation',   'icon' => 'visibility',       'implemented' => true],
+        'responsive'  => ['label' => 'Responsive',  'icon' => 'desktop',          'implemented' => true],
+        'content'     => ['label' => 'Content',     'icon' => 'edit',             'implemented' => true],
     ];
 
     private static ?self $instance = null;
@@ -343,11 +343,49 @@ class Property_Registry {
             'type'    => 'textarea',
             'default' => '',
         ]);
+        $this->register('subtitle-text', [
+            'tool'    => 'content',
+            'label'   => __('Subtitle', 'phantom-core'),
+            'type'    => 'textarea',
+            'default' => '',
+        ]);
+        $this->register('button-text', [
+            'tool'    => 'content',
+            'label'   => __('Button Label', 'phantom-core'),
+            'type'    => 'text',
+            'default' => '',
+        ]);
+        $this->register('button-secondary-text', [
+            'tool'    => 'content',
+            'label'   => __('Secondary Button Label', 'phantom-core'),
+            'type'    => 'text',
+            'default' => '',
+        ]);
         $this->register('link-url', [
             'tool'    => 'content',
             'label'   => __('Link URL', 'phantom-core'),
             'type'    => 'text',
             'default' => '',
+        ]);
+
+        // ── Responsive ────────────────────────────────────────
+        $this->register('hide-desktop', [
+            'tool'    => 'responsive',
+            'label'   => __('Hide on Desktop', 'phantom-core'),
+            'type'    => 'toggle',
+            'default' => '0',
+        ]);
+        $this->register('hide-tablet', [
+            'tool'    => 'responsive',
+            'label'   => __('Hide on Tablet', 'phantom-core'),
+            'type'    => 'toggle',
+            'default' => '0',
+        ]);
+        $this->register('hide-mobile', [
+            'tool'    => 'responsive',
+            'label'   => __('Hide on Mobile', 'phantom-core'),
+            'type'    => 'toggle',
+            'default' => '0',
         ]);
 
         /**

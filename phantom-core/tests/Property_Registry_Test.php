@@ -27,15 +27,11 @@ class Property_Registry_Test extends TestCase {
         );
     }
 
-    public function test_colors_and_typography_are_implemented(): void {
+    public function test_all_tools_are_implemented(): void {
         $tools = $this->registry->get_tools();
-        $this->assertTrue($tools['colors']['implemented']);
-        $this->assertTrue($tools['typography']['implemented']);
-        $this->assertTrue($tools['spacing']['implemented']);
-        $this->assertTrue($tools['assets']['implemented']);
-        $this->assertFalse($tools['animation']['implemented']);
-        $this->assertFalse($tools['responsive']['implemented']);
-        $this->assertFalse($tools['content']['implemented']);
+        foreach ($tools as $tool) {
+            $this->assertTrue($tool['implemented'], 'Tool ' . $tool['label'] . ' should be implemented');
+        }
     }
 
     public function test_tool_exists(): void {
@@ -78,8 +74,28 @@ class Property_Registry_Test extends TestCase {
         $this->assertArrayHasKey('background-color', $colors);
     }
 
-    public function test_get_for_tool_unimplemented_returns_empty(): void {
-        $this->assertEmpty($this->registry->get_for_tool('responsive'));
+    public function test_get_for_tool_returns_new_tool_properties(): void {
+        $content = $this->registry->get_for_tool('content');
+        $this->assertNotEmpty($content);
+        $this->assertArrayHasKey('subtitle-text', $content);
+        $this->assertArrayHasKey('button-text', $content);
+        $this->assertArrayHasKey('button-secondary-text', $content);
+
+        $responsive = $this->registry->get_for_tool('responsive');
+        $this->assertNotEmpty($responsive);
+        $this->assertArrayHasKey('hide-desktop', $responsive);
+        $this->assertArrayHasKey('hide-tablet', $responsive);
+        $this->assertArrayHasKey('hide-mobile', $responsive);
+
+        foreach (array_merge($content, $responsive) as $key => $def) {
+            $this->assertTrue($this->registry->tool_exists($def['tool']), "{$key} tool mismatch");
+        }
+    }
+
+    public function test_new_tool_properties_are_toggle_and_textarea_types(): void {
+        $this->assertSame('toggle', $this->registry->get('hide-mobile')['type']);
+        $this->assertSame('textarea', $this->registry->get('subtitle-text')['type']);
+        $this->assertSame('text', $this->registry->get('button-text')['type']);
     }
 
     public function test_custom_register_is_additive(): void {

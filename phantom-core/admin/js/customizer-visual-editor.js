@@ -10,6 +10,7 @@
     var cfg = window.PhantomVisualEditor || {};
     var editingEnabled = false;
     var currentComponent = null;
+    var currentPart = '';
     var currentTool = '';
     var toolsCache = {};
     var pendingChanges = {};
@@ -65,11 +66,31 @@
         return '--' + prop.replace(/_/g, '-');
     }
 
-    function applyLive(prop, value) {
+    function controlScope(input) {
+        var box = input.closest ? input.closest('.vc-control') : null;
+        return {
+            part: box ? (box.getAttribute('data-part') || currentPart) : currentPart,
+            target: box ? (box.getAttribute('data-target') || '') : ''
+        };
+    }
+
+    function applyLive(prop, value, opts) {
+        opts = opts || {};
         pendingChanges[prop] = value;
         var vars = {};
         vars[cssVarFor(prop)] = value;
-        postToPreview({ type: 'vc-apply-css', cssVars: vars });
+        var msg = { type: 'vc-apply-css', cssVars: vars };
+        if (opts.part || currentPart) {
+            msg.part = opts.part || currentPart;
+        }
+        if (opts.target) {
+            msg.target = opts.target;
+        }
+        postToPreview(msg);
+
+        if (opts.target && opts.target !== 'component') {
+            postToPreview({ type: 'vc-apply-text', target: opts.target, value: value });
+        }
 
         var settingId = 'phantom_' + prop;
         var setting = api(settingId);
@@ -191,6 +212,7 @@
             if (input.dataset.vcBound) return;
             input.dataset.vcBound = '1';
             var prop = input.getAttribute('data-property');
+            var scope = controlScope(input);
             var swatch = input.parentNode ? input.parentNode.querySelector('.vc-color-swatch') : null;
 
             if (window.jQuery && jQuery.fn.wpColorPicker) {
@@ -200,10 +222,10 @@
                             var val = ui.color ? ui.color.toString() : input.value;
                             input.value = val;
                             if (swatch) swatch.style.background = val;
-                            applyLive(prop, val);
+                            applyLive(prop, val, scope);
                         },
                         clear: function () {
-                            applyLive(prop, '');
+                            applyLive(prop, '', scope);
                             if (swatch) swatch.style.background = '';
                         }
                     });
@@ -212,35 +234,39 @@
             }
             input.addEventListener('change', function () {
                 if (swatch) swatch.style.background = input.value;
-                applyLive(prop, input.value);
+                applyLive(prop, input.value, scope);
             });
         });
 
         container.querySelectorAll('.vc-range').forEach(function (range) {
+            var scope = controlScope(range);
             range.addEventListener('input', function () {
                 var num = range.parentNode ? range.parentNode.querySelector('.vc-range-value') : null;
                 if (num) num.value = range.value;
-                applyLive(range.getAttribute('data-property'), range.value);
+                applyLive(range.getAttribute('data-property'), range.value, scope);
             });
         });
 
         container.querySelectorAll('.vc-range-value').forEach(function (num) {
+            var scope = controlScope(num);
             num.addEventListener('change', function () {
                 var range = num.parentNode ? num.parentNode.querySelector('.vc-range') : null;
                 if (range) range.value = num.value;
-                applyLive(num.getAttribute('data-property'), num.value);
+                applyLive(num.getAttribute('data-property'), num.value, scope);
             });
         });
 
         container.querySelectorAll('.vc-select').forEach(function (sel) {
+            var scope = controlScope(sel);
             sel.addEventListener('change', function () {
-                applyLive(sel.getAttribute('data-property'), sel.value);
+                applyLive(sel.getAttribute('data-property'), sel.value, scope);
             });
         });
 
         container.querySelectorAll('.vc-text-input').forEach(function (input) {
+            var scope = controlScope(input);
             input.addEventListener('change', function () {
-                applyLive(input.getAttribute('data-property'), input.value);
+                applyLive(input.getAttribute('data-property'), input.value, scope);
             });
         });
 
@@ -416,6 +442,7 @@
         switch (e.data.type) {
             case 'vc-element-selected':
                 currentComponent = e.data.data || {};
+                currentPart = (e.data.data && e.data.data.part) || '';
                 loadInspector(currentComponent, undefined, undefined, currentTool, function () {
                     renderSelectionCrumb(currentComponent);
                 });

@@ -199,6 +199,42 @@
         tooltip.style.display = 'none';
     }
 
+    function componentRootOf(el) {
+        return el.closest('[data-component]') || el;
+    }
+
+    function resolveTarget(selection, target) {
+        if (!selection) return null;
+        if (target === 'component') return componentRootOf(selection);
+        var root = componentRootOf(selection);
+        var activeSlide = root.querySelector('.swiper-slide-active');
+        var scope = activeSlide || root;
+        var el = scope.querySelector('[data-part="' + target + '"]');
+        if (el) return el;
+        return selection.querySelector('[data-part="' + target + '"]');
+    }
+
+    function applyText(target, value) {
+        if (typeof value !== 'string') return;
+        var el = resolveTarget(currentSelection, target);
+        if (el) {
+            el.textContent = value;
+        }
+    }
+
+    function ensureMediaStyle() {
+        var styleId = 'vc-live-media';
+        var styleEl = document.getElementById(styleId);
+        if (styleEl) return;
+        styleEl = document.createElement('style');
+        styleEl.id = styleId;
+        styleEl.textContent =
+            '@media (max-width: 1024px){ .vc-hide-desktop{ display:none !important } }' +
+            '@media (max-width: 768px){ .vc-hide-tablet{ display:none !important } }' +
+            '@media (max-width: 576px){ .vc-hide-mobile{ display:none !important } }';
+        document.head.appendChild(styleEl);
+    }
+
     function applyCssVars(cssVars) {
         if (!cssVars || typeof cssVars !== 'object') return;
 
@@ -212,9 +248,18 @@
 
         var css = ':root {';
         for (var key in cssVars) {
-            if (cssVars.hasOwnProperty(key)) {
-                css += key + ':' + cssVars[key] + ';';
+            if (!cssVars.hasOwnProperty(key)) continue;
+            var hideMatch = key.match(/-(hide-(?:desktop|tablet|mobile))$/);
+            if (hideMatch) {
+                ensureMediaStyle();
+                var truthy = cssVars[key] !== '' && cssVars[key] !== '0' && cssVars[key] !== 'false';
+                var target = resolveTarget(currentSelection, 'component');
+                if (target) {
+                    target.classList.toggle('vc-' + hideMatch[1], truthy);
+                }
+                continue;
             }
+            css += key + ':' + cssVars[key] + ';';
         }
         css += '}';
         styleEl.textContent = css;
@@ -268,6 +313,9 @@
         switch (e.data.type) {
             case 'vc-apply-css':
                 applyCssVars(e.data.cssVars);
+                break;
+            case 'vc-apply-text':
+                applyText(e.data.target, e.data.value);
                 break;
             case 'vc-clear-selection':
                 clearSelection();

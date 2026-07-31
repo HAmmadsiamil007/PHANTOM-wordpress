@@ -55,9 +55,37 @@ add_filter(
 		$output .= "\t" . '--hero-bg-position: ' . $pos_val . ';' . "\n";
 		$output .= "\t" . '--hero-overlay-opacity: ' . absint( $opacity ) . '%;' . "\n";
 
+		// Animation tool consumption (visual editor part "animation").
+		$animation = \Phantom_Custom_CSS::get_legacy_option( 'hero_animation', '' );
+		if ( '' !== $animation && 'none' !== $animation ) {
+			$output .= "\t" . '--hero-animation: ' . esc_attr( $animation ) . ';' . "\n";
+			$delay = \Phantom_Custom_CSS::get_legacy_option( 'hero_animation_delay', '' );
+			if ( '' !== $delay ) {
+				$output .= "\t" . '--hero-animation-delay: ' . absint( $delay ) . 'ms;' . "\n";
+			}
+			$duration = \Phantom_Custom_CSS::get_legacy_option( 'hero_animation_duration', '' );
+			if ( '' !== $duration ) {
+				$output .= "\t" . '--hero-animation-duration: ' . absint( $duration ) . 'ms;' . "\n";
+			}
+		}
+
 		if ( '' !== $output ) {
 			$css .= '[data-hero-area] {' . "\n" . $output . '}' . "\n";
 			$css .= ':root {' . "\n" . $output . '}' . "\n";
+		}
+
+		// Responsive tool consumption (visual editor part "responsive").
+		$hide_desktop = \Phantom_Custom_CSS::get_legacy_option( 'hero_hide_desktop', '' );
+		$hide_tablet  = \Phantom_Custom_CSS::get_legacy_option( 'hero_hide_tablet', '' );
+		$hide_mobile  = \Phantom_Custom_CSS::get_legacy_option( 'hero_hide_mobile', '' );
+		if ( $hide_desktop ) {
+			$css .= '@media (max-width: 1024px) { [data-component="hero"] { display: none !important; } }' . "\n";
+		}
+		if ( $hide_tablet ) {
+			$css .= '@media (max-width: 768px) { [data-component="hero"] { display: none !important; } }' . "\n";
+		}
+		if ( $hide_mobile ) {
+			$css .= '@media (max-width: 576px) { [data-component="hero"] { display: none !important; } }' . "\n";
 		}
 
 		return $css;

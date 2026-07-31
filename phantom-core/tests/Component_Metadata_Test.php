@@ -61,11 +61,45 @@ class Component_Metadata_Test extends TestCase {
     public function test_tools_derived_from_properties_in_order(): void {
         $tools = $this->metadata->get_tools('hero');
 
-        $this->assertSame(['colors', 'typography', 'spacing', 'assets', 'animation'], array_column($tools, 'tool'));
+        $this->assertSame(
+            ['colors', 'typography', 'spacing', 'assets', 'animation', 'responsive', 'content'],
+            array_column($tools, 'tool')
+        );
         $this->assertSame('Colors', $tools[0]['label']);
-        $this->assertTrue($tools[0]['implemented']);
-        $this->assertTrue($tools[2]['implemented']);
-        $this->assertFalse($tools[4]['implemented']);
+        foreach ($tools as $tool) {
+            $this->assertTrue($tool['implemented'], 'Tool ' . $tool['tool'] . ' should be implemented');
+        }
+    }
+
+    public function test_hero_content_part_targets_elements(): void {
+        $parts = $this->metadata->get_parts('hero');
+
+        $this->assertArrayHasKey('content', $parts);
+        $this->assertSame('Content', $parts['content']['label']);
+
+        $by_target = [];
+        foreach ($parts['content']['properties'] as $entry) {
+            $by_target[$entry['target']] = $entry;
+        }
+        $this->assertSame('hero_subtitle_text', $by_target['description']['key']);
+        $this->assertSame('hero_button_text', $by_target['button_primary']['key']);
+        $this->assertSame('hero_button2_text', $by_target['button_secondary']['key']);
+    }
+
+    public function test_hero_responsive_part_targets_component(): void {
+        $parts = $this->metadata->get_parts('hero');
+
+        $this->assertArrayHasKey('responsive', $parts);
+        $this->assertSame('Responsive', $parts['responsive']['label']);
+
+        $by_prop = [];
+        foreach ($parts['responsive']['properties'] as $entry) {
+            $by_prop[$entry['property']] = $entry;
+        }
+        $this->assertSame('component', $by_prop['hide-desktop']['target']);
+        $this->assertSame('component', $by_prop['hide-tablet']['target']);
+        $this->assertSame('component', $by_prop['hide-mobile']['target']);
+        $this->assertSame('hero_hide_mobile', $by_prop['hide-mobile']['key']);
     }
 
     public function test_footer_tools_exclude_assets(): void {

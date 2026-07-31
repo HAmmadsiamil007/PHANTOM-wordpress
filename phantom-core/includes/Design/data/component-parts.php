@@ -97,6 +97,22 @@ return array(
                     array('property' => 'animation-duration', 'key' => 'hero_animation_duration'),
                 ),
             ),
+            'content' => array(
+                'label'      => 'Content',
+                'properties' => array(
+                    array('property' => 'subtitle-text',          'key' => 'hero_subtitle_text', 'target' => 'description'),
+                    array('property' => 'button-text',            'key' => 'hero_button_text',   'target' => 'button_primary'),
+                    array('property' => 'button-secondary-text',  'key' => 'hero_button2_text',  'target' => 'button_secondary'),
+                ),
+            ),
+            'responsive' => array(
+                'label'      => 'Responsive',
+                'properties' => array(
+                    array('property' => 'hide-desktop', 'key' => 'hero_hide_desktop', 'target' => 'component'),
+                    array('property' => 'hide-tablet',  'key' => 'hero_hide_tablet',  'target' => 'component'),
+                    array('property' => 'hide-mobile',  'key' => 'hero_hide_mobile',  'target' => 'component'),
+                ),
+            ),
         ),
     ),
 
