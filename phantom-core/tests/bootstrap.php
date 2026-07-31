@@ -723,3 +723,5 @@ function phantom_ensure_fashion_fixture(): void {
 // Load Template Packs (PhantomCore\Packs) classes
 require_once PHANTOM_CORE_PATH . 'includes/Packs/class-frontend-pack.php';
 
+require_once PHANTOM_CORE_PATH . 'includes/Packs/class-frontend-pack-registry.php';
+
