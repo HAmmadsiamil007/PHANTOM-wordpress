@@ -727,3 +727,18 @@ require_once PHANTOM_CORE_PATH . 'includes/Packs/class-frontend-pack-registry.ph
 
 require_once PHANTOM_CORE_PATH . 'includes/Packs/class-pack-rest.php';
 
+// Load Inspector + asset panel dependencies (PhantomCore\Inspector / PhantomCore\Components / PhantomCore\Design)
+require_once PHANTOM_CORE_PATH . 'includes/Components/class-media-asset-registry.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Components/class-component-instance.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Design/class-component-definition.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Design/class-component-definition-registry.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Inspector/class-state-manager.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Inspector/class-selection-engine.php';
+
+require_once PHANTOM_CORE_PATH . 'includes/Inspector/class-inspector-factory.php';
+

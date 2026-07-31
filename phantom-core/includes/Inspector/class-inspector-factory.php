@@ -113,7 +113,65 @@ class Inspector_Factory {
             }
         }
 
+        $asset_panel = $this->render_assets_panel();
+        if ($asset_panel) {
+            $panels[] = $asset_panel;
+        }
+
         return $panels;
+    }
+
+    private function render_assets_panel(): string {
+        if (!class_exists(\PhantomCore\Components\Media_Asset_Registry::class)) {
+            return '';
+        }
+
+        $registry = \PhantomCore\Components\Media_Asset_Registry::get_instance();
+        if (method_exists($registry, 'register_defaults')) {
+            $registry->register_defaults();
+        }
+
+        $assets = $registry->get_all('image');
+        if (empty($assets)) {
+            return '';
+        }
+
+        $html = '<div class="vc-panel vc-panel-assets">';
+        $html .= '<div class="vc-panel-header" data-panel="assets">';
+        $html .= '<span class="dashicons dashicons-format-image"></span>';
+        $html .= '<span class="vc-panel-title">' . esc_html__('Assets', 'phantom-core') . '</span>';
+        $html .= '<span class="vc-panel-toggle dashicons dashicons-arrow-up"></span>';
+        $html .= '</div>';
+        $html .= '<div class="vc-panel-body">';
+
+        foreach ($assets as $asset) {
+            $html .= $this->render_asset_row($asset);
+        }
+
+        $html .= '</div></div>';
+        return $html;
+    }
+
+    private function render_asset_row(\PhantomCore\Components\MediaAsset $asset): string {
+        $key = esc_attr($asset->key);
+        $label = esc_html($asset->label);
+        $url = esc_url(\PhantomCore\Components\Media_Asset_Registry::get_instance()->get_url($asset->key));
+        $default = esc_url($asset->default);
+
+        $preview = $url
+            ? '<img class="vc-asset-preview" src="' . $url . '" alt="' . $label . '" data-default="' . $default . '" onerror="this.onerror=null;this.src=this.getAttribute(\'data-default\');">'
+            : '<span class="vc-asset-preview">' . esc_html__('Default', 'phantom-core') . '</span>';
+
+        $html = '<div class="vc-asset-row" data-asset="' . $key . '">';
+        $html .= '<div class="vc-asset-info">';
+        $html .= '<span class="vc-asset-label">' . $label . '</span>';
+        $html .= $preview;
+        $html .= '</div>';
+        $html .= '<button type="button" class="vc-btn-upload" data-asset="' . $key . '">' . esc_html__('Upload', 'phantom-core') . '</button>';
+        $html .= '<button type="button" class="vc-btn-reset" data-asset="' . $key . '">' . esc_html__('Reset', 'phantom-core') . '</button>';
+        $html .= '</div>';
+
+        return $html;
     }
 
     private function render_panel(array $tab, Component_Definition $component, ?ComponentInstance $instance): string {
