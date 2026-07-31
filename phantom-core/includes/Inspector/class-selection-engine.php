@@ -60,6 +60,9 @@ class Selection_Engine {
         if (isset($_POST['vc_preview']) && '1' === $_POST['vc_preview']) {
             return true;
         }
+        if (function_exists('is_customize_preview') && is_customize_preview()) {
+            return true;
+        }
         return false;
     }
 }

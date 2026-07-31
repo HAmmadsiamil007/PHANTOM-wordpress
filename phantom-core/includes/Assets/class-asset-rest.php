@@ -76,6 +76,25 @@ class Asset_REST {
             ),
         ));
 
+        // Set an existing Media Library attachment as the asset value
+        register_rest_route($this->namespace, '/assets/set', array(
+            'methods'             => \WP_REST_Server::CREATABLE,
+            'callback'            => array($this, 'set_asset'),
+            'permission_callback' => array($this, 'admin_permission_check'),
+            'args'                => array(
+                'key' => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'id' => array(
+                    'required'          => true,
+                    'type'              => 'integer',
+                    'sanitize_callback' => 'absint',
+                ),
+            ),
+        ));
+
         // Remove uploaded media asset
         register_rest_route($this->namespace, '/assets/remove', array(
             'methods'             => \WP_REST_Server::DELETABLE,
@@ -233,6 +252,35 @@ class Asset_REST {
         ), 200);
     }
 
+    public function set_asset(\WP_REST_Request $request): \WP_REST_Response {
+        $key = $request->get_param('key');
+        $id  = absint($request->get_param('id'));
+
+        if (!$key || $id < 1) {
+            return new \WP_REST_Response(array(
+                'success' => false,
+                'message' => __('A valid asset key and attachment ID are required.', 'phantom-core'),
+            ), 400);
+        }
+
+        $url = wp_get_attachment_url($id);
+        if (!$url) {
+            return new \WP_REST_Response(array(
+                'success' => false,
+                'message' => __('Attachment not found.', 'phantom-core'),
+            ), 404);
+        }
+
+        $this->save_asset_option($key, $id);
+
+        return new \WP_REST_Response(array(
+            'success'       => true,
+            'attachment_id' => $id,
+            'url'           => $url,
+            'message'       => __('Asset updated.', 'phantom-core'),
+        ), 200);
+    }
+
     public function remove_asset(\WP_REST_Request $request): \WP_REST_Response {
         $key = $request->get_param('key');
         if (!$key) {
@@ -267,11 +315,18 @@ class Asset_REST {
     }
 
     private function get_default_asset_url(string $key): string {
+        $base = PHANTOM_CORE_URL . 'frontend/assets/images/';
         $defaults = array(
-            'logo'             => PHANTOM_CORE_URL . 'frontend/assets/images/logo.svg',
-            'favicon'          => PHANTOM_CORE_URL . 'frontend/assets/images/favicon.ico',
-            'hero_desktop'     => PHANTOM_CORE_URL . 'frontend/assets/images/hero-default.jpg',
-            'product_placeholder' => PHANTOM_CORE_URL . 'frontend/assets/images/placeholder.png',
+            'logo'                => $base . 'logo.png',
+            'mobile_logo'         => $base . 'logo.png',
+            'sticky_logo'         => $base . 'logo.png',
+            'favicon'             => $base . 'favicon/favicon.ico',
+            'hero_desktop'        => $base . 'banner-bg-img.png',
+            'hero_mobile'         => $base . 'banner-bg-img.png',
+            'product_placeholder' => $base . 'product-img1.png',
+            'blog_placeholder'    => $base . 'post-featured.jpg',
+            'category_banner'     => $base . 'banner-bg-img.png',
+            'author_avatar'       => $base . 'logo.png',
         );
         return $defaults[$key] ?? '';
     }

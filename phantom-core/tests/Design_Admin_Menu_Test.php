@@ -2,7 +2,6 @@
 use PHPUnit\Framework\TestCase;
 use PhantomCore\Admin\PhantomAdmin;
 use PhantomCore\Admin\DashboardPage;
-use PhantomCore\Admin\DesignStudioPage;
 use PhantomCore\Admin\ComponentLibraryPage;
 use PhantomCore\Admin\ImportExportPage;
 
@@ -28,8 +27,11 @@ class Design_Admin_Menu_Test extends TestCase {
         $this->assertInstanceOf(DashboardPage::class, DashboardPage::get_instance());
     }
 
-    public function test_design_studio_page_singleton(): void {
-        $this->assertInstanceOf(DesignStudioPage::class, DesignStudioPage::get_instance());
+    public function test_menu_has_no_design_studio_tab(): void {
+        $this->admin->register_menu();
+        foreach ($GLOBALS['_phantom_submenu_pages'] as $page) {
+            $this->assertNotSame('phantom-design-studio', $page['slug'] ?? $page[0] ?? '');
+        }
     }
 
     public function test_component_library_page_singleton(): void {
@@ -43,13 +45,6 @@ class Design_Admin_Menu_Test extends TestCase {
     public function test_dashboard_page_render_outputs(): void {
         $page = DashboardPage::get_instance();
         $this->expectOutputRegex('/PHANTOM Dashboard/');
-        $page->render();
-    }
-
-    public function test_design_studio_page_render_outputs(): void {
-        $_GET['tab'] = 'presets';
-        $page = DesignStudioPage::get_instance();
-        $this->expectOutputRegex('/Design Studio/');
         $page->render();
     }
 

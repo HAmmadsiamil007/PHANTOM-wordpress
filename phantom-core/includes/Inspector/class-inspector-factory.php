@@ -24,11 +24,11 @@ class Inspector_Factory {
         $this->state_manager = State_Manager::get_instance();
     }
 
-    public function render_panels(string $component_name, ?ComponentInstance $instance = null, string $state = 'normal', string $viewport = 'desktop'): string {
+    public function render_panels(string $component_name, ?ComponentInstance $instance = null, string $state = 'normal', string $viewport = 'desktop', array $editable = []): string {
         $this->state_manager->set_state($state);
         $this->state_manager->set_viewport($viewport);
 
-        $definition = Component_Definition_Registry::get_instance()->get($component_name);
+        $definition = Component_Definition_Registry::get_instance()->resolve($component_name, $editable);
 
         if (null === $definition) {
             return '<div class="vc-panel vc-panel-error">Component not found: ' . esc_html($component_name) . '</div>';

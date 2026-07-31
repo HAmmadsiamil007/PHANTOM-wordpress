@@ -95,17 +95,43 @@ class Media_Asset_Registry {
 
         $url = PHANTOM_CORE_URL;
 
-        $this->register(new MediaAsset('logo', 'Site Logo', 'image', $url . 'frontend/assets/images/logo.svg'));
-        $this->register(new MediaAsset('logo-light', 'Logo (Light Mode)', 'image', $url . 'frontend/assets/images/logo-light.svg'));
-        $this->register(new MediaAsset('logo-dark', 'Logo (Dark Mode)', 'image', $url . 'frontend/assets/images/logo-dark.svg'));
-        $this->register(new MediaAsset('favicon', 'Favicon', 'image', $url . 'frontend/assets/images/favicon.ico'));
-        $this->register(new MediaAsset('hero-bg', 'Hero Background', 'image', $url . 'frontend/assets/images/hero-default.jpg', sizes: ['full', 'large', 'medium'], responsive: true));
-        $this->register(new MediaAsset('placeholder', 'Placeholder Image', 'image', $url . 'frontend/assets/images/placeholder.svg'));
-        $this->register(new MediaAsset('404-image', '404 Page Image', 'image', $url . 'frontend/assets/images/404.svg'));
-        $this->register(new MediaAsset('preloader', 'Preloader Animation', 'image', $url . 'frontend/assets/images/preloader.svg'));
-        $this->register(new MediaAsset('footer-bg', 'Footer Background', 'image', $url . 'frontend/assets/images/footer-bg.svg'));
+        $this->register(new MediaAsset('logo', 'Site Logo', 'image', $url . 'frontend/assets/images/logo.png'));
+        $this->register(new MediaAsset('mobile_logo', 'Mobile Logo', 'image', $url . 'frontend/assets/images/logo.png'));
+        $this->register(new MediaAsset('sticky_logo', 'Sticky Logo', 'image', $url . 'frontend/assets/images/logo.png'));
+        $this->register(new MediaAsset('favicon', 'Favicon', 'image', $url . 'frontend/assets/images/favicon/favicon.ico'));
+        $this->register(new MediaAsset('hero_desktop', 'Hero Image (Desktop)', 'image', $url . 'frontend/assets/images/banner-bg-img.png', sizes: ['full', 'large', 'medium'], responsive: true));
+        $this->register(new MediaAsset('hero_mobile', 'Hero Image (Mobile)', 'image', $url . 'frontend/assets/images/banner-bg-img.png', responsive: true));
+        $this->register(new MediaAsset('product_placeholder', 'Product Placeholder', 'image', $url . 'frontend/assets/images/product-img1.png'));
+        $this->register(new MediaAsset('blog_placeholder', 'Blog Placeholder', 'image', $url . 'frontend/assets/images/post-featured.jpg'));
+        $this->register(new MediaAsset('category_banner', 'Category Banner', 'image', $url . 'frontend/assets/images/banner-bg-img.png', responsive: true));
+        $this->register(new MediaAsset('author_avatar', 'Author Avatar', 'image', $url . 'frontend/assets/images/logo.png'));
+
+        $this->register(new MediaAsset('logo-light', 'Logo (Light Mode)', 'image', $url . 'frontend/assets/images/logo.png'));
+        $this->register(new MediaAsset('logo-dark', 'Logo (Dark Mode)', 'image', $url . 'frontend/assets/images/logo.png'));
+        $this->register(new MediaAsset('hero-bg', 'Hero Background', 'image', $url . 'frontend/assets/images/banner-bg-img.png', sizes: ['full', 'large', 'medium'], responsive: true));
+        $this->register(new MediaAsset('placeholder', 'Placeholder Image', 'image', $url . 'frontend/assets/images/product-img1.png'));
+        $this->register(new MediaAsset('404-image', '404 Page Image', 'image', $url . 'frontend/assets/images/vector.png'));
+        $this->register(new MediaAsset('preloader', 'Preloader Animation', 'image', $url . 'frontend/assets/images/logo.png'));
+        $this->register(new MediaAsset('footer-bg', 'Footer Background', 'image', $url . 'frontend/assets/images/banner-bg-img.png'));
 
         $this->defaults_registered = true;
+    }
+
+    /**
+     * Assets shown in the Customizer Visual Assets grid, in display order.
+     *
+     * @return array<string, string> Key => label.
+     */
+    public function get_display_assets(): array {
+        $order = ['logo', 'mobile_logo', 'sticky_logo', 'hero_desktop', 'hero_mobile', 'favicon', 'product_placeholder', 'blog_placeholder', 'category_banner', 'author_avatar'];
+        $display = [];
+        foreach ($order as $key) {
+            $asset = $this->get($key);
+            if ($asset) {
+                $display[$key] = $asset->label;
+            }
+        }
+        return $display;
     }
 
     public function get(string $key): ?MediaAsset {
@@ -120,6 +146,14 @@ class Media_Asset_Registry {
         $asset = $this->get($key);
         if (null === $asset) {
             return '';
+        }
+
+        $uploaded = get_option('phantom_assets', array());
+        if (!empty($uploaded[$key])) {
+            $src = wp_get_attachment_image_url((int) $uploaded[$key], $size);
+            if ($src) {
+                return $src;
+            }
         }
 
         $settings = \PhantomCore\Settings_Registry::get_instance();

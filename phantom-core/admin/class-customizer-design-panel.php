@@ -68,8 +68,8 @@ class Customizer_Design_Panel {
             </table>
 
             <p style="margin-top:20px;">
-                <a href="<?php echo esc_url(admin_url('admin.php?page=phantom-design-studio')); ?>" class="button button-primary">
-                    <?php echo esc_html__('Open Design Studio', 'phantom-core'); ?>
+                <a href="<?php echo esc_url(admin_url('customize.php')); ?>" class="button button-primary">
+                    <?php echo esc_html__('Open Customizer', 'phantom-core'); ?>
                 </a>
             </p>
         </div>

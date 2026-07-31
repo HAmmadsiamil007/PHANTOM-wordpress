@@ -91,6 +91,91 @@ class Component_Definition_Registry {
     }
 
     /**
+     * Get the frontend data-component → definition id alias map.
+     *
+     * @return array<string, string>
+     */
+    public function get_aliases(): array {
+        $file = __DIR__ . '/data/component-aliases.php';
+        return file_exists($file) ? (array) require $file : [];
+    }
+
+    /**
+     * Resolve any component name to a definition.
+     *
+     * Priority: exact definition → alias → generic definition built from the
+     * element's data-editable fields (never null, so no click ever fails).
+     */
+    public function resolve(string $name, array $editable = []): ?Component_Definition {
+        $definition = $this->get($name);
+        if (null !== $definition) {
+            return $definition;
+        }
+        $aliases = $this->get_aliases();
+        if (isset($aliases[$name])) {
+            return $this->get($aliases[$name]);
+        }
+        return $this->get_generic($name, $editable);
+    }
+
+    /**
+     * Build a generic definition for unknown components using the element's
+     * data-editable field names. Field keys are scoped to the component
+     * ({name}_{field}) so settings remain namespaced.
+     *
+     * @param string   $name     Component name from the DOM.
+     * @param string[] $editable data-editable field names.
+     */
+    public function get_generic(string $name, array $editable = []): Component_Definition {
+        $fields = [];
+        foreach ($editable as $field) {
+            $field = sanitize_key((string) $field);
+            if ('' === $field) {
+                continue;
+            }
+            $fields[] = $this->generic_field($name, $field);
+        }
+
+        if (empty($fields)) {
+            $fields = [
+                ['key' => $name . '_title',     'label' => __('Title', 'phantom-core'),     'type' => 'text',   'default' => ''],
+                ['key' => $name . '_font_size', 'label' => __('Font Size', 'phantom-core'), 'type' => 'slider', 'default' => '16', 'min' => 8, 'max' => 96, 'step' => 1, 'unit' => 'px'],
+            ];
+        }
+
+        return new Component_Definition([
+            'id'          => $name,
+            'name'        => ucwords(str_replace(['-', '_'], ' ', $name)),
+            'category'    => 'general',
+            'description' => __('Auto-generated inspector for this element.', 'phantom-core'),
+            'tabs'        => [
+                ['key' => 'content', 'label' => __('Content', 'phantom-core'), 'fields' => $fields],
+            ],
+        ]);
+    }
+
+    /**
+     * Map a data-editable field name to a field definition.
+     *
+     * @return array{key: string, label: string, type: string, default: string|int, min?: int, max?: int, step?: int, unit?: string}
+     */
+    private function generic_field(string $name, string $field): array {
+        $key   = $name . '_' . $field;
+        $label = ucwords(str_replace('_', ' ', $field));
+
+        if (preg_match('/(bg|background|overlay|color)/i', $field)) {
+            return ['key' => $key, 'label' => $label, 'type' => 'color', 'default' => '#1a1a2e'];
+        }
+        if (preg_match('/(font|size|weight|line_?height|transform|align|letter_?spacing)/i', $field)) {
+            return ['key' => $key, 'label' => $label, 'type' => 'slider', 'default' => '16', 'min' => 8, 'max' => 96, 'step' => 1, 'unit' => 'px'];
+        }
+        if (preg_match('/(padding|margin|gap|radius|width|height)/i', $field)) {
+            return ['key' => $key, 'label' => $label, 'type' => 'slider', 'default' => '24', 'min' => 0, 'max' => 200, 'step' => 2, 'unit' => 'px'];
+        }
+        return ['key' => $key, 'label' => $label, 'type' => 'text', 'default' => ''];
+    }
+
+    /**
      * Get count.
      */
     public function count(): int {

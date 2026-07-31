@@ -51,7 +51,6 @@ class PhantomAdmin {
 
         $this->pages = [
             'phantom-dashboard'        => ['title' => __('Dashboard', 'phantom-core'), 'render' => [$this, 'render_dashboard']],
-            'phantom-design-studio'    => ['title' => __('Design Studio', 'phantom-core'), 'render' => [$this, 'render_design_studio']],
             'phantom-component-library'=> ['title' => __('Component Library', 'phantom-core'), 'render' => [$this, 'render_component_library']],
             'phantom-template-manager' => ['title' => __('Template Manager', 'phantom-core'), 'render' => [$this, 'render_template_manager']],
             'phantom-animation-studio' => ['title' => __('Animation Studio', 'phantom-core'), 'render' => [$this, 'render_animation_studio']],
@@ -86,21 +85,10 @@ class PhantomAdmin {
             return;
         }
         wp_enqueue_style('phantom-admin', PHANTOM_CORE_URL . 'admin/css/admin.css', [], PHANTOM_CORE_VERSION);
-
-        // Design Studio assets are enqueued by DesignStudioPage::enqueue_assets.
-        // Only enqueue design-studio CSS here as shared dependency for other phantom pages.
-        if (str_contains($hook, '_page_phantom-design-studio')) {
-            return; // DesignStudioPage handles its own assets
-        }
-        wp_enqueue_style('phantom-design-studio', PHANTOM_CORE_URL . 'admin/css/design-studio.css', ['phantom-admin'], PHANTOM_CORE_VERSION);
     }
 
     public function render_dashboard(): void {
         DashboardPage::get_instance()->render();
-    }
-
-    public function render_design_studio(): void {
-        DesignStudioPage::get_instance()->render();
     }
 
     public function render_component_library(): void {

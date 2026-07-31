@@ -159,12 +159,21 @@ class Auto_Register {
                 $viewport = $request->get_param('viewport') ?: 'desktop';
                 $instance_id = $request->get_param('instance');
 
+                $editable = array();
+                $raw = $request->get_param('editable');
+                if (is_string($raw) && '' !== $raw) {
+                    $decoded = json_decode($raw, true);
+                    if (is_array($decoded)) {
+                        $editable = array_filter(array_map('sanitize_key', array_map('strval', $decoded)));
+                    }
+                }
+
                 $instance = null;
                 if (!empty($instance_id)) {
                     $instance = ComponentInstance::get($instance_id);
                 }
 
-                $html = Inspector_Factory::get_instance()->render_panels($name, $instance, $state, $viewport);
+                $html = Inspector_Factory::get_instance()->render_panels($name, $instance, $state, $viewport, $editable);
 
                 return new \WP_REST_Response(
                     array(

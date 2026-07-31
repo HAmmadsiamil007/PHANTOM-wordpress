@@ -572,7 +572,6 @@ if ( is_admin() ) {
 	$phantom_admin_files = [
 		'admin/class-phantom-admin.php',
 		'admin/class-dashboard-page.php',
-		'admin/class-design-studio-page.php',
 		'admin/class-component-library-page.php',
 		'admin/class-template-manager-page.php',
 		'admin/class-animation-studio-page.php',
@@ -592,7 +591,6 @@ if ( is_admin() ) {
 		}
 	}
 	\PhantomCore\Admin\PhantomAdmin::get_instance()->init();
-	\PhantomCore\Admin\DesignStudioPage::get_instance()->init();
 }
 
 $cache_path = PHANTOM_CORE_PATH . 'includes/Engine/Cache.php';
@@ -678,23 +676,13 @@ add_action(
 	25
 );
 
-// Visual Customizer 2.0 stack: auto-register REST routes, selection engine, admin page
+// Visual Customizer 2.0 stack: auto-register REST routes, selection engine, media asset API
 add_action(
 	'plugins_loaded',
 	function (): void {
 		\PhantomCore\Rest\Auto_Register::get_instance()->init();
 		\PhantomCore\Inspector\Selection_Engine::get_instance()->init();
 		\PhantomCore\Packs\Pack_Rest::get_instance()->init();
-	},
-	26
-);
-
-add_action(
-	'plugins_loaded',
-	function (): void {
-		if ( is_admin() ) {
-			\PhantomCore\Admin\Visual_Customizer_Page::get_instance()->init();
-		}
 	},
 	26
 );

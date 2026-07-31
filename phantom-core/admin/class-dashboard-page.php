@@ -69,7 +69,7 @@ class DashboardPage {
             <div class="phantom-quick-actions">
                 <h2><?php esc_html_e('Quick Actions', 'phantom-core'); ?></h2>
                 <div class="phantom-actions">
-                    <a href="<?php echo esc_url(admin_url('admin.php?page=phantom-design-studio')); ?>" class="button button-primary"><?php esc_html_e('Open Design Studio', 'phantom-core'); ?></a>
+                    <a href="<?php echo esc_url(admin_url('customize.php')); ?>" class="button button-primary"><?php esc_html_e('Customize Theme', 'phantom-core'); ?></a>
                     <a href="<?php echo esc_url(admin_url('admin.php?page=phantom-theme-options')); ?>" class="button"><?php esc_html_e('Theme Options', 'phantom-core'); ?></a>
                     <a href="<?php echo esc_url(admin_url('admin.php?page=phantom-demo-manager')); ?>" class="button"><?php esc_html_e('Manage Demos', 'phantom-core'); ?></a>
                     <a href="<?php echo esc_url(admin_url('customize.php')); ?>" class="button"><?php esc_html_e('Customizer', 'phantom-core'); ?></a>

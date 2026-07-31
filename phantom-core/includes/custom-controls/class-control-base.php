@@ -29,6 +29,9 @@ abstract class Control_Base extends \WP_Customize_Control {
             'class-border-control.php',
             'class-preset-card-control.php',
             'class-array-textarea-control.php',
+            'class-asset-grid-control.php',
+            'class-visual-toggle-control.php',
+            'class-visual-inspector-control.php',
         );
         foreach ( $controls as $file ) {
             $path = $base . $file;
@@ -57,6 +60,9 @@ abstract class Control_Base extends \WP_Customize_Control {
         'ast-border'            => Border_Control::class,
         'ast-preset-card'       => Preset_Card_Control::class,
         'ast-array-textarea'    => Array_Textarea_Control::class,
+        'ast-asset-grid'        => Asset_Grid_Control::class,
+        'ast-visual-toggle'     => Visual_Toggle_Control::class,
+        'ast-visual-inspector'  => Visual_Inspector_Control::class,
     );
 
     public static function get_class_for_type( string $type ): ?string {

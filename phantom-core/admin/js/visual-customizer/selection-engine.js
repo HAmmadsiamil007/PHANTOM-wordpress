@@ -10,6 +10,7 @@
 
     var currentSelection = null;
     var hoveredElement = null;
+    var editingEnabled = false;
 
     var overlay = document.createElement('div');
     overlay.id = 'vc-selection-overlay';
@@ -116,6 +117,13 @@
         }, '*');
     }
 
+    function setEditingMode(enabled) {
+        editingEnabled = !!enabled;
+        if (!editingEnabled) {
+            clearSelection();
+        }
+    }
+
     function clearSelection() {
         if (currentSelection) {
             currentSelection.classList.remove(SELECTED_CLASS);
@@ -147,6 +155,7 @@
     }
 
     document.addEventListener('mouseover', function (e) {
+        if (!editingEnabled) return;
         var el = findComponentRoot(e.target);
         if (hoveredElement && hoveredElement !== el) {
             hoveredElement.classList.remove(HOVER_CLASS);
@@ -165,11 +174,15 @@
     }, true);
 
     document.addEventListener('click', function (e) {
+        if (!editingEnabled) return;
         var el = findComponentRoot(e.target);
         if (!el) {
             clearSelection();
             return;
         }
+
+        e.preventDefault();
+        e.stopPropagation();
 
         var data = getComponentData(el);
         if (data.locked) {
@@ -180,8 +193,6 @@
             return;
         }
 
-        e.preventDefault();
-        e.stopPropagation();
         selectElement(el);
     }, true);
 
@@ -198,6 +209,9 @@
                 if (e.data.url) {
                     window.location.href = e.data.url;
                 }
+                break;
+            case 'vc-editing-mode':
+                setEditingMode(e.data.enabled);
                 break;
         }
     });

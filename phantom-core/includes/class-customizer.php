@@ -3,17 +3,34 @@ declare(strict_types=1);
 
 namespace PhantomCore;
 
-use WP_Customize_Manager;
+use PhantomCore\Customizer\Controls\Asset_Grid_Control;
 use PhantomCore\Customizer\Controls\Control_Base;
+use PhantomCore\Customizer\Controls\Visual_Inspector_Control;
+use PhantomCore\Customizer\Controls\Visual_Toggle_Control;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Customizer — the single theme editor (Phase A).
+ *
+ * The native WordPress Customizer (Appearance → Customize) is the one and
+ * only editing surface. This class registers a small curated section list
+ * plus the PHANTOM panel (Visual Colors, Typography, Spacing, Assets,
+ * Live Preview, Element Inspector). Click-to-edit is handled by the
+ * selection engine inside the preview iframe and customizer-visual-editor.js
+ * in the sidebar (see docs/superpowers/specs/2026-07-31-visual-customizer-design.md).
+ */
 class Customizer {
 
-	private static ?Customizer $instance = null;
-	private array $entries = array();
-	private array $panels = array();
-	private array $divider_controls = array();
+	private static ?self $instance = null;
+
+	private ?Settings_Registry $registry = null;
+
+	/** @var array<string, array{title: string, keys: string[]}> */
+	private array $curated_sections = array();
+
+	/** @var array<string, array{title: string, keys: string[]}> */
+	private array $visual_sections = array();
 
 	public static function get_instance(): self {
 		if ( null === self::$instance ) {
@@ -22,475 +39,237 @@ class Customizer {
 		return self::$instance;
 	}
 
+	private function __construct() {
+		$this->registry = Settings_Registry::get_instance();
+	}
+
 	public function init(): void {
-		$this->entries = Settings_Registry::get_instance()->get_entries();
-		$this->panels = $this->define_panels();
 		add_action( 'customize_register', array( $this, 'register' ) );
 		add_action( 'customize_preview_init', array( $this, 'preview_js' ) );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'controls_js' ) );
 		add_action( 'customize_save_after', array( $this, 'sync_options' ) );
-		add_action( 'customize_controls_print_footer_scripts', array( $this, 'render_welcome_panel' ) );
 		add_action( 'wp_head', array( $this, 'output_inline_css' ), 100 );
 	}
 
-	public function output_inline_css(): void {
-		echo $this->get_inline_css();
+	/**
+	 * Curated top-level sections (keys verified against the Settings Registry).
+	 */
+	private function curated_sections(): array {
+		if ( empty( $this->curated_sections ) ) {
+			$this->curated_sections = array(
+				'phantom_section_homepage' => array(
+					'title' => __( 'Homepage', 'phantom-core' ),
+					'keys'  => array( 'home_banner_enable', 'home_banner_heading', 'home_banner_title', 'home_banner_description', 'home_banner_btn_text' ),
+				),
+				'phantom_section_blog'     => array(
+					'title' => __( 'Blog', 'phantom-core' ),
+					'keys'  => array( 'blog_layout', 'blog_sidebar_position', 'blog_show_sidebar', 'blog_posts_per_page' ),
+				),
+				'phantom_section_woocommerce' => array(
+					'title' => __( 'WooCommerce', 'phantom-core' ),
+					'keys'  => array( 'shop_catalog_mode', 'shop_minicart_enable', 'shop_ajax_add_to_cart', 'shop_wishlist_enable', 'shop_checkout_style' ),
+				),
+			);
+		}
+		return $this->curated_sections;
 	}
 
-	public function define_panels(): array {
-		// 7 global-only panels — component-level settings live in Design Studio.
-		$design_studio_note = __( 'Component-level settings (header, footer, hero, products, etc.) are managed in the Design Studio.', 'phantom-core' );
-		$panels = array(
-			'phantom_branding'      => array(
-				'title'       => 'Branding',
-				'description' => $design_studio_note,
-				'sections'    => array( 'branding' ),
-				'priority'    => 10,
-			),
-			'phantom_global_colors' => array(
-				'title'       => 'Global Colors',
-				'description' => $design_studio_note,
-				'sections'    => array( 'colors' ),
-				'priority'    => 20,
-			),
-			'phantom_global_typography' => array(
-				'title'       => 'Global Typography',
-				'description' => $design_studio_note,
-				'sections'    => array( 'typography' ),
-				'priority'    => 30,
-			),
-			'phantom_presets'       => array(
-				'title'       => 'Presets & Design System',
-				'description' => $design_studio_note,
-				'sections'    => array( 'design_tokens', 'design_system' ),
-				'priority'    => 40,
-			),
-			'phantom_responsive'    => array(
-				'title'       => 'Responsive',
-				'description' => $design_studio_note,
-				'sections'    => array( 'responsive' ),
-				'priority'    => 50,
-			),
-			'phantom_performance'   => array(
-				'title'       => 'Performance & SEO',
-				'description' => $design_studio_note,
-				'sections'    => array( 'performance', 'seo', 'template_pack' ),
-				'priority'    => 60,
-			),
-			'phantom_integrations'  => array(
-				'title'       => 'Integrations',
-				'description' => $design_studio_note,
-				'sections'    => array( 'integrations', 'custom_code' ),
-				'priority'    => 70,
-			),
+	/**
+	 * PHANTOM panel sections.
+	 */
+	private function visual_sections(): array {
+		if ( empty( $this->visual_sections ) ) {
+			$this->visual_sections = array(
+				'phantom_section_colors'     => array(
+					'title' => __( 'Visual Colors', 'phantom-core' ),
+					'keys'  => array( 'color_primary', 'color_secondary', 'color_accent', 'color_success', 'color_error' ),
+				),
+				'phantom_section_typography' => array(
+					'title' => __( 'Typography', 'phantom-core' ),
+					'keys'  => array( 'typography_heading_font', 'typography_body_font', 'typography_base_size', 'typography_heading_weight' ),
+				),
+				'phantom_section_spacing'    => array(
+					'title' => __( 'Spacing', 'phantom-core' ),
+					'keys'  => array( 'container_width', 'content_width', 'sidebar_width' ),
+				),
+			);
+		}
+		return $this->visual_sections;
+	}
+
+	/**
+	 * @param \WP_Customize_Manager $wp_customize
+	 */
+	public function register( $wp_customize ): void {
+		if ( class_exists( Control_Base::class ) ) {
+			Control_Base::register_all( $wp_customize );
+		}
+
+		$priority = 10;
+		foreach ( $this->curated_sections() as $id => $cfg ) {
+			$this->register_section( $wp_customize, $id, $cfg['title'], $cfg['keys'], '', $priority );
+			$priority += 10;
+		}
+
+		$wp_customize->add_panel(
+			'phantom_visual',
+			array(
+				'title'       => __( 'PHANTOM', 'phantom-core' ),
+				'description' => __( 'Visual editing for the PHANTOM theme. Enable Start Editing, then click any element in the preview to edit it.', 'phantom-core' ),
+				'priority'    => 150,
+			)
 		);
 
-		// Legacy panels hidden behind PHANTOM_DEV_MODE — component-level settings
-		// moved to Design Studio. Enable via wp-config.php:
-		//   define('PHANTOM_DEV_MODE', true);
-		if ( defined( 'PHANTOM_DEV_MODE' ) && PHANTOM_DEV_MODE ) {
-			$legacy_panels = array(
-				'phantom_header'        => array(
-					'title'    => '[Dev] Header & Navigation',
-					'sections' => array( 'header', 'topbar', 'navigation', 'announcement_bar' ),
-					'priority' => 80,
-				),
-				'phantom_hero'          => array(
-					'title'    => '[Dev] Hero & Home',
-					'sections' => array( 'hero', 'home_sections', 'collections' ),
-					'priority' => 90,
-				),
-				'phantom_products'      => array(
-					'title'    => '[Dev] Products & Shop',
-					'sections' => array( 'product_cards', 'shop_page', 'product_page' ),
-					'priority' => 100,
-				),
-				'phantom_woocommerce'   => array(
-					'title'    => '[Dev] WooCommerce',
-					'sections' => array( 'woocommerce' ),
-					'priority' => 110,
-				),
-				'phantom_blog'          => array(
-					'title'    => '[Dev] Blog',
-					'sections' => array( 'blog' ),
-					'priority' => 120,
-				),
-				'phantom_footer'        => array(
-					'title'    => '[Dev] Footer',
-					'sections' => array( 'footer' ),
-					'priority' => 130,
-				),
-				'phantom_colors'        => array(
-					'title'    => '[Dev] Colors & Buttons',
-					'sections' => array( 'buttons', 'forms', 'spacing' ),
-					'priority' => 140,
-				),
-				'phantom_layout'        => array(
-					'title'    => '[Dev] Layout & Effects',
-					'sections' => array( 'layout', 'animations', 'effects_3d' ),
-					'priority' => 150,
-				),
-				'phantom_search'        => array(
-					'title'    => '[Dev] Search',
-					'sections' => array( 'search' ),
-					'priority' => 160,
-				),
-				'phantom_accessibility' => array(
-					'title'    => '[Dev] Accessibility',
-					'sections' => array( 'accessibility' ),
-					'priority' => 170,
-				),
-				'phantom_advanced'      => array(
-					'title'    => '[Dev] Advanced',
-					'sections' => array( 'import_export' ),
-					'priority' => 180,
-				),
-				'phantom_pages'         => array(
-					'title'    => '[Dev] Pages',
-					'sections' => array(
-						'about_page', 'contact_page', 'faq_page', 'coming_soon',
-						'error_404', 'login_page', 'register_page', 'portfolio',
-						'thank_you', 'load_more', 'privacy', 'terms', 'team', 'testimonials',
-					),
-					'priority' => 190,
-				),
-			);
-			$panels = array_merge( $panels, $legacy_panels );
+		$priority = 10;
+		foreach ( $this->visual_sections() as $id => $cfg ) {
+			$this->register_section( $wp_customize, $id, $cfg['title'], $cfg['keys'], 'phantom_visual', $priority );
+			$priority += 10;
 		}
 
-		return $panels;
+		$wp_customize->add_section(
+			'phantom_section_assets',
+			array(
+				'title'       => __( 'Visual Assets', 'phantom-core' ),
+				'panel'       => 'phantom_visual',
+				'priority'    => 40,
+				'description' => __( 'Upload replacements for site media. Reset restores the default asset.', 'phantom-core' ),
+			)
+		);
+		$wp_customize->add_control(
+			new Asset_Grid_Control(
+				$wp_customize,
+				'phantom_visual_assets',
+				array(
+					'section'  => 'phantom_section_assets',
+					'settings' => array(),
+				)
+			)
+		);
+
+		$wp_customize->add_section(
+			'phantom_section_live_preview',
+			array(
+				'title'    => __( 'Live Preview', 'phantom-core' ),
+				'panel'    => 'phantom_visual',
+				'priority' => 60,
+			)
+		);
+		$wp_customize->add_control(
+			new Visual_Toggle_Control(
+				$wp_customize,
+				'phantom_live_preview_edit',
+				array(
+					'section'  => 'phantom_section_live_preview',
+					'settings' => array(),
+				)
+			)
+		);
+
+		$wp_customize->add_section(
+			'phantom_section_inspector',
+			array(
+				'title'    => __( 'Element Inspector', 'phantom-core' ),
+				'panel'    => 'phantom_visual',
+				'priority' => 70,
+			)
+		);
+		$wp_customize->add_control(
+			new Visual_Inspector_Control(
+				$wp_customize,
+				'phantom_visual_inspector',
+				array(
+					'section'  => 'phantom_section_inspector',
+					'settings' => array(),
+				)
+			)
+		);
 	}
 
-	public function register( WP_Customize_Manager $wp_customize ): void {
-		Control_Base::register_all( $wp_customize );
-		$section_priority = 0;
-
-		foreach ( $this->panels as $panel_id => $panel ) {
-			$panel_args = array(
-				'title'    => __( $panel['title'], 'phantom-core' ),
-				'priority' => $panel['priority'],
-			);
-			if ( ! empty( $panel['description'] ) ) {
-				$panel_args['description'] = $panel['description'];
-			}
-			$wp_customize->add_panel( $panel_id, $panel_args );
-
-			foreach ( $panel['sections'] as $section_slug ) {
-				$section_priority += 5;
-				$section_id = 'phantom_section_' . $section_slug;
-				$section_label = $this->get_section_label( $section_slug );
-
-			$description = '';
-			if ($section_slug === 'design_tokens') {
-				$design_studio_url = admin_url('admin.php?page=phantom-design-studio');
-				$description = sprintf(
-					'<a href="%s" target="_blank">%s</a>',
-					esc_url($design_studio_url),
-					__('Open Design Studio &rarr;', 'phantom-core')
-				);
-			}
-			if ($section_slug === 'design_system') {
-				$token_count = 0;
-				$token_cats = [];
-				$comp_count = 0;
-				$comp_cats = [];
-				$preset_count = 0;
-				$current_preset = 'None';
-				$css_var_count = 0;
-				if (class_exists('\PhantomCore\Design\DesignSystemManager')) {
-					$dsm = \PhantomCore\Design\DesignSystemManager::get_instance();
-					$compileResult = $dsm->compile();
-					$token_count = count($compileResult->tokens);
-					$css_var_count = count($compileResult->cssVars ?? []);
-					$presets = $dsm->availablePresets();
-					$preset_count = count($presets);
-					$current = $dsm->currentPreset();
-					$current_preset = esc_html($current['name'] ?? 'None');
-					if (class_exists('\PhantomCore\Design\TokenRegistry')) {
-						$token_cats = \PhantomCore\Design\TokenRegistry::get_instance()->count_by_category();
-					}
-					if (class_exists('\PhantomCore\Design\Component_Definition_Registry')) {
-						$comp_count = \PhantomCore\Design\Component_Definition_Registry::get_instance()->count();
-						$comp_cats = \PhantomCore\Design\Component_Definition_Registry::get_instance()->count_by_category();
-					}
-				}
-				$health_items = [
-					['label' => __('CSS Generation', 'phantom-core'), 'status' => class_exists('\PhantomCore\Design\DesignSystemManager') ? '✅' : '❌', 'detail' => __('Active', 'phantom-core')],
-					['label' => __('Token Registry', 'phantom-core'), 'status' => $token_count > 0 ? '✅' : '❌', 'detail' => sprintf(__('%d tokens loaded', 'phantom-core'), $token_count)],
-					['label' => __('Component Registry', 'phantom-core'), 'status' => $comp_count > 0 ? '✅' : '❌', 'detail' => sprintf(__('%d components', 'phantom-core'), $comp_count)],
-					['label' => __('Preset Manager', 'phantom-core'), 'status' => $preset_count > 0 ? '✅' : '❌', 'detail' => sprintf(__('%d presets', 'phantom-core'), $preset_count)],
-				];
-				$desc = '<div style="padding:8px 0;">';
-				$desc .= '<h4 style="margin:0 0 8px;">' . __('Design System Overview', 'phantom-core') . '</h4>';
-				$desc .= '<table style="width:100%;font-size:12px;border-collapse:collapse;">';
-				$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Tokens', 'phantom-core') . '</td><td>' . (string)$token_count . '</td></tr>';
-				if (!empty($token_cats)) {
-					$cat_parts = [];
-					foreach ($token_cats as $cat => $count) {
-						$cat_parts[] = ucfirst($cat) . ': ' . $count;
-					}
-					$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Tokens by Category', 'phantom-core') . '</td><td style="font-size:11px;">' . implode(' &middot; ', $cat_parts) . '</td></tr>';
-				}
-				if (!empty($comp_cats)) {
-					$comp_parts = [];
-					foreach ($comp_cats as $cat => $count) {
-						$comp_parts[] = ucfirst($cat) . ': ' . $count;
-					}
-					$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Components', 'phantom-core') . '</td><td>' . (string)$comp_count . ' (' . implode(' &middot; ', $comp_parts) . ')</td></tr>';
-				}
-				$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('CSS Variables', 'phantom-core') . '</td><td>' . (string)$css_var_count . '</td></tr>';
-				$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Presets', 'phantom-core') . '</td><td>' . (string)$preset_count . ' &middot; ' . __('Active', 'phantom-core') . ': ' . $current_preset . '</td></tr>';
-				$desc .= '<tr><td style="padding:2px 8px 2px 0;font-weight:600;">' . __('Framework', 'phantom-core') . '</td><td>v' . PHANTOM_CORE_VERSION . '</td></tr>';
-				$desc .= '</table>';
-				$desc .= '<h4 style="margin:12px 0 8px;">' . __('System Health', 'phantom-core') . '</h4>';
-				$desc .= '<table style="width:100%;font-size:12px;border-collapse:collapse;">';
-				foreach ($health_items as $item) {
-					$desc .= '<tr><td style="padding:2px 8px 2px 0;">' . $item['status'] . ' ' . $item['label'] . '</td><td style="color:#666;">' . $item['detail'] . '</td></tr>';
-				}
-				$desc .= '</table>';
-				$design_system_url = admin_url('admin.php?page=phantom-design-system');
-				$design_studio_url = admin_url('admin.php?page=phantom-design-studio');
-				$desc .= '<p style="margin-top:12px;"><a href="' . esc_url($design_system_url) . '" class="button button-secondary" target="_blank">' . __('View Full Design System &rarr;', 'phantom-core') . '</a> ';
-				$desc .= '<a href="' . esc_url($design_studio_url) . '" class="button button-primary" target="_blank">' . __('Open Design Studio &rarr;', 'phantom-core') . '</a></p>';
-				$desc .= '</div>';
-				$description = $desc;
-			}
-			$wp_customize->add_section( $section_id, array(
-				'title'       => $section_label,
-				'description' => $description,
-				'panel'       => $panel_id,
-				'priority'    => $section_priority,
-			) );
-
-				$control_priority = 0;
-				foreach ( $this->entries as $key => $entry ) {
-					if ( ( $entry['section'] ?? '' ) !== $section_slug ) {
-						continue;
-					}
-					$control_priority += 1;
-
-					$setting_id = 'phantom_' . $key;
-					$default = $entry['default'] ?? '';
-					if ( is_array( $default ) ) {
-						$default = wp_json_encode( $default, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-						if ( false === $default || '[]' === $default ) {
-							$default = '';
-						}
-					}
-					$wp_customize->add_setting( $setting_id, array(
-						'default'           => $default,
-						'type'              => 'option',
-						'sanitize_callback' => $this->get_sanitize_callback( $entry ),
-						'transport'         => $this->get_transport( $key, $entry ),
-						'capability'        => 'edit_theme_options',
-					) );
-
-					$this->add_control( $wp_customize, $key, $entry, $section_id, $setting_id, $control_priority );
-				}
-			}
+	/**
+	 * Register one section plus controls for every curated setting key.
+	 *
+	 * @param \WP_Customize_Manager $wp_customize
+	 * @param string                $id         Section ID.
+	 * @param string                $title      Section title.
+	 * @param string[]              $keys       Setting keys (must exist in the Settings Registry).
+	 * @param string                $panel      Optional panel ID.
+	 * @param int                   $priority   Section priority.
+	 */
+	private function register_section( $wp_customize, string $id, string $title, array $keys, string $panel = '', int $priority = 10 ): void {
+		$args = array(
+			'title'    => $title,
+			'priority' => $priority,
+		);
+		if ( $panel ) {
+			$args['panel'] = $panel;
 		}
+		$wp_customize->add_section( $id, $args );
 
-		$this->register_partials( $wp_customize );
-	}
+		$entries = $this->registry->get_entries();
+		$prio    = 10;
 
-	public function register_partials( WP_Customize_Manager $wp_customize ): void {
-		foreach ( $this->entries as $key => $entry ) {
-			if ( empty( $entry['partial'] ) || ! is_array( $entry['partial'] ) ) {
+		foreach ( $keys as $key ) {
+			$prio += 10;
+			$entry = $entries[ $key ] ?? null;
+			if ( ! is_array( $entry ) ) {
 				continue;
 			}
-			$partial = $entry['partial'];
+
 			$setting_id = 'phantom_' . $key;
-			$wp_customize->selective_refresh->add_partial( 'phantom_partial_' . $key, array(
-				'selector'            => $partial['selector'],
-				'settings'            => array( $setting_id ),
-				'render_callback'     => $partial['render_callback'] ?? '__return_empty_string',
-				'container_inclusive' => false,
-			) );
-		}
-	}
+			$type       = $entry['type'] ?? 'text';
+			$transport  = $entry['transport'] ?? 'refresh';
 
-	private function add_control( WP_Customize_Manager $wp_customize, string $key, array $entry, string $section_id, string $setting_id, int $priority ): void {
-		if ( ! empty( $entry['divider'] ) ) {
-			$this->divider_controls[ $setting_id ] = $entry['divider'];
-		}
+			$wp_customize->add_setting(
+				$setting_id,
+				array(
+					'default'           => $entry['default'] ?? '',
+					'type'              => 'option',
+					'sanitize_callback' => $entry['sanitize'] ?? 'sanitize_text_field',
+					'transport'         => $transport,
+				)
+			);
 
-		$type = $entry['type'] ?? 'string';
-		$label = $entry['label'] ?? $key;
-		$description = $entry['desc'] ?? '';
-		$custom_types = array( 'ast-color', 'ast-toggle', 'ast-radio-image', 'ast-responsive-slider', 'ast-responsive-spacing', 'ast-typography', 'ast-gradient', 'ast-select', 'ast-color-group', 'ast-background', 'ast-border', 'ast-preset-card' );
+			$label = $entry['label'] ?? ucwords( str_replace( '_', ' ', $key ) );
+			$cargs = array(
+				'section'  => $id,
+				'label'    => $label,
+				'priority' => $prio,
+			);
 
-		if ( in_array( $type, $custom_types, true ) ) {
-			$class = Control_Base::get_class_for_type( $type );
-			if ( $class ) {
-				$input_attrs = $entry['input_attrs'] ?? array();
-				if ( isset( $entry['min'] ) )  $input_attrs['min']  = $entry['min'];
-				if ( isset( $entry['max'] ) )  $input_attrs['max']  = $entry['max'];
-				if ( isset( $entry['step'] ) ) $input_attrs['step'] = $entry['step'];
-				if ( isset( $entry['unit'] ) ) $input_attrs['unit'] = $entry['unit'];
-				if ( isset( $entry['dependencies'] ) ) $input_attrs['data-dependencies'] = $entry['dependencies'];
-				$wp_customize->add_control( new $class(
-					$wp_customize,
-					$setting_id,
-					array(
-						'label'       => $label,
-						'description' => $description,
-						'section'     => $section_id,
-						'settings'    => $setting_id,
-						'priority'    => $priority,
-						'choices'     => $entry['options'] ?? $entry['choices'] ?? array(),
-						'input_attrs' => $input_attrs,
-					)
-				) );
-				return;
+			if ( in_array( $type, array( 'text', 'string', 'textarea' ), true ) ) {
+				$cargs['type'] = ( 'textarea' === $type ) ? 'textarea' : 'text';
+			} else {
+				$cargs['type'] = $type;
 			}
-		}
 
-		switch ( $type ) {
-			case 'color':
-				$wp_customize->add_control(
-					new \WP_Customize_Color_Control(
-						$wp_customize,
-						$setting_id,
-						array(
-							'label'       => $label,
-							'description' => $description,
-							'section'     => $section_id,
-							'settings'    => $setting_id,
-							'priority'    => $priority,
-						)
-					)
-				);
-				break;
+			if ( in_array( $type, array( 'ast-select', 'select' ), true ) ) {
+				$cargs['choices'] = $entry['choices'] ?? $entry['options'] ?? array();
+			}
 
-			case 'bool':
-				$wp_customize->add_control( $setting_id, array(
-					'type'        => 'checkbox',
-					'label'       => $label,
-					'description' => $description,
-					'section'     => $section_id,
-					'priority'    => $priority,
-				) );
-				break;
-
-			case 'select':
-				$wp_customize->add_control( $setting_id, array(
-					'type'        => 'select',
-					'label'       => $label,
-					'description' => $description,
-					'section'     => $section_id,
-					'choices'     => $entry['options'] ?? $entry['choices'] ?? array(),
-					'priority'    => $priority,
-				) );
-				break;
-
-			case 'image':
-				$wp_customize->add_control( new \WP_Customize_Image_Control( $wp_customize, $setting_id, array(
-					'label'       => $label,
-					'description' => $description,
-					'section'     => $section_id,
-					'settings'    => $setting_id,
-					'priority'    => $priority,
-				) ) );
-				break;
-
-			case 'textarea':
-			case 'text':
-				$wp_customize->add_control( $setting_id, array(
-					'type'        => 'textarea',
-					'label'       => $label,
-					'description' => $description,
-					'section'     => $section_id,
-					'input_attrs' => array( 'rows' => $entry['rows'] ?? 4 ),
-					'priority'    => $priority,
-				) );
-				break;
-
-			case 'code':
-				$wp_customize->add_control( new \WP_Customize_Code_Editor_Control( $wp_customize, $setting_id, array(
-					'label'       => $label,
-					'description' => $description,
-					'section'     => $section_id,
-					'settings'    => $setting_id,
-					'priority'    => $priority,
-					'code_type'   => $entry['code_type'] ?? 'text/html',
-				) ) );
-				break;
-
-			case 'repeater':
-			case 'array':
-			case 'multiselect':
-			case 'multi_select':
-			case 'json':
-				$array_control = Control_Base::get_class_for_type( 'ast-array-textarea' );
-				if ( $array_control && class_exists( $array_control ) ) {
-					$wp_customize->add_control( new $array_control( $wp_customize, $setting_id, array(
-						'label'       => $label,
-						'description' => $description . ' ' . __( 'Enter one value per line.', 'phantom-core' ),
-						'section'     => $section_id,
-						'settings'    => $setting_id,
-						'input_attrs' => array( 'rows' => $entry['rows'] ?? 5 ),
-						'priority'    => $priority,
-					) ) );
-				} else {
-					$wp_customize->add_control( $setting_id, array(
-						'type'        => 'textarea',
-						'label'       => $label,
-						'description' => $description . ' ' . __( 'Enter one value per line.', 'phantom-core' ),
-						'section'     => $section_id,
-						'input_attrs' => array( 'rows' => $entry['rows'] ?? 5 ),
-						'priority'    => $priority,
-					) );
-				}
-				break;
-
-			case 'number':
-			case 'int':
-			case 'float':
-				$attrs = array();
-				if ( isset( $entry['min'] ) ) $attrs['min'] = $entry['min'];
-				if ( isset( $entry['max'] ) ) $attrs['max'] = $entry['max'];
-				if ( isset( $entry['step'] ) ) $attrs['step'] = $entry['step'];
-				if ( 'float' === $type && ! isset( $entry['step'] ) ) $attrs['step'] = '0.01';
-				$wp_customize->add_control( $setting_id, array(
-					'type'        => 'number',
-					'label'       => $label,
-					'description' => $description,
-					'section'     => $section_id,
-					'input_attrs' => $attrs,
-					'priority'    => $priority,
-				) );
-				break;
-
-			default:
-				$wp_customize->add_control( $setting_id, array(
-					'type'        => 'string' === $type ? 'text' : $type,
-					'label'       => $label,
-					'description' => $description,
-					'section'     => $section_id,
-					'priority'    => $priority,
-				) );
-				break;
+			$wp_customize->add_control( $setting_id, $cargs );
 		}
 	}
 
 	public function preview_js(): void {
+		$ver = defined( 'PHANTOM_CORE_VERSION' ) ? PHANTOM_CORE_VERSION : '2.0.0';
 		wp_enqueue_script(
 			'phantom-customizer-preview',
 			PHANTOM_CORE_URL . 'admin/js/customizer-preview.js',
 			array( 'jquery', 'customize-preview' ),
-			PHANTOM_CORE_VERSION,
+			$ver,
 			true
 		);
-		$css_var_map    = $this->get_css_var_map();
-		$all_px_keys    = Settings_Registry::get_px_keys();
-		$px_keys        = array();
+
+		$css_var_map     = Settings_Registry::get_css_var_map();
+		$all_px_keys     = Settings_Registry::get_px_keys();
+		$px_keys         = array();
 		$responsive_keys = array();
 		foreach ( array_keys( $css_var_map ) as $key ) {
 			if ( in_array( $key, $all_px_keys, true ) ) {
 				$px_keys[] = $key;
 			}
 		}
-		foreach ( $this->entries as $ekey => $entry ) {
+		foreach ( $this->registry->get_entries() as $ekey => $entry ) {
 			if ( ! empty( $entry['responsive'] ) && isset( $css_var_map[ $ekey ] ) ) {
 				$responsive_keys[] = $ekey;
 			}
@@ -505,251 +284,119 @@ class Customizer {
 				'responsiveKeys' => $responsive_keys,
 				'restUrl'        => rest_url(),
 				'defaultImages'  => array(
-					'heroDesktop' => PHANTOM_CORE_URL . 'frontend/assets/images/banner-img1.png',
-					'heroTablet'  => PHANTOM_CORE_URL . 'frontend/assets/images/banner-img2.png',
+					'heroDesktop' => PHANTOM_CORE_URL . 'frontend/assets/images/banner-bg-img.png',
+					'heroTablet'  => PHANTOM_CORE_URL . 'frontend/assets/images/banner-bg-img.png',
 					'heroMobile'  => PHANTOM_CORE_URL . 'frontend/assets/images/banner-bg-img.png',
 					'logo'        => PHANTOM_CORE_URL . 'frontend/assets/images/logo.png',
 					'favicon'     => PHANTOM_CORE_URL . 'frontend/assets/images/favicon/favicon.ico',
 				),
 			)
 		);
-
-		$partials = array();
-		foreach ( $this->entries as $ekey => $entry ) {
-			if ( ! empty( $entry['partial'] ) && is_array( $entry['partial'] ) ) {
-				$partials[ $ekey ] = $entry['partial'];
-			}
-		}
-		if ( ! empty( $partials ) ) {
-			wp_localize_script(
-				'phantom-customizer-preview',
-				'PhantomPartials',
-				$partials
-			);
-		}
 	}
 
 	public function controls_js(): void {
+		$ver = defined( 'PHANTOM_CORE_VERSION' ) ? PHANTOM_CORE_VERSION : '2.0.0';
+
+		wp_enqueue_media();
+		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_style(
+			'phantom-customizer-visual',
+			PHANTOM_CORE_URL . 'admin/css/customizer-visual-editor.css',
+			array(),
+			$ver
+		);
+
 		wp_enqueue_script(
 			'phantom-customizer-conditionals',
 			PHANTOM_CORE_URL . 'admin/js/customizer-conditionals.js',
-			array( 'jquery', 'customize-controls' ),
-			PHANTOM_CORE_VERSION,
+			array( 'customize-controls' ),
+			$ver,
 			true
 		);
 
-		if ( ! empty( $this->divider_controls ) ) {
-			wp_localize_script(
-				'phantom-customizer-conditionals',
-				'PhantomDividerControls',
-				$this->divider_controls
-			);
-		}
-
-		wp_add_inline_style(
-			'customize-controls',
-			'.ast-top-divider { border-top: 1px solid #ddd; margin-top: 15px; padding-top: 15px; }' .
-			'.ast-bottom-divider { border-bottom: 1px solid #ddd; margin-bottom: 15px; padding-bottom: 15px; }'
+		wp_enqueue_script(
+			'phantom-customizer-visual',
+			PHANTOM_CORE_URL . 'admin/js/customizer-visual-editor.js',
+			array( 'customize-controls', 'wp-color-picker', 'jquery' ),
+			$ver,
+			true
 		);
-	}
 
-	private function get_section_label( string $slug ): string {
-		$labels = array(
-			'branding'          => __( 'Branding', 'phantom-core' ),
-			'header'            => __( 'Header', 'phantom-core' ),
-			'topbar'            => __( 'Top Bar', 'phantom-core' ),
-			'navigation'        => __( 'Navigation', 'phantom-core' ),
-			'announcement_bar'  => __( 'Announcement Bar', 'phantom-core' ),
-			'hero'              => __( 'Hero Section', 'phantom-core' ),
-			'home_sections'     => __( 'Home Sections', 'phantom-core' ),
-			'collections'       => __( 'Collections', 'phantom-core' ),
-			'product_cards'     => __( 'Product Cards', 'phantom-core' ),
-			'shop_page'         => __( 'Shop Page', 'phantom-core' ),
-			'product_page'      => __( 'Product Page', 'phantom-core' ),
-			'woocommerce'       => __( 'WooCommerce', 'phantom-core' ),
-			'blog'              => __( 'Blog', 'phantom-core' ),
-			'footer'            => __( 'Footer', 'phantom-core' ),
-			'typography'        => __( 'Typography', 'phantom-core' ),
-			'colors'            => __( 'Colors', 'phantom-core' ),
-			'buttons'           => __( 'Buttons', 'phantom-core' ),
-			'forms'             => __( 'Forms', 'phantom-core' ),
-			'spacing'           => __( 'Spacing', 'phantom-core' ),
-			'layout'            => __( 'Layout', 'phantom-core' ),
-			'responsive'        => __( 'Responsive', 'phantom-core' ),
-			'animations'        => __( 'Animations', 'phantom-core' ),
-			'effects_3d'        => __( '3D Effects', 'phantom-core' ),
-			'search'            => __( 'Search', 'phantom-core' ),
-			'performance'       => __( 'Performance', 'phantom-core' ),
-			'seo'               => __( 'SEO', 'phantom-core' ),
-			'accessibility'     => __( 'Accessibility', 'phantom-core' ),
-			'integrations'      => __( 'Integrations', 'phantom-core' ),
-			'custom_code'       => __( 'Custom Code', 'phantom-core' ),
-			'import_export'     => __( 'Import / Export', 'phantom-core' ),
-			'about_page'        => __( 'About Page', 'phantom-core' ),
-			'contact_page'      => __( 'Contact Page', 'phantom-core' ),
-			'faq_page'          => __( 'FAQ Page', 'phantom-core' ),
-			'coming_soon'       => __( 'Coming Soon', 'phantom-core' ),
-			'error_404'         => __( '404 Page', 'phantom-core' ),
-			'login_page'        => __( 'Login Page', 'phantom-core' ),
-			'register_page'     => __( 'Register Page', 'phantom-core' ),
-			'portfolio'         => __( 'Portfolio', 'phantom-core' ),
-			'thank_you'         => __( 'Thank You', 'phantom-core' ),
-			'load_more'         => __( 'Load More', 'phantom-core' ),
-			'privacy'           => __( 'Privacy Policy', 'phantom-core' ),
-			'terms'             => __( 'Terms of Use', 'phantom-core' ),
-			'team'              => __( 'Team', 'phantom-core' ),
-			'testimonials'      => __( 'Testimonials', 'phantom-core' ),
-			'design_tokens'     => __( 'Design Tokens', 'phantom-core' ),
-			'design_system'    => __( 'Design System Overview', 'phantom-core' ),
-			'template_pack'    => __( 'Template Pack', 'phantom-core' ),
+		wp_localize_script(
+			'phantom-customizer-visual',
+			'PhantomVisualEditor',
+			array(
+				'restUrl'     => esc_url_raw( rest_url( 'phantom/v1' ) ),
+				'nonce'       => wp_create_nonce( 'phantom_api' ),
+				'wpRestNonce' => wp_create_nonce( 'wp_rest' ),
+				'varMap'      => Settings_Registry::get_css_var_map(),
+			)
 		);
-		return $labels[ $slug ] ?? ucfirst( str_replace( '_', ' ', $slug ) );
-	}
-
-	private function get_sanitize_callback( array $entry ): callable {
-		$type = $entry['type'] ?? 'string';
-		if ( in_array( $type, array( 'array', 'repeater', 'multiselect', 'multi_select', 'json' ), true ) ) {
-			$array_sanitize = Control_Base::get_sanitize_for_type( 'ast-array-textarea' );
-			if ( $array_sanitize ) {
-				return $array_sanitize;
-			}
-		}
-		$sanitize = $entry['sanitize'] ?? null;
-		if ( is_callable( $sanitize ) ) {
-			return $sanitize;
-		}
-		if ( is_string( $sanitize ) && function_exists( $sanitize ) ) {
-			return $sanitize;
-		}
-		if ( in_array( $type, array( 'array', 'repeater', 'multiselect', 'multi_select', 'json' ), true ) ) {
-			return 'sanitize_textarea_field';
-		}
-		$custom_sanitize = Control_Base::get_sanitize_for_type( $type );
-		if ( $custom_sanitize ) {
-			return $custom_sanitize;
-		}
-		return 'sanitize_text_field';
-	}
-
-	private function get_transport( string $key, array $entry ): string {
-		if ( isset( $entry['transport'] ) ) {
-			return $entry['transport'];
-		}
-		$map = Settings_Registry::get_css_var_map();
-		if ( isset( $map[ $key ] ) ) {
-			return 'postMessage';
-		}
-		return 'refresh';
-	}
-
-	public function get_css_var_map(): array {
-		return Settings_Registry::get_css_var_map();
 	}
 
 	/**
-	 * Sync individual phantom_* options into the phantom_options array
-	 * after Customizer saves. This bridges the gap between Customizer's
-	 * per-setting storage and the array-based phantom_options format
-	 * used by the Shell and inline CSS injection.
+	 * Safety-net inline CSS (the CSS Generation Engine is the primary path).
+	 * Kept at wp_head priority 100 as in previous releases.
 	 */
-	public function sync_options(): void {
-		$options = get_option( 'phantom_options', array() );
-		$changed = false;
-		$entries = Settings_Registry::get_instance()->get_entries();
-		foreach ( array_keys( $entries ) as $key ) {
-			$value = get_option( 'phantom_' . $key, null );
-			if ( null !== $value && ( ! array_key_exists( $key, $options ) || $options[ $key ] !== $value ) ) {
-				if ( is_array( $value ) && empty( $value ) ) {
-					continue;
-				}
-				$options[ $key ] = $value;
-				$changed = true;
+	public function get_inline_css(): string {
+		$css = '';
+		foreach ( Settings_Registry::get_css_var_map() as $key => $var ) {
+			$value = $this->registry->get( $key );
+			if ( null !== $value && '' !== $value && is_scalar( $value ) ) {
+				$css .= $var . ':' . $value . ';';
 			}
 		}
-        if ( $changed ) {
-            update_option( 'phantom_options', $options, false );
-        }
-
-        $active_preset = get_option('phantom_active_preset', '');
-        if (!empty($active_preset) && class_exists('\PhantomCore\Preset_Compatibility_Bridge')) {
-            \PhantomCore\Preset_Compatibility_Bridge::sync($active_preset);
-        }
-    }
-
-    public function get_inline_css(): string {
-		$options = get_option( 'phantom_options', array() );
-		$map     = $this->get_css_var_map();
-		$css     = '';
-		foreach ( $map as $key => $var ) {
-			$val = null;
-			if ( isset( $options[ $key ] ) && '' !== $options[ $key ] ) {
-				$val = $options[ $key ];
-			} else {
-				$individual = get_option( 'phantom_' . $key, null );
-				if ( null !== $individual && '' !== $individual ) {
-					$val = $individual;
-				}
-			}
-			if ( null !== $val ) {
-				if ( is_array( $val ) ) {
-					$responsive_bps = array(
-						'desktop' => '',
-						'tablet'  => 768,
-						'mobile'  => 544,
-					);
-					$desktop_val   = $val['desktop'] ?? '';
-					if ( '' !== $desktop_val ) {
-						$bp_val = in_array( $key, Settings_Registry::get_px_keys(), true ) && is_numeric( $desktop_val ) ? $desktop_val . 'px' : $desktop_val;
-						$css   .= $var . ':' . wp_strip_all_tags( $bp_val ) . ';';
-					}
-					foreach ( array( 'tablet', 'mobile' ) as $bp ) {
-						if ( isset( $val[ $bp ] ) && '' !== $val[ $bp ] ) {
-							$bp_val = in_array( $key, Settings_Registry::get_px_keys(), true ) && is_numeric( $val[ $bp ] ) ? $val[ $bp ] . 'px' : $val[ $bp ];
-							$css   .= '@media (max-width: ' . $responsive_bps[ $bp ] . 'px) {:root{' . $var . ':' . wp_strip_all_tags( $bp_val ) . ';}}';
-						}
-					}
-				} else {
-					if ( in_array( $key, Settings_Registry::get_px_keys(), true ) ) {
-						$val = is_numeric( $val ) ? $val . 'px' : $val;
-					}
-					$css .= $var . ':' . wp_strip_all_tags( $val ) . ';';
-				}
-			}
-		}
-		if ( '' === $css ) {
-			return '';
-		}
-		return '<style id="phantom-customizer-css">:root{' . $css . '}</style>';
+		return $css ? ':root{' . $css . '}' : '';
 	}
 
-	public function render_welcome_panel(): void {
-		?>
-		<div id="phantom-welcome-overlay" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;">
-			<div style="background:#fff;border-radius:12px;padding:32px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-				<h2 style="margin:0 0 8px;font-size:22px;font-weight:700;"><?php esc_html_e('Welcome to Phantom Core', 'phantom-core'); ?></h2>
-				<p style="margin:0 0 16px;font-size:14px;color:#555;line-height:1.5;"><?php esc_html_e('Your design system hub for presets, tokens, components, and live preview. Start by selecting a preset or customizing individual tokens below.', 'phantom-core'); ?></p>
-				<ul style="text-align:left;margin:0 0 20px;padding:0;list-style:none;font-size:13px;line-height:1.8;">
-					<li>🎨 <strong><?php esc_html_e('Presets', 'phantom-core'); ?></strong> — <?php esc_html_e('Pre-built style configurations', 'phantom-core'); ?></li>
-					<li>🎯 <strong><?php esc_html_e('Tokens', 'phantom-core'); ?></strong> — <?php esc_html_e('Fine-tune colors, fonts, spacing', 'phantom-core'); ?></li>
-					<li>🧩 <strong><?php esc_html_e('Components', 'phantom-core'); ?></strong> — <?php esc_html_e('Manage reusable design elements', 'phantom-core'); ?></li>
-					<li>📊 <strong><?php esc_html_e('Live Preview', 'phantom-core'); ?></strong> — <?php esc_html_e('See changes in real time', 'phantom-core'); ?></li>
-				</ul>
-				<button type="button" id="phantom-welcome-dismiss" class="button button-primary" style="padding:8px 24px;font-size:14px;"><?php esc_html_e('Get Started', 'phantom-core'); ?></button>
-			</div>
-		</div>
-		<script>
-		(function() {
-			var dismissed = localStorage.getItem('phantom_customizer_welcome');
-			if (!dismissed) {
-				var overlay = document.getElementById('phantom-welcome-overlay');
-				overlay.style.display = 'flex';
-				document.getElementById('phantom-welcome-dismiss').addEventListener('click', function() {
-					overlay.style.display = 'none';
-					localStorage.setItem('phantom_customizer_welcome', '1');
-				});
+	public function output_inline_css(): void {
+		if ( is_customize_preview() ) {
+			return;
+		}
+		$css = $this->get_inline_css();
+		if ( $css ) {
+			echo '<style id="phantom-inline-css">' . "\n" . $css . "\n" . '</style>';
+		}
+	}
+
+	/**
+	 * Post-save pipeline: history snapshot, design state commit, cache flush,
+	 * asset pipeline build. Mirrors the /publish REST endpoint (best-effort).
+	 */
+	public function sync_options(): void {
+		if ( class_exists( '\PhantomCore\History\History_Manager' ) ) {
+			try {
+				$autosave = \PhantomCore\History\History_Autosave::get_instance();
+				$settings = $autosave->capture_current_settings();
+				\PhantomCore\History\History_Manager::get_instance()->create_snapshot(
+					$settings,
+					'customizer_save',
+					__( 'Saved via Customizer', 'phantom-core' )
+				);
+			} catch ( \Throwable $e ) {
+				// Non-fatal: history is best-effort.
 			}
-		})();
-		</script>
-		<?php
+		}
+
+		if ( class_exists( '\PhantomCore\Design\ThemeStateEngine' ) ) {
+			try {
+				\PhantomCore\Design\ThemeStateEngine::get_instance()->commit_preview();
+			} catch ( \Throwable $e ) {
+				// Non-fatal.
+			}
+		}
+
+		if ( class_exists( '\Phantom_Custom_CSS' ) ) {
+			\Phantom_Custom_CSS::flush_cache();
+		}
+		delete_transient( 'phantom_page_data_v2' );
+
+		if ( class_exists( '\PhantomCore\Asset\Pipeline\Pipeline' ) ) {
+			try {
+				\PhantomCore\Asset\Pipeline\Pipeline::get_instance()->execute( 'css', array( 'profile' => 'production' ) );
+			} catch ( \Throwable $e ) {
+				// Non-fatal: settings already committed.
+			}
+		}
 	}
 }

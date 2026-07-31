@@ -370,6 +370,35 @@ if ( ! class_exists( 'WP_REST_Controller' ) ) {
         public function __construct() {}
     }
 }
+// Minimal WP_Customize_Control stub — enough surface for custom control
+// classes (Customizer\Controls\*) to load and render in standalone tests.
+if ( ! class_exists( 'WP_Customize_Control' ) ) {
+    class WP_Customize_Control {
+        public $manager;
+        public $id;
+        public $label = '';
+        public $description = '';
+        public $section = '';
+        public $priority = 10;
+        public $settings = [];
+        public $type = 'text';
+        public $choices = [];
+        public $json = [];
+        public function __construct( $manager, $id, $args = [] ) {
+            $this->manager = $manager;
+            $this->id = $id;
+            foreach ( [ 'label', 'description', 'section', 'priority', 'settings', 'type', 'choices' ] as $prop ) {
+                if ( isset( $args[ $prop ] ) ) {
+                    $this->$prop = $args[ $prop ];
+                }
+            }
+        }
+        public function to_json() {}
+        public function value() { return ''; }
+        public function render_content() {}
+        public function enqueue() {}
+    }
+}
 
 // Stub register_rest_route to collect routes for testing
 if ( ! function_exists( 'register_rest_route' ) ) {
@@ -643,7 +672,6 @@ require_once PHANTOM_CORE_PATH . 'includes/Design/Providers/class-user-provider.
 // Load Phase 4C Admin page classes
 require_once PHANTOM_CORE_PATH . 'admin/class-phantom-admin.php';
 require_once PHANTOM_CORE_PATH . 'admin/class-dashboard-page.php';
-require_once PHANTOM_CORE_PATH . 'admin/class-design-studio-page.php';
 require_once PHANTOM_CORE_PATH . 'admin/class-component-library-page.php';
 require_once PHANTOM_CORE_PATH . 'admin/class-template-manager-page.php';
 require_once PHANTOM_CORE_PATH . 'admin/class-animation-studio-page.php';

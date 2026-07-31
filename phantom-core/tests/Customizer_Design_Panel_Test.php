@@ -39,11 +39,12 @@ class Customizer_Design_Panel_Test extends TestCase {
         $this->assertStringContainsString('Motion Style', $output);
     }
 
-    public function testRenderContainsLinkToDesignStudio(): void {
+    public function testRenderContainsLinkToCustomizer(): void {
         ob_start();
         $this->panel->render();
         $output = ob_get_clean();
-        $this->assertStringContainsString('Open Design Studio', $output);
-        $this->assertStringContainsString('phantom-design-studio', $output);
+        $this->assertStringContainsString('Open Customizer', $output);
+        $this->assertStringContainsString('customize.php', $output);
+        $this->assertStringNotContainsString('phantom-design-studio', $output);
     }
 }
