@@ -8,15 +8,15 @@ A **decoupled WordPress framework** that replaces traditional PHP template hiera
 |--------|-------|
 | Version | **2.0.0** |
 | Plugin | `phantom-core` (decoupled framework + static HTML SPA) |
-| Theme | `phantom-theme` — Bootstrap 5 companion, 7 page templates, 5 multi-column variants, 10 widget areas (3 theme + 7 plugin), 6 nav locations |
+| Theme | `phantom-theme` — Bootstrap 5 shell (zero page templates; plugin `templates/shell.php` SPA router renders everything), 10 widget areas (3 theme + 7 plugin), 6 nav locations |
 | Settings | **~612** across **46** sections |
 | REST API Endpoints | **60** under `phantom/v1` (44 unique paths) |
 | Customizer | **16** panels, **46** sections, 11 custom control types (3 used: ast-toggle=103, ast-color=56, ast-select=37) |
 | Custom Controls | **11** types (3 actively used) |
 | PHP Files | **~217** (all pass `php -l`, zero syntax errors) |
-| HTML Templates | **22** (static, replaceable, in `frontend/html/`) |
+| HTML Templates | **25** (static, replaceable, in `frontend/html/`) |
 | Frontend JS | **29** files (plugin frontend) + **6** (admin) |
-| PHPUnit Tests | **463** passing, 0 failures, 0 errors |
+| PHPUnit Tests | **598** passing, 0 failures, 0 errors |
 | WooCommerce | Full integration via Store API + `wc-ajax` (18 WC REST endpoints) |
 | Backend Health | **100/100** forensic code health, **100/100** architecture alignment |
 | Custom CSS Modules | **9** (colors, typography, header, footer, layout, buttons, product, responsive, **hero**) |
@@ -51,14 +51,14 @@ Phantom Core Plugin
   ├── Container_Config (38 services)
   └── Shell SPA Router (template_redirect → HTML)
        │
-phantom-theme (Bootstrap 5 fallback)
-  ├── 7 page templates + 5 multi-column variants
+phantom-theme (Bootstrap 5 shell — zero page templates)
+  ├── plugin templates/shell.php SPA router renders everything
   ├── 3 widget areas + 7 plugin areas = 10 total
   ├── 6 nav locations (2 theme + 4 plugin)
   └── WooCommerce template overrides
        │
   Frontend (swappable)
-  ├── 22 static HTML templates (frontend/html/)
+  ├── 25 static HTML templates (frontend/html/)
   ├── PhantomBridge.js (REST API bridge)
   ├── phantom-data.js (delegation shim, ~200 lines post-refactor)
   └── 3 template packs (frontend/packs/)

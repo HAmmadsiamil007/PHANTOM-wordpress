@@ -1,7 +1,7 @@
 # Phantom Core — Complete Feature Inventory
 
 > **Legend:** ✅ Implemented | ⚠️ Partial | ❌ Missing | 🔧 Hardcoded (not setting-controlled)
-> **Version:** 2.0.0 | **Settings:** ~612 across 46 sections | **HTML Templates:** 22 | **Template Packs:** 3 (Dark, Minimal, Bold)
+> **Version:** 2.0.0 | **Settings:** ~612 across 46 sections | **HTML Templates:** 25 | **Template Packs:** 3 (Dark, Minimal, Bold)
 
 ---
 
@@ -278,7 +278,7 @@ Each page type has its own settings section:
 
 ---
 
-## 5. HTML Template Inventory (22 files)
+## 5. HTML Template Inventory (25 files)
 
 All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 were consolidated.
 
@@ -291,6 +291,7 @@ All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 w
 | `checkout.html` | `/checkout` | Shipping, payment, order summary |
 | `blog.html` | `/blog` | Post grid, sidebar, categories, pagination |
 | `single-blog.html` | `/blog/{slug}` | Content, image, related, comments |
+| `search.html` | `/search` | Search results grid |
 | `about.html` | `/about` | Mission, team, stats |
 | `contact.html` | `/contact` | Form, map, info |
 | `faq.html` | `/faq` | Accordion Q&A |
@@ -306,6 +307,8 @@ All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 w
 | `cookie-policy.html` | `/cookie-policy` | Content |
 | `wishlist.html` | `/wishlist` | Wishlist management |
 | `account.html` | `/account` | User account dashboard |
+| `orders.html` | `/account/orders` | Order history list |
+| `order-detail.html` | `/account/orders/{id}` | Single order detail |
 
 ---
 
@@ -334,19 +337,20 @@ All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 w
 
 ## 7. PHP Theme Template Inventory (phantom-theme)
 
-`phantom-theme` is a Bootstrap 5 companion theme with:
+`phantom-theme` is a Bootstrap 5 **shell theme**: the plugin's `templates/shell.php` SPA router (hooked on `template_redirect` at priority 10) intercepts all frontend requests, so **zero theme templates render at runtime** — everything is served from `frontend/html/` via the shell. The files below remain as a WordPress-API fallback (theme activation, Customizer, edge cases).
 
 | Template | Description |
 |----------|-------------|
 | `index.php` | Default fallback |
 | `page.php` | Single page with sidebar |
 | `page-full-width.php` | Single page, no sidebar |
+| `page-one-column.php` | Single page, one column |
+| `page-two-column.php` | 2-column layout |
 | `page-three-column.php` | 3-column layout |
 | `page-three-column-sidebar.php` | 3-column with sidebar |
 | `page-four-column.php` | 4-column layout |
-| `page-six-column.php` | 6-column layout |
 | `page-six-column-full-width.php` | 6-column full width |
-| `page-two-column.php` | 2-column layout |
+| `front-page.php` | Homepage fallback |
 | `single.php` | Single blog post |
 | `archive.php` | Blog archive |
 | `search.php` | Search results (XSS-fixed) |
@@ -355,8 +359,8 @@ All templates live in `frontend/html/`. 9 layout-variant templates from v1.5.0 w
 | `header.php` | Header with 6 nav locations |
 | `footer.php` | Footer with 3 widget areas |
 | `sidebar.php` | Primary sidebar |
+| `sidebar-shop.php` | Shop sidebar |
 | `woocommerce.php` | WooCommerce wrapper |
-| `page-one-column.php` | Single page, one column |
 | `class-bootstrap-nav-walker.php` | Bootstrap 5 nav walker for dropdowns |
 | `functions.php` | Theme setup (menus, widgets, assets) |
 | `style.css` | Theme metadata |
@@ -386,13 +390,13 @@ Responsive Hero:         ██████████████████�
 Accessibility:           ████████████████████ 100% (skip links, ARIA landmarks, role=banner, nav labels, focus outlines, form label for/id, contrast, a11y.css)
 Animations:              ████████████████████ 100% (GSAP, ScrollTrigger, Lenis, preloader JS, scroll-reveal, parallax, animations.js enqueued)
 Performance:             ████████████████████ 100% (lazy loading, preconnect, preload, dns-prefetch, defer JS, minify, cache, font-display, emoji/block removal)
-HTML Templates:          ████████████████████ 100% (22 pages)
+HTML Templates:          ████████████████████ 100% (25 pages)
 REST API:                ████████████████████ 100% (60 routes, all verified secure)
 Data Binding:            ████████████████████ 100% (full attribute system)
 SEO:                     ████████████████████ 100% (OG/JSON-LD, meta, Twitter Cards, canonical, hreflang, sitemap, robots, WebPage schema, org logo/sameAs)
 Security:                ████████████████████ 100% (nonce, sanitization, capabilities, CSP, XSS protection)
 Settings Debug:          ████████████████████ 100% (zero PHP notices, empty debug log)
 Architecture Alignment:  ████████████████████ 100% (all 9 registries, all layers complete)
-phantom-theme:           ████████████████████ 100% (Bootstrap 5, 7 page templates, 35 issues fixed)
+phantom-theme:           ████████████████████ 100% (Bootstrap 5 shell, zero page templates rendered — SPA router serves all)
 AETHER Frontend Polish:  ████████████████████ 100% (homepage guards, card flex layout, shop fog, encoding fixes)
 ```

@@ -308,13 +308,13 @@ A separate forensic audit of the **phantom-theme** found **35 issues**:
 - 30+ PHPUnit test files
 - ~12 e2e test files
 
-### HTML — 22 Templates
+### HTML — 25 Templates
 
-Auth: login, join-now, password-reset, account
-E-commerce: shop, product-detail, cart, checkout, wishlist
-Content: index, blog, single-blog, about, contact, faq, team, testimonials
+Auth: login, join-now, account
+E-commerce: shop, product-detail, cart, checkout, wishlist, orders, order-detail
+Content: index, blog, single-blog, search, about, contact, faq, team, testimonials
 Legal: privacy-policy, term-of-use, cookie-policy
-Special: coming-soon, 404
+Special: coming-soon, 404, thank-you
 
 ---
 
@@ -466,9 +466,9 @@ A comprehensive 5-phase bugfix and quality pass addressing 24 issues across 15 P
 | **Accessibility** | 40/100 | Minimal — needs keyboard nav, ARIA, focus states |
 | **Developer Experience** | 90/100 | Well-documented, all 8 docs in theme-detail/, consistent patterns, 38 DI services |
 | **WooCommerce** | 85/100 | Cart/checkout fixed, 18 WC REST endpoints, wishlist, HPOS support, bridge system |
-| **Frontend** | 100/100 | 22 templates, full data binding, responsive hero, Swup SPA transitions, server-side WC rendering |
+| **Frontend** | 100/100 | 25 templates, full data binding, responsive hero, Swup SPA transitions, server-side WC rendering |
 
-**Overall: 100/100 — All architectures and forensic audits at 100%. Zero PHP syntax errors. Zero debug log entries. 463/463 tests pass.**
+**Overall: 100/100 — All architectures and forensic audits at 100%. Zero PHP syntax errors. Zero debug log entries. 598/598 tests pass.**
 
 ---
 
@@ -481,13 +481,13 @@ A comprehensive 5-phase bugfix and quality pass addressing 24 issues across 15 P
 | CSS Vars | 90 | 136 | **136** | — | **136** | — |
 | Customizer Panels | 15 | 16 | **16** | — | **16** | — |
 | Customizer Sections | 44 | 46 | **45** | -1 (template_pack admin-only) | **46** | +1 (restored) |
-| HTML Templates | 31 | 22 | **22** | — | **22** | — |
+| HTML Templates | 31 | 22 | **22** | — | **25** | +3 (orders, order-detail, search) |
 | Custom CSS Modules | 8 | 9 | **9** | — | **9** | — |
 | Architecture Alignment | — | 100/100 | **100/100** | Maintained | **100/100** | Maintained |
 | Forensic Code Health | 100/100 | 100/100 | **100/100** | Maintained | **100/100** | Maintained |
 | Debug Log Entries | — | 0 | **0** | ✅ Empty | **0** | ✅ Empty |
 | Container Services | — | 38 | **38** | — | **38+** | — |
-| PHPUnit Tests | — | ~215 | **399** | +184 (pack + setup tests) | **463** | +64 (24-issue repair tests) |
+| PHPUnit Tests | — | ~215 | **399** | +184 (pack + setup tests) | **598** | +135 (24-issue repair + Visual Customizer tests) |
 | Plugin PHP Files | ~15 | 55+ | **~217** | +162 (full architecture) | **~217** | — |
 | Theme PHP Files | ~20 | 21 | **22** | +1 (Bootstrap_Nav_Walker) | **22** | — |
 | Template Packs | — | — | **3** | New (Dark, Minimal, Bold) | **3** | — |
@@ -505,7 +505,7 @@ A comprehensive 5-phase bugfix and quality pass addressing 24 issues across 15 P
 | 3 | Customizer loads without errors | ✅ Pass — 16 panels, 46 sections |
 | 4 | Admin settings page loads and saves | ✅ Pass — 15 tabs, 612 settings |
 | 5 | CSS generation engine injects vars | ✅ Pass — 136 CSS vars on frontend |
-| 6 | Frontend templates render correctly | ✅ Pass — 22 templates, all HTTP 200 |
+| 6 | Frontend templates render correctly | ✅ Pass — 25 templates, all HTTP 200 |
 | 7 | WooCommerce cart/checkout functional | ✅ Pass — 18 WC REST endpoints, HPOS |
 | 8 | Template packs available and switchable | ✅ Pass — 3 packs, REST activation, 463 tests |
 | 8 | Nonce verification on all write endpoints | ✅ Pass — dual nonce system |

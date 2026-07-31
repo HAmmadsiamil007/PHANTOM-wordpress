@@ -824,7 +824,7 @@ interface BridgeInterface {
                                        │
                     ┌──────────────────▼──────────────────────────┐
                     │           Frontend HTML Templates           │
-                    │  22 static files · 3 pack overrides         │
+                    │  25 static files · 3 pack overrides         │
                     │  phantom-data.js · Swup.js · Bootstrap 5    │
                     └────────────────────────────────────────────┘
 ```

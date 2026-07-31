@@ -6,7 +6,7 @@ The frontend is completely decoupled from WordPress. It consists of:
 
 ```
 frontend/
-├── html/*.html          # 22 static HTML page templates
+├── html/*.html          # 25 static HTML page templates
 ├── assets/
 │   ├── css/            # 10 CSS files (Bootstrap, theme, a11y, vendor)
 │   ├── js/             # 27 JS files (phantom-data.js + vendor libs)

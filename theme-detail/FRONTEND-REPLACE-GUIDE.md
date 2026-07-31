@@ -26,7 +26,7 @@ PHP Backend (NEVER change this)
 
 Frontend (100% replaceable)
   │
-  ├─ frontend/html/*.html — 22 page templates
+  ├─ frontend/html/*.html — 25 page templates
   ├─ frontend/assets/js/phantom-data.js — Core data bridge
   └─ frontend/assets/css/ — CSS files
 ```
@@ -143,7 +143,7 @@ For each dynamic element, add `data-phantom` attributes:
 6. Use WordPress for REST API only (headless CMS)
 
 ### Option C: Mixed (Existing Pages + New App)
-1. Keep Shell serving 22 static templates for existing pages
+1. Keep Shell serving 25 static templates for existing pages
 2. Add a single route in Shell that serves your new app
 3. New app runs independently alongside static templates
 
