@@ -116,6 +116,7 @@ class Pack_Rest_Test extends TestCase {
         $result = $this->rest->activate($request);
         $this->assertInstanceOf(WP_Error::class, $result);
         $this->assertSame('pack_missing', $result->get_error_code());
+        $this->assertSame(400, $result->get_error_data()['status']);
     }
 
     public function test_uninstall_unknown_pack_returns_wp_error(): void {
@@ -125,6 +126,7 @@ class Pack_Rest_Test extends TestCase {
         $result = $this->rest->uninstall($request);
         $this->assertInstanceOf(WP_Error::class, $result);
         $this->assertSame('pack_missing', $result->get_error_code());
+        $this->assertSame(400, $result->get_error_data()['status']);
     }
 
     public function test_install_without_file_returns_upload_error(): void {

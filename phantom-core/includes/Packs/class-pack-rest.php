@@ -106,15 +106,17 @@ class Pack_Rest {
 
     public function activate(\WP_REST_Request $request) {
         $slug = (string) $request->get_param('slug');
-        $result = Frontend_Pack_Registry::get_instance()->activate($slug);
+        $registry = Frontend_Pack_Registry::get_instance();
+        $applied = $registry->apply_pack_settings($slug);
+        $result = $registry->activate($slug);
         if (is_wp_error($result)) {
-            return $result;
+            return $this->with_status($result, 400);
         }
         return new \WP_REST_Response(
             [
                 'success' => true,
                 'pack' => $slug,
-                'applied' => Frontend_Pack_Registry::get_instance()->apply_pack_settings($slug),
+                'applied' => $applied,
             ],
             200
         );
@@ -124,7 +126,7 @@ class Pack_Rest {
         $file = $_FILES['file'] ?? [];
         $result = Frontend_Pack_Registry::get_instance()->install_from_upload(is_array($file) ? $file : []);
         if (is_wp_error($result)) {
-            return $result;
+            return $this->with_status($result, 400);
         }
         return new \WP_REST_Response(
             [
@@ -140,7 +142,7 @@ class Pack_Rest {
         $force = (bool) $request->get_param('force');
         $result = Frontend_Pack_Registry::get_instance()->uninstall($slug, $force);
         if (is_wp_error($result)) {
-            return $result;
+            return $this->with_status($result, 400);
         }
         return new \WP_REST_Response(
             [
@@ -150,6 +152,14 @@ class Pack_Rest {
             ],
             200
         );
+    }
+
+    private function with_status(\WP_Error $error, int $status): \WP_Error {
+        $data = $error->get_error_data();
+        if (!is_array($data) || !isset($data['status'])) {
+            $error->add_data(['status' => $status]);
+        }
+        return $error;
     }
 
     private function wp_route_exists(string $route, string $method): bool {

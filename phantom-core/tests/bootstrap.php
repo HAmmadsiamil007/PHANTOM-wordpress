@@ -319,6 +319,7 @@ if ( ! class_exists( 'WP_Error' ) ) {
         public function get_error_code() { return $this->code; }
         public function get_error_message() { return $this->message; }
         public function get_error_data( $code = '' ) { return $this->data; }
+        public function add_data( $data, $code = '', $key = '' ) { $this->data = $data; }
     }
 }
 if ( ! class_exists( 'WP_REST_Response' ) ) {
