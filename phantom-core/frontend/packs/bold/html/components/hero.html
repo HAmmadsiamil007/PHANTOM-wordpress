@@ -1,8 +1,8 @@
-<section class="hero-section hero-section--bold" style="--hero-overlay-opacity: {{OVERLAY_OPACITY}}">
+<section data-component="bold-hero" data-instance="{{bold-hero_id}}" data-token-group="bold-hero" class="hero-section hero-section--bold" style="--hero-overlay-opacity: {{OVERLAY_OPACITY}}">
   <picture>
     <source media="(max-width: {{TABLET_BP}}px)" srcset="{{IMAGE_TABLET}}">
     <source media="(max-width: {{MOBILE_BP}}px)" srcset="{{IMAGE_MOBILE}}">
-    <img src="{{IMAGE}}" alt="{{TITLE}}" class="hero-image hero-image--bold" loading="{{LOADING}}">
+    <img data-asset="{{image_{{IMAGE}}}" src="{{IMAGE}}" alt="{{TITLE}}" class="hero-image hero-image--bold" loading="{{LOADING}}">
   </picture>
   <div class="hero-overlay hero-overlay--bold"></div>
   <div class="hero-content hero-content--bold">

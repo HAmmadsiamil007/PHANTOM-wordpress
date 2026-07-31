@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-component="page-faq" data-instance="{{slug}}-{{index}}" data-token-group="faq">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -196,21 +196,21 @@
             </div>
         </div>
     </header>
-<div id="main" tabindex="-1" class="visually-hidden-focusable" style="position:absolute;top:0"></div>
-    <main id="swup">
+<div id="main" data-component="main" data-instance="main-{{slug}}" data-token-group="main" tabindex="-1" class="visually-hidden-focusable" style="position:absolute;top:0"></div>
+    <main id="swup" data-component="swup" data-instance="swup-{{slug}}" data-token-group="swup">
 
     <section class="page-hero" data-component="page-hero" data-instance="hero-faq" data-token-group="hero" data-settings-group="hero" data-editable="true" data-version="1.0" data-parallax-section data-phantom-bg="hero">
     <!-- Fog / Mist Effect -->
     <div class="hero-fog" aria-hidden="true">
-        <div id="hl_01" class="hf-fog">
+        <div id="hl_01" data-component="hl01" data-instance="hl01-{{slug}}" data-token-group="hl01" class="hf-fog">
             <div class="hf-img"></div>
             <div class="hf-img"></div>
         </div>
-        <div id="hl_02" class="hf-fog">
+        <div id="hl_02" data-component="hl02" data-instance="hl02-{{slug}}" data-token-group="hl02" class="hf-fog">
             <div class="hf-img"></div>
             <div class="hf-img"></div>
         </div>
-        <div id="hl_03" class="hf-fog">
+        <div id="hl_03" data-component="hl03" data-instance="hl03-{{slug}}" data-token-group="hl03" class="hf-fog">
             <div class="hf-img"></div>
             <div class="hf-img"></div>
         </div>
@@ -224,12 +224,12 @@
 
     <section class="faq-section">
         <div class="container">
-            <div class="accordion" id="faqAccordion" data-reveal-group>
+            <div class="accordion" id="faqAccordion" data-component="faqaccordion" data-instance="faqaccordion-{{slug}}" data-token-group="faqaccordion" data-reveal-group>
                 <div class="accordion-item" data-reveal-item>
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">What is the Void Air cushioning system?</button>
                     </h2>
-                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                    <div id="faq1" data-component="faq1" data-instance="faq1-{{slug}}" data-token-group="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">Our proprietary Void Air system uses pressurized air capsules within a 40mm midsole to deliver responsive energy return with every stride. Combined with our full-length carbon fiber plate, it provides 40% more energy return than traditional foam systems.</div>
                     </div>
                 </div>
@@ -237,7 +237,7 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">How do I find my size?</button>
                     </h2>
-                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq2" data-component="faq2" data-instance="faq2-{{slug}}" data-token-group="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">We recommend measuring your foot length and consulting our size guide. The Void Runner fits true to size with a medium width. If you're between sizes, we recommend going half a size up.</div>
                     </div>
                 </div>
@@ -245,7 +245,7 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">What is your return policy?</button>
                     </h2>
-                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq3" data-component="faq3" data-instance="faq3-{{slug}}" data-token-group="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">We offer free returns within 30 days of purchase. Shoes must be unworn and in original packaging. Contact our support team to initiate a return.</div>
                     </div>
                 </div>
@@ -253,7 +253,7 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">Do you ship internationally?</button>
                     </h2>
-                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq4" data-component="faq4" data-instance="faq4-{{slug}}" data-token-group="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">Yes, we ship to over 50 countries worldwide. International shipping rates vary by location. Check our shipping page for full details.</div>
                     </div>
                 </div>
@@ -261,7 +261,7 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">How long does shipping take?</button>
                     </h2>
-                    <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq5" data-component="faq5" data-instance="faq5-{{slug}}" data-token-group="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">Standard shipping takes 5-7 business days. Express shipping (2-3 days) is available for 5 at checkout.</div>
                     </div>
                 </div>
@@ -269,7 +269,7 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">Are the shoes water resistant?</button>
                     </h2>
-                    <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq6" data-component="faq6" data-instance="faq6-{{slug}}" data-token-group="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">The Void Runner features a DWR-treated upper that repels light moisture but is not fully waterproof. They can handle light rain but are not designed for submersion.</div>
                     </div>
                 </div>
@@ -277,7 +277,7 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">What is the carbon fiber plate?</button>
                     </h2>
-                    <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq7" data-component="faq7" data-instance="faq7-{{slug}}" data-token-group="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">A full-length carbon fiber plate embedded in the midsole provides 40% more energy return compared to traditional foam. It acts as a lever, storing and releasing energy during your stride.</div>
                     </div>
                 </div>
@@ -285,7 +285,7 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq8">How do I care for my Void Runners?</button>
                     </h2>
-                    <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div id="faq8" data-component="faq8" data-instance="faq8-{{slug}}" data-token-group="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">Spot clean with mild soap and water. Air dry only. Do not machine wash or tumble dry. Store in a cool, dry place away from direct sunlight.</div>
                     </div>
                 </div>
@@ -327,18 +327,18 @@
     </main>
     <footer class="footer" id="footer" role="contentinfo" aria-label="Site footer" data-phantom-menu="footer" data-component="footer" data-instance="footer-default" data-token-group="footer" data-settings-group="footer" data-editable="true" data-version="1.0">
         <div class="container">
-            <div class="footer-top">
-                <div class="footer-brand">
+            <div class="footer-top" data-component="footer-top" data-instance="footer-top-{{slug}}" data-token-group="footer">
+                <div class="footer-brand" data-component="footer-brand" data-instance="footer-brand-{{slug}}" data-token-group="footer">
                     <a href="/" class="footer-logo">AETHER</a>
                     <p class="footer-tagline">Step Into The Void</p>
-                    <div class="footer-social" aria-label="Social media links">
+                    <div class="footer-social" data-component="footer-social" data-instance="footer-social-{{slug}}" data-token-group="footer" aria-label="Social media links">
                         <a href="https://instagram.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                         <a href="https://twitter.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
                         <a href="https://tiktok.com/@aethershoes" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
                         <a href="https://youtube.com/@aethershoes" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
                     </div>
                 </div>
-                <div class="footer-links">
+                <div class="footer-links" data-component="footer-links" data-instance="footer-links-{{slug}}" data-token-group="footer">
                     <h4 class="footer-heading">Shop</h4>
                     <ul>
                         <li><a href="/shop">Men</a></li>
@@ -348,7 +348,7 @@
                         <li><a href="/shop">Bestsellers</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
+                <div class="footer-links" data-component="footer-links" data-instance="footer-links-{{slug}}" data-token-group="footer">
                     <h4 class="footer-heading">Support</h4>
                     <ul>
                         <li><a href="/faq">FAQ</a></li>
@@ -358,7 +358,7 @@
                         <li><a href="product-detail.html#size-guide">Size Guide</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
+                <div class="footer-links" data-component="footer-links" data-instance="footer-links-{{slug}}" data-token-group="footer">
                     <h4 class="footer-heading">Company</h4>
                     <ul>
                         <li><a href="/about">About Us</a></li>
@@ -367,7 +367,7 @@
                         <li><a href="about.html#press">Press</a></li>
                     </ul>
                 </div>
-                <div class="footer-newsletter">
+                <div class="footer-newsletter" data-component="footer-newsletter" data-instance="footer-newsletter-{{slug}}" data-token-group="footer">
                     <h4 class="footer-heading">Stay in the Loop</h4>
                     <p>Get exclusive drops, early access, and AETHER news.</p>
                     <form class="footer-newsletter-form" aria-label="Newsletter subscription" >
@@ -376,14 +376,14 @@
                     </form>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <div class="footer-legal">
+            <div class="footer-bottom" data-component="footer-bottom" data-instance="footer-bottom-{{slug}}" data-token-group="footer">
+                <div class="footer-legal" data-component="footer-legal" data-instance="footer-legal-{{slug}}" data-token-group="footer">
                     <span>&copy; 2026 AETHER. All Rights Reserved.</span>
                     <a href="/privacy-policy">Privacy</a>
                     <a href="/terms">Terms</a>
                     <a href="/cookies">Cookies</a>
                 </div>
-                <div class="footer-payments">
+                <div class="footer-payments" data-component="footer-payments" data-instance="footer-payments-{{slug}}" data-token-group="footer">
                     <i class="fab fa-cc-visa"></i>
                     <i class="fab fa-cc-mastercard"></i>
                     <i class="fab fa-cc-amex"></i>

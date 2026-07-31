@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-component="page-index" data-instance="{{slug}}-{{index}}" data-token-group="index">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -225,23 +225,23 @@
             </div>
         </div>
     </header>
-<div id="main" tabindex="-1" class="visually-hidden-focusable" style="position:absolute;top:0"></div>
-    <main id="swup">
+<div id="main" data-component="main" data-instance="main-{{slug}}" data-token-group="main" tabindex="-1" class="visually-hidden-focusable" style="position:absolute;top:0"></div>
+    <main id="swup" data-component="swup" data-instance="swup-{{slug}}" data-token-group="swup">
 
     <!-- ═══════════════════════════════════════════════════════
          3. HERO SLIDER
          ═══════════════════════════════════════════════════════ -->
     <section class="hero-slider" id="heroSlider" data-component="hero" data-instance="hero-home" data-token-group="hero" data-settings-group="hero" data-editable="true" data-version="1.0" data-phantom-bg="hero" data-mouse-parallax data-parallax-section>
                 <div class="hero-fog" aria-hidden="true">
-                    <div id="hl_01" class="hf-fog">
+                    <div id="hl_01" data-component="hl01" data-instance="hl01-{{slug}}" data-token-group="hl01" class="hf-fog">
                         <div class="hf-img"></div>
                         <div class="hf-img"></div>
                     </div>
-                    <div id="hl_02" class="hf-fog">
+                    <div id="hl_02" data-component="hl02" data-instance="hl02-{{slug}}" data-token-group="hl02" class="hf-fog">
                         <div class="hf-img"></div>
                         <div class="hf-img"></div>
                     </div>
-                    <div id="hl_03" class="hf-fog">
+                    <div id="hl_03" data-component="hl03" data-instance="hl03-{{slug}}" data-token-group="hl03" class="hf-fog">
                         <div class="hf-img"></div>
                         <div class="hf-img"></div>
                     </div>
@@ -251,7 +251,7 @@
                 <!-- Slide 1 — Flagship -->
                 <div class="swiper-slide hero-slide">
                     <div class="hero-slide-bg">
-                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-alt="hero_slide_1" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-alt="hero_slide_1" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
                         <div class="hero-slide-overlay"></div>
                     </div>
                     <div class="container hero-slide-content">
@@ -268,7 +268,7 @@
                 <!-- Slide 2 -->
                 <div class="swiper-slide hero-slide">
                     <div class="hero-slide-bg">
-                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-alt="hero_slide_2" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-alt="hero_slide_2" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
                         <div class="hero-slide-overlay"></div>
                     </div>
                     <div class="container hero-slide-content">
@@ -285,7 +285,7 @@
                 <!-- Slide 3 -->
                 <div class="swiper-slide hero-slide">
                     <div class="hero-slide-bg">
-                        <img loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-alt="hero_slide_3" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="eager" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-alt="hero_slide_3" data-mouse-depth="0.06" data-parallax data-parallax-speed="0.15">
                         <div class="hero-slide-overlay"></div>
                     </div>
                     <div class="container hero-slide-content">
@@ -312,7 +312,7 @@
         <!-- Fire Sparks Canvas -->
 
         <!-- Hero Particles -->
-        <div id="hero-particles" class="hero-particles"></div>
+        <div id="hero-particles" data-component="heroparticles" data-instance="heroparticles-{{slug}}" data-token-group="heroparticles" class="hero-particles"></div>
         
         <div class="scroll-indicator">
             <div class="mouse">
@@ -335,7 +335,7 @@
             <div class="category-grid" data-component="category-grid" data-instance="category-grid-home" data-token-group="collections" data-settings-group="collections" data-editable="true" data-version="1.0" data-reveal-group>
                 <a href="/shop" class="category-card category-card--large" data-tilt data-reveal-item>
                     <div class="category-card-bg">
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Men's Collection" data-phantom-alt="category_men">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Men's Collection" data-phantom-alt="category_men">
                         <div class="category-card-overlay"></div>
                     </div>
                     <div class="category-card-content">
@@ -347,7 +347,7 @@
                 
                 <a href="/shop" class="category-card" data-tilt data-reveal-item>
                     <div class="category-card-bg">
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Women's Collection" data-phantom-alt="category_women">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Women's Collection" data-phantom-alt="category_women">
                         <div class="category-card-overlay"></div>
                     </div>
                     <div class="category-card-content">
@@ -359,7 +359,7 @@
                 
                 <a href="/shop" class="category-card" data-tilt data-reveal-item>
                     <div class="category-card-bg">
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Kids Collection" data-phantom-alt="category_kids">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="Kids Collection" data-phantom-alt="category_kids">
                         <div class="category-card-overlay"></div>
                     </div>
                     <div class="category-card-content">
@@ -371,7 +371,7 @@
                 
                 <a href="/shop" class="category-card category-card--accent" data-tilt data-reveal-item>
                     <div class="category-card-bg">
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="New Arrivals" data-phantom-alt="category_new">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="New Arrivals" data-phantom-alt="category_new">
                         <div class="category-card-overlay"></div>
                     </div>
                     <div class="category-card-content">
@@ -399,7 +399,7 @@
                 <!-- Product 1 -->
                 <div class="product-card" data-component="product-card" data-instance="void-runner" data-token-group="product-card" data-settings-group="product-card" data-editable="true" data-version="1.0" data-tilt data-reveal-item>
                     <div class="product-image" data-image-zoom>
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-alt="product_1">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Void Runner" data-phantom-alt="product_1">
                         <span class="product-badge">Bestseller</span>
                         <div class="product-actions">
                             <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
@@ -427,7 +427,7 @@
                 <!-- Product 2 -->
                 <div class="product-card" data-component="product-card" data-instance="cloud-stride" data-token-group="product-card" data-settings-group="product-card" data-editable="true" data-version="1.0" data-tilt data-reveal-item>
                     <div class="product-image" data-image-zoom>
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-alt="product_2">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Cloud Stride" data-phantom-alt="product_2">
                         <span class="product-badge badge-new">New</span>
                         <div class="product-actions">
                             <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
@@ -455,7 +455,7 @@
                 <!-- Product 3 -->
                 <div class="product-card" data-component="product-card" data-instance="midnight" data-token-group="product-card" data-settings-group="product-card" data-editable="true" data-version="1.0" data-tilt data-reveal-item>
                     <div class="product-image" data-image-zoom>
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-alt="product_3">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Midnight Edition" data-phantom-alt="product_3">
                         <span class="product-badge badge-limited">Limited</span>
                         <div class="product-actions">
                             <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
@@ -483,7 +483,7 @@
                 <!-- Product 4 -->
                 <div class="product-card" data-component="product-card" data-instance="aero-sprint" data-token-group="product-card" data-settings-group="product-card" data-editable="true" data-version="1.0" data-tilt data-reveal-item>
                     <div class="product-image" data-image-zoom>
-                        <img loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Aero Sprint" data-phantom-alt="product_4">
+                        <img data-asset="{{image_Luxury_running_sneaker_on_pedestal_202607222032.jpeg}}" data-asset="{{image_}}"  loading="lazy" src="assets/images/Luxury_running_sneaker_on_pedestal_202607222032.jpeg" alt="AETHER Aero Sprint" data-phantom-alt="product_4">
                         <span class="product-badge badge-new">New</span>
                         <div class="product-actions">
                             <button class="product-action-btn" aria-label="Add to wishlist"><i class="fas fa-heart"></i></button>
@@ -743,7 +743,7 @@
                     </div>
                     <p class="newsletter-note"><i class="fas fa-lock"></i> No spam. Unsubscribe anytime.</p>
                 </form>
-                <div class="newsletter-success" id="newsletterSuccess">
+                <div class="newsletter-success" id="newsletterSuccess" data-component="newslettersuccess" data-instance="newslettersuccess-{{slug}}" data-token-group="newslettersuccess">
                     <i class="fas fa-check-circle"></i>
                     <p>Welcome to the void. Check your inbox.</p>
                 </div>
@@ -757,11 +757,11 @@
     </main>
     <footer class="footer" id="footer" role="contentinfo" aria-label="Site footer" data-component="footer" data-instance="footer-default" data-token-group="footer" data-settings-group="footer" data-editable="true" data-version="1.0" data-phantom-menu="footer">
         <div class="container">
-            <div class="footer-top">
-                <div class="footer-brand">
+            <div class="footer-top" data-component="footer-top" data-instance="footer-top-{{slug}}" data-token-group="footer">
+                <div class="footer-brand" data-component="footer-brand" data-instance="footer-brand-{{slug}}" data-token-group="footer">
                     <a href="/" class="footer-logo">AETHER</a>
                     <p class="footer-tagline">Step Into The Void</p>
-                    <div class="footer-social" aria-label="Social media links">
+                    <div class="footer-social" data-component="footer-social" data-instance="footer-social-{{slug}}" data-token-group="footer" aria-label="Social media links">
                         <a href="https://instagram.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                         <a href="https://twitter.com/aethershoes" target="_blank" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
                         <a href="https://tiktok.com/@aethershoes" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
@@ -769,7 +769,7 @@
                     </div>
                 </div>
                 
-                <div class="footer-links">
+                <div class="footer-links" data-component="footer-links" data-instance="footer-links-{{slug}}" data-token-group="footer">
                     <h4 class="footer-heading">Shop</h4>
                     <ul>
                         <li><a href="/shop">Men</a></li>
@@ -780,7 +780,7 @@
                     </ul>
                 </div>
                 
-                <div class="footer-links">
+                <div class="footer-links" data-component="footer-links" data-instance="footer-links-{{slug}}" data-token-group="footer">
                     <h4 class="footer-heading">Support</h4>
                     <ul>
                         <li><a href="/faq">FAQ</a></li>
@@ -791,7 +791,7 @@
                     </ul>
                 </div>
                 
-                <div class="footer-links">
+                <div class="footer-links" data-component="footer-links" data-instance="footer-links-{{slug}}" data-token-group="footer">
                     <h4 class="footer-heading">Company</h4>
                     <ul>
                         <li><a href="/about">About Us</a></li>
@@ -801,7 +801,7 @@
                     </ul>
                 </div>
                 
-                <div class="footer-newsletter">
+                <div class="footer-newsletter" data-component="footer-newsletter" data-instance="footer-newsletter-{{slug}}" data-token-group="footer">
                     <h4 class="footer-heading">Stay in the Loop</h4>
                     <p>Get exclusive drops, early access, and AETHER news.</p>
                     <form class="footer-newsletter-form" aria-label="Newsletter subscription" id="footerNewsletterForm">
@@ -811,14 +811,14 @@
                 </div>
             </div>
             
-            <div class="footer-bottom">
-                <div class="footer-legal">
+            <div class="footer-bottom" data-component="footer-bottom" data-instance="footer-bottom-{{slug}}" data-token-group="footer">
+                <div class="footer-legal" data-component="footer-legal" data-instance="footer-legal-{{slug}}" data-token-group="footer">
                     <span>&copy; 2026 AETHER. All Rights Reserved.</span>
                     <a href="/privacy-policy">Privacy</a>
                     <a href="/terms">Terms</a>
                     <a href="/cookies">Cookies</a>
                 </div>
-                <div class="footer-payments">
+                <div class="footer-payments" data-component="footer-payments" data-instance="footer-payments-{{slug}}" data-token-group="footer">
                     <i class="fab fa-cc-visa"></i>
                     <i class="fab fa-cc-mastercard"></i>
                     <i class="fab fa-cc-amex"></i>

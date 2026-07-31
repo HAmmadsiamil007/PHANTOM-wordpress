@@ -20,7 +20,7 @@ class Container_Config {
             return new EventDispatcher();
         });
 
-		// 2. Template_Loader — singleton
+        // 2. Template_Loader — singleton
     $container->singleton(Template_Loader::class, function () {
       return new Template_Loader();
     });
@@ -58,9 +58,9 @@ class Container_Config {
             );
         });
 
-		// 8. Render_Engine — singleton with pack resolution
-		$container->singleton(Render_Engine::class, function ($c) {
-			$pack = 'default';
+        // 8. Render_Engine — singleton with pack resolution
+        $container->singleton(Render_Engine::class, function ($c) {
+            $pack = 'default';
             if (class_exists('\PhantomCore\Settings_Registry')) {
                 $registry = \PhantomCore\Settings_Registry::get_instance();
                 if ($registry->has('template_pack')) {
@@ -93,239 +93,239 @@ class Container_Config {
             );
         });
 
-		// 11. Demo_Switcher — singleton for activate/deactivate
-		$container->singleton(Demo_Switcher::class, function ($c) {
-			return new Demo_Switcher(
-				$c->get(Demo_Registry::class)
-			);
-		});
+        // 11. Demo_Switcher — singleton for activate/deactivate
+        $container->singleton(Demo_Switcher::class, function ($c) {
+            return new Demo_Switcher(
+                $c->get(Demo_Registry::class)
+            );
+        });
 
-		// 12. DesignSystemManager — singleton (Phase 4)
-		$container->singleton(\PhantomCore\Design\DesignSystemManager::class, function () {
-			return \PhantomCore\Design\DesignSystemManager::get_instance();
-		});
+        // 12. DesignSystemManager — singleton (Phase 4)
+        $container->singleton(\PhantomCore\Design\DesignSystemManager::class, function () {
+            return \PhantomCore\Design\DesignSystemManager::get_instance();
+        });
 
-		// 13. WooCommerce_Injector — factory (not singleton)
-		$container->set(WooCommerce_Injector::class, function ($c) {
-			return new WooCommerce_Injector(
-				$c->get(Render_Engine::class),
-				$c->get(EventDispatcher::class)
-			);
-		});
+        // 13. WooCommerce_Injector — factory (not singleton)
+        $container->set(WooCommerce_Injector::class, function ($c) {
+            return new WooCommerce_Injector(
+                $c->get(Render_Engine::class),
+                $c->get(EventDispatcher::class)
+            );
+        });
 
-		// 14. Feature_Registry — singleton (Phase 5B)
-		$container->singleton(\PhantomCore\Feature\Feature_Registry::class, function () {
-			return \PhantomCore\Feature\Feature_Registry::get_instance();
-		});
+        // 14. Feature_Registry — singleton (Phase 5B)
+        $container->singleton(\PhantomCore\Feature\Feature_Registry::class, function () {
+            return \PhantomCore\Feature\Feature_Registry::get_instance();
+        });
 
-		// 15. Feature_Manager — singleton (Phase 5B)
-		$container->singleton(\PhantomCore\Feature\Feature_Manager::class, function () {
-			return \PhantomCore\Feature\Feature_Manager::get_instance();
-		});
+        // 15. Feature_Manager — singleton (Phase 5B)
+        $container->singleton(\PhantomCore\Feature\Feature_Manager::class, function () {
+            return \PhantomCore\Feature\Feature_Manager::get_instance();
+        });
 
-		// 16. Component_Registry — singleton (Phase 5D)
-		$container->singleton(Component_Registry::class, function () {
-			return Component_Registry::get_instance();
-		});
+        // 16. Component_Registry — singleton (Phase 5D)
+        $container->singleton(Component_Registry::class, function () {
+            return Component_Registry::get_instance();
+        });
 
-		// 17. Component_Manager — singleton (Phase 5D)
-		$container->singleton(Component_Manager::class, function () {
-			return Component_Manager::get_instance();
-		});
+        // 17. Component_Manager — singleton (Phase 5D)
+        $container->singleton(Component_Manager::class, function () {
+            return Component_Manager::get_instance();
+        });
 
-		// 18. Template_Registry — singleton (Phase 5D)
-		$container->singleton(Template_Registry::class, function () {
-			return Template_Registry::get_instance();
-		});
+        // 18. Template_Registry — singleton (Phase 5D)
+        $container->singleton(Template_Registry::class, function () {
+            return Template_Registry::get_instance();
+        });
 
-		// 19. Animation_Registry — singleton (Phase 5A)
-		$container->singleton(\PhantomCore\Animation\Animation_Registry::class, function () {
-			return \PhantomCore\Animation\Animation_Registry::get_instance();
-		});
+        // 19. Animation_Registry — singleton (Phase 5A)
+        $container->singleton(\PhantomCore\Animation\Animation_Registry::class, function () {
+            return \PhantomCore\Animation\Animation_Registry::get_instance();
+        });
 
-		// 20. GSAP_Bridge — singleton (Phase 5A)
-		$container->singleton(\PhantomCore\Animation\GSAP_Bridge::class, function () {
-			return \PhantomCore\Animation\GSAP_Bridge::get_instance();
-		});
+        // 20. GSAP_Bridge — singleton (Phase 5A)
+        $container->singleton(\PhantomCore\Animation\GSAP_Bridge::class, function () {
+            return \PhantomCore\Animation\GSAP_Bridge::get_instance();
+        });
 
-		// 21. Three_Bridge — singleton (Phase 5A)
-		$container->singleton(\PhantomCore\Animation\Three_Bridge::class, function () {
-			return \PhantomCore\Animation\Three_Bridge::get_instance();
-		});
+        // 21. Three_Bridge — singleton (Phase 5A)
+        $container->singleton(\PhantomCore\Animation\Three_Bridge::class, function () {
+            return \PhantomCore\Animation\Three_Bridge::get_instance();
+        });
 
-		// 22. Scroll_Reveal — singleton (Phase 5A)
-		$container->singleton(\PhantomCore\Animation\Scroll_Reveal::class, function () {
-			return \PhantomCore\Animation\Scroll_Reveal::get_instance();
-		});
+        // 22. Scroll_Reveal — singleton (Phase 5A)
+        $container->singleton(\PhantomCore\Animation\Scroll_Reveal::class, function () {
+            return \PhantomCore\Animation\Scroll_Reveal::get_instance();
+        });
 
-		// 23. Parallax — singleton (Phase 5A)
-		$container->singleton(\PhantomCore\Animation\Parallax::class, function () {
-			return \PhantomCore\Animation\Parallax::get_instance();
-		});
+        // 23. Parallax — singleton (Phase 5A)
+        $container->singleton(\PhantomCore\Animation\Parallax::class, function () {
+            return \PhantomCore\Animation\Parallax::get_instance();
+        });
 
-		// 24. Data_Normalizer — singleton utility (Phase B)
-		$container->singleton(\PhantomCore\Data\Data_Normalizer::class, function () {
-			return new \PhantomCore\Data\Data_Normalizer();
-		});
+        // 24. Data_Normalizer — singleton utility (Phase B)
+        $container->singleton(\PhantomCore\Data\Data_Normalizer::class, function () {
+            return new \PhantomCore\Data\Data_Normalizer();
+        });
 
-		// 25. Data_Provider — abstract, concrete instances per provider
-		// Concrete providers should self-register: $container->set(Foo_Provider::class, ...)
+        // 25. Data_Provider — abstract, concrete instances per provider
+        // Concrete providers should self-register: $container->set(Foo_Provider::class, ...)
 
-		// 26. Layout_Registry — singleton (Phase C)
-		$container->singleton(\PhantomCore\Layout\Layout_Registry::class, function () {
-			return \PhantomCore\Layout\Layout_Registry::get_instance();
-		});
+        // 26. Layout_Registry — singleton (Phase C)
+        $container->singleton(\PhantomCore\Layout\Layout_Registry::class, function () {
+            return \PhantomCore\Layout\Layout_Registry::get_instance();
+        });
 
-		// 27. Layout_Manager — singleton instance
-		$container->singleton(\PhantomCore\Layout\Layout_Manager::class, function () {
-			return \PhantomCore\Layout\Layout_Manager::get_instance();
-		});
+        // 27. Layout_Manager — singleton instance
+        $container->singleton(\PhantomCore\Layout\Layout_Manager::class, function () {
+            return \PhantomCore\Layout\Layout_Manager::get_instance();
+        });
 
-		// 28. Design_API — singleton facade (Phase C)
-		$container->singleton(\PhantomCore\Public\Design_API::class, function () {
-			return \PhantomCore\Public\Design_API::get_instance();
-		});
+        // 28. Design_API — singleton facade (Phase C)
+        $container->singleton(\PhantomCore\Public\Design_API::class, function () {
+            return \PhantomCore\Public\Design_API::get_instance();
+        });
 
-		// 29. Hook_Registry — singleton (Phase C)
-		$container->singleton(\PhantomCore\Hook\Hook_Registry::class, function () {
-			return \PhantomCore\Hook\Hook_Registry::get_instance();
-		});
+        // 29. Hook_Registry — singleton (Phase C)
+        $container->singleton(\PhantomCore\Hook\Hook_Registry::class, function () {
+            return \PhantomCore\Hook\Hook_Registry::get_instance();
+        });
 
-		// 30. Bridge_Manager — singleton (Phase D + Phase 4)
-		$container->singleton(\PhantomCore\Bridges\Bridge_Manager::class, function () {
-			return \PhantomCore\Bridges\Bridge_Manager::get_instance();
-		});
+        // 30. Bridge_Manager — singleton (Phase D + Phase 4)
+        $container->singleton(\PhantomCore\Bridges\Bridge_Manager::class, function () {
+            return \PhantomCore\Bridges\Bridge_Manager::get_instance();
+        });
 
-		// 30. Asset_Registry — singleton (Phase E), register defaults on init
-		$container->singleton(\PhantomCore\Registry\Asset_Registry::class, function () {
-			$registry = \PhantomCore\Registry\Asset_Registry::get_instance();
-			$registry->register_defaults();
-			return $registry;
-		});
+        // 30. Asset_Registry — singleton (Phase E), register defaults on init
+        $container->singleton(\PhantomCore\Registry\Asset_Registry::class, function () {
+            $registry = \PhantomCore\Registry\Asset_Registry::get_instance();
+            $registry->register_defaults();
+            return $registry;
+        });
 
-		// 31. Capability_Manager — singleton (Phase E)
-		$container->singleton(\PhantomCore\Capability_Manager::class, function () {
-			return \PhantomCore\Capability_Manager::get_instance();
-		});
+        // 31. Capability_Manager — singleton (Phase E)
+        $container->singleton(\PhantomCore\Capability_Manager::class, function () {
+            return \PhantomCore\Capability_Manager::get_instance();
+        });
 
-		// 32-37. Public API facades (Phase E)
-		$container->singleton(\PhantomCore\Public\Render_API::class, function () {
-			return \PhantomCore\Public\Render_API::get_instance();
-		});
-		$container->singleton(\PhantomCore\Public\Component_API::class, function () {
-			return \PhantomCore\Public\Component_API::get_instance();
-		});
-		$container->singleton(\PhantomCore\Public\Animation_API::class, function () {
-			return \PhantomCore\Public\Animation_API::get_instance();
-		});
-		$container->singleton(\PhantomCore\Public\Settings_API::class, function () {
-			return \PhantomCore\Public\Settings_API::get_instance();
-		});
-		$container->singleton(\PhantomCore\Public\Template_API::class, function () {
-			return \PhantomCore\Public\Template_API::get_instance();
-		});
-		$container->singleton(\PhantomCore\Public\Developer_API::class, function () {
-			return \PhantomCore\Public\Developer_API::get_instance();
-		});
+        // 32-37. Public API facades (Phase E)
+        $container->singleton(\PhantomCore\Public\Render_API::class, function () {
+            return \PhantomCore\Public\Render_API::get_instance();
+        });
+        $container->singleton(\PhantomCore\Public\Component_API::class, function () {
+            return \PhantomCore\Public\Component_API::get_instance();
+        });
+        $container->singleton(\PhantomCore\Public\Animation_API::class, function () {
+            return \PhantomCore\Public\Animation_API::get_instance();
+        });
+        $container->singleton(\PhantomCore\Public\Settings_API::class, function () {
+            return \PhantomCore\Public\Settings_API::get_instance();
+        });
+        $container->singleton(\PhantomCore\Public\Template_API::class, function () {
+            return \PhantomCore\Public\Template_API::get_instance();
+        });
+        $container->singleton(\PhantomCore\Public\Developer_API::class, function () {
+            return \PhantomCore\Public\Developer_API::get_instance();
+        });
 
-		// 38-48. Data Layer registrations (Phase 2a)
-		// Adapters — actively wired into injectors
-		$container->singleton(\PhantomCore\Adapters\Cart_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Cart_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\SearchResult_Adapter::class, function () {
-			return new \PhantomCore\Adapters\SearchResult_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\User_Adapter::class, function () {
-			return new \PhantomCore\Adapters\User_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Footer_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Footer_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Product_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Product_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Post_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Post_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Page_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Page_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Settings_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Settings_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Category_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Category_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Comment_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Comment_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Coupon_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Coupon_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Hero_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Hero_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Menu_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Menu_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Order_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Order_Adapter();
-		});
-		$container->singleton(\PhantomCore\Adapters\Tag_Adapter::class, function () {
-			return new \PhantomCore\Adapters\Tag_Adapter();
-		});
+        // 38-48. Data Layer registrations (Phase 2a)
+        // Adapters — actively wired into injectors
+        $container->singleton(\PhantomCore\Adapters\Cart_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Cart_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\SearchResult_Adapter::class, function () {
+            return new \PhantomCore\Adapters\SearchResult_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\User_Adapter::class, function () {
+            return new \PhantomCore\Adapters\User_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Footer_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Footer_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Product_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Product_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Post_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Post_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Page_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Page_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Settings_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Settings_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Category_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Category_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Comment_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Comment_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Coupon_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Coupon_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Hero_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Hero_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Menu_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Menu_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Order_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Order_Adapter();
+        });
+        $container->singleton(\PhantomCore\Adapters\Tag_Adapter::class, function () {
+            return new \PhantomCore\Adapters\Tag_Adapter();
+        });
 
-		// ViewModels
-		$container->singleton(\PhantomCore\ViewModels\Product_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Product_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\SearchResult_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\SearchResult_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\Post_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Post_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\Order_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Order_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\User_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\User_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\Comment_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Comment_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\Category_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Category_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\Page_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Page_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\Settings_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Settings_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\Coupon_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Coupon_ViewModel();
-		});
-		$container->singleton(\PhantomCore\ViewModels\Tag_ViewModel::class, function () {
-			return new \PhantomCore\ViewModels\Tag_ViewModel();
-		});
+        // ViewModels
+        $container->singleton(\PhantomCore\ViewModels\Product_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Product_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\SearchResult_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\SearchResult_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\Post_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Post_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\Order_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Order_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\User_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\User_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\Comment_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Comment_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\Category_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Category_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\Page_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Page_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\Settings_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Settings_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\Coupon_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Coupon_ViewModel();
+        });
+        $container->singleton(\PhantomCore\ViewModels\Tag_ViewModel::class, function () {
+            return new \PhantomCore\ViewModels\Tag_ViewModel();
+        });
 
-	// Component_Metadata — template/asset compatibility
-	$container->singleton(\PhantomCore\Components\Component_Metadata::class, function () {
-		return \PhantomCore\Components\Component_Metadata::get_instance();
-	});
+    // Component_Metadata — template/asset compatibility
+    $container->singleton(\PhantomCore\Components\Component_Metadata::class, function () {
+        return \PhantomCore\Components\Component_Metadata::get_instance();
+    });
 
-		// 38. Swiper_Bridge — singleton
-		$container->singleton(\PhantomCore\Bridges\Swiper_Bridge::class, function () {
-			return \PhantomCore\Bridges\Swiper_Bridge::get_instance();
-		});
+        // 38. Swiper_Bridge — singleton
+        $container->singleton(\PhantomCore\Bridges\Swiper_Bridge::class, function () {
+            return \PhantomCore\Bridges\Swiper_Bridge::get_instance();
+        });
 
-	// 39. Customizer_Design_Panel — singleton (Phase 8, admin only)
-	if (is_admin()) {
-		$container->singleton(\PhantomCore\Admin\Customizer_Design_Panel::class, function () {
-			return \PhantomCore\Admin\Customizer_Design_Panel::get_instance();
-		});
-	}
+    // 39. Customizer_Design_Panel — singleton (Phase 8, admin only)
+    if (is_admin()) {
+        $container->singleton(\PhantomCore\Admin\Customizer_Design_Panel::class, function () {
+            return \PhantomCore\Admin\Customizer_Design_Panel::get_instance();
+        });
+    }
     }
 }

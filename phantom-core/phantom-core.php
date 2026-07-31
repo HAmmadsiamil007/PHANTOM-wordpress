@@ -174,7 +174,19 @@ spl_autoload_register(
 			}
 		}
 
-// Components uses includes/Components/ with class-{name}.php naming
+// Component (singular) uses includes/Component/ with class-{name}.php naming
+		$component_prefix = 'Component\\';
+		if ( strncmp( $component_prefix, $relative_class, strlen( $component_prefix ) ) === 0 ) {
+			$short = substr( $relative_class, strlen( $component_prefix ) );
+			$short = $pascal_to_kebab( $short );
+			$file  = PHANTOM_CORE_PATH . 'includes/Component/class-' . str_replace( '_', '-', strtolower( $short ) ) . '.php';
+			if ( file_exists( $file ) ) {
+				require_once $file;
+				return;
+			}
+		}
+
+		// Components uses includes/Components/ with class-{name}.php naming
 		$components_prefix = 'Components\\';
 		if ( strncmp( $components_prefix, $relative_class, strlen( $components_prefix ) ) === 0 ) {
 			$short = substr( $relative_class, strlen( $components_prefix ) );
