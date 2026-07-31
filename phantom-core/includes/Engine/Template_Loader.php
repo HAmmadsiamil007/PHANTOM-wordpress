@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhantomCore\Engine;
 
 use PhantomCore\Registry\Template_Registry;
+use PhantomCore\Packs\Frontend_Pack_Registry;
 
 defined('ABSPATH') || exit;
 
@@ -21,34 +22,21 @@ class Template_Loader {
   }
 
   public function pack_exists(string $pack): bool {
-    $dir = PHANTOM_CORE_PATH . 'frontend/packs/' . $pack;
-    return is_dir($dir) && file_exists($dir . '/manifest.json');
+    return Frontend_Pack_Registry::get_instance()->has($pack);
   }
 
   public function get_pack_manifest(string $pack = ''): ?array {
     if ($pack === '') $pack = $this->pack;
-    if ($pack === 'default') return null;
-    $file = PHANTOM_CORE_PATH . 'frontend/packs/' . $pack . '/manifest.json';
-    if (!file_exists($file)) return null;
-    $json = json_decode((string) file_get_contents($file), true);
-    return is_array($json) ? $json : null;
+    $pack_obj = Frontend_Pack_Registry::get_instance()->get($pack);
+    return $pack_obj ? $pack_obj->to_manifest() : null;
   }
 
   public function get_pack_asset_urls(string $pack = ''): array {
-    $manifest = $this->get_pack_manifest($pack ?: $this->pack);
-    if (!$manifest || !isset($manifest['assets'])) return ['css' => [], 'js' => []];
-    $base = function_exists('content_url')
-      ? content_url() . '/plugins/phantom-core/'
-      : PHANTOM_CORE_URL . 'frontend/packs/';
-    $css = [];
-    $js = [];
-    foreach ($manifest['assets']['css'] ?? [] as $rel) {
-      $css[] = $base . $rel;
+    $pack_obj = Frontend_Pack_Registry::get_instance()->get($pack ?: $this->pack);
+    if (null === $pack_obj) {
+      return ['css' => [], 'js' => []];
     }
-    foreach ($manifest['assets']['js'] ?? [] as $rel) {
-      $js[] = $base . $rel;
-    }
-    return ['css' => $css, 'js' => $js];
+    return ['css' => $pack_obj->get_css_urls(), 'js' => $pack_obj->get_js_urls()];
   }
 
   public function resolve(string $slug): string {
@@ -152,13 +140,8 @@ class Template_Loader {
 
   public function get_packs(): array {
     $packs = ['default' => 'Default'];
-    $dir = PHANTOM_CORE_PATH . 'frontend/packs/';
-    if (is_dir($dir)) {
-      foreach (scandir($dir) as $entry) {
-        if ($entry !== '.' && $entry !== '..' && is_dir($dir . $entry)) {
-          $packs[$entry] = ucwords(str_replace('-', ' ', $entry));
-        }
-      }
+    foreach (Frontend_Pack_Registry::get_instance()->get_display_names() as $slug => $name) {
+      $packs[$slug] = $name;
     }
     return $packs;
   }

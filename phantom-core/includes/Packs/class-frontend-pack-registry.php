@@ -14,6 +14,8 @@ class Frontend_Pack_Registry {
 
     private array $packs = [];
 
+    private ?string $scanned_base = null;
+
     public static function get_instance(): self {
         if (null === self::$instance) {
             self::$instance = new self();
@@ -27,6 +29,7 @@ class Frontend_Pack_Registry {
 
     public function scan(?string $base_path = null): void {
         $base = $base_path ?? $this->default_base_path();
+        $this->scanned_base = $base;
         $this->packs = [];
 
         if (!is_dir($base)) {
@@ -69,18 +72,22 @@ class Frontend_Pack_Registry {
     }
 
     public function get(string $slug): ?Frontend_Pack {
+        $this->ensure_scanned();
         return $this->packs[$slug] ?? null;
     }
 
     public function get_all(): array {
+        $this->ensure_scanned();
         return $this->packs;
     }
 
     public function has(string $slug): bool {
+        $this->ensure_scanned();
         return isset($this->packs[$slug]);
     }
 
     public function count(): int {
+        $this->ensure_scanned();
         return count($this->packs);
     }
 
@@ -94,6 +101,7 @@ class Frontend_Pack_Registry {
     }
 
     public function get_display_names(): array {
+        $this->ensure_scanned();
         $names = [];
         foreach ($this->packs as $slug => $pack) {
             $names[$slug] = $pack->name;
@@ -102,11 +110,18 @@ class Frontend_Pack_Registry {
     }
 
     public function get_pack_list(): array {
+        $this->ensure_scanned();
         $list = [];
         foreach ($this->packs as $slug => $pack) {
             $list[$slug] = $pack->to_array();
         }
         return $list;
+    }
+
+    private function ensure_scanned(): void {
+        if (null === $this->scanned_base) {
+            $this->scan();
+        }
     }
 
     public function validate_slug(string $slug): ?string {
