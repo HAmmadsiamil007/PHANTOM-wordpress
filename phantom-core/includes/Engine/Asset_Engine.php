@@ -76,7 +76,7 @@ class Asset_Engine {
   }
 
   private function inject_css_by_route(string $html, string $slug): string {
-    $theme_css = PHANTOM_CORE_URL . '../phantom-theme/assets/css/';
+    $theme_css = PHANTOM_THEME_URL . 'assets/css/';
     $v = '?v=' . PHANTOM_CORE_VERSION;
 
     if (in_array($slug, ['blog', 'post', 'single-blog'], true)) {

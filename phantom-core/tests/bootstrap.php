@@ -14,6 +14,7 @@ $core_path = str_replace( '\\', '/', $core_path );
 define( 'PHANTOM_CORE_PATH', $core_path );
 define( 'PHANTOM_CORE_URL', 'http://example.com/wp-content/plugins/phantom-core/' );
 define( 'PHANTOM_CORE_FILE', PHANTOM_CORE_PATH . 'phantom-core.php' );
+define( 'PHANTOM_THEME_URL', 'http://example.com/wp-content/themes/phantom-theme/' );
 
 // WordPress function stubs for standalone testing
 if ( ! function_exists( '__' ) ) {

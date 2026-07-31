@@ -28,25 +28,32 @@ jQuery(function ($) {
 
 
 // load more button js
-var loadMoreButtonClicked = false;
+var loadMoreButton = document.getElementById('loadMore');
 
-document.getElementById('loadMore').addEventListener('click', function () {
-  this.style.display = 'none';
-  loadMoreButtonClicked = true;
-  adjustStructure();
-});
+if (loadMoreButton) {
+  var loadMoreButtonClicked = false;
 
-window.addEventListener('resize', function (event) {
-  if (loadMoreButtonClicked) {
+  loadMoreButton.addEventListener('click', function () {
+    this.style.display = 'none';
+    loadMoreButtonClicked = true;
     adjustStructure();
-  }
-}, true);
+  });
 
-function adjustStructure() {
-  var hideBlogOuterWrap = document.querySelector('.hide-blog-outer-wrap');
-  if (loadMoreButtonClicked && window.matchMedia("(max-width: 991px)").matches) {
-    hideBlogOuterWrap.style.display = 'block';
-  } else {
-    hideBlogOuterWrap.style.display = 'flex';
+  window.addEventListener('resize', function (event) {
+    if (loadMoreButtonClicked) {
+      adjustStructure();
+    }
+  }, true);
+
+  function adjustStructure() {
+    var hideBlogOuterWrap = document.querySelector('.hide-blog-outer-wrap');
+    if (!hideBlogOuterWrap) {
+      return;
+    }
+    if (loadMoreButtonClicked && window.matchMedia("(max-width: 991px)").matches) {
+      hideBlogOuterWrap.style.display = 'block';
+    } else {
+      hideBlogOuterWrap.style.display = 'flex';
+    }
   }
 }

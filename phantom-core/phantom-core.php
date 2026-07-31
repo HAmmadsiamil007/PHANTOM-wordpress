@@ -34,7 +34,9 @@ define( 'PHANTOM_CORE_VERSION', '2.0.0' );
 define( 'PHANTOM_CORE_FILE', __FILE__ );
 define( 'PHANTOM_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'PHANTOM_CORE_URL', plugin_dir_url( __FILE__ ) );
-define( 'PHANTOM_THEME_URL', PHANTOM_CORE_URL . '../phantom-theme/' );
+if ( ! defined( 'PHANTOM_THEME_URL' ) ) {
+	define( 'PHANTOM_THEME_URL', get_template_directory_uri() . '/' );
+}
 if ( ! defined( 'PHANTOM_DEV_MODE' ) ) {
 	define( 'PHANTOM_DEV_MODE', false ); /** Set to true in wp-config.php to show legacy Customizer panels */
 }

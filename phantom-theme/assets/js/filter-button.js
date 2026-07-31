@@ -2,34 +2,40 @@
 
 var lowerSlider = document.querySelector('#lower');
 var upperSlider = document.querySelector('#upper');
+var inputOne = document.querySelector('#one');
+var inputTwo = document.querySelector('#two');
 
-document.querySelector('#two').value = upperSlider.value;
-document.querySelector('#one').value = lowerSlider.value;
+if (!lowerSlider || !upperSlider || !inputOne || !inputTwo) {
+    // Elements not present on this page — skip.
+} else {
+    inputTwo.value = upperSlider.value;
+    inputOne.value = lowerSlider.value;
 
-var lowerVal = parseInt(lowerSlider.value);
-var upperVal = parseInt(upperSlider.value);
+    var lowerVal = parseInt(lowerSlider.value);
+    var upperVal = parseInt(upperSlider.value);
 
-upperSlider.oninput = function () {
-    lowerVal = parseInt(lowerSlider.value);
-    upperVal = parseInt(upperSlider.value);
+    upperSlider.oninput = function () {
+        lowerVal = parseInt(lowerSlider.value);
+        upperVal = parseInt(upperSlider.value);
 
-    if (upperVal < lowerVal + 4) {
-        lowerSlider.value = upperVal - 4;
-        if (lowerVal == lowerSlider.min) {
-            upperSlider.value = 4;
+        if (upperVal < lowerVal + 4) {
+            lowerSlider.value = upperVal - 4;
+            if (lowerVal == lowerSlider.min) {
+                upperSlider.value = 4;
+            }
         }
-    }
-    document.querySelector('#two').value = this.value
-};
+        inputTwo.value = this.value;
+    };
 
-lowerSlider.oninput = function () {
-    lowerVal = parseInt(lowerSlider.value);
-    upperVal = parseInt(upperSlider.value);
-    if (lowerVal > upperVal - 4) {
-        upperSlider.value = lowerVal + 4;
-        if (upperVal == upperSlider.max) {
-            lowerSlider.value = parseInt(upperSlider.max) - 4;
+    lowerSlider.oninput = function () {
+        lowerVal = parseInt(lowerSlider.value);
+        upperVal = parseInt(upperSlider.value);
+        if (lowerVal > upperVal - 4) {
+            upperSlider.value = lowerVal + 4;
+            if (upperVal == upperSlider.max) {
+                lowerSlider.value = parseInt(upperSlider.max) - 4;
+            }
         }
-    }
-    document.querySelector('#one').value = this.value
-};
+        inputOne.value = this.value;
+    };
+}
