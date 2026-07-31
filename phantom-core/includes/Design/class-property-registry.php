@@ -21,8 +21,8 @@ class Property_Registry {
     public const TOOLS = [
         'colors'      => ['label' => 'Colors',      'icon' => 'art',             'implemented' => true],
         'typography'  => ['label' => 'Typography',  'icon' => 'editor-textcolor', 'implemented' => true],
-        'spacing'     => ['label' => 'Spacing',     'icon' => 'editor-expand',    'implemented' => false],
-        'assets'      => ['label' => 'Assets',      'icon' => 'format-image',     'implemented' => false],
+        'spacing'     => ['label' => 'Spacing',     'icon' => 'editor-expand',    'implemented' => true],
+        'assets'      => ['label' => 'Assets',      'icon' => 'format-image',     'implemented' => true],
         'animation'   => ['label' => 'Animation',   'icon' => 'visibility',       'implemented' => false],
         'responsive'  => ['label' => 'Responsive',  'icon' => 'desktop',          'implemented' => false],
         'content'     => ['label' => 'Content',     'icon' => 'edit',             'implemented' => false],

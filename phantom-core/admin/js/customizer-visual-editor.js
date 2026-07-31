@@ -11,6 +11,7 @@
     var editingEnabled = false;
     var currentComponent = null;
     var currentTool = '';
+    var toolsCache = {};
     var pendingChanges = {};
     var previewFrame = null;
 
@@ -105,6 +106,8 @@
                 }
                 inspector.innerHTML = html;
                 if (json && json.data && json.data.tools) {
+                    toolsCache = {};
+                    (json.data.tools || []).forEach(function (t) { toolsCache[t.tool] = t; });
                     renderToolPalette(inspector, json.data.tools, currentTool);
                 }
                 bindControls(inspector);
@@ -131,18 +134,49 @@
             var soon = t.implemented ? '' : ' vc-tool-soon';
             var title = t.implemented ? t.label : t.label + ' (coming soon)';
             el.innerHTML += '<button type="button" class="vc-tool-btn' + active + soon + '" data-tool="' + t.tool + '"' +
-                (t.implemented ? '' : ' disabled') + ' title="' + title + '">' +
+                ' title="' + title + '">' +
                 '<span class="dashicons dashicons-' + t.icon + '"></span>' +
-                '<span>' + t.label + '</span></button>';
+                '<span>' + t.label + '</span>' +
+                (t.implemented ? '' : '<span class="vc-tool-soon-badge">Soon</span>') +
+                '</button>';
         });
 
         container.insertBefore(el, container.firstChild);
 
         el.addEventListener('click', function (ev) {
             var btn = ev.target && ev.target.closest ? ev.target.closest('.vc-tool-btn') : null;
-            if (!btn || btn.disabled || btn.classList.contains('active')) return;
-            selectTool(btn.getAttribute('data-tool'));
+            if (!btn || btn.classList.contains('active')) return;
+            var tool = btn.getAttribute('data-tool');
+            if (btn.classList.contains('vc-tool-soon')) {
+                showToolSoonNotice(tool);
+                return;
+            }
+            selectTool(tool);
         });
+    }
+
+    function showToolSoonNotice(tool) {
+        var def = toolsCache[tool] || {};
+        var label = def.label || tool;
+        var notice = document.querySelector('.vc-tool-soon-notice');
+        if (!notice) {
+            notice = document.createElement('div');
+            notice.className = 'vc-tool-soon-notice';
+            var inspector = document.getElementById('phantom-visual-inspector');
+            if (!inspector) return;
+            inspector.insertBefore(notice, inspector.querySelector('.vc-panel') || inspector.firstChild);
+        }
+        notice.innerHTML = '<span class="dashicons dashicons-hammer"></span>' +
+            '<span>The <strong>' + label + '</strong> tool is coming soon.</span>' +
+            '<button type="button" class="vc-tool-soon-dismiss" title="Dismiss"><span class="dashicons dashicons-no-alt"></span></button>';
+        notice.style.display = '';
+        var dismiss = notice.querySelector('.vc-tool-soon-dismiss');
+        if (dismiss && !dismiss.dataset.vcBound) {
+            dismiss.dataset.vcBound = '1';
+            dismiss.addEventListener('click', function () {
+                notice.style.display = 'none';
+            });
+        }
     }
 
     function selectTool(tool) {

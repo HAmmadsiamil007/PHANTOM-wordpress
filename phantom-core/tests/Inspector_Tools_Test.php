@@ -67,6 +67,18 @@ class Inspector_Tools_Test extends TestCase {
         $this->assertStringNotContainsString('vc-color-picker', $html);
     }
 
+    public function test_animation_tool_renders_animation_part(): void {
+        $html = $this->factory->render_panels('hero', null, 'normal', 'desktop', [], 'animation');
+
+        $this->assertStringContainsString('data-panel="animation"', $html);
+        $this->assertStringContainsString('data-property="hero_animation"', $html);
+        $this->assertStringContainsString('data-property="hero_animation_delay"', $html);
+        $this->assertStringContainsString('data-property="hero_animation_duration"', $html);
+
+        $this->assertStringNotContainsString('data-panel="background"', $html);
+        $this->assertStringNotContainsString('data-property="hero_bg_color"', $html);
+    }
+
     public function test_legacy_tabs_fallback_without_metadata(): void {
         $html = $this->factory->render_panels(
             'mystery-section',

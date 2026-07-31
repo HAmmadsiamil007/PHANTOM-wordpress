@@ -89,6 +89,14 @@ return array(
                     array('property' => 'logo-image', 'key' => 'hero_image', 'label' => 'Hero Image'),
                 ),
             ),
+            'animation' => array(
+                'label'      => 'Animation',
+                'properties' => array(
+                    array('property' => 'animation-type',     'key' => 'hero_animation'),
+                    array('property' => 'animation-delay',    'key' => 'hero_animation_delay'),
+                    array('property' => 'animation-duration', 'key' => 'hero_animation_duration'),
+                ),
+            ),
         ),
     ),
 

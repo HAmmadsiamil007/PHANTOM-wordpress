@@ -61,10 +61,11 @@ class Component_Metadata_Test extends TestCase {
     public function test_tools_derived_from_properties_in_order(): void {
         $tools = $this->metadata->get_tools('hero');
 
-        $this->assertSame(['colors', 'typography', 'spacing', 'assets'], array_column($tools, 'tool'));
+        $this->assertSame(['colors', 'typography', 'spacing', 'assets', 'animation'], array_column($tools, 'tool'));
         $this->assertSame('Colors', $tools[0]['label']);
         $this->assertTrue($tools[0]['implemented']);
-        $this->assertFalse($tools[2]['implemented']);
+        $this->assertTrue($tools[2]['implemented']);
+        $this->assertFalse($tools[4]['implemented']);
     }
 
     public function test_footer_tools_exclude_assets(): void {

@@ -388,7 +388,7 @@
     padding: 8px 4px;
 }
 
-/* Tool palette (Phase B — universal tool engine) */
+/* Tool palette (Phase B ï¿½ universal tool engine) */
 
 .vc-tool-palette {
     display: flex;
@@ -441,9 +441,69 @@
     color: #fff;
 }
 
-.vc-tool-btn.vc-tool-soon:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
+.vc-tool-btn.vc-tool-soon {
+    opacity: 0.7;
+    cursor: pointer;
+    border-style: dashed;
+}
+
+.vc-tool-btn.vc-tool-soon:hover {
+    opacity: 1;
+    border-color: #996800;
+    color: #996800;
+}
+
+.vc-tool-soon-badge {
+    font-size: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #996800;
+    background: #fcf9e8;
+    border: 1px solid #e5d9a0;
+    border-radius: 2px;
+    padding: 0 3px;
+}
+
+.vc-tool-soon-notice {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    padding: 7px 10px;
+    background: #fcf9e8;
+    border: 1px solid #e5d9a0;
+    border-left: 3px solid #996800;
+    border-radius: 3px;
+    color: #3c3c3c;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.vc-tool-soon-notice .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #996800;
+}
+
+.vc-tool-soon-notice strong {
+    font-weight: 600;
+}
+
+.vc-tool-soon-dismiss {
+    margin-left: auto;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #646970;
+    opacity: 0.7;
+}
+
+.vc-tool-soon-dismiss:hover {
+    opacity: 1;
+    color: #1d2327;
 }
 
 .vc-selection-crumb {

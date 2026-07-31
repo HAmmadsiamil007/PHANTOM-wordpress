@@ -31,8 +31,10 @@ class Property_Registry_Test extends TestCase {
         $tools = $this->registry->get_tools();
         $this->assertTrue($tools['colors']['implemented']);
         $this->assertTrue($tools['typography']['implemented']);
-        $this->assertFalse($tools['spacing']['implemented']);
+        $this->assertTrue($tools['spacing']['implemented']);
+        $this->assertTrue($tools['assets']['implemented']);
         $this->assertFalse($tools['animation']['implemented']);
+        $this->assertFalse($tools['responsive']['implemented']);
         $this->assertFalse($tools['content']['implemented']);
     }
 
